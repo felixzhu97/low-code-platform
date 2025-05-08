@@ -1,0 +1,37 @@
+@startuml C4组件图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Web应用组件图
+
+Container_Boundary(web_app, "Web应用") {
+    Component(editor, "可视化编辑器", "React", "拖拽式UI构建")
+    Component(theme_mgr, "主题管理", "React", "样式定制")
+    Component(comp_lib, "组件库", "React", "预制组件集合")
+    Component(state_mgr, "状态管理", "Zustand", "全局状态管理")
+    Component(auth_ui, "认证UI", "React", "登录/注册界面")
+    
+    Rel(editor, comp_lib, "使用", "组件引用")
+    Rel(editor, theme_mgr, "应用", "主题配置")
+    Rel(editor, state_mgr, "读写", "状态管理")
+    Rel(auth_ui, state_mgr, "更新", "用户状态")
+}
+
+Container_Boundary(api_service, "API服务") {
+    Component(comp_api, "组件API", "Express", "组件CRUD")
+    Component(auth_api, "认证API", "Express", "处理认证")
+    Component(data_api, "数据API", "Express", "业务数据处理")
+    
+    Rel(comp_api, data_api, "调用", "内部API")
+    Rel(auth_api, data_api, "验证", "权限检查")
+}
+
+Rel(editor, comp_api, "保存/加载", "REST")
+Rel(auth_ui, auth_api, "认证", "OAuth2")
+
+legend right
+<color:#000000>**关键组件**</color>
+|可视化编辑器|核心功能|
+|组件库|50+预制组件|
+|状态管理|全局数据流|
+end legend
+@enduml

@@ -1,0 +1,30 @@
+@startuml C4容器图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title 容器图
+
+System_Boundary(系统边界, "低代码平台") {
+    Container(web_app, "Web应用", "Next.js", "提供可视化编辑器界面")
+    Container(api_service, "API服务", "Node.js", "处理业务逻辑")
+    Container(db, "数据库", "PostgreSQL", "存储应用数据")
+    Container(auth_service, "认证服务", "Keycloak", "处理用户认证授权")
+    
+    Rel(web_app, api_service, "调用", "REST/GraphQL")
+    Rel(api_service, db, "读写", "SQL")
+    Rel(web_app, auth_service, "认证", "OAuth2")
+    Rel(api_service, auth_service, "验证", "JWT")
+}
+
+System_Ext(cdn, "CDN", "提供静态资源")
+System_Ext(monitoring, "监控服务", "Prometheus/Grafana")
+
+Rel(web_app, cdn, "加载资源")
+Rel(api_service, monitoring, "上报指标")
+
+legend right
+<color:#000000>**技术说明**</color>
+|Next.js|React框架|
+|Node.js|后端运行时|
+|PostgreSQL|关系型数据库|
+end legend
+@enduml
