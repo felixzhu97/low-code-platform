@@ -1,73 +1,73 @@
-L My Lowcode Project - Low Code Platform
+# 低代码平台项目
 
-A modern low-code platform built with Next.js and React 19, featuring drag-and-drop UI building, theme customization, and real-time collaboration.
+基于 Next.js 和 React 19 构建的现代化低代码平台，提供拖拽式 UI 构建、主题定制和实时协作功能。
 
-## ✨ Features
+## ✨ 功能特性
 
-- 🏗️ Drag-and-drop component builder
-- 🎨 Theme editor with color picker
-- ✨ Animation editor for interactive components
-- 🤝 Real-time collaboration
-- 📱 Responsive design controls
-- 📦 Template gallery for quick starts
-- 📊 Data visualization with Recharts
-- 🎭 Radix UI based component library
+- 🏗️ 拖拽式组件构建器
+- 🎨 带颜色选择器的主题编辑器
+- ✨ 交互式组件动画编辑器
+- 🤝 实时协作功能
+- 📱 响应式设计控制
+- 📦 快速开始的模板库
+- 📊 使用 Recharts 的数据可视化
+- 🎭 基于 Radix UI 的组件库
 
-## 🛠️ Tech Stack
+## 🛠️ 技术栈
 
-- **Framework**: Next.js 15.2
-- **UI**: Radix UI + Tailwind CSS
-- **State**: React 19
-- **Forms**: react-hook-form + Zod validation
-- **Styling**: Tailwind CSS + tailwind-merge + tailwindcss-animate
-- **Utilities**: date-fns, clsx, class-variance-authority
-- **Components**: 50+ pre-built components
+- **框架**: Next.js 15.2
+- **UI 组件**: Radix UI + Tailwind CSS
+- **状态管理**: React 19
+- **表单处理**: react-hook-form + Zod 验证
+- **样式系统**: Tailwind CSS + tailwind-merge + tailwindcss-animate
+- **工具库**: date-fns, clsx, class-variance-authority
+- **组件**: 50+预制组件
 
-## 🚀 Getting Started
+## 🚀 快速开始
 
-1. Install dependencies:
+1. 安装依赖:
 
 ```bash
 pnpm install
 ```
 
-2. Run development server:
+2. 启动开发服务器:
 
 ```bash
 pnpm dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+3. 在浏览器中打开 [http://localhost:3000](http://localhost:3000)
 
-## 📂 Project Structure
+## 📂 项目结构
 
 ```
 .
-├── app/               # Next.js app router
-├── components/        # UI components
-│   ├── ui/            # Radix-based primitives
-│   ├── form-builder/  # Drag-and-drop form builder
-│   ├── theme-editor/  # Theme customization
-│   └── ...            # Other feature components
-├── hooks/             # Custom hooks
-├── lib/               # Utilities and types
-├── public/            # Static assets
-└── styles/            # Global styles
+├── app/               # Next.js应用路由
+├── components/        # UI组件
+│   ├── ui/            # Radix基础组件
+│   ├── form-builder/  # 拖拽表单构建器
+│   ├── theme-editor/  # 主题定制
+│   └── ...            # 其他功能组件
+├── hooks/             # 自定义Hook
+├── lib/               # 工具函数和类型
+├── public/            # 静态资源
+└── styles/            # 全局样式
 ```
 
-## ⚙️ Configuration
+## ⚙️ 配置说明
 
-- ESLint and TypeScript errors are ignored during builds
-- Image optimization is disabled (see `next.config.mjs`)
+- 构建时忽略 ESLint 和 TypeScript 错误
+- 禁用图片优化(参见`next.config.mjs`)
 
-## 🤝 Contributing
+## 🤝 贡献指南
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/新特性`)
+3. 提交更改 (`git commit -m '添加新特性'`)
+4. 推送分支 (`git push origin feature/新特性`)
+5. 提交 Pull Request
 
-## 📄 License
+## 📄 许可证
 
 MIT
