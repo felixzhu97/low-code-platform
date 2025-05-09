@@ -11,6 +11,8 @@ export interface Component {
   properties?: Record<string, any>
   children?: Component[]
   parentId?: string | null
+  dataSource?: string | null
+  dataMapping?: Record<string, string>
 }
 
 export interface ComponentCategory {
@@ -45,4 +47,29 @@ export interface ThemeConfig {
   fontFamily: string
   borderRadius: string
   spacing: string
+}
+
+export interface DataField {
+  name: string
+  type: "string" | "number" | "boolean" | "date" | "object" | "array"
+  path: string
+}
+
+export interface ChartConfig {
+  type: "bar" | "line" | "pie" | "area" | "scatter" | "radar" | "donut"
+  xField: string
+  yField: string
+  seriesField?: string
+  colorField?: string
+  annotations?: any[]
+}
+
+export interface TableColumn {
+  title: string
+  dataIndex: string
+  key: string
+  width?: number
+  sortable?: boolean
+  filterable?: boolean
+  render?: string
 }

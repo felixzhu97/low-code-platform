@@ -33,6 +33,10 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
             fontWeight: "normal",
             color: "#000000",
             alignment: "left",
+            lineHeight: 1.5,
+            letterSpacing: "normal",
+            textTransform: "none",
+            textDecoration: "none",
           })
           break
         case "button":
@@ -41,6 +45,32 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
             variant: "default",
             size: "default",
             disabled: false,
+            icon: "",
+            iconPosition: "left",
+            fullWidth: false,
+            onClick: "none",
+          })
+          break
+        case "image":
+          setProperties({
+            src: "/placeholder.svg?height=200&width=300",
+            alt: "示例图片",
+            width: 300,
+            height: 200,
+            objectFit: "cover",
+            rounded: false,
+            shadow: false,
+            border: false,
+            caption: "",
+          })
+          break
+        case "divider":
+          setProperties({
+            orientation: "horizontal",
+            thickness: 1,
+            color: "#e2e8f0",
+            margin: "1rem 0",
+            style: "solid",
           })
           break
         case "input":
@@ -48,12 +78,80 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
             placeholder: "请输入...",
             disabled: false,
             required: false,
+            type: "text",
+            label: "输入框",
+            helperText: "",
+            defaultValue: "",
           })
           break
         case "card":
           setProperties({
             title: "卡片标题",
             shadow: true,
+            padding: "1rem",
+            border: true,
+            rounded: true,
+          })
+          break
+        case "grid-layout":
+          setProperties({
+            columns: 3,
+            gap: 2,
+            autoRows: false,
+            rowHeight: "auto",
+            width: "100%",
+            height: "auto",
+          })
+          break
+        case "flex-layout":
+          setProperties({
+            direction: "row",
+            wrap: true,
+            justifyContent: "start",
+            alignItems: "center",
+            gap: 2,
+            width: "100%",
+            height: "auto",
+          })
+          break
+        case "split-layout":
+          setProperties({
+            direction: "horizontal",
+            splitRatio: 30,
+            minSize: 100,
+            width: "100%",
+            height: "300px",
+          })
+          break
+        case "tab-layout":
+          setProperties({
+            tabs: [
+              { id: "tab-1", label: "标签1", content: "标签1内容" },
+              { id: "tab-2", label: "标签2", content: "标签2内容" },
+            ],
+            defaultTab: "tab-1",
+            width: "100%",
+            height: "auto",
+          })
+          break
+        case "card-group":
+          setProperties({
+            columns: 3,
+            gap: 2,
+            width: "100%",
+            height: "auto",
+          })
+          break
+        case "responsive-container":
+          setProperties({
+            breakpoints: {
+              sm: 640,
+              md: 768,
+              lg: 1024,
+              xl: 1280,
+            },
+            width: "100%",
+            height: "auto",
           })
           break
         default:
@@ -66,6 +164,53 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
 
   const handlePropertyChange = (key: string, value: any) => {
     const updatedProperties = { ...properties, [key]: value }
+    setProperties(updatedProperties)
+
+    if (selectedComponent && onUpdateComponent) {
+      onUpdateComponent(selectedComponent.id, updatedProperties)
+    }
+  }
+
+  const handleNestedPropertyChange = (parentKey: string, key: string, value: any) => {
+    const parentValue = properties[parentKey] || {}
+    const updatedParentValue = { ...parentValue, [key]: value }
+    const updatedProperties = { ...properties, [parentKey]: updatedParentValue }
+    setProperties(updatedProperties)
+
+    if (selectedComponent && onUpdateComponent) {
+      onUpdateComponent(selectedComponent.id, updatedProperties)
+    }
+  }
+
+  const handleArrayItemChange = (arrayKey: string, index: number, key: string, value: any) => {
+    const array = [...(properties[arrayKey] || [])]
+    array[index] = { ...array[index], [key]: value }
+
+    const updatedProperties = { ...properties, [arrayKey]: array }
+    setProperties(updatedProperties)
+
+    if (selectedComponent && onUpdateComponent) {
+      onUpdateComponent(selectedComponent.id, updatedProperties)
+    }
+  }
+
+  const handleAddArrayItem = (arrayKey: string, newItem: any) => {
+    const array = [...(properties[arrayKey] || [])]
+    array.push(newItem)
+
+    const updatedProperties = { ...properties, [arrayKey]: array }
+    setProperties(updatedProperties)
+
+    if (selectedComponent && onUpdateComponent) {
+      onUpdateComponent(selectedComponent.id, updatedProperties)
+    }
+  }
+
+  const handleRemoveArrayItem = (arrayKey: string, index: number) => {
+    const array = [...(properties[arrayKey] || [])]
+    array.splice(index, 1)
+
+    const updatedProperties = { ...properties, [arrayKey]: array }
     setProperties(updatedProperties)
 
     if (selectedComponent && onUpdateComponent) {
@@ -177,6 +322,55 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
                               </SelectContent>
                             </Select>
                           </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="lineHeight">行高</Label>
+                            <div className="flex items-center gap-2">
+                              <Slider
+                                id="lineHeight"
+                                min={1}
+                                max={3}
+                                step={0.1}
+                                value={[properties.lineHeight || 1.5]}
+                                onValueChange={(value) => handlePropertyChange("lineHeight", value[0])}
+                                className="flex-1"
+                              />
+                              <span className="w-8 text-right">{properties.lineHeight || 1.5}</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="textTransform">文本转换</Label>
+                            <Select
+                              value={properties.textTransform || "none"}
+                              onValueChange={(value) => handlePropertyChange("textTransform", value)}
+                            >
+                              <SelectTrigger id="textTransform">
+                                <SelectValue placeholder="选择文本转换" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">无</SelectItem>
+                                <SelectItem value="uppercase">大写</SelectItem>
+                                <SelectItem value="lowercase">小写</SelectItem>
+                                <SelectItem value="capitalize">首字母大写</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="textDecoration">文本装饰</Label>
+                            <Select
+                              value={properties.textDecoration || "none"}
+                              onValueChange={(value) => handlePropertyChange("textDecoration", value)}
+                            >
+                              <SelectTrigger id="textDecoration">
+                                <SelectValue placeholder="选择文本装饰" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">无</SelectItem>
+                                <SelectItem value="underline">下划线</SelectItem>
+                                <SelectItem value="line-through">删除线</SelectItem>
+                                <SelectItem value="overline">上划线</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </>
                       )}
 
@@ -233,11 +427,229 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
                               onCheckedChange={(checked) => handlePropertyChange("disabled", checked)}
                             />
                           </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="fullWidth">全宽</Label>
+                            <Switch
+                              id="fullWidth"
+                              checked={properties.fullWidth || false}
+                              onCheckedChange={(checked) => handlePropertyChange("fullWidth", checked)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="icon">图标</Label>
+                            <Select
+                              value={properties.icon || ""}
+                              onValueChange={(value) => handlePropertyChange("icon", value)}
+                            >
+                              <SelectTrigger id="icon">
+                                <SelectValue placeholder="选择图标" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">无</SelectItem>
+                                <SelectItem value="plus">加号</SelectItem>
+                                <SelectItem value="minus">减号</SelectItem>
+                                <SelectItem value="check">对勾</SelectItem>
+                                <SelectItem value="x">叉号</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          {properties.icon && (
+                            <div className="grid gap-2">
+                              <Label htmlFor="iconPosition">图标位置</Label>
+                              <Select
+                                value={properties.iconPosition || "left"}
+                                onValueChange={(value) => handlePropertyChange("iconPosition", value)}
+                              >
+                                <SelectTrigger id="iconPosition">
+                                  <SelectValue placeholder="选择图标位置" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="left">左侧</SelectItem>
+                                  <SelectItem value="right">右侧</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {selectedComponent.type === "image" && (
+                        <>
+                          <div className="grid gap-2">
+                            <Label htmlFor="src">图片地址</Label>
+                            <Input
+                              id="src"
+                              value={properties.src || ""}
+                              onChange={(e) => handlePropertyChange("src", e.target.value)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="alt">替代文本</Label>
+                            <Input
+                              id="alt"
+                              value={properties.alt || ""}
+                              onChange={(e) => handlePropertyChange("alt", e.target.value)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="width">宽度</Label>
+                            <div className="flex items-center gap-2">
+                              <Slider
+                                id="width"
+                                min={50}
+                                max={800}
+                                step={10}
+                                value={[properties.width || 300]}
+                                onValueChange={(value) => handlePropertyChange("width", value[0])}
+                                className="flex-1"
+                              />
+                              <span className="w-12 text-right">{properties.width || 300}px</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="height">高度</Label>
+                            <div className="flex items-center gap-2">
+                              <Slider
+                                id="height"
+                                min={50}
+                                max={600}
+                                step={10}
+                                value={[properties.height || 200]}
+                                onValueChange={(value) => handlePropertyChange("height", value[0])}
+                                className="flex-1"
+                              />
+                              <span className="w-12 text-right">{properties.height || 200}px</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="objectFit">填充方式</Label>
+                            <Select
+                              value={properties.objectFit || "cover"}
+                              onValueChange={(value) => handlePropertyChange("objectFit", value)}
+                            >
+                              <SelectTrigger id="objectFit">
+                                <SelectValue placeholder="选择填充方式" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="cover">覆盖 (cover)</SelectItem>
+                                <SelectItem value="contain">包含 (contain)</SelectItem>
+                                <SelectItem value="fill">填充 (fill)</SelectItem>
+                                <SelectItem value="none">无 (none)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="rounded">圆角</Label>
+                            <Switch
+                              id="rounded"
+                              checked={properties.rounded || false}
+                              onCheckedChange={(checked) => handlePropertyChange("rounded", checked)}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="shadow">阴影</Label>
+                            <Switch
+                              id="shadow"
+                              checked={properties.shadow || false}
+                              onCheckedChange={(checked) => handlePropertyChange("shadow", checked)}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="border">边框</Label>
+                            <Switch
+                              id="border"
+                              checked={properties.border || false}
+                              onCheckedChange={(checked) => handlePropertyChange("border", checked)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="caption">图片说明</Label>
+                            <Input
+                              id="caption"
+                              value={properties.caption || ""}
+                              onChange={(e) => handlePropertyChange("caption", e.target.value)}
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {selectedComponent.type === "divider" && (
+                        <>
+                          <div className="grid gap-2">
+                            <Label htmlFor="orientation">方向</Label>
+                            <Select
+                              value={properties.orientation || "horizontal"}
+                              onValueChange={(value) => handlePropertyChange("orientation", value)}
+                            >
+                              <SelectTrigger id="orientation">
+                                <SelectValue placeholder="选择方向" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="horizontal">水平</SelectItem>
+                                <SelectItem value="vertical">垂直</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="thickness">粗细</Label>
+                            <div className="flex items-center gap-2">
+                              <Slider
+                                id="thickness"
+                                min={1}
+                                max={10}
+                                step={1}
+                                value={[properties.thickness || 1]}
+                                onValueChange={(value) => handlePropertyChange("thickness", value[0])}
+                                className="flex-1"
+                              />
+                              <span className="w-8 text-right">{properties.thickness || 1}px</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="color">颜色</Label>
+                            <ColorPicker
+                              color={properties.color || "#e2e8f0"}
+                              onChange={(color) => handlePropertyChange("color", color)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="margin">外边距</Label>
+                            <Input
+                              id="margin"
+                              value={properties.margin || "1rem 0"}
+                              onChange={(e) => handlePropertyChange("margin", e.target.value)}
+                              placeholder="例如: 1rem 0"
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="style">样式</Label>
+                            <Select
+                              value={properties.style || "solid"}
+                              onValueChange={(value) => handlePropertyChange("style", value)}
+                            >
+                              <SelectTrigger id="style">
+                                <SelectValue placeholder="选择样式" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="solid">实线</SelectItem>
+                                <SelectItem value="dashed">虚线</SelectItem>
+                                <SelectItem value="dotted">点线</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </>
                       )}
 
                       {selectedComponent.type === "input" && (
                         <>
+                          <div className="grid gap-2">
+                            <Label htmlFor="label">标签文本</Label>
+                            <Input
+                              id="label"
+                              value={properties.label || ""}
+                              onChange={(e) => handlePropertyChange("label", e.target.value)}
+                            />
+                          </div>
                           <div className="grid gap-2">
                             <Label htmlFor="placeholder">占位文本</Label>
                             <Input
@@ -245,6 +657,42 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
                               value={properties.placeholder || ""}
                               onChange={(e) => handlePropertyChange("placeholder", e.target.value)}
                             />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="defaultValue">默认值</Label>
+                            <Input
+                              id="defaultValue"
+                              value={properties.defaultValue || ""}
+                              onChange={(e) => handlePropertyChange("defaultValue", e.target.value)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="helperText">帮助文本</Label>
+                            <Input
+                              id="helperText"
+                              value={properties.helperText || ""}
+                              onChange={(e) => handlePropertyChange("helperText", e.target.value)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="type">输入类型</Label>
+                            <Select
+                              value={properties.type || "text"}
+                              onValueChange={(value) => handlePropertyChange("type", value)}
+                            >
+                              <SelectTrigger id="type">
+                                <SelectValue placeholder="选择输入类型" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="text">文本</SelectItem>
+                                <SelectItem value="password">密码</SelectItem>
+                                <SelectItem value="email">邮箱</SelectItem>
+                                <SelectItem value="number">数字</SelectItem>
+                                <SelectItem value="tel">电话</SelectItem>
+                                <SelectItem value="url">网址</SelectItem>
+                                <SelectItem value="date">日期</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                           <div className="flex items-center gap-2">
                             <Label htmlFor="disabled">禁用</Label>
@@ -281,6 +729,30 @@ export function PropertiesPanel({ selectedComponent, onUpdateComponent }: Proper
                               id="shadow"
                               checked={properties.shadow || false}
                               onCheckedChange={(checked) => handlePropertyChange("shadow", checked)}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="rounded">圆角</Label>
+                            <Switch
+                              id="rounded"
+                              checked={properties.rounded || false}
+                              onCheckedChange={(checked) => handlePropertyChange("rounded", checked)}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="border">边框</Label>
+                            <Switch
+                              id="border"
+                              checked={properties.border || false}
+                              onCheckedChange={(checked) => handlePropertyChange("border", checked)}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="padding">内边距</Label>
+                            <Input
+                              id="padding"
+                              value={properties.padding || "1rem"}
+                              onChange={(e) => handlePropertyChange("padding", e.target.value)}
                             />
                           </div>
                         </>

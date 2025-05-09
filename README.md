@@ -1,73 +1,97 @@
-# 低代码平台项目
+# 低代码平台
 
-基于 Next.js 和 React 19 构建的现代化低代码平台，提供拖拽式 UI 构建、主题定制和实时协作功能。
+## 项目简介
 
-## ✨ 功能特性
+本项目是一个基于 Next.js 和 React 的低代码平台，支持可视化页面搭建、组件拖拽、属性配置、主题编辑、模板库、表单生成、动画编辑、多人协作等功能，适用于快速构建 Web 应用。
 
-- 🏗️ 拖拽式组件构建器
-- 🎨 带颜色选择器的主题编辑器
-- ✨ 交互式组件动画编辑器
-- 🤝 实时协作功能
-- 📱 响应式设计控制
-- 📦 快速开始的模板库
-- 📊 使用 Recharts 的数据可视化
-- 🎭 基于 Radix UI 的组件库
+## 主要功能
 
-## 🛠️ 技术栈
+- 可视化页面搭建与实时预览
+- 丰富的组件库与模板库（包含 50+ UI 组件）
+- 组件属性、样式、动画可配置
+- 表单可视化生成与数据管理
+- 多人协作与实时同步
+- 主题与响应式适配
+- 代码导出与集成
 
-- **框架**: Next.js 15.2
-- **UI 组件**: Radix UI + Tailwind CSS
-- **状态管理**: React 19
-- **表单处理**: react-hook-form + Zod 验证
-- **样式系统**: Tailwind CSS + tailwind-merge + tailwindcss-animate
-- **工具库**: date-fns, clsx, class-variance-authority
-- **组件**: 50+预制组件
+### 核心组件
 
-## 🚀 快速开始
+- **编辑器组件**：Canvas、PreviewCanvas、AnimationEditor、ThemeEditor
+- **UI 组件库**：Button、Input、Form、Table、Chart 等 50+组件
+- **模板系统**：Dashboard、Landing Page、Form 等模板
+- **工具组件**：Collaboration、CodeExport、ComponentTree 等
 
-1. 安装依赖:
+## 技术架构
+
+- 前端：Next.js、React、TypeScript、Tailwind CSS、Radix UI
+- 后端：Next.js API 路由（可扩展为 Node.js 服务）
+- 数据库：可选 PostgreSQL/MongoDB 等
+- 对象存储：OSS/S3 等
+- 认证：支持 OAuth/自建认证服务
+
+## 开发环境
+
+- Node.js 18+
+- pnpm 8+
+- TypeScript 5+
+
+## 快速启动
 
 ```bash
 pnpm install
-```
-
-2. 启动开发服务器:
-
-```bash
 pnpm dev
 ```
 
-3. 在浏览器中打开 [http://localhost:3000](http://localhost:3000)
+访问 http://localhost:3000 体验低代码平台。
 
-## 📂 项目结构
+## 项目截图
+
+![Dashboard Template](public/dashboard-template.png)
+![Form Builder](public/signup-form-template.png)
+
+## 目录结构
 
 ```
-.
-├── app/               # Next.js应用路由
-├── components/        # UI组件
-│   ├── ui/            # Radix基础组件
-│   ├── form-builder/  # 拖拽表单构建器
-│   ├── theme-editor/  # 主题定制
-│   └── ...            # 其他功能组件
-├── hooks/             # 自定义Hook
-├── lib/               # 工具函数和类型
-├── public/            # 静态资源
-└── styles/            # 全局样式
+├── app/                # Next.js应用入口与页面路由
+│   ├── layout.tsx      # 全局布局
+│   └── page.tsx        # 主页面
+├── components/         # 功能组件
+│   ├── core/           # 核心编辑器组件
+│   ├── templates/      # 页面模板
+│   ├── charts/         # 图表组件
+│   └── ui/             # 基础UI组件库
+├── docs/               # 文档
+│   ├── architecture/   # 架构设计文档
+│   └── qa/             # 常见问题解答
+├── hooks/              # 自定义React Hooks
+├── lib/                # 工具函数与类型定义
+├── public/             # 静态资源文件
+└── styles/             # 全局样式配置
 ```
 
-## ⚙️ 配置说明
+## C4 模型
 
-- 构建时忽略 ESLint 和 TypeScript 错误
-- 禁用图片优化(参见`next.config.mjs`)
+项目已按 C4 模型分层建模，详见 `c4model/` 文件夹，包含系统上下文、容器、组件、部署等架构图（puml 格式）。
 
-## 🤝 贡献指南
+---
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/新特性`)
-3. 提交更改 (`git commit -m '添加新特性'`)
-4. 推送分支 (`git push origin feature/新特性`)
-5. 提交 Pull Request
+如需二次开发或部署，请参考下方产品与技术文档：
 
-## 📄 许可证
+- [用户手册](docs/用户手册.md)
+- [产品说明](docs/project/product-description.md)
+- [技术文档](docs/project/technical-description.md)
+- [C4 架构模型文档](docs/architecture/)
 
-MIT
+## 贡献指南
+
+欢迎提交 Pull Request 或 Issue。提交代码前请确保：
+
+1. 通过 ESLint 检查
+2. 添加必要的单元测试
+3. 更新相关文档
+
+## 许可证
+
+MIT © 2025 低代码平台团队
+
+如有问题或建议，欢迎提交 issue 或联系开发团队。

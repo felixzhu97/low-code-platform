@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lowcode App",
-  description: "Created with Lowcode",
-  generator: "Lowcode APP",
+  title: "lowcode App",
+  description: "Created with lowcode",
+  generator: "lowcode.dev",
 };
 
 export default function RootLayout({
