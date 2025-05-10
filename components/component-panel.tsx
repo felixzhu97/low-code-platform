@@ -6,22 +6,106 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
+import { Search, Layers, Info } from "lucide-react"
 import {
   LayoutGrid,
   Type,
   Square,
   CircleIcon as CircleSquare,
-  Layers,
+  Layers as LayersIcon,
   FormInput,
   Table2,
   BarChart4,
+  MousePointer,
+  Move,
 } from "lucide-react"
 import type { ComponentCategory } from "@/lib/types"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
+
+// 组件描述信息
+const componentDescriptions: Record<string, string> = {
+  text: "用于展示静态文本内容，可自定义字体、颜色、大小等样式",
+  button: "可点击的按钮，支持多种样式和大小",
+  image: "图片展示组件，支持各种图片格式",
+  divider: "分隔线，用于分隔内容区域",
+  container: "基础容器组件，可包含其他组件",
+  "grid-layout": "网格布局，使用CSS Grid实现等分或自定义网格",
+  "flex-layout": "弹性布局，使用CSS Flex实现灵活的一维排列",
+  input: "文本输入框，用于收集用户输入",
+  textarea: "多行文本输入框，适用于较长文本",
+  select: "下拉选择框，用于从预设选项中选择",
+  checkbox: "复选框，用于多选场景",
+  radio: "单选框，用于单选场景",
+  "bar-chart": "柱状图，展示分类数据的数值比较",
+  "line-chart": "折线图，展示连续数据的趋势变化",
+  "pie-chart": "饼图，展示部分与整体的关系",
+  card: "卡片容器，用于包装相关内容和操作",
+  carousel: "轮播图，循环播放内容或图片",
+  progress: "进度条，展示操作完成的进度",
+};
+
+// 获取组件描述
+const getComponentDescription = (type: string): string => {
+  return componentDescriptions[type] || "暂无描述";
+};
+
+// 组件示例渲染函数
+const renderComponentPreview = (type: string): React.ReactNode => {
+  switch (type) {
+    case "text":
+      return <div className="text-sm">示例文本</div>;
+    case "button":
+      return <Button size="sm" variant="outline" className="h-6 text-xs">按钮</Button>;
+    case "image":
+      return <div className="h-12 w-16 bg-muted-foreground/20 flex items-center justify-center text-xs text-muted-foreground">图片</div>;
+    case "divider":
+      return <div className="h-px w-full bg-border my-1"></div>;
+    case "container":
+      return <div className="h-12 w-full border border-dashed border-muted-foreground/50 rounded-sm"></div>;
+    case "grid-layout":
+      return (
+        <div className="grid grid-cols-2 gap-1 w-full">
+          <div className="bg-muted h-6 rounded-sm"></div>
+          <div className="bg-muted h-6 rounded-sm"></div>
+          <div className="bg-muted h-6 rounded-sm"></div>
+          <div className="bg-muted h-6 rounded-sm"></div>
+        </div>
+      );
+    case "input":
+      return <Input disabled placeholder="输入文本..." className="h-6 text-xs" />;
+    case "textarea":
+      return <div className="h-14 w-full border rounded-md bg-background"></div>;
+    case "select":
+      return <div className="h-6 w-full border rounded-md bg-background flex items-center justify-between px-2 text-xs"><span>选择选项</span><span>▼</span></div>;
+    case "bar-chart":
+      return (
+        <div className="flex items-end h-14 gap-1 w-full">
+          <div className="bg-primary w-3 h-8 rounded-sm"></div>
+          <div className="bg-primary w-3 h-10 rounded-sm"></div>
+          <div className="bg-primary w-3 h-6 rounded-sm"></div>
+          <div className="bg-primary w-3 h-12 rounded-sm"></div>
+        </div>
+      );
+    case "pie-chart":
+      return <div className="h-12 w-12 rounded-full border-4 border-primary border-r-muted border-b-secondary"></div>;
+    default:
+      return <div className="text-xs text-muted-foreground">预览</div>;
+  }
+};
 
 export function ComponentPanel() {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [selectedComponent, setSelectedComponent] = useState<string | null>(null)
 
   // 组件分类
   const categories: ComponentCategory[] = [
@@ -160,11 +244,74 @@ export function ComponentPanel() {
     return (
       <div
         ref={drag}
-        className="flex cursor-grab items-center justify-between rounded-md border bg-card p-2 text-sm shadow-sm"
+        className="relative flex flex-col cursor-grab rounded-md border bg-card p-2 text-sm shadow-sm hover:border-primary/50 transition-all"
         style={{ opacity: isDragging ? 0.5 : 1 }}
+        onClick={() => setSelectedComponent(component.id === selectedComponent ? null : component.id)}
       >
-        <span>{component.name}</span>
-        {component.isContainer && <Layers className="h-3 w-3 text-muted-foreground" />}
+        <div className="flex items-center justify-between mb-2">
+          <span className="font-medium">{component.name}</span>
+          <div className="flex gap-1">
+            {component.isContainer && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="outline" className="h-5 px-1">
+                      <Layers className="h-3 w-3" />
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p className="text-xs">容器组件，可包含其他组件</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Badge variant="outline" className="h-5 px-1 cursor-pointer hover:bg-accent">
+                  <Info className="h-3 w-3" />
+                </Badge>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{component.name}</DialogTitle>
+                  <DialogDescription>
+                    {getComponentDescription(component.type)}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col gap-4 py-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="text-sm font-medium">组件预览</div>
+                    <div className="flex items-center justify-center p-4 border rounded-md bg-accent/10">
+                      {renderComponentPreview(component.type)}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="text-sm font-medium">使用方式</div>
+                    <div className="text-sm flex items-center gap-2">
+                      <MousePointer className="h-4 w-4" />
+                      <span>拖拽此组件到画布中</span>
+                    </div>
+                    <div className="text-sm flex items-center gap-2">
+                      <Move className="h-4 w-4" />
+                      <span>在画布中调整位置与大小</span>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+        
+        <div className={`h-14 flex items-center justify-center rounded border border-dashed ${
+          isDragging ? "border-primary" : "border-muted-foreground/30"
+        } p-1`}>
+          {renderComponentPreview(component.type)}
+        </div>
+        
+        <div className="text-xs text-muted-foreground mt-1 line-clamp-1">
+          {getComponentDescription(component.type)}
+        </div>
       </div>
     )
   }
@@ -214,7 +361,7 @@ export function ComponentPanel() {
                       {category.icon}
                       <h3 className="ml-2 text-sm font-medium">{category.name}</h3>
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid grid-cols-1 gap-3">
                       {category.components.map((component) => (
                         <DraggableComponent key={component.id} component={component} />
                       ))}
@@ -228,7 +375,7 @@ export function ComponentPanel() {
 
         <TabsContent value="all" className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col">
           <ScrollArea className="flex-1">
-            <div className="grid gap-2 p-4">
+            <div className="grid grid-cols-1 gap-3 p-4">
               {categories
                 .flatMap((category) => category.components)
                 .filter((component) => component.name.toLowerCase().includes(searchTerm.toLowerCase()))

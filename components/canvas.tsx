@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Trash2, Smartphone, Tablet, BarChart, LineChart, PieChart, ArrowUpDown, Filter } from "lucide-react"
+import { Trash2, Smartphone, Tablet, BarChart, LineChart, PieChart, ArrowUpDown, Filter, HelpCircle, Keyboard } from "lucide-react"
 import type { Component, ThemeConfig, DataSource, TableColumn } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Switch } from "@/components/ui/switch"
@@ -22,6 +22,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 type CanvasProps = {
   onSelectComponent: (component: Component | null) => void
@@ -48,6 +50,8 @@ export function Canvas({
   const [snapToGrid, setSnapToGrid] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [dropTargetId, setDropTargetId] = useState<string | null>(null)
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
+  const [showTooltips, setShowTooltips] = useState(true)
 
   // 添加拖拽状态
   const [isDragging, setIsDragging] = useState(false)
@@ -1745,6 +1749,27 @@ export function Canvas({
     [drop],
   )
 
+  // 显示键盘快捷键对话框
+  const toggleKeyboardShortcuts = () => {
+    setShowKeyboardShortcuts(!showKeyboardShortcuts)
+  }
+  
+  // 显示/隐藏工具提示
+  const toggleTooltips = () => {
+    setShowTooltips(!showTooltips)
+  }
+  
+  // 键盘快捷键列表
+  const keyboardShortcuts = [
+    { key: "Delete / Backspace", description: "删除所选组件" },
+    { key: "↑ / ↓ / ← / →", description: "微调所选组件位置" },
+    { key: "Shift + 拖动", description: "保持组件比例" },
+    { key: "Ctrl + Z", description: "撤销上一步操作" },
+    { key: "Ctrl + Y", description: "重做操作" },
+    { key: "Ctrl + D", description: "复制所选组件" },
+    { key: "Esc", description: "取消选择" },
+  ]
+
   return (
     <div className="flex-1 bg-gray-50">
       {!isPreviewMode && (
@@ -1752,18 +1777,62 @@ export function Canvas({
           <span className="font-medium">画布</span>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Label htmlFor="show-grid" className="text-xs">
-                显示网格
-              </Label>
-              <Switch id="show-grid" checked={showGrid} onCheckedChange={setShowGrid} size="sm" />
+              <Label htmlFor="show-grid" className="text-xs text-muted-foreground">网格</Label>
+              <Switch id="show-grid" checked={showGrid} onCheckedChange={setShowGrid} />
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="snap-grid" className="text-xs">
-                对齐网格
-              </Label>
-              <Switch id="snap-grid" checked={snapToGrid} onCheckedChange={setSnapToGrid} size="sm" />
+              <Label htmlFor="snap-grid" className="text-xs text-muted-foreground">对齐</Label>
+              <Switch id="snap-grid" checked={snapToGrid} onCheckedChange={setSnapToGrid} />
             </div>
-            <Button variant="outline" size="icon" onClick={handleClear} disabled={components.length === 0}>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="show-tooltips" className="text-xs text-muted-foreground">提示</Label>
+                    <Switch id="show-tooltips" checked={showTooltips} onCheckedChange={toggleTooltips} />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>显示/隐藏操作提示</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <Dialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={toggleKeyboardShortcuts}>
+                  <Keyboard className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>键盘快捷键</DialogTitle>
+                  <DialogDescription>
+                    使用这些快捷键可以更高效地操作画布
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>快捷键</TableHead>
+                        <TableHead>功能</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {keyboardShortcuts.map((shortcut, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-mono">{shortcut.key}</TableCell>
+                          <TableCell>{shortcut.description}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button variant="ghost" size="icon" onClick={handleClear} disabled={components.length === 0}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -1819,6 +1888,25 @@ export function Canvas({
             </div>
           ) : (
             rootComponents.map((component) => renderComponent(component))
+          )}
+
+          {/* 新手引导提示 - 只在画布空且不是预览模式时显示 */}
+          {components.length === 0 && !isPreviewMode && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 pointer-events-none">
+              <div className="max-w-md space-y-4 bg-background/90 backdrop-blur-sm p-6 rounded-lg shadow-lg border">
+                <HelpCircle className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                <h3 className="text-xl font-medium">开始创建您的低代码应用</h3>
+                <p className="text-muted-foreground">
+                  从左侧面板拖拽组件到此画布，构建您的应用界面。使用右侧属性面板自定义组件。
+                </p>
+                <div className="flex justify-center gap-2 pointer-events-auto">
+                  <Button size="sm" variant="outline" onClick={toggleKeyboardShortcuts}>
+                    <Keyboard className="mr-2 h-4 w-4" />
+                    快捷键
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </ScrollArea>

@@ -1,29 +1,39 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import { ComponentPanel } from "@/components/component-panel"
 import { Canvas } from "@/components/canvas"
-import { PropertiesPanel } from "@/components/properties-panel"
 import { Header } from "@/components/header"
-import { DataPanel } from "@/components/data-panel"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CodeExport } from "@/components/code-export"
-import { TemplateGallery } from "@/components/template-gallery"
 import { ResponsiveControls } from "@/components/responsive-controls"
-import { ThemeEditor } from "@/components/theme-editor"
-import { FormBuilder } from "@/components/form-builder"
-import { AnimationEditor } from "@/components/animation-editor"
-import { Collaboration } from "@/components/collaboration"
 import type { Component, ThemeConfig } from "@/lib/types"
 import { type HistoryState, createHistory, addToHistory, undo, redo } from "@/lib/history"
 import { Button } from "@/components/ui/button"
-import { Eye, Undo2, Redo2 } from "lucide-react"
-import { ComponentLibraryManager } from "@/components/component-library-manager"
-import { ComponentGrouping } from "@/components/component-grouping"
+import { Eye, Undo2, Redo2, HelpCircle, BookOpenIcon } from "lucide-react"
 import { ComponentTree } from "@/components/component-tree"
 import { toast } from "@/components/ui/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+
+// 懒加载大型组件，减轻首屏加载负担
+const PropertiesPanel = lazy(() => import("@/components/properties-panel").then(mod => ({ default: mod.PropertiesPanel })))
+const DataPanel = lazy(() => import("@/components/data-panel").then(mod => ({ default: mod.DataPanel })))
+const CodeExport = lazy(() => import("@/components/code-export").then(mod => ({ default: mod.CodeExport })))
+const TemplateGallery = lazy(() => import("@/components/template-gallery").then(mod => ({ default: mod.TemplateGallery })))
+const ThemeEditor = lazy(() => import("@/components/theme-editor").then(mod => ({ default: mod.ThemeEditor })))
+const FormBuilder = lazy(() => import("@/components/form-builder").then(mod => ({ default: mod.FormBuilder })))
+const AnimationEditor = lazy(() => import("@/components/animation-editor").then(mod => ({ default: mod.AnimationEditor })))
+const Collaboration = lazy(() => import("@/components/collaboration").then(mod => ({ default: mod.Collaboration })))
+const ComponentLibraryManager = lazy(() => import("@/components/component-library-manager").then(mod => ({ default: mod.ComponentLibraryManager })))
+const ComponentGrouping = lazy(() => import("@/components/component-grouping").then(mod => ({ default: mod.ComponentGrouping })))
+
+// 懒加载的组件包装器
+const LazyComponentWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<div className="p-4 flex items-center justify-center">加载中...</div>}>
+    {children}
+  </Suspense>
+)
 
 export default function LowCodePlatform() {
   const [selectedComponent, setSelectedComponent] = useState<Component | null>(null)
@@ -44,6 +54,92 @@ export default function LowCodePlatform() {
   })
 
   const [customComponents, setCustomComponents] = useState<any[]>([])
+  
+  // 添加教程模式状态
+  const [showTutorial, setShowTutorial] = useState(false)
+  const [tutorialStep, setTutorialStep] = useState(0)
+  // 从本地存储加载是否首次访问的状态
+  const [isFirstVisit, setIsFirstVisit] = useState(true)
+
+  // 初始化时检查是否是首次访问
+  useEffect(() => {
+    const visitedBefore = localStorage.getItem('lowCodePlatformVisited')
+    if (visitedBefore) {
+      setIsFirstVisit(false)
+    } else {
+      setIsFirstVisit(true)
+      // 可以弹出欢迎对话框询问是否要开启教程
+    }
+  }, [])
+
+  // 完成首次访问的标记
+  const markAsVisited = () => {
+    localStorage.setItem('lowCodePlatformVisited', 'true')
+    setIsFirstVisit(false)
+  }
+
+  // 开始教程
+  const startTutorial = () => {
+    setShowTutorial(true)
+    setTutorialStep(0)
+    markAsVisited()
+  }
+
+  // 跳过教程
+  const skipTutorial = () => {
+    setShowTutorial(false)
+    markAsVisited()
+  }
+
+  // 教程步骤
+  const nextTutorialStep = () => {
+    if (tutorialStep < TUTORIAL_STEPS.length - 1) {
+      setTutorialStep(tutorialStep + 1)
+    } else {
+      // 完成教程
+      setShowTutorial(false)
+    }
+  }
+
+  // 定义教程步骤
+  const TUTORIAL_STEPS = [
+    {
+      title: "欢迎使用低代码平台",
+      description: "这个平台可以帮助您快速创建应用程序，无需编写大量代码。",
+      target: ".tutorial-header",
+      placement: "bottom",
+    },
+    {
+      title: "组件面板",
+      description: "从这里拖拽组件到画布上，快速构建您的应用界面。",
+      target: ".tutorial-components",
+      placement: "right",
+    },
+    {
+      title: "画布",
+      description: "这是您的工作区域，所有组件都会放置在这里。",
+      target: ".tutorial-canvas",
+      placement: "bottom",
+    },
+    {
+      title: "属性面板",
+      description: "选中组件后，可以在这里编辑其属性和样式。",
+      target: ".tutorial-properties",
+      placement: "left",
+    },
+    {
+      title: "模板库",
+      description: "使用预设的模板快速开始您的项目。",
+      target: ".tutorial-templates",
+      placement: "bottom",
+    },
+    {
+      title: "预览和导出",
+      description: "预览您的应用或导出代码以便部署。",
+      target: ".tutorial-preview",
+      placement: "bottom",
+    },
+  ]
 
   const components = componentsHistory.present
 
@@ -342,8 +438,63 @@ export default function LowCodePlatform() {
 
   return (
     <DndProvider backend={HTML5Backend}>
+      {/* 首次访问欢迎对话框 */}
+      {isFirstVisit && (
+        <Dialog open={isFirstVisit} onOpenChange={(open) => !open && skipTutorial()}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>👋 欢迎使用低代码平台</DialogTitle>
+              <DialogDescription>
+                这是一个强大的低代码开发工具，可以帮助您快速构建应用。您可以使用我们的引导教程快速了解平台功能。
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={skipTutorial}>跳过教程</Button>
+              <Button onClick={startTutorial}>开始教程</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* 教程提示 */}
+      {showTutorial && tutorialStep < TUTORIAL_STEPS.length && (
+        <div className="fixed z-50 inset-0 bg-black/50 pointer-events-none">
+          <div 
+            className="absolute p-4 bg-background rounded-lg shadow-lg pointer-events-auto border border-primary"
+            style={{
+              width: "300px",
+              // 根据target和placement动态定位，这里仅做示例
+              // 实际应用中应该基于目标元素的位置计算
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <div className="flex flex-col gap-2">
+              <h3 className="text-lg font-semibold">{TUTORIAL_STEPS[tutorialStep].title}</h3>
+              <p className="text-sm text-muted-foreground">{TUTORIAL_STEPS[tutorialStep].description}</p>
+              <div className="flex justify-between mt-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowTutorial(false)}
+                >
+                  退出教程
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={nextTutorialStep}
+                >
+                  {tutorialStep < TUTORIAL_STEPS.length - 1 ? "下一步" : "完成"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex h-screen flex-col">
-        <Header>
+        <Header data-tutorial="header">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleUndo} disabled={componentsHistory.past.length === 0}>
               <Undo2 className="mr-2 h-4 w-4" />
@@ -353,30 +504,46 @@ export default function LowCodePlatform() {
               <Redo2 className="mr-2 h-4 w-4" />
               重做
             </Button>
-            <Button variant="outline" size="sm" onClick={togglePreviewMode}>
+            <Button variant="outline" size="sm" onClick={togglePreviewMode} data-tutorial="preview">
               <Eye className="mr-2 h-4 w-4" />
               {previewMode ? "退出预览" : "预览"}
             </Button>
             <ResponsiveControls onViewportChange={handleViewportChange} />
-            <TemplateGallery onSelectTemplate={handleSelectTemplate} theme={theme} />
-            <FormBuilder onAddForm={handleAddForm} />
-            <ComponentGrouping components={components} onGroupComponents={handleGroupComponents} />
-            <AnimationEditor componentId={selectedComponent?.id || null} onApplyAnimation={handleApplyAnimation} />
-            <ThemeEditor theme={theme} onThemeChange={handleThemeChange} />
-            <Collaboration projectName={projectName} />
-            <ComponentLibraryManager
-              customComponents={customComponents}
-              onAddComponent={handleAddCustomComponent}
-              onRemoveComponent={handleRemoveCustomComponent}
-              onImportComponents={handleImportComponents}
-              existingComponents={components}
-            />
-            <CodeExport components={components} />
+            <LazyComponentWrapper>
+              <TemplateGallery onSelectTemplate={handleSelectTemplate} theme={theme} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <FormBuilder onAddForm={handleAddForm} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <ComponentGrouping components={components} onGroupComponents={handleGroupComponents} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <AnimationEditor componentId={selectedComponent?.id || null} onApplyAnimation={handleApplyAnimation} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <ThemeEditor theme={theme} onThemeChange={handleThemeChange} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <Collaboration projectName={projectName} />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <ComponentLibraryManager
+                customComponents={customComponents}
+                onAddComponent={handleAddCustomComponent}
+                onRemoveComponent={handleRemoveCustomComponent}
+                onImportComponents={handleImportComponents}
+                existingComponents={components}
+              />
+            </LazyComponentWrapper>
+            <LazyComponentWrapper>
+              <CodeExport components={components} />
+            </LazyComponentWrapper>
           </div>
         </Header>
         <div className="flex flex-1 overflow-hidden">
           {!previewMode && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-64 border-r">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-64 border-r" data-tutorial="components">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="components">组件</TabsTrigger>
                 <TabsTrigger value="tree">组件树</TabsTrigger>
@@ -399,12 +566,15 @@ export default function LowCodePlatform() {
                 />
               </TabsContent>
               <TabsContent value="data" className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col">
-                <DataPanel />
+                <LazyComponentWrapper>
+                  <DataPanel />
+                </LazyComponentWrapper>
               </TabsContent>
             </Tabs>
           )}
           <div
             className="flex-1 overflow-auto"
+            data-tutorial="canvas"
             style={{
               maxWidth: previewMode ? viewportWidth + "px" : "none",
               margin: previewMode ? "0 auto" : "0",
@@ -424,9 +594,42 @@ export default function LowCodePlatform() {
             />
           </div>
           {!previewMode && (
-            <PropertiesPanel selectedComponent={selectedComponent} onUpdateComponent={handleUpdateComponent} />
+            <LazyComponentWrapper>
+              <PropertiesPanel 
+                selectedComponent={selectedComponent} 
+                onUpdateComponent={handleUpdateComponent}
+                data-tutorial="properties"
+              />
+            </LazyComponentWrapper>
           )}
         </div>
+        
+        {/* 底部工具栏，包含帮助按钮 */}
+        {!previewMode && (
+          <div className="border-t py-2 px-4 flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">
+              {projectName}
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowTutorial(true)}
+              >
+                <HelpCircle className="mr-2 h-4 w-4" />
+                教程
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => window.open('https://example.com/docs', '_blank')}
+              >
+                <BookOpenIcon className="mr-2 h-4 w-4" />
+                文档
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </DndProvider>
   )
