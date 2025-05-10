@@ -1,14 +1,14 @@
 "use client"
 
-import { SelectItem } from "@/components/ui/select"
+import { SelectItem } from "@/src/shared/ui/select"
 
-import { SelectContent } from "@/components/ui/select"
+import { SelectContent } from "@/src/shared/ui/select"
 
-import { SelectValue } from "@/components/ui/select"
+import { SelectValue } from "@/src/shared/ui/select"
 
-import { SelectTrigger } from "@/components/ui/select"
+import { SelectTrigger } from "@/src/shared/ui/select"
 
-import { Select } from "@/components/ui/select"
+import { Select } from "@/src/shared/ui/select"
 
 import { useState } from "react"
 import {
@@ -18,15 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Input } from "@/src/shared/ui/input"
+import { Label } from "@/src/shared/ui/label"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/shared/ui/avatar"
+import { Badge } from "@/src/shared/ui/badge"
 import { Users, Send, Copy } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
 
 interface CollaborationProps {
   projectName: string

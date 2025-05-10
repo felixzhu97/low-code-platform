@@ -9,17 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Input } from "@/src/shared/ui/input"
+import { Label } from "@/src/shared/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/shared/ui/select"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
 import { PlusCircle, Save } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import type { Component } from "@/lib/types"
+import { Card, CardContent } from "@/src/shared/ui/card"
+import { Switch } from "@/src/shared/ui/switch"
+import type { Component } from "@/src/shared/utils/types"
 
 interface CustomComponentBuilderProps {
   onSaveComponent: (component: any) => void

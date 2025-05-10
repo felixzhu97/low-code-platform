@@ -8,17 +8,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Label } from "@/components/ui/label"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
+import { Label } from "@/src/shared/ui/label"
 import { Palette, Sparkles, CopyCheck, RefreshCw } from "lucide-react"
 import { ColorPicker } from "./color-picker"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ThemeConfig } from "@/lib/types"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/shared/ui/select"
+import type { ThemeConfig } from "@/src/shared/utils/types"
+import { RadioGroup, RadioGroupItem } from "@/src/shared/ui/radio-group"
+import { Badge } from "@/src/shared/ui/badge"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/shared/ui/tooltip"
 
 interface ThemeEditorProps {
   theme: ThemeConfig

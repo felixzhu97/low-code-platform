@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import { useDrag } from "react-dnd"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
+import { Input } from "@/src/shared/ui/input"
+import { Button } from "@/src/shared/ui/button"
 import { Search, Layers, Info } from "lucide-react"
 import {
   LayoutGrid,
@@ -19,8 +19,8 @@ import {
   MousePointer,
   Move,
 } from "lucide-react"
-import type { ComponentCategory } from "@/lib/types"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import type { ComponentCategory } from "@/src/shared/utils/types"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/shared/ui/tooltip"
 import { 
   Dialog, 
   DialogContent, 
@@ -28,8 +28,8 @@ import {
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
+} from "@/src/shared/ui/dialog"
+import { Badge } from "@/src/shared/ui/badge"
 
 // 组件描述信息
 const componentDescriptions: Record<string, string> = {

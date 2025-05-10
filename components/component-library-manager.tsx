@@ -10,16 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Input } from "@/src/shared/ui/input"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
 import { Library, Search, Star, Trash2, Import, ImportIcon as Export, Edit } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardFooter } from "@/src/shared/ui/card"
+import { Badge } from "@/src/shared/ui/badge"
 import { CustomComponentBuilder } from "./custom-component-builder"
-import type { Component } from "@/lib/types"
+import type { Component } from "@/src/shared/utils/types"
 
 interface ComponentLibraryManagerProps {
   customComponents: any[]

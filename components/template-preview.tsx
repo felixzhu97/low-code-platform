@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react"
 import { PreviewCanvas } from "@/components/preview-canvas"
-import type { Component } from "@/lib/types"
+import type { Component } from "@/src/shared/utils/types"
 
 interface Template {
   id: string
