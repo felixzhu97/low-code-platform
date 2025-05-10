@@ -8,14 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Label } from "@/src/shared/ui/label"
+import { Slider } from "@/src/shared/ui/slider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/shared/ui/select"
 import { Play, Sparkles } from "lucide-react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/shared/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
 
 interface AnimationEditorProps {
   componentId: string | null

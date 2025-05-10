@@ -1,8 +1,17 @@
-# 低代码平台
+# 低代码平台 [![CI Status](https://github.com/your-org/low-code-platform/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/your-org/low-code-platform/actions)
 
 ## 项目简介
 
 本项目是一个基于 Next.js 和 React 的低代码平台，支持可视化页面搭建、组件拖拽、属性配置、主题编辑、模板库、表单生成、动画编辑、多人协作等功能，适用于快速构建 Web 应用。
+
+- **官网**: [https://lowcode.example.com](https://lowcode.example.com)
+- **特点**:
+  - 可视化低代码搭建平台，拖拽即可生成页面
+  - 丰富的组件库，覆盖常见业务场景
+  - 支持自定义组件开发与扩展
+  - 实时预览与代码导出功能
+  - 多主题支持与样式定制
+  - 协作编辑与版本管理
 
 ## 主要功能
 
@@ -78,8 +87,9 @@ pnpm dev
 如需二次开发或部署，请参考下方产品与技术文档：
 
 - [用户手册](docs/用户手册.md)
-- [产品说明](docs/project/product-description.md)
-- [技术文档](docs/project/technical-description.md)
+- [产品说明](docs/产品说明.md)
+- [技术文档](docs/技术文档.md)
+- [术语表](docs/术语表.md)
 - [C4 架构模型文档](docs/architecture/)
 
 ## 贡献指南

@@ -9,14 +9,14 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Input } from "@/src/shared/ui/input"
+import { Label } from "@/src/shared/ui/label"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
 import { Layers, Group } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-import type { Component } from "@/lib/types"
+import { Checkbox } from "@/src/shared/ui/checkbox"
+import type { Component } from "@/src/shared/utils/types"
 
 interface ComponentGroupingProps {
   components: Component[]
