@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/src/shared/ui/dialog"
+import { Button } from "@/src/shared/ui/button"
+import { Input } from "@/src/shared/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/ui/tabs"
+import { Card, CardContent } from "@/src/shared/ui/card"
+import { Badge } from "@/src/shared/ui/badge"
 import { Star, Search, Filter, X } from "lucide-react"
 import { TemplatePreview } from "@/components/template-preview"
 import { EnhancedTemplatePreview } from "@/components/enhanced-template-preview"
-import type { Component, ThemeConfig } from "@/lib/types"
+import type { Component, ThemeConfig } from "@/src/shared/utils/types"
 import { VirtualList } from "@/components/virtual-list"
 
 interface TemplateGalleryProps {

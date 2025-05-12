@@ -3,11 +3,11 @@
 import type React from "react"
 
 import { useState } from "react"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/src/shared/ui/scroll-area"
+import { Button } from "@/src/shared/ui/button"
 import { ChevronRight, ChevronDown, Layers, Eye, EyeOff, Trash2 } from "lucide-react"
-import type { Component } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import type { Component } from "@/src/shared/utils/types"
+import { cn } from "@/src/shared/utils/utils"
 
 interface ComponentTreeProps {
   components: Component[]
