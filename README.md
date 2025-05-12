@@ -90,6 +90,7 @@ pnpm dev
 - [产品说明](docs/产品说明.md)
 - [技术文档](docs/技术文档.md)
 - [术语表](docs/术语表.md)
+- [低代码核心原理](docs/低代码核心原理.md)
 - [C4 架构模型文档](docs/architecture/)
 
 ## 贡献指南
