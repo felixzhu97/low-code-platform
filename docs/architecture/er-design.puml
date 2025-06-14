@@ -1,0 +1,50 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+
+' 用户表
+entity User {
+  *id : string
+  *username : string
+  *email : string
+  password : string
+  createdAt : datetime
+}
+
+' 页面表
+entity Page {
+  *id : string
+  *name : string
+  ownerId : string
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+' 组件表
+entity Component {
+  *id : string
+  *pageId : string
+  type : string
+  config : json
+  order : int
+}
+
+' 表单表
+entity Form {
+  *id : string
+  *pageId : string
+  schema : json
+}
+
+' 模板表
+entity Template {
+  *id : string
+  *name : string
+  content : json
+}
+
+User ||--o{ Page : 拥有
+Page ||--o{ Component : 包含
+Page ||--o{ Form : 包含
+User ||--o{ Template : 拥有
+
+@enduml 

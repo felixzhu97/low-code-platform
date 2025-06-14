@@ -29,6 +29,9 @@ next-env.d.ts
 # IDE
 .idea
 
-docs/qa
-
+# macOS
 .DS_Store
+
+# docs
+docs/*
+!docs/architecture

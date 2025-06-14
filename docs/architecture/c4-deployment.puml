@@ -1,0 +1,24 @@
+@startuml
+!include ./c4-plantuml/C4_Deployment.puml
+
+Node(browser, "用户浏览器") {
+  Container(web, "Web前端", "Next.js/React")
+}
+Node(cloud, "云平台/服务器") {
+  Container(api, "后端API服务", "Node.js/Next.js API")
+  ContainerDb(db, "数据库", "如PostgreSQL/MongoDB")
+  Container(storage, "对象存储", "如OSS/S3")
+}
+Node(ext, "外部服务") {
+  System_Ext(auth, "认证服务")
+  System_Ext(extapi, "第三方API")
+}
+
+Rel(browser, web, "HTTP/HTTPS")
+Rel(web, api, "HTTP/HTTPS API调用")
+Rel(api, db, "数据库连接")
+Rel(api, storage, "对象存储API")
+Rel(api, auth, "认证API")
+Rel(api, extapi, "外部API调用")
+
+@enduml

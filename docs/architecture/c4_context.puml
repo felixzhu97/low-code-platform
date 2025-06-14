@@ -1,0 +1,21 @@
+@startuml C4上下文图
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title 系统上下文图
+
+Person(前端用户, "前端开发者", "使用平台构建前端应用")
+Person(管理员, "平台管理员", "管理系统和用户")
+
+System(低代码平台, "低代码平台", "提供可视化前端开发环境")
+
+System_Ext(第三方服务, "第三方服务", "提供API服务")
+
+Rel(前端用户, 低代码平台, "使用", "Web界面")
+Rel(管理员, 低代码平台, "管理", "管理后台")
+Rel(低代码平台, 第三方服务, "调用", "REST API")
+
+legend right
+<color:#000000>**图例说明**</color>
+|<color:#000000>角色</color>|<color:#000000>系统</color>|
+end legend
+@enduml

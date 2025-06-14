@@ -102,7 +102,7 @@ pnpm install
 ### 启动开发服务器
 
 ```bash
-# 使用 npm
+# 使用 pnpm
 npm run dev
 
 # 或使用 yarn
