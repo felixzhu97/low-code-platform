@@ -8,19 +8,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/src/presentation/components/ui/dialog"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Input } from "@/src/presentation/components/ui/input"
-import { Label } from "@/src/presentation/components/ui/label"
-import { Checkbox } from "@/src/presentation/components/ui/checkbox"
-import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
+} from "@/presentation/components/ui/dialog"
+import { Button } from "@/presentation/components/ui/button"
+import { Input } from "@/presentation/components/ui/input"
+import { Label } from "@/presentation/components/ui/label"
+import { Checkbox } from "@/presentation/components/ui/checkbox"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
 import { FormInput, Plus, Trash2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/presentation/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
 
 
-import {Component} from "@/src/domain/entities/types";
+import {Component} from "@/domain/entities/types";
 
 interface FormBuilderProps {
   onAddForm: (components: Component[]) => void

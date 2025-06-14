@@ -1,14 +1,14 @@
 "use client"
 
-import { SelectItem } from "@/src/presentation/components/ui/select"
+import { SelectItem } from "@/presentation/components/ui/select"
 
-import { SelectContent } from "@/src/presentation/components/ui/select"
+import { SelectContent } from "@/presentation/components/ui/select"
 
-import { SelectValue } from "@/src/presentation/components/ui/select"
+import { SelectValue } from "@/presentation/components/ui/select"
 
-import { SelectTrigger } from "@/src/presentation/components/ui/select"
+import { SelectTrigger } from "@/presentation/components/ui/select"
 
-import { Select } from "@/src/presentation/components/ui/select"
+import { Select } from "@/presentation/components/ui/select"
 
 import { useState } from "react"
 import {
@@ -18,15 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/src/presentation/components/ui/dialog"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Input } from "@/src/presentation/components/ui/input"
-import { Label } from "@/src/presentation/components/ui/label"
-import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/presentation/components/ui/avatar"
-import { Badge } from "@/src/presentation/components/ui/badge"
+} from "@/presentation/components/ui/dialog"
+import { Button } from "@/presentation/components/ui/button"
+import { Input } from "@/presentation/components/ui/input"
+import { Label } from "@/presentation/components/ui/label"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/components/ui/avatar"
+import { Badge } from "@/presentation/components/ui/badge"
 import { Users, Send, Copy } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
 
 interface CollaborationProps {
   projectName: string

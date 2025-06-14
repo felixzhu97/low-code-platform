@@ -1,15 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/presentation/components/ui/dialog"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
-import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/presentation/components/ui/dialog"
+import { Button } from "@/presentation/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react"
-import { PreviewCanvas } from "@/src/presentation/components/preview-canvas"
+import { PreviewCanvas } from "@/presentation/components/preview-canvas"
 
 
-import {Component} from "@/src/domain/entities/types";
+import {Component} from "@/domain/entities/types";
 
 interface Template {
   id: string

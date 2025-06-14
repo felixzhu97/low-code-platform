@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { useDrag } from "react-dnd";
-import { ScrollArea } from "@/src/presentation/components/ui/scroll-area";
+import { ScrollArea } from "@/presentation/components/ui/scroll-area";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/src/presentation/components/ui/tabs";
-import { Input } from "@/src/presentation/components/ui/input";
-import { Button } from "@/src/presentation/components/ui/button";
+} from "@/presentation/components/ui/tabs";
+import { Input } from "@/presentation/components/ui/input";
+import { Button } from "@/presentation/components/ui/button";
 import { Search } from "lucide-react";
 import {
   LayoutGrid,
@@ -23,7 +23,7 @@ import {
   BarChart4,
 } from "lucide-react";
 
-import { ComponentCategory } from "@/src/domain/entities/types";
+import { ComponentCategory } from "@/domain/entities/types";
 
 export function ComponentPanel() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,14 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Input } from "@/src/presentation/components/ui/input"
-import { Label } from "@/src/presentation/components/ui/label"
-import { Textarea } from "@/src/presentation/components/ui/textarea"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
+import { Button } from "@/presentation/components/ui/button"
+import { Input } from "@/presentation/components/ui/input"
+import { Label } from "@/presentation/components/ui/label"
+import { Textarea } from "@/presentation/components/ui/textarea"
 import { PlusCircle, Database, Globe, Table2 } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/presentation/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/presentation/components/ui/card"
 
 type DataSource = {
   id: string

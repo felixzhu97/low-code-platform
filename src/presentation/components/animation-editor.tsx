@@ -8,14 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/src/presentation/components/ui/dialog"
-import { Button } from "@/src/presentation/components/ui/button"
-import { Label } from "@/src/presentation/components/ui/label"
-import { Slider } from "@/src/presentation/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
+} from "@/presentation/components/ui/dialog"
+import { Button } from "@/presentation/components/ui/button"
+import { Label } from "@/presentation/components/ui/label"
+import { Slider } from "@/presentation/components/ui/slider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
 import { Play, Sparkles } from "lucide-react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/presentation/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/presentation/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
 
 interface AnimationEditorProps {
   componentId: string | null
