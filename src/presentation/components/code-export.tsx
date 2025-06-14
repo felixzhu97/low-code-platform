@@ -8,13 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
 import { Code, Copy, Download } from "lucide-react"
 
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 interface CodeExportProps {
   components: Component[]

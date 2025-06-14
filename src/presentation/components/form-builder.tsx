@@ -8,18 +8,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Label } from "@/src/presentation/components/ui/label"
+import { Checkbox } from "@/src/presentation/components/ui/checkbox"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
 import { FormInput, Plus, Trash2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/presentation/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
 
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 interface FormBuilderProps {
   onAddForm: (components: Component[]) => void

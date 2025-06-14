@@ -1,18 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Card, CardContent } from "@/src/presentation/components/ui/card"
+import { Badge } from "@/src/presentation/components/ui/badge"
 import { Star, Search, Filter, X } from "lucide-react"
-import { TemplatePreview } from "@/components/template-preview"
-import { EnhancedTemplatePreview } from "@/components/enhanced-template-preview"
-import type { ThemeConfig } from "@/lib/types"
-import { VirtualList } from "@/components/virtual-list"
-import {Component} from "@/lib/component";
+import { TemplatePreview } from "@/src/presentation/components/template-preview"
+import { EnhancedTemplatePreview } from "@/src/presentation/components/enhanced-template-preview"
+import type {Component, ThemeConfig} from "@/src/domain/entities/types"
+import { VirtualList } from "@/src/presentation/components/virtual-list"
 
 interface TemplateGalleryProps {
   onSelectTemplate: (components: Component[]) => void

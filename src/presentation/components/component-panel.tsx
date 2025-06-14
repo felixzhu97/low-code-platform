@@ -1,12 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useDrag } from "react-dnd"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
+import { useState } from "react";
+import { useDrag } from "react-dnd";
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/presentation/components/ui/tabs";
+import { Input } from "@/src/presentation/components/ui/input";
+import { Button } from "@/src/presentation/components/ui/button";
+import { Search } from "lucide-react";
 import {
   LayoutGrid,
   Type,
@@ -16,13 +21,13 @@ import {
   FormInput,
   Table2,
   BarChart4,
-} from "lucide-react"
+} from "lucide-react";
 
-import {ComponentCategory} from "@/lib/component";
+import { ComponentCategory } from "@/src/domain/entities/types";
 
 export function ComponentPanel() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   // 组件分类
   const categories: ComponentCategory[] = [
@@ -43,12 +48,42 @@ export function ComponentPanel() {
       icon: <LayoutGrid className="h-4 w-4" />,
       components: [
         { id: "container", name: "容器", type: "container", isContainer: true },
-        { id: "grid-layout", name: "网格布局", type: "grid-layout", isContainer: true },
-        { id: "flex-layout", name: "弹性布局", type: "flex-layout", isContainer: true },
-        { id: "split-layout", name: "分割布局", type: "split-layout", isContainer: true },
-        { id: "tab-layout", name: "标签页布局", type: "tab-layout", isContainer: true },
-        { id: "card-group", name: "卡片组", type: "card-group", isContainer: true },
-        { id: "responsive-container", name: "响应式容器", type: "responsive-container", isContainer: true },
+        {
+          id: "grid-layout",
+          name: "网格布局",
+          type: "grid-layout",
+          isContainer: true,
+        },
+        {
+          id: "flex-layout",
+          name: "弹性布局",
+          type: "flex-layout",
+          isContainer: true,
+        },
+        {
+          id: "split-layout",
+          name: "分割布局",
+          type: "split-layout",
+          isContainer: true,
+        },
+        {
+          id: "tab-layout",
+          name: "标签页布局",
+          type: "tab-layout",
+          isContainer: true,
+        },
+        {
+          id: "card-group",
+          name: "卡片组",
+          type: "card-group",
+          isContainer: true,
+        },
+        {
+          id: "responsive-container",
+          name: "响应式容器",
+          type: "responsive-container",
+          isContainer: true,
+        },
         { id: "row", name: "行", type: "row", isContainer: true },
         { id: "column", name: "列", type: "column", isContainer: true },
       ],
@@ -102,7 +137,12 @@ export function ComponentPanel() {
       icon: <Square className="h-4 w-4" />,
       components: [
         { id: "card", name: "卡片", type: "card", isContainer: true },
-        { id: "collapse", name: "折叠面板", type: "collapse", isContainer: true },
+        {
+          id: "collapse",
+          name: "折叠面板",
+          type: "collapse",
+          isContainer: true,
+        },
         { id: "tabs", name: "标签页", type: "tabs", isContainer: true },
         { id: "modal", name: "模态框", type: "modal", isContainer: true },
         { id: "drawer", name: "抽屉", type: "drawer", isContainer: true },
@@ -125,38 +165,50 @@ export function ComponentPanel() {
         { id: "rating", name: "评分", type: "rating" },
       ],
     },
-  ]
+  ];
 
   // 过滤组件
   const filteredCategories = categories.map((category) => ({
     ...category,
     components: category.components.filter((component) =>
-      component.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      component.name.toLowerCase().includes(searchTerm.toLowerCase())
     ),
-  }))
+  }));
 
   // 显示的分类
   const visibleCategories = searchTerm
     ? filteredCategories.filter((category) => category.components.length > 0)
-    : filteredCategories
+    : filteredCategories;
 
   // 拖拽组件
   const DraggableComponent = ({
     component,
-  }: { component: { id: string; name: string; type: string; isContainer?: boolean } }) => {
+  }: {
+    component: {
+      id: string;
+      name: string;
+      type: string;
+      isContainer?: boolean;
+    };
+  }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
       type: "COMPONENT",
-      item: { id: component.id, name: component.name, type: component.type, isContainer: component.isContainer },
+      item: {
+        id: component.id,
+        name: component.name,
+        type: component.type,
+        isContainer: component.isContainer,
+      },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
       end: (item, monitor) => {
-        const didDrop = monitor.didDrop()
+        const didDrop = monitor.didDrop();
         if (didDrop) {
-          console.log(`Component ${item.name} was dropped successfully`)
+          console.log(`Component ${item.name} was dropped successfully`);
         }
       },
-    }))
+    }));
 
     return (
       <div
@@ -165,10 +217,12 @@ export function ComponentPanel() {
         style={{ opacity: isDragging ? 0.5 : 1 }}
       >
         <span>{component.name}</span>
-        {component.isContainer && <Layers className="h-3 w-3 text-muted-foreground" />}
+        {component.isContainer && (
+          <Layers className="h-3 w-3 text-muted-foreground" />
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -190,7 +244,10 @@ export function ComponentPanel() {
           <TabsTrigger value="all">全部</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="categories" className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col">
+        <TabsContent
+          value="categories"
+          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col"
+        >
           <div className="flex flex-wrap gap-1 border-b p-2">
             {categories.map((category) => (
               <Button
@@ -198,7 +255,11 @@ export function ComponentPanel() {
                 variant={activeCategory === category.id ? "secondary" : "ghost"}
                 size="sm"
                 className="h-8"
-                onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
+                onClick={() =>
+                  setActiveCategory(
+                    activeCategory === category.id ? null : category.id
+                  )
+                }
               >
                 {category.icon}
                 <span className="ml-1">{category.name}</span>
@@ -208,38 +269,54 @@ export function ComponentPanel() {
 
           <ScrollArea className="flex-1">
             <div className="p-4">
-              {(activeCategory ? visibleCategories.filter((c) => c.id === activeCategory) : visibleCategories).map(
-                (category) => (
-                  <div key={category.id} className="mb-6">
-                    <div className="mb-2 flex items-center">
-                      {category.icon}
-                      <h3 className="ml-2 text-sm font-medium">{category.name}</h3>
-                    </div>
-                    <div className="grid gap-2">
-                      {category.components.map((component) => (
-                        <DraggableComponent key={component.id} component={component} />
-                      ))}
-                    </div>
+              {(activeCategory
+                ? visibleCategories.filter((c) => c.id === activeCategory)
+                : visibleCategories
+              ).map((category) => (
+                <div key={category.id} className="mb-6">
+                  <div className="mb-2 flex items-center">
+                    {category.icon}
+                    <h3 className="ml-2 text-sm font-medium">
+                      {category.name}
+                    </h3>
                   </div>
-                ),
-              )}
+                  <div className="grid gap-2">
+                    {category.components.map((component) => (
+                      <DraggableComponent
+                        key={component.id}
+                        component={component}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </ScrollArea>
         </TabsContent>
 
-        <TabsContent value="all" className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col">
+        <TabsContent
+          value="all"
+          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col"
+        >
           <ScrollArea className="flex-1">
             <div className="grid gap-2 p-4">
               {categories
                 .flatMap((category) => category.components)
-                .filter((component) => component.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                .filter((component) =>
+                  component.name
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                )
                 .map((component) => (
-                  <DraggableComponent key={component.id} component={component} />
+                  <DraggableComponent
+                    key={component.id}
+                    component={component}
+                  />
                 ))}
             </div>
           </ScrollArea>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

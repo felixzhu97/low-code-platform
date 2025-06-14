@@ -8,14 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Label } from "@/components/ui/label"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Label } from "@/src/presentation/components/ui/label"
 import { Palette } from "lucide-react"
 import { ColorPicker } from "./color-picker"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ThemeConfig } from "@/lib/types"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
+import type { ThemeConfig } from "@/src/domain/entities/types"
 
 interface ThemeEditorProps {
   theme: ThemeConfig

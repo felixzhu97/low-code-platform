@@ -10,17 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
 import { Library, Search, Star, Trash2, Import, ImportIcon as Export, Edit } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardFooter } from "@/src/presentation/components/ui/card"
+import { Badge } from "@/src/presentation/components/ui/badge"
 import { CustomComponentBuilder } from "./custom-component-builder"
 
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 interface ComponentLibraryManagerProps {
   customComponents: any[]

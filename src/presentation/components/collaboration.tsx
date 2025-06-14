@@ -1,14 +1,14 @@
 "use client"
 
-import { SelectItem } from "@/components/ui/select"
+import { SelectItem } from "@/src/presentation/components/ui/select"
 
-import { SelectContent } from "@/components/ui/select"
+import { SelectContent } from "@/src/presentation/components/ui/select"
 
-import { SelectValue } from "@/components/ui/select"
+import { SelectValue } from "@/src/presentation/components/ui/select"
 
-import { SelectTrigger } from "@/components/ui/select"
+import { SelectTrigger } from "@/src/presentation/components/ui/select"
 
-import { Select } from "@/components/ui/select"
+import { Select } from "@/src/presentation/components/ui/select"
 
 import { useState } from "react"
 import {
@@ -18,15 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Label } from "@/src/presentation/components/ui/label"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/presentation/components/ui/avatar"
+import { Badge } from "@/src/presentation/components/ui/badge"
 import { Users, Send, Copy } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
 
 interface CollaborationProps {
   projectName: string

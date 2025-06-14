@@ -9,18 +9,19 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Label } from "@/src/presentation/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
 import { PlusCircle, Save } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
+import { Card, CardContent } from "@/src/presentation/components/ui/card"
+import { Switch } from "@/src/presentation/components/ui/switch"
 
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 interface CustomComponentBuilderProps {
   onSaveComponent: (component: any) => void

@@ -1,16 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Slider } from "@/components/ui/slider"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Label } from "@/src/presentation/components/ui/label"
+import { Switch } from "@/src/presentation/components/ui/switch"
+import { Slider } from "@/src/presentation/components/ui/slider"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/presentation/components/ui/select"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/src/presentation/components/ui/accordion"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/presentation/components/ui/tabs"
 import { ColorPicker } from "./color-picker"
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 type PropertiesPanelProps = {
   selectedComponent: Component | null

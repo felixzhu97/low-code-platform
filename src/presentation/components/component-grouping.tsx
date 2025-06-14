@@ -9,15 +9,16 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/presentation/components/ui/dialog"
+import { Button } from "@/src/presentation/components/ui/button"
+import { Input } from "@/src/presentation/components/ui/input"
+import { Label } from "@/src/presentation/components/ui/label"
+import { ScrollArea } from "@/src/presentation/components/ui/scroll-area"
 import { Layers, Group } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/src/presentation/components/ui/checkbox"
 
-import {Component} from "@/lib/component";
+
+import {Component} from "@/src/domain/entities/types";
 
 interface ComponentGroupingProps {
   components: Component[]
