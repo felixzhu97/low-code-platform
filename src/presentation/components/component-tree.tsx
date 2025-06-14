@@ -6,8 +6,8 @@ import { useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, ChevronDown, Layers, Eye, EyeOff, Trash2 } from "lucide-react"
-import type { Component } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import {Component} from "@/lib/component";
 
 interface ComponentTreeProps {
   components: Component[]

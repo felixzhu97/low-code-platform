@@ -9,8 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { Component } from "@/lib/types"
 import { ColorPicker } from "./color-picker"
+import {Component} from "@/lib/component";
 
 type PropertiesPanelProps = {
   selectedComponent: Component | null

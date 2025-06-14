@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Trash2, Smartphone, Tablet, BarChart, LineChart, PieChart, ArrowUpDown, Filter } from "lucide-react"
-import type { Component, ThemeConfig, DataSource, TableColumn } from "@/lib/types"
+import type { ThemeConfig, DataSource, TableColumn } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {Component} from "@/lib/component";
 
 type CanvasProps = {
   onSelectComponent: (component: Component | null) => void

@@ -6,8 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { PreviewCanvas } from "@/components/preview-canvas"
 import { Button } from "@/components/ui/button"
 import { Smartphone, Tablet, Monitor, Code, Layout, FileJson } from "lucide-react"
-import type { Component, ThemeConfig } from "@/lib/types"
+import type { ThemeConfig } from "@/lib/types"
 import { VirtualList } from "@/components/virtual-list"
+import {Component} from "@/lib/component";
 
 interface EnhancedTemplatePreviewProps {
   templateId: string

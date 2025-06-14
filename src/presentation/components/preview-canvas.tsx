@@ -3,7 +3,8 @@
 import type React from "react"
 
 import { useRef } from "react"
-import type { Component, ThemeConfig } from "@/lib/types"
+import type { ThemeConfig } from "@/lib/types"
+import {Component} from "@/lib/component";
 
 interface PreviewCanvasProps {
   components: Component[]

@@ -17,7 +17,8 @@ import {
   Table2,
   BarChart4,
 } from "lucide-react"
-import type { ComponentCategory } from "@/lib/types"
+
+import {ComponentCategory} from "@/lib/component";
 
 export function ComponentPanel() {
   const [searchTerm, setSearchTerm] = useState("")

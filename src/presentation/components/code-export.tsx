@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Code, Copy, Download } from "lucide-react"
-import type { Component } from "@/lib/types"
+
+import {Component} from "@/lib/component";
 
 interface CodeExportProps {
   components: Component[]

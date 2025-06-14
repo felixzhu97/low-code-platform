@@ -19,7 +19,8 @@ import { Library, Search, Star, Trash2, Import, ImportIcon as Export, Edit } fro
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CustomComponentBuilder } from "./custom-component-builder"
-import type { Component } from "@/lib/types"
+
+import {Component} from "@/lib/component";
 
 interface ComponentLibraryManagerProps {
   customComponents: any[]

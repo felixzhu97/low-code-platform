@@ -16,7 +16,8 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Layers, Group } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import type { Component } from "@/lib/types"
+
+import {Component} from "@/lib/component";
 
 interface ComponentGroupingProps {
   components: Component[]

@@ -19,7 +19,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { PlusCircle, Save } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import type { Component } from "@/lib/types"
+
+import {Component} from "@/lib/component";
 
 interface CustomComponentBuilderProps {
   onSaveComponent: (component: any) => void

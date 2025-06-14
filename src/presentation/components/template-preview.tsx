@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react"
 import { PreviewCanvas } from "@/components/preview-canvas"
-import type { Component } from "@/lib/types"
+
+import {Component} from "@/lib/component";
 
 interface Template {
   id: string

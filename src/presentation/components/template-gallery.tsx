@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { Star, Search, Filter, X } from "lucide-react"
 import { TemplatePreview } from "@/components/template-preview"
 import { EnhancedTemplatePreview } from "@/components/enhanced-template-preview"
-import type { Component, ThemeConfig } from "@/lib/types"
+import type { ThemeConfig } from "@/lib/types"
 import { VirtualList } from "@/components/virtual-list"
+import {Component} from "@/lib/component";
 
 interface TemplateGalleryProps {
   onSelectTemplate: (components: Component[]) => void
