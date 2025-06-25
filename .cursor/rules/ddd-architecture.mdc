@@ -1,0 +1,298 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 低代码平台 DDD + 分层架构最佳实践
+
+## 架构概述
+
+本项目采用 DDD（领域驱动设计）+ 分层架构模式，将代码按职责清晰分层，确保高内聚、低耦合的系统设计。
+
+## 分层架构
+
+### 1. Domain Layer (领域层) - [src/domain/](mdc:src/domain)
+**核心业务逻辑层，不依赖任何外部框架**
+
+#### 职责：
+- 定义业务实体 (Entities)
+- 定义值对象 (Value Objects) 
+- 定义领域服务 (Domain Services)
+- 定义仓储接口 (Repository Interfaces)
+- 定义领域事件 (Domain Events)
+
+#### 文件结构：
+```
+src/domain/
+├── entities/           # 业务实体
+│   ├── types.ts       # 实体类型定义
+│   ├── component.ts   # 组件实体
+│   ├── template.ts    # 模板实体
+│   └── project.ts     # 项目实体
+├── value-objects/     # 值对象
+│   ├── position.ts    # 位置值对象
+│   ├── style.ts       # 样式值对象
+│   └── config.ts      # 配置值对象
+├── services/          # 领域服务
+│   ├── component-service.ts
+│   └── template-service.ts
+├── repositories/      # 仓储接口
+│   ├── component-repository.ts
+│   └── template-repository.ts
+└── events/           # 领域事件
+    ├── component-created.ts
+    └── template-updated.ts
+```
+
+#### 示例实体：
+参考 [src/domain/entities/types.ts](mdc:src/domain/entities/types.ts) 的实现方式
+
+### 2. Application Layer (应用层) - [src/application/](mdc:src/application)
+**应用业务逻辑层，协调领域对象完成应用场景**
+
+#### 职责：
+- 定义应用服务 (Application Services)
+- 定义用例 (Use Cases)
+- 定义DTO (Data Transfer Objects)
+- 定义应用接口 (Application Interfaces)
+- 事务管理
+
+#### 文件结构：
+```
+src/application/
+├── services/          # 应用服务
+│   ├── history.ts     # 历史管理服务
+│   ├── utils.ts       # 工具服务
+│   ├── component-application-service.ts
+│   └── template-application-service.ts
+├── use-cases/         # 用例
+│   ├── create-component.ts
+│   ├── update-template.ts
+│   └── export-project.ts
+├── dto/              # 数据传输对象
+│   ├── component-dto.ts
+│   └── template-dto.ts
+├── interfaces/       # 应用接口
+│   ├── component-application-service.interface.ts
+│   └── template-application-service.interface.ts
+└── commands/         # 命令对象
+    ├── create-component-command.ts
+    └── update-template-command.ts
+```
+
+#### 示例应用服务：
+参考 [src/application/services/history.ts](mdc:src/application/services/history.ts) 和 [src/application/services/utils.ts](mdc:src/application/services/utils.ts)
+
+### 3. Presentation Layer (表现层) - [src/presentation/](mdc:src/presentation)
+**用户界面层，处理用户交互和数据展示**
+
+#### 职责：
+- React 组件
+- 页面路由
+- 用户交互处理
+- 数据绑定和展示
+- UI 状态管理
+
+#### 文件结构：
+```
+src/presentation/
+├── components/        # 业务组件
+│   ├── canvas.tsx     # 画布组件
+│   ├── component-panel.tsx
+│   ├── properties-panel.tsx
+│   └── template-gallery.tsx
+├── ui/               # 基础UI组件
+│   ├── button.tsx
+│   ├── dialog.tsx
+│   └── ...
+├── hooks/            # 自定义Hooks
+│   ├── use-mobile.tsx
+│   └── use-toast.ts
+├── styles/           # 样式文件
+│   └── globals.css
+└── templates/        # 模板组件
+    └── dashboard-template.tsx
+```
+
+#### 组件示例：
+参考 [src/presentation/components/canvas.tsx](mdc:src/presentation/components/canvas.tsx) 和其他组件的实现
+
+### 4. Infrastructure Layer (基础设施层) - 需要补充
+**技术实现层，提供技术能力支撑**
+
+#### 职责：
+- 数据持久化实现
+- 外部API调用
+- 文件系统操作
+- 缓存实现
+- 第三方服务集成
+
+#### 建议文件结构：
+```
+src/infrastructure/
+├── repositories/     # 仓储实现
+│   ├── component-repository.impl.ts
+│   └── template-repository.impl.ts
+├── external-services/ # 外部服务
+│   ├── api-client.ts
+│   └── file-service.ts
+├── persistence/      # 持久化
+│   ├── database.ts
+│   └── cache.ts
+└── config/          # 配置
+    └── database-config.ts
+```
+
+## 依赖关系规则
+
+### 🚫 禁止的依赖关系：
+1. **Domain Layer** 不能依赖任何其他层
+2. **Application Layer** 只能依赖 Domain Layer
+3. **Infrastructure Layer** 可以依赖 Domain 和 Application Layer
+4. **Presentation Layer** 只能依赖 Application Layer，不能直接访问 Domain Layer
+
+### ✅ 允许的依赖关系：
+```
+Presentation → Application → Domain
+Infrastructure → Application → Domain
+```
+
+## 命名约定
+
+### 文件命名：
+- 实体文件：`kebab-case.ts` (如 `component-entity.ts`)
+- 服务文件：`kebab-case-service.ts` (如 `component-application-service.ts`)
+- 接口文件：`kebab-case.interface.ts`
+- 类型文件：`kebab-case.types.ts`
+
+### 类命名：
+- 实体类：`PascalCase` (如 `ComponentEntity`)
+- 服务类：`PascalCaseService` (如 `ComponentApplicationService`)
+- 接口：`IPascalCase` (如 `IComponentRepository`)
+
+### 方法命名：
+- 领域服务方法：动词 + 名词 (如 `validateComponent`)
+- 应用服务方法：用例名称 (如 `createComponent`)
+- 仓储方法：标准CRUD (如 `findById`, `save`, `delete`)
+
+## 最佳实践
+
+### 1. 实体设计
+```typescript
+// 好的实体设计
+export class ComponentEntity {
+  constructor(
+    private readonly id: ComponentId,
+    private readonly name: ComponentName,
+    private properties: ComponentProperties
+  ) {}
+
+  // 业务方法
+  public updateProperties(properties: ComponentProperties): void {
+    this.validateProperties(properties);
+    this.properties = properties;
+  }
+
+  private validateProperties(properties: ComponentProperties): void {
+    // 验证逻辑
+  }
+}
+```
+
+### 2. 应用服务设计
+```typescript
+// 好的应用服务设计
+export class ComponentApplicationService {
+  constructor(
+    private componentRepository: IComponentRepository,
+    private eventPublisher: IEventPublisher
+  ) {}
+
+  async createComponent(command: CreateComponentCommand): Promise<ComponentDto> {
+    const component = new ComponentEntity(
+      command.id,
+      command.name,
+      command.properties
+    );
+    
+    await this.componentRepository.save(component);
+    await this.eventPublisher.publish(new ComponentCreatedEvent(component.id));
+    
+    return ComponentDto.fromEntity(component);
+  }
+}
+```
+
+### 3. 仓储接口设计
+```typescript
+// 好的仓储接口设计
+export interface IComponentRepository {
+  findById(id: ComponentId): Promise<ComponentEntity | null>;
+  findByProjectId(projectId: ProjectId): Promise<ComponentEntity[]>;
+  save(component: ComponentEntity): Promise<void>;
+  delete(id: ComponentId): Promise<void>;
+}
+```
+
+## 错误处理
+
+### 领域层错误
+```typescript
+export class DomainError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DomainError';
+  }
+}
+
+export class ComponentValidationError extends DomainError {}
+```
+
+### 应用层错误
+```typescript
+export class ApplicationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ApplicationError';
+  }
+}
+
+export class ComponentNotFoundError extends ApplicationError {}
+```
+
+## 测试策略
+
+### 单元测试
+- 领域实体测试：测试业务逻辑
+- 领域服务测试：测试领域规则
+- 应用服务测试：测试用例场景
+
+### 集成测试
+- 仓储实现测试
+- 外部服务集成测试
+
+### 端到端测试
+- 完整用户场景测试
+
+## 迁移指南
+
+### 当前项目改进建议：
+
+1. **补充Infrastructure层**：
+   - 创建 `src/infrastructure/` 目录
+   - 实现仓储模式
+   - 添加数据持久化
+
+2. **完善Domain层**：
+   - 将 [src/domain/entities/types.ts](mdc:src/domain/entities/types.ts) 重构为独立实体类
+   - 添加值对象和领域服务
+
+3. **重构Application层**：
+   - 将 [src/application/services/](mdc:src/application/services) 按DDD模式重构
+   - 添加用例和DTO
+
+4. **优化Presentation层**：
+   - 确保组件只调用应用服务
+   - 添加错误边界和加载状态
+
+记住：DDD的核心是将复杂的业务逻辑封装在领域层，保持各层职责清晰，通过接口解耦，实现可测试、可维护的代码架构。
