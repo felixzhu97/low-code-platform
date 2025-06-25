@@ -1,0 +1,615 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Canvas > Snapshot Tests > matches snapshot in preview mode 1`] = `
+<div>
+  <div
+    class="flex-1 bg-gray-50"
+  >
+    <div
+      class="relative overflow-hidden h-[calc(100vh-3.5rem)]"
+      dir="ltr"
+      style="position: relative; --radix-scroll-area-corner-width: 0px; --radix-scroll-area-corner-height: 0px;"
+    >
+      <style>
+        [data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}
+      </style>
+      <div
+        class="h-full w-full rounded-[inherit]"
+        data-radix-scroll-area-viewport=""
+        style="overflow-x: hidden; overflow-y: scroll;"
+      >
+        <div
+          style="min-width: 100%; display: table;"
+        >
+          <div
+            class="relative min-h-[calc(100vh-7.5rem)] p-4"
+            id="canvas-area"
+            style="background-size: 20px 20px; background-image: none; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); font-family: system-ui, sans-serif; width: 1280px; cursor: default;"
+            tabindex="0"
+          >
+            <div
+              class="absolute"
+              data-component-id="text-1"
+              style="left: 100px; top: 100px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div
+                class="p-2"
+                style="font-size: 16px; color: rgb(0, 0, 0); font-family: system-ui, sans-serif; --border-radius: 0.375rem; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Sample text
+              </div>
+            </div>
+            <div
+              class="absolute"
+              data-component-id="button-1"
+              style="left: 200px; top: 200px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                style="font-family: system-ui, sans-serif; --border-radius: 0.375rem; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Click me
+              </button>
+            </div>
+            <div
+              class="absolute"
+              data-component-id="bar-chart-1"
+              style="left: 300px; top: 300px; width: 500px; height: 300px; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div>
+                <div
+                  class="w-full h-full"
+                >
+                  <h3
+                    class="text-lg font-semibold mb-2"
+                  >
+                    Sales Chart
+                  </h3>
+                  <div
+                    data-testid="responsive-container"
+                    height="300"
+                    width="100%"
+                  >
+                    <div
+                      data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+                      data-testid="bar-chart"
+                    >
+                      <div
+                        data-testid="cartesian-grid"
+                        stroke-dasharray="3 3"
+                      />
+                      <div
+                        data-testid="x-axis"
+                        datakey="name"
+                      />
+                      <div
+                        data-testid="y-axis"
+                      />
+                      <div
+                        data-testid="tooltip"
+                      />
+                      <div
+                        data-testid="legend"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="sales"
+                        fill="#8884d8"
+                        name="销售额"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="revenue"
+                        fill="#82ca9d"
+                        name="收入"
+                      />
+                      <div
+                        data-testid="chart-data"
+                      >
+                        [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600},{"name":"4月","sales":9800,"revenue":7900},{"name":"5月","sales":10200,"revenue":8100},{"name":"6月","sales":9500,"revenue":7600}]
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Canvas > Snapshot Tests > matches snapshot with components 1`] = `
+<div>
+  <div
+    class="flex-1 bg-gray-50"
+  >
+    <div
+      class="flex h-12 items-center justify-between border-b bg-background px-4"
+    >
+      <span
+        class="font-medium"
+      >
+        画布
+      </span>
+      <div
+        class="flex items-center gap-4"
+      >
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="show-grid"
+          >
+            显示网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="show-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="snap-grid"
+          >
+            对齐网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="snap-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+        >
+          <div
+            data-testid="trash-icon"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="relative overflow-hidden h-[calc(100vh-7.5rem)]"
+      dir="ltr"
+      style="position: relative; --radix-scroll-area-corner-width: 0px; --radix-scroll-area-corner-height: 0px;"
+    >
+      <style>
+        [data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}
+      </style>
+      <div
+        class="h-full w-full rounded-[inherit]"
+        data-radix-scroll-area-viewport=""
+        style="overflow-x: hidden; overflow-y: scroll;"
+      >
+        <div
+          style="min-width: 100%; display: table;"
+        >
+          <div
+            class="relative min-h-[calc(100vh-7.5rem)] p-4"
+            id="canvas-area"
+            style="background-size: 20px 20px; background-image: none; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); font-family: system-ui, sans-serif; width: 100%; cursor: default;"
+            tabindex="0"
+          >
+            <div
+              class="absolute cursor-grab"
+              data-component-id="text-1"
+              style="left: 100px; top: 100px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div
+                class="p-2"
+                style="font-size: 16px; color: rgb(0, 0, 0); font-family: system-ui, sans-serif; --border-radius: 0.375rem; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Sample text
+              </div>
+            </div>
+            <div
+              class="absolute cursor-grab"
+              data-component-id="button-1"
+              style="left: 200px; top: 200px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                style="font-family: system-ui, sans-serif; --border-radius: 0.375rem; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Click me
+              </button>
+            </div>
+            <div
+              class="absolute cursor-grab"
+              data-component-id="bar-chart-1"
+              style="left: 300px; top: 300px; width: 500px; height: 300px; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div>
+                <div
+                  class="w-full h-full"
+                >
+                  <h3
+                    class="text-lg font-semibold mb-2"
+                  >
+                    Sales Chart
+                  </h3>
+                  <div
+                    data-testid="responsive-container"
+                    height="300"
+                    width="100%"
+                  >
+                    <div
+                      data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+                      data-testid="bar-chart"
+                    >
+                      <div
+                        data-testid="cartesian-grid"
+                        stroke-dasharray="3 3"
+                      />
+                      <div
+                        data-testid="x-axis"
+                        datakey="name"
+                      />
+                      <div
+                        data-testid="y-axis"
+                      />
+                      <div
+                        data-testid="tooltip"
+                      />
+                      <div
+                        data-testid="legend"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="sales"
+                        fill="#8884d8"
+                        name="销售额"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="revenue"
+                        fill="#82ca9d"
+                        name="收入"
+                      />
+                      <div
+                        data-testid="chart-data"
+                      >
+                        [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600},{"name":"4月","sales":9800,"revenue":7900},{"name":"5月","sales":10200,"revenue":8100},{"name":"6月","sales":9500,"revenue":7600}]
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Canvas > Snapshot Tests > matches snapshot with empty canvas 1`] = `
+<div>
+  <div
+    class="flex-1 bg-gray-50"
+  >
+    <div
+      class="flex h-12 items-center justify-between border-b bg-background px-4"
+    >
+      <span
+        class="font-medium"
+      >
+        画布
+      </span>
+      <div
+        class="flex items-center gap-4"
+      >
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="show-grid"
+          >
+            显示网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="show-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="snap-grid"
+          >
+            对齐网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="snap-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+          disabled=""
+        >
+          <div
+            data-testid="trash-icon"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="relative overflow-hidden h-[calc(100vh-7.5rem)]"
+      dir="ltr"
+      style="position: relative; --radix-scroll-area-corner-width: 0px; --radix-scroll-area-corner-height: 0px;"
+    >
+      <style>
+        [data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}
+      </style>
+      <div
+        class="h-full w-full rounded-[inherit]"
+        data-radix-scroll-area-viewport=""
+        style="overflow-x: hidden; overflow-y: scroll;"
+      >
+        <div
+          style="min-width: 100%; display: table;"
+        >
+          <div
+            class="relative min-h-[calc(100vh-7.5rem)] p-4"
+            id="canvas-area"
+            style="background-size: 20px 20px; background-image: none; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); font-family: system-ui, sans-serif; width: 100%; cursor: default;"
+            tabindex="0"
+          >
+            <div
+              class="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed"
+            >
+              <div
+                class="text-center text-muted-foreground"
+              >
+                <p>
+                  将组件拖拽到此处或选择一个模板开始
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Canvas > Snapshot Tests > matches snapshot with theme applied 1`] = `
+<div>
+  <div
+    class="flex-1 bg-gray-50"
+  >
+    <div
+      class="flex h-12 items-center justify-between border-b bg-background px-4"
+    >
+      <span
+        class="font-medium"
+      >
+        画布
+      </span>
+      <div
+        class="flex items-center gap-4"
+      >
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="show-grid"
+          >
+            显示网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="show-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <div
+          class="flex items-center gap-2"
+        >
+          <label
+            class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-xs"
+            for="snap-grid"
+          >
+            对齐网格
+          </label>
+          <button
+            aria-checked="false"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+            data-state="unchecked"
+            id="snap-grid"
+            role="switch"
+            type="button"
+            value="on"
+          >
+            <span
+              class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+              data-state="unchecked"
+            />
+          </button>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+        >
+          <div
+            data-testid="trash-icon"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="relative overflow-hidden h-[calc(100vh-7.5rem)]"
+      dir="ltr"
+      style="position: relative; --radix-scroll-area-corner-width: 0px; --radix-scroll-area-corner-height: 0px;"
+    >
+      <style>
+        [data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}
+      </style>
+      <div
+        class="h-full w-full rounded-[inherit]"
+        data-radix-scroll-area-viewport=""
+        style="overflow-x: hidden; overflow-y: scroll;"
+      >
+        <div
+          style="min-width: 100%; display: table;"
+        >
+          <div
+            class="relative min-h-[calc(100vh-7.5rem)] p-4"
+            id="canvas-area"
+            style="background-size: 20px 20px; background-image: none; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); font-family: Arial, sans-serif; width: 100%; cursor: default;"
+            tabindex="0"
+          >
+            <div
+              class="absolute cursor-grab"
+              data-component-id="text-1"
+              style="left: 100px; top: 100px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div
+                class="p-2"
+                style="font-size: 16px; color: rgb(0, 0, 0); font-family: Arial, sans-serif; --border-radius: 8px; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Sample text
+              </div>
+            </div>
+            <div
+              class="absolute cursor-grab"
+              data-component-id="button-1"
+              style="left: 200px; top: 200px; width: auto; height: auto; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                style="font-family: Arial, sans-serif; --border-radius: 8px; --primary: #0070f3; --secondary: #6c757d;"
+              >
+                Click me
+              </button>
+            </div>
+            <div
+              class="absolute cursor-grab"
+              data-component-id="bar-chart-1"
+              style="left: 300px; top: 300px; width: 500px; height: 300px; margin: 0px; padding: 0px; background-color: transparent; z-index: 1;"
+            >
+              <div>
+                <div
+                  class="w-full h-full"
+                >
+                  <h3
+                    class="text-lg font-semibold mb-2"
+                  >
+                    Sales Chart
+                  </h3>
+                  <div
+                    data-testid="responsive-container"
+                    height="300"
+                    width="100%"
+                  >
+                    <div
+                      data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+                      data-testid="bar-chart"
+                    >
+                      <div
+                        data-testid="cartesian-grid"
+                        stroke-dasharray="3 3"
+                      />
+                      <div
+                        data-testid="x-axis"
+                        datakey="name"
+                      />
+                      <div
+                        data-testid="y-axis"
+                      />
+                      <div
+                        data-testid="tooltip"
+                      />
+                      <div
+                        data-testid="legend"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="sales"
+                        fill="#8884d8"
+                        name="销售额"
+                      />
+                      <div
+                        data-testid="bar"
+                        datakey="revenue"
+                        fill="#82ca9d"
+                        name="收入"
+                      />
+                      <div
+                        data-testid="chart-data"
+                      >
+                        [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600},{"name":"4月","sales":9800,"revenue":7900},{"name":"5月","sales":10200,"revenue":8100},{"name":"6月","sales":9500,"revenue":7600}]
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

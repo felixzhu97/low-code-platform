@@ -749,8 +749,8 @@ export function Canvas({
     component: Component,
     parentComponent: Component | null = null
   ) => {
-    // 如果组件被设置为不可见，则不渲染
-    if (component.properties?.visible === false && !isPreviewMode) {
+    // 如果组件被设置为不可见，在预览模式下不渲染
+    if (component.properties?.visible === false && isPreviewMode) {
       return null;
     }
 

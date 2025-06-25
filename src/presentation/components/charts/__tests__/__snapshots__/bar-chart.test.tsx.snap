@@ -1,0 +1,173 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BarChart > Snapshot Tests > matches snapshot with all props 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <h3
+      class="text-lg font-semibold mb-2"
+    >
+      Complete Bar Chart
+    </h3>
+    <div
+      data-height="400"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-bar-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="sales"
+          data-fill="#8884d8"
+          data-name="销售额"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-datakey="revenue"
+          data-fill="#82ca9d"
+          data-name="收入"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`BarChart > Snapshot Tests > matches snapshot with custom data and title 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <h3
+      class="text-lg font-semibold mb-2"
+    >
+      Custom Chart
+    </h3>
+    <div
+      data-height="350"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-bar-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="sales"
+          data-fill="#8884d8"
+          data-name="销售额"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-datakey="revenue"
+          data-fill="#82ca9d"
+          data-name="收入"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`BarChart > Snapshot Tests > matches snapshot with default props 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <div
+      data-height="300"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-bar-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="sales"
+          data-fill="#8884d8"
+          data-name="销售额"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-datakey="revenue"
+          data-fill="#82ca9d"
+          data-name="收入"
+          data-testid="recharts-bar"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","sales":8500,"revenue":6200},{"name":"2月","sales":9200,"revenue":7300},{"name":"3月","sales":10800,"revenue":8600},{"name":"4月","sales":9800,"revenue":7900},{"name":"5月","sales":10200,"revenue":8100},{"name":"6月","sales":9500,"revenue":7600}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

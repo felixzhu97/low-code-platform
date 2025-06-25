@@ -1,0 +1,172 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GaugeChart > Snapshot Tests > matches snapshot with all props 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <h3
+      class="mb-2 text-lg font-medium"
+    >
+      Performance Gauge
+    </h3>
+    <div
+      class="relative"
+      style="width: 350px; height: 250px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-endangle="0"
+            data-innerradius="60%"
+            data-outerradius="80%"
+            data-startangle="180"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="gauge-data"
+            >
+              [{"name":"value","value":0.78},{"name":"empty","value":0.21999999999999997}]
+            </div>
+            <div
+              data-fill="#FF8042"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#EEEEEE"
+              data-testid="recharts-cell"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute left-0 right-0 top-1/2 text-center text-3xl font-bold"
+        style="transform: translateY(-20%);"
+      >
+        78
+        <span
+          class="ml-1 text-sm font-normal text-muted-foreground"
+        >
+          %
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GaugeChart > Snapshot Tests > matches snapshot with default props 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <div
+      class="relative"
+      style="width: 500px; height: 300px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-endangle="0"
+            data-innerradius="60%"
+            data-outerradius="80%"
+            data-startangle="180"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="gauge-data"
+            >
+              [{"name":"value","value":0.88},{"name":"empty","value":0.12}]
+            </div>
+            <div
+              data-fill="#FF0000"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#EEEEEE"
+              data-testid="recharts-cell"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute left-0 right-0 top-1/2 text-center text-3xl font-bold"
+        style="transform: translateY(-20%);"
+      >
+        88
+        <span
+          class="ml-1 text-sm font-normal text-muted-foreground"
+        >
+          %
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GaugeChart > Snapshot Tests > matches snapshot with minimal configuration 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <div
+      class="relative"
+      style="width: 500px; height: 300px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-endangle="0"
+            data-innerradius="60%"
+            data-outerradius="80%"
+            data-startangle="180"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="gauge-data"
+            >
+              [{"name":"value","value":0.45},{"name":"empty","value":0.55}]
+            </div>
+            <div
+              data-fill="#FFBB28"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#EEEEEE"
+              data-testid="recharts-cell"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

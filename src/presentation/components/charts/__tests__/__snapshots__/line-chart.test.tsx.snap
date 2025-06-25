@@ -1,0 +1,179 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LineChart > Snapshot Tests > matches snapshot with all props 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <h3
+      class="text-lg font-semibold mb-2"
+    >
+      Complete Line Chart
+    </h3>
+    <div
+      data-height="500"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-line-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="visits"
+          data-name="访问量"
+          data-stroke="#8884d8"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-datakey="sales"
+          data-name="销售"
+          data-stroke="#82ca9d"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","visits":12500,"sales":8400},{"name":"2月","visits":18900,"sales":12600},{"name":"3月","visits":25600,"sales":16800},{"name":"4月","visits":28400,"sales":19200}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`LineChart > Snapshot Tests > matches snapshot with custom data and title 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <h3
+      class="text-lg font-semibold mb-2"
+    >
+      Custom Line Chart
+    </h3>
+    <div
+      data-height="400"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-line-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="visits"
+          data-name="访问量"
+          data-stroke="#8884d8"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-datakey="sales"
+          data-name="销售"
+          data-stroke="#82ca9d"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","visits":12500,"sales":8400},{"name":"2月","visits":18900,"sales":12600},{"name":"3月","visits":25600,"sales":16800},{"name":"4月","visits":28400,"sales":19200}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`LineChart > Snapshot Tests > matches snapshot with default props 1`] = `
+<div>
+  <div
+    class="w-full h-full"
+  >
+    <div
+      data-height="300"
+      data-testid="recharts-responsive-container"
+      data-width="100%"
+    >
+      <div
+        data-props="{"margin":{"top":20,"right":30,"left":20,"bottom":5}}"
+        data-testid="recharts-line-chart"
+      >
+        <div
+          data-testid="recharts-cartesian-grid"
+          stroke-dasharray="3 3"
+        />
+        <div
+          data-datakey="name"
+          data-testid="recharts-x-axis"
+        />
+        <div
+          data-testid="recharts-y-axis"
+        />
+        <div
+          data-testid="recharts-tooltip"
+        />
+        <div
+          data-testid="recharts-legend"
+        />
+        <div
+          data-datakey="visits"
+          data-name="访问量"
+          data-stroke="#8884d8"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-datakey="sales"
+          data-name="销售"
+          data-stroke="#82ca9d"
+          data-testid="recharts-line"
+          data-type="monotone"
+        />
+        <div
+          data-testid="chart-data"
+        >
+          [{"name":"1月","visits":12500,"sales":8400},{"name":"2月","visits":18900,"sales":12600},{"name":"3月","visits":25600,"sales":16800},{"name":"4月","visits":28400,"sales":19200},{"name":"5月","visits":32100,"sales":22500},{"name":"6月","visits":29800,"sales":20100},{"name":"7月","visits":35400,"sales":26300}]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

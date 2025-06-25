@@ -1,0 +1,192 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PieChart > Snapshot Tests > matches snapshot with all props 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <h3
+      class="mb-2 text-lg font-medium"
+    >
+      Complete Pie Chart
+    </h3>
+    <div
+      style="width: 600px; height: 400px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-datakey="value"
+            data-fill="#8884d8"
+            data-innerradius="30"
+            data-label="function"
+            data-labelline="true"
+            data-outerradius="100"
+            data-paddingangle="2"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="pie-data"
+            >
+              [{"name":"移动端","value":45},{"name":"桌面端","value":32},{"name":"平板端","value":18},{"name":"其他","value":5}]
+            </div>
+            <div
+              data-fill="#ff0000"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#00ff00"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#0000ff"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#ff0000"
+              data-testid="recharts-cell"
+            />
+          </div>
+          <div
+            data-testid="recharts-tooltip"
+          />
+          <div
+            data-testid="recharts-legend"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PieChart > Snapshot Tests > matches snapshot with minimal configuration 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <div
+      style="width: 500px; height: 300px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-datakey="value"
+            data-fill="#8884d8"
+            data-innerradius="0"
+            data-label="function"
+            data-labelline="true"
+            data-outerradius="80"
+            data-paddingangle="0"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="pie-data"
+            >
+              [{"name":"移动端","value":45},{"name":"桌面端","value":32},{"name":"平板端","value":18},{"name":"其他","value":5}]
+            </div>
+            <div
+              data-fill="#0088FE"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#00C49F"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#FFBB28"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#FF8042"
+              data-testid="recharts-cell"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PieChart > Snapshot Tests > matches snapshot with required props 1`] = `
+<div>
+  <div
+    class="w-full"
+  >
+    <div
+      style="width: 500px; height: 300px;"
+    >
+      <div
+        data-height="100%"
+        data-testid="recharts-responsive-container"
+        data-width="100%"
+      >
+        <div
+          data-props="{}"
+          data-testid="recharts-pie-chart"
+        >
+          <div
+            data-cx="50%"
+            data-cy="50%"
+            data-datakey="value"
+            data-fill="#8884d8"
+            data-innerradius="0"
+            data-label="function"
+            data-labelline="true"
+            data-outerradius="80"
+            data-paddingangle="0"
+            data-testid="recharts-pie"
+          >
+            <div
+              data-testid="pie-data"
+            >
+              [{"name":"移动端","value":45},{"name":"桌面端","value":32},{"name":"平板端","value":18},{"name":"其他","value":5}]
+            </div>
+            <div
+              data-fill="#0088FE"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#00C49F"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#FFBB28"
+              data-testid="recharts-cell"
+            />
+            <div
+              data-fill="#FF8042"
+              data-testid="recharts-cell"
+            />
+          </div>
+          <div
+            data-testid="recharts-tooltip"
+          />
+          <div
+            data-testid="recharts-legend"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
