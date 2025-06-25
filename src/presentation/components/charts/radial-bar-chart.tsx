@@ -51,19 +51,23 @@ export function RadialBarChart({
           endAngle={450}
         >
           <RadialBar
-            label={{ position: "insideStart", fill: "#fff" }}
+            label={{
+              position: "insideStart",
+              fill: "#fff",
+              fontSize: 12,
+              fontWeight: "bold",
+            }}
             background
             dataKey="uv"
           />
           <Legend
-            iconSize={18}
+            iconSize={12}
             layout="vertical"
             verticalAlign="middle"
             align="right"
             wrapperStyle={{
-              width: "50%",
-              textAlign: "left",
-              paddingLeft: "20px",
+              fontSize: "12px",
+              lineHeight: "1.5",
             }}
           />
         </RechartsRadialBarChart>

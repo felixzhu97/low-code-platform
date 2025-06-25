@@ -1289,8 +1289,8 @@ export function Canvas({
               <RadialBarChart
                 data={componentData || []}
                 title={props.title}
-                width={props.width || 400}
-                height={props.height || 300}
+                width={props.width || 500}
+                height={props.height || 350}
                 innerRadius={props.innerRadius || "10%"}
                 outerRadius={props.outerRadius || "80%"}
               />
@@ -1302,8 +1302,8 @@ export function Canvas({
               <TreemapChart
                 data={componentData || []}
                 title={props.title}
-                width={props.width || 400}
-                height={props.height || 300}
+                width={props.width || 500}
+                height={props.height || 350}
                 dataKey={props.dataKey || "size"}
               />
             </div>

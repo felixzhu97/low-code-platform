@@ -49,6 +49,10 @@ const CustomizedContent = (props: any) => {
     name,
   } = props;
 
+  // 只在足够大的区域显示文字
+  const showText = width > 40 && height > 20;
+  const showIndex = width > 60 && height > 40;
+
   return (
     <g>
       <rect
@@ -66,19 +70,28 @@ const CustomizedContent = (props: any) => {
           strokeOpacity: 1 / (depth + 1e-10),
         }}
       />
-      {depth === 1 ? (
+      {depth === 1 && showText ? (
         <text
           x={x + width / 2}
-          y={y + height / 2 + 7}
+          y={y + height / 2 + 4}
           textAnchor="middle"
           fill="#fff"
-          fontSize={14}
+          fontSize={Math.min(14, width / 4, height / 3)}
+          fontWeight="bold"
+          dominantBaseline="middle"
         >
           {name}
         </text>
       ) : null}
-      {depth === 1 ? (
-        <text x={x + 4} y={y + 18} fill="#fff" fontSize={16} fillOpacity={0.9}>
+      {depth === 1 && showIndex ? (
+        <text
+          x={x + 6}
+          y={y + 16}
+          fill="#fff"
+          fontSize={Math.min(12, width / 6, height / 4)}
+          fillOpacity={0.8}
+          fontWeight="bold"
+        >
           {index + 1}
         </text>
       ) : null}
