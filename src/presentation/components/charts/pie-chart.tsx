@@ -1,27 +1,42 @@
-"use client"
+"use client";
 
-import { useMemo } from "react"
-import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { useMemo } from "react";
+import {
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 interface PieChartProps {
-  data: any[]
-  nameField: string
-  valueField: string
-  title?: string
-  height?: number
-  width?: number
-  colors?: string[]
-  showLegend?: boolean
-  showTooltip?: boolean
-  innerRadius?: number
-  outerRadius?: number
-  paddingAngle?: number
+  data: any[];
+  nameField: string;
+  valueField: string;
+  title?: string;
+  height?: number;
+  width?: number;
+  colors?: string[];
+  showLegend?: boolean;
+  showTooltip?: boolean;
+  innerRadius?: number;
+  outerRadius?: number;
+  paddingAngle?: number;
 }
+
+// 默认演示数据
+const defaultData = [
+  { category: "移动端", value: 45 },
+  { category: "桌面端", value: 32 },
+  { category: "平板端", value: 18 },
+  { category: "其他", value: 5 },
+];
 
 export function PieChart({
   data,
-  nameField,
-  valueField,
+  nameField = "category",
+  valueField = "value",
   title,
   height = 300,
   width = 500,
@@ -32,28 +47,22 @@ export function PieChart({
   outerRadius = 80,
   paddingAngle = 0,
 }: PieChartProps) {
+  // 使用传入的数据或默认数据
+  const chartData = useMemo(() => {
+    return data && Array.isArray(data) && data.length > 0 ? data : defaultData;
+  }, [data]);
+
   // 处理数据，确保格式正确
   const processedData = useMemo(() => {
-    if (!data || !Array.isArray(data)) {
-      return []
+    if (!chartData || !Array.isArray(chartData)) {
+      return [];
     }
 
-    return data.map((item) => ({
+    return chartData.map((item) => ({
       name: item[nameField],
       value: item[valueField],
-    }))
-  }, [data, nameField, valueField])
-
-  if (!data || data.length === 0) {
-    return (
-      <div
-        className="flex items-center justify-center rounded-md border border-dashed p-4 text-center text-muted-foreground"
-        style={{ width: width || "100%", height: height || 300 }}
-      >
-        暂无数据
-      </div>
-    )
-  }
+    }));
+  }, [chartData, nameField, valueField]);
 
   return (
     <div className="w-full">
@@ -66,7 +75,9 @@ export function PieChart({
               cx="50%"
               cy="50%"
               labelLine={true}
-              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              label={({ name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(0)}%`
+              }
               outerRadius={outerRadius}
               innerRadius={innerRadius}
               fill="#8884d8"
@@ -74,7 +85,10 @@ export function PieChart({
               dataKey="value"
             >
               {processedData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                />
               ))}
             </Pie>
             {showTooltip && <Tooltip />}
@@ -83,5 +97,5 @@ export function PieChart({
         </ResponsiveContainer>
       </div>
     </div>
-  )
+  );
 }

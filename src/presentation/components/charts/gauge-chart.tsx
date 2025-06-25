@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useMemo } from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { useMemo } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 interface GaugeChartProps {
-  value: number
-  min?: number
-  max?: number
-  title?: string
-  height?: number
-  width?: number
-  colors?: string[]
-  showValue?: boolean
-  unit?: string
+  value?: number;
+  min?: number;
+  max?: number;
+  title?: string;
+  height?: number;
+  width?: number;
+  colors?: string[];
+  showValue?: boolean;
+  unit?: string;
 }
 
 export function GaugeChart({
-  value,
+  value = 88,
   min = 0,
   max = 100,
   title,
@@ -28,31 +28,34 @@ export function GaugeChart({
 }: GaugeChartProps) {
   // 计算百分比
   const percent = useMemo(() => {
-    const normalizedValue = Math.max(min, Math.min(max, value))
-    return (normalizedValue - min) / (max - min)
-  }, [value, min, max])
+    const normalizedValue = Math.max(min, Math.min(max, value));
+    return (normalizedValue - min) / (max - min);
+  }, [value, min, max]);
 
   // 创建仪表盘数据
   const data = useMemo(() => {
     return [
       { name: "value", value: percent },
       { name: "empty", value: 1 - percent },
-    ]
-  }, [percent])
+    ];
+  }, [percent]);
 
   // 确定颜色
   const color = useMemo(() => {
-    if (percent <= 0.2) return colors[0]
-    if (percent <= 0.4) return colors[1]
-    if (percent <= 0.6) return colors[2]
-    if (percent <= 0.8) return colors[3]
-    return colors[4]
-  }, [percent, colors])
+    if (percent <= 0.2) return colors[0];
+    if (percent <= 0.4) return colors[1];
+    if (percent <= 0.6) return colors[2];
+    if (percent <= 0.8) return colors[3];
+    return colors[4];
+  }, [percent, colors]);
 
   return (
     <div className="w-full">
       {title && <h3 className="mb-2 text-lg font-medium">{title}</h3>}
-      <div style={{ width: width || "100%", height: height || 300 }} className="relative">
+      <div
+        style={{ width: width || "100%", height: height || 300 }}
+        className="relative"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -78,10 +81,12 @@ export function GaugeChart({
             style={{ transform: "translateY(-20%)" }}
           >
             {value}
-            <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>
+            <span className="ml-1 text-sm font-normal text-muted-foreground">
+              {unit}
+            </span>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

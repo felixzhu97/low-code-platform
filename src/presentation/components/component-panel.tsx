@@ -129,6 +129,8 @@ export function ComponentPanel() {
         { id: "scatter-chart", name: "散点图", type: "scatter-chart" },
         { id: "radar-chart", name: "雷达图", type: "radar-chart" },
         { id: "gauge", name: "仪表盘", type: "gauge" },
+        { id: "radial-bar-chart", name: "环形图", type: "radial-bar-chart" },
+        { id: "treemap-chart", name: "树状图", type: "treemap-chart" },
       ],
     },
     {
