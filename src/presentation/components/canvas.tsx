@@ -1275,7 +1275,7 @@ export function Canvas({
             <div style={{ ...animationStyle }}>
               <GaugeChart
                 value={props.percent ? props.percent * 100 : 88}
-                title={"props.title"}
+                title={props.title}
                 width={props.width || 300}
                 height={props.height || 300}
                 showValue={true}
