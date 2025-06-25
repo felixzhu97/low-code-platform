@@ -89,7 +89,7 @@ export function LayoutComponentRenderer({
         onSelectComponent(child);
       }}
     >
-      <div className="rounded border p-2">{child.name || child.type}</div>
+      {renderChildComponent(child)}
     </div>
   );
 
