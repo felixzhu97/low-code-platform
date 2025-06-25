@@ -214,7 +214,7 @@ export function ComponentPanel() {
 
     return (
       <div
-        ref={drag}
+        ref={drag as any}
         className="flex cursor-grab items-center justify-between rounded-md border bg-card p-2 text-sm shadow-sm"
         style={{ opacity: isDragging ? 0.5 : 1 }}
       >
@@ -227,8 +227,8 @@ export function ComponentPanel() {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="p-4">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="p-4 shrink-0">
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -240,17 +240,20 @@ export function ComponentPanel() {
         </div>
       </div>
 
-      <Tabs defaultValue="categories" className="flex-1">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs
+        defaultValue="categories"
+        className="flex-1 flex flex-col overflow-hidden"
+      >
+        <TabsList className="grid w-full grid-cols-2 shrink-0">
           <TabsTrigger value="categories">分类</TabsTrigger>
           <TabsTrigger value="all">全部</TabsTrigger>
         </TabsList>
 
         <TabsContent
           value="categories"
-          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col"
+          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
         >
-          <div className="flex flex-wrap gap-1 border-b p-2">
+          <div className="flex flex-wrap gap-1 border-b p-2 shrink-0">
             {categories.map((category) => (
               <Button
                 key={category.id}
@@ -269,7 +272,7 @@ export function ComponentPanel() {
             ))}
           </div>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 overflow-hidden">
             <div className="p-4">
               {(activeCategory
                 ? visibleCategories.filter((c) => c.id === activeCategory)
@@ -298,9 +301,9 @@ export function ComponentPanel() {
 
         <TabsContent
           value="all"
-          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col"
+          className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
         >
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 overflow-hidden">
             <div className="grid gap-2 p-4">
               {categories
                 .flatMap((category) => category.components)

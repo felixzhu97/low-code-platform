@@ -1,9 +1,9 @@
-import type { ReactNode } from "react"
-import { Button } from "@/presentation/components/ui/button"
-import { Save, Play, Download, Settings } from "lucide-react"
+import type { ReactNode } from "react";
+import { Button } from "@/presentation/components/ui/button";
+import { Save, Play, Download, Settings } from "lucide-react";
 
 interface HeaderProps {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export function Header({ children }: HeaderProps) {
@@ -35,5 +35,5 @@ export function Header({ children }: HeaderProps) {
         )}
       </div>
     </header>
-  )
+  );
 }
