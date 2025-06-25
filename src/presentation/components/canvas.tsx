@@ -559,8 +559,8 @@ export function Canvas({
         return {
           title: "柱状图",
           dataSource: null,
-          xField: "x",
-          yField: "y",
+          xField: "name",
+          yField: "sales",
           seriesField: "category",
           isGroup: true,
           isStack: false,
@@ -573,7 +573,7 @@ export function Canvas({
         return {
           title: "折线图",
           dataSource: null,
-          xField: "x",
+          xField: "name",
           yField: "y",
           seriesField: "category",
           smooth: true,
@@ -597,7 +597,7 @@ export function Canvas({
         return {
           title: "面积图",
           dataSource: null,
-          xField: "month",
+          xField: "name",
           yField: "uv",
           seriesField: "category",
           smooth: true,
@@ -1275,7 +1275,7 @@ export function Canvas({
             <div style={{ ...animationStyle }}>
               <GaugeChart
                 value={props.percent ? props.percent * 100 : 88}
-                title={props.title}
+                title={"props.title"}
                 width={props.width || 300}
                 height={props.height || 300}
                 showValue={true}
