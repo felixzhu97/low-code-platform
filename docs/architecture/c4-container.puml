@@ -1,21 +1,37 @@
 @startuml
 !include ./c4-plantuml/C4_Container.puml
 
-Person(user, "用户")
-System_Boundary(system, "低代码平台") {
-  Container(web, "Web前端", "Next.js/React", "用户界面，页面搭建与交互")
-  Container(api, "后端API服务", "Node.js/Next.js API", "业务逻辑与数据处理")
-  ContainerDb(db, "数据库", "如PostgreSQL/MongoDB", "存储用户数据、页面配置等")
-  Container(storage, "对象存储", "如OSS/S3", "存储图片等静态资源")
-}
-System_Ext(auth, "认证服务")
-System_Ext(extapi, "第三方API")
+LAYOUT_WITH_LEGEND()
 
-Rel(user, web, "使用Web界面")
-Rel(web, api, "API请求/响应")
-Rel(api, db, "读写数据")
-Rel(api, storage, "上传/下载资源")
-Rel(api, auth, "用户认证")
-Rel(api, extapi, "集成外部数据")
+title Felix 低代码平台 - 容器架构图
+
+Person(user, "用户", "设计师、开发者、管理员")
+
+System_Boundary(lowcode, "Felix 低代码平台") {
+    Container(webapp, "Web应用", "Next.js 15 + React 19", "单页应用，提供可视化编辑界面")
+    Container(api, "API层", "Next.js API Routes", "后端API服务，处理业务逻辑")
+    Container(realtime, "实时协作", "WebSocket/Server-Sent Events", "多人协作和实时同步")
+    
+    ContainerDb(localstorage, "本地存储", "LocalStorage/IndexedDB", "本地缓存页面配置和历史记录")
+    ContainerDb(database, "数据库", "PostgreSQL/MongoDB", "存储用户数据、页面配置、模板库")
+    Container(storage, "文件存储", "对象存储/CDN", "静态资源、图片、导出文件")
+}
+
+System_Ext(auth, "认证服务", "第三方认证")
+System_Ext(external_api, "外部API", "数据源集成")
+System_Ext(git_service, "代码托管", "GitHub/GitLab")
+
+Rel(user, webapp, "使用Web界面", "HTTPS")
+Rel(webapp, api, "API调用", "HTTP/JSON")
+Rel(webapp, realtime, "实时通信", "WebSocket")
+Rel(webapp, localstorage, "本地缓存", "JavaScript API")
+
+Rel(api, database, "数据读写", "SQL/NoSQL")
+Rel(api, storage, "文件操作", "API调用")
+Rel(api, auth, "身份验证", "OAuth/JWT")
+Rel(api, external_api, "数据集成", "REST/GraphQL")
+Rel(api, git_service, "代码导出", "Git API")
+
+Rel(realtime, database, "状态同步", "数据库连接")
 
 @enduml 

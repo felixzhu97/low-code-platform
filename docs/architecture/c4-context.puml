@@ -1,15 +1,34 @@
 @startuml
 !include ./c4-plantuml/C4_Context.puml
 
-Person(user, "用户", "使用低代码平台进行页面搭建和管理")
-System(system, "低代码平台", "可视化页面搭建与管理")
-System_Ext(auth, "认证服务", "提供用户登录认证")
-System_Ext(storage, "对象存储", "存储图片等静态资源")
-System_Ext(api, "第三方API", "外部数据源")
+LAYOUT_WITH_LEGEND()
 
-Rel(user, system, "使用")
-Rel(system, auth, "用户认证")
-Rel(system, storage, "上传/下载资源")
-Rel(system, api, "数据集成")
+title Felix 低代码平台 - 系统上下文图
+
+Person(designer, "页面设计师", "使用可视化编辑器设计页面和表单")
+Person(developer, "开发者", "使用代码导出功能，自定义组件开发")
+Person(enduser, "终端用户", "访问和使用生成的页面")
+Person(admin, "管理员", "管理模板库、组件库和用户权限")
+
+System(lowcode, "Felix 低代码平台", "可视化页面搭建、组件管理、模板系统的一体化平台")
+
+System_Ext(cdn, "CDN服务", "静态资源加速分发")
+System_Ext(storage, "对象存储", "图片、文件等静态资源存储")
+System_Ext(auth, "认证服务", "用户身份认证与授权")
+System_Ext(analytics, "数据分析", "页面访问统计和用户行为分析")
+System_Ext(api, "第三方API", "外部数据源和服务集成")
+System_Ext(export_service, "代码托管", "导出代码的版本管理和部署")
+
+Rel(designer, lowcode, "设计页面", "拖拽组件、配置属性")
+Rel(developer, lowcode, "扩展开发", "自定义组件、代码导出")
+Rel(admin, lowcode, "平台管理", "模板管理、用户管理")
+Rel(enduser, lowcode, "访问页面", "使用生成的应用")
+
+Rel(lowcode, storage, "存储资源", "HTTPS/API")
+Rel(lowcode, cdn, "资源分发", "HTTPS")
+Rel(lowcode, auth, "用户认证", "OAuth/SAML")
+Rel(lowcode, analytics, "数据上报", "HTTPS/API")
+Rel(lowcode, api, "数据集成", "REST/GraphQL")
+Rel(lowcode, export_service, "代码托管", "Git/API")
 
 @enduml 

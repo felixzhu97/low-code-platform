@@ -1,28 +1,70 @@
 @startuml
 !include ./c4-plantuml/C4_Component.puml
 
-Container(api, "后端API服务", "Node.js/Next.js API")
+LAYOUT_WITH_LEGEND()
 
-Component(authModule, "认证模块", "处理用户登录、鉴权")
-Component(pageService, "页面服务", "页面配置的增删改查")
-Component(componentService, "组件服务", "组件数据管理")
-Component(formService, "表单服务", "表单数据处理")
-Component(dataSourceService, "数据源服务", "外部API/数据集成")
-Component(fileService, "文件服务", "图片等静态资源上传/下载")
-Component(collaborationService, "协作服务", "多人协作与同步")
-Component(templateService, "模板服务", "页面模板管理")
-Component(themeService, "主题服务", "主题配置管理")
-Component(historyService, "历史记录服务", "操作历史与撤销重做")
+title Felix 低代码平台 - 后端服务架构
 
-Rel(api, authModule, "用户认证")
-Rel(api, pageService, "页面管理")
-Rel(api, componentService, "组件管理")
-Rel(api, formService, "表单处理")
-Rel(api, dataSourceService, "数据集成")
-Rel(api, fileService, "文件管理")
-Rel(api, collaborationService, "协作同步")
-Rel(api, templateService, "模板管理")
-Rel(api, themeService, "主题管理")
-Rel(api, historyService, "历史记录")
+Container_Boundary(api, "API服务层 (Next.js API Routes)") {
+    
+    ' 核心业务服务
+    Component(page_api, "页面API", "Next.js API Route", "页面配置的CRUD操作")
+    Component(component_api, "组件API", "Next.js API Route", "组件数据管理和配置")
+    Component(template_api, "模板API", "Next.js API Route", "模板库管理")
+    Component(theme_api, "主题API", "Next.js API Route", "主题配置管理")
+    
+    ' 用户和权限
+    Component(auth_api, "认证API", "Next.js API Route", "用户认证和授权")
+    Component(user_api, "用户API", "Next.js API Route", "用户信息管理")
+    
+    ' 数据和文件服务
+    Component(data_api, "数据源API", "Next.js API Route", "外部数据源集成")
+    Component(file_api, "文件API", "Next.js API Route", "文件上传和管理")
+    Component(export_api, "导出API", "Next.js API Route", "代码导出服务")
+    
+    ' 协作和实时服务
+    Component(collaboration_api, "协作API", "WebSocket/SSE", "实时协作和同步")
+    Component(history_api, "历史API", "Next.js API Route", "操作历史记录")
+    
+    ' 分析和监控
+    Component(analytics_api, "分析API", "Next.js API Route", "使用统计和分析")
+    Component(health_api, "健康检查", "Next.js API Route", "系统状态监控")
+}
+
+Container_Boundary(storage, "数据存储层") {
+    ComponentDb(main_db, "主数据库", "PostgreSQL/MongoDB", "用户、页面、模板数据")
+    ComponentDb(cache_db, "缓存数据库", "Redis", "会话和临时数据缓存")
+    ComponentDb(file_storage, "文件存储", "云存储/本地存储", "静态资源存储")
+}
+
+Container_Boundary(external, "外部服务集成") {
+    Component(auth_service, "认证服务", "OAuth Provider", "第三方认证")
+    Component(git_service, "Git服务", "GitHub/GitLab API", "代码仓库管理")
+    Component(email_service, "邮件服务", "SMTP/SES", "通知邮件发送")
+    Component(cdn_service, "CDN服务", "云CDN", "静态资源加速")
+}
+
+' API之间的关系
+Rel(page_api, component_api, "组件关联", "数据引用")
+Rel(template_api, page_api, "模板应用", "配置复制")
+Rel(user_api, auth_api, "用户验证", "权限检查")
+
+' API与存储的关系
+Rel(page_api, main_db, "页面数据", "CRUD")
+Rel(component_api, main_db, "组件数据", "CRUD")
+Rel(template_api, main_db, "模板数据", "CRUD")
+Rel(user_api, main_db, "用户数据", "CRUD")
+Rel(history_api, main_db, "历史记录", "CRUD")
+
+Rel(collaboration_api, cache_db, "实时状态", "缓存读写")
+Rel(auth_api, cache_db, "会话管理", "缓存读写")
+
+Rel(file_api, file_storage, "文件操作", "上传下载")
+
+' 外部服务集成
+Rel(auth_api, auth_service, "身份验证", "OAuth流程")
+Rel(export_api, git_service, "代码推送", "Git API")
+Rel(analytics_api, email_service, "报告通知", "邮件发送")
+Rel(file_api, cdn_service, "资源分发", "CDN API")
 
 @enduml 
