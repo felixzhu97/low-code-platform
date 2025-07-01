@@ -36,7 +36,7 @@ Felix 低代码平台是一个基于 Next.js 和 React 的现代化可视化页�
 
 ### 3. 组件架构图 (Component)
 
-- 前端组件：[c4-component-frontend.puml](./c4-component-frontend.puml)
+- 前端组件：[c4-component-frontend.puml](./c4-component.puml)
 - 后端服务：[c4-component-backend.puml](./c4-component-backend.puml)
 - 核心组件：[c4_component.puml](./c4_component.puml)
 - 描述：详细展示各个容器内部的组件结构
