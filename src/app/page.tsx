@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ComponentPanel } from "@/presentation/components/component-panel";
@@ -22,43 +22,36 @@ import { FormBuilder } from "@/presentation/components/form-builder";
 import { AnimationEditor } from "@/presentation/components/animation-editor";
 import { Collaboration } from "@/presentation/components/collaboration";
 import type { Component, ThemeConfig } from "@/domain/entities/types";
-import {
-  type HistoryState,
-  createHistory,
-  addToHistory,
-  undo,
-  redo,
-} from "@/application/services/history";
+import { TemplateApplicationError } from "@/domain/entities/types";
+import { TemplateService } from "@/application/services/template-command.service";
 import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
 import { ComponentLibraryManager } from "@/presentation/components/component-library-manager";
 import { ComponentGrouping } from "@/presentation/components/component-grouping";
 import { ComponentTree } from "@/presentation/components/component-tree";
 import { toast } from "@/presentation/components/ui/use-toast";
+import { usePlatformState } from "@/presentation/hooks/use-platform-state";
 
 export default function LowCodePlatform() {
-  const [selectedComponent, setSelectedComponent] = useState<Component | null>(
-    null
-  );
-  const [activeTab, setActiveTab] = useState("components");
-  const [componentsHistory, setComponentsHistory] = useState<
-    HistoryState<Component[]>
-  >(createHistory([]));
-  const [previewMode, setPreviewMode] = useState(false);
-  const [projectName, setProjectName] = useState("我的低代码项目");
-  const [viewportWidth, setViewportWidth] = useState<number>(1280);
-  const [activeDevice, setActiveDevice] = useState<string>("desktop");
-  const [theme, setTheme] = useState<ThemeConfig>({
-    primaryColor: "#0070f3",
-    secondaryColor: "#6c757d",
-    backgroundColor: "#ffffff",
-    textColor: "#000000",
-    fontFamily: "system-ui, sans-serif",
-    borderRadius: "0.375rem",
-    spacing: "1rem",
-  });
+  const {
+    state,
+    updateState,
+    updateComponentsHistory,
+    handleUndo,
+    handleRedo,
+  } = usePlatformState();
 
-  const [customComponents, setCustomComponents] = useState<any[]>([]);
+  const {
+    selectedComponent,
+    activeTab,
+    componentsHistory,
+    previewMode,
+    projectName,
+    viewportWidth,
+    activeDevice,
+    theme,
+    customComponents,
+  } = state;
 
   const components = componentsHistory.present;
 
@@ -68,15 +61,15 @@ export default function LowCodePlatform() {
   }, [components]);
 
   const handleAddCustomComponent = (component: any) => {
-    setCustomComponents([...customComponents, component]);
+    updateState({ customComponents: [...customComponents, component] });
   };
 
   const handleRemoveCustomComponent = (componentId: string) => {
-    setCustomComponents(customComponents.filter((c) => c.id !== componentId));
+    updateState({ customComponents: customComponents.filter((c) => c.id !== componentId) });
   };
 
   const handleImportComponents = (components: any[]) => {
-    setCustomComponents([...customComponents, ...components]);
+    updateState({ customComponents: [...customComponents, ...components] });
   };
 
   const handleUpdateComponent = (id: string, properties: any) => {
@@ -87,115 +80,59 @@ export default function LowCodePlatform() {
       return component;
     });
 
-    setComponentsHistory(addToHistory(componentsHistory, updatedComponents));
+    updateComponentsHistory(updatedComponents);
   };
 
   const handleSelectComponent = (component: Component | null) => {
-    setSelectedComponent(component);
+    updateState({ selectedComponent: component });
   };
 
   const togglePreviewMode = () => {
-    setPreviewMode(!previewMode);
-    if (!previewMode) {
-      // 进入预览模式时取消选中组件
-      setSelectedComponent(null);
-    }
-  };
-
-  const handleUndo = () => {
-    setComponentsHistory(undo(componentsHistory));
-  };
-
-  const handleRedo = () => {
-    setComponentsHistory(redo(componentsHistory));
+    updateState({ 
+      previewMode: !previewMode,
+      selectedComponent: !previewMode ? null : selectedComponent
+    });
   };
 
   const handleViewportChange = (width: number, device: string) => {
-    setViewportWidth(width);
-    setActiveDevice(device);
+    updateState({ viewportWidth: width, activeDevice: device });
   };
 
   const handleThemeChange = (newTheme: ThemeConfig) => {
-    setTheme(newTheme);
+    updateState({ theme: newTheme });
   };
 
   // 处理模板选择
-  const handleSelectTemplate = (templateComponents: Component[]) => {
+  const handleSelectTemplate = useCallback((templateComponents: Component[]) => {
     try {
-      console.log("应用模板组件:", templateComponents);
+      const processedComponents = TemplateService.applyTemplate(templateComponents);
+      updateComponentsHistory(processedComponents);
 
-      // 为每个组件生成新的唯一ID，避免ID冲突
-      const processedComponents = templateComponents.map((component) => {
-        // 生成新ID
-        const newId = `${component.type}-${Date.now()}-${Math.floor(
-          Math.random() * 1000
-        )}`;
-
-        // 记录旧ID到新ID的映射，用于更新parentId和children引用
-        const idMapping = { [component.id]: newId };
-
-        return {
-          ...component,
-          id: newId,
-          // 暂时保留原始ID作为临时属性，后续处理完成后会删除
-          _originalId: component.id,
-        };
-      });
-
-      // 第二次遍历，更新所有组件的parentId和children引用
-      const finalComponents = processedComponents.map((component) => {
-        // 创建组件的副本
-        const updatedComponent = { ...component };
-
-        // 删除临时属性
-        delete updatedComponent._originalId;
-
-        // 更新parentId引用
-        if (component.parentId) {
-          // 查找对应的新parentId
-          const parentComponent = processedComponents.find(
-            (c) => c._originalId === component.parentId
-          );
-          updatedComponent.parentId = parentComponent
-            ? parentComponent.id
-            : null;
-        }
-
-        // 更新children引用
-        if (component.children && Array.isArray(component.children)) {
-          updatedComponent.children = component.children.map((childId) => {
-            const childComponent = processedComponents.find(
-              (c) => c._originalId === childId
-            );
-            return childComponent ? childComponent.id : childId;
-          });
-        }
-
-        return updatedComponent;
-      });
-
-      // 应用处理后的组件到画布
-      setComponentsHistory(addToHistory(componentsHistory, finalComponents));
-
-      // 显示成功提示
       toast({
         title: "模板应用成功",
-        description: `已添加 ${finalComponents.length} 个组件到画布`,
+        description: `已添加 ${processedComponents.length} 个组件到画布`,
       });
     } catch (error) {
       console.error("应用模板时出错:", error);
-      toast({
-        title: "应用模板失败",
-        description: "处理模板时发生错误，请查看控制台获取详细信息",
-        variant: "destructive",
-      });
+      
+      if (error instanceof TemplateApplicationError) {
+        toast({
+          title: "模板应用失败",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "应用模板失败",
+          description: "处理模板时发生未知错误",
+          variant: "destructive",
+        });
+      }
     }
-  };
+  }, [updateComponentsHistory]);
 
   const handleAddForm = (formComponents: Component[]) => {
-    setComponentsHistory(
-      addToHistory(componentsHistory, [...components, ...formComponents])
-    );
+    updateComponentsHistory([...components, ...formComponents]);
   };
 
   const handleApplyAnimation = (componentId: string, animation: any) => {
@@ -212,7 +149,7 @@ export default function LowCodePlatform() {
       return component;
     });
 
-    setComponentsHistory(addToHistory(componentsHistory, updatedComponents));
+    updateComponentsHistory(updatedComponents);
   };
 
   const handleGroupComponents = (componentIds: string[], groupName: string) => {
@@ -263,9 +200,7 @@ export default function LowCodePlatform() {
     );
 
     // 添加新的组容器
-    setComponentsHistory(
-      addToHistory(componentsHistory, [...remainingComponents, groupContainer])
-    );
+    updateComponentsHistory([...remainingComponents, groupContainer]);
   };
 
   // 处理组件树中的组件删除
@@ -291,10 +226,10 @@ export default function LowCodePlatform() {
     };
 
     const newComponents = deleteComponentAndChildren(id, components);
-    setComponentsHistory(addToHistory(componentsHistory, newComponents));
+    updateComponentsHistory(newComponents);
 
     if (selectedComponent?.id === id) {
-      setSelectedComponent(null);
+      updateState({ selectedComponent: null });
     }
   };
 
@@ -313,7 +248,7 @@ export default function LowCodePlatform() {
       return component;
     });
 
-    setComponentsHistory(addToHistory(componentsHistory, updatedComponents));
+    updateComponentsHistory(updatedComponents);
   };
 
   // 处理组件移动
@@ -360,7 +295,7 @@ export default function LowCodePlatform() {
         return comp;
       });
 
-      setComponentsHistory(addToHistory(componentsHistory, updatedComponents));
+      updateComponentsHistory(updatedComponents);
     } else {
       // 移动到目标容器中
       const updatedComponents = components.map((comp) => {
@@ -374,7 +309,7 @@ export default function LowCodePlatform() {
         return comp;
       });
 
-      setComponentsHistory(addToHistory(componentsHistory, updatedComponents));
+      updateComponentsHistory(updatedComponents);
     }
   };
 
@@ -435,7 +370,7 @@ export default function LowCodePlatform() {
           {!previewMode && (
             <Tabs
               value={activeTab}
-              onValueChange={setActiveTab}
+              onValueChange={(value) => updateState({ activeTab: value })}
               className="w-64 border-r flex flex-col"
             >
               <TabsList className="grid w-full grid-cols-3 shrink-0">
@@ -485,11 +420,7 @@ export default function LowCodePlatform() {
               viewportWidth={viewportWidth}
               activeDevice={activeDevice}
               components={components}
-              onUpdateComponents={(updatedComponents) =>
-                setComponentsHistory(
-                  addToHistory(componentsHistory, updatedComponents)
-                )
-              }
+              onUpdateComponents={updateComponentsHistory}
             />
           </div>
           {!previewMode && (

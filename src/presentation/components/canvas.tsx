@@ -1,10 +1,9 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 import { useState, useCallback } from "react";
 import { ScrollArea } from "@/presentation/components/ui/scroll-area";
 import { Button } from "@/presentation/components/ui/button";
-import { Separator } from "@/presentation/components/ui/separator";
 import { Trash2, Smartphone, Tablet } from "lucide-react";
 import type {
   ThemeConfig,
@@ -30,7 +29,7 @@ type CanvasProps = {
   dataSources?: DataSource[];
 };
 
-export function Canvas({
+export const Canvas = React.memo<CanvasProps>(({
   onSelectComponent,
   isPreviewMode = false,
   theme,
@@ -39,7 +38,7 @@ export function Canvas({
   components,
   onUpdateComponents,
   dataSources = [],
-}: CanvasProps) {
+}) => {
   const [showGrid, setShowGrid] = useState(false);
   const [snapToGrid, setSnapToGrid] = useState(false);
 
@@ -54,7 +53,6 @@ export function Canvas({
     handleMouseMove,
     handleMouseUp,
     handleKeyDown,
-    handleDeleteSelected,
     handleClear,
   } = useComponentInteraction({
     components,
@@ -228,4 +226,6 @@ export function Canvas({
       </ScrollArea>
     </div>
   );
-}
+});
+
+Canvas.displayName = 'Canvas';

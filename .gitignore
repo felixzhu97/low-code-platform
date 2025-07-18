@@ -35,3 +35,9 @@ next-env.d.ts
 # docs
 docs/*
 !docs/architecture
+
+#  kiro
+.kiro
+
+# IDE
+.vscode

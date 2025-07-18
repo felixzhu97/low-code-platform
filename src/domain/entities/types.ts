@@ -73,3 +73,17 @@ export interface TableColumn {
   filterable?: boolean
   render?: string
 }
+
+// Event handler types for better type safety
+export type ComponentEventHandler = (component: Component | null) => void;
+export type ComponentUpdateHandler = (id: string, properties: any) => void;
+export type ComponentsUpdateHandler = (components: Component[]) => void;
+export type TemplateSelectHandler = (templateComponents: Component[]) => void;
+
+// Error types
+export class TemplateApplicationError extends Error {
+  constructor(message: string, public readonly templateComponents: Component[]) {
+    super(message);
+    this.name = 'TemplateApplicationError';
+  }
+}
