@@ -1,227 +1,202 @@
-# 低代码平台 (Low-Code Platform)
+# Felix 低代码平台
 
-一个基于 Next.js 和 React 构建的可视化低代码开发平台，支持拖拽式页面构建、组件管理、主题定制和代码导出等功能。
+一个基于 Next.js 和 React 的现代化低代码开发平台，采用 MVVM 架构设计，提供可视化组件拖拽、实时预览、代码生成等功能。
 
-## ✨ 功能特性
+## ✨ 特性
 
-### 🎨 可视化编辑
-
-- **拖拽式画布**: 直观的拖拽操作，快速构建页面布局
-- **实时预览**: 即时查看设计效果，支持响应式预览
-- **组件树视图**: 层级化管理页面组件结构
-- **属性面板**: 丰富的属性配置选项
-
-### 🧩 组件系统
-
-- **内置组件库**: 包含按钮、表单、图表等常用组件
-- **自定义组件**: 支持创建和管理自定义组件
-- **组件分组**: 灵活的组件分类和组织管理
-- **组件导入导出**: 跨项目共享组件资源
-
-### 📊 数据与图表
-
-- **数据面板**: 统一管理数据源和数据绑定
-- **图表组件**: 支持柱状图、折线图、饼图等多种图表类型
-- **表单构建器**: 快速创建表单和数据收集页面
-
-### 🎭 主题与动画
-
-- **主题编辑器**: 可视化定制界面主题和样式
-- **动画编辑器**: 为组件添加动画效果
-- **响应式设计**: 适配不同屏幕尺寸
-
-### 🚀 协作与导出
-
-- **实时协作**: 多人协同编辑功能
-- **代码导出**: 导出为可部署的前端代码
-- **模板库**: 预置页面模板，快速开始项目
-
-## 🛠 技术栈
-
-- **框架**: Next.js 15.2.4 + React 19
-- **语言**: TypeScript
-- **架构**: MVVM (Model-View-ViewModel) 🆕
-- **样式**: Tailwind CSS + CSS 变量主题系统
-- **UI 组件库**: Radix UI
-- **拖拽**: React DnD
-- **图表**: Recharts
-- **表单**: React Hook Form + Zod 验证
-- **状态管理**: MVVM ViewModel + 观察者模式
-- **测试**: Vitest + Testing Library
-- **构建工具**: Next.js 构建系统
-
-## 📦 项目结构
-
-```
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── page.tsx           # 主页面入口（使用MVVM架构）
-│   │   ├── layout.tsx         # 根布局
-│   │   └── globals.css        # 全局样式
-│   ├── mvvm/                  # MVVM架构核心 🆕
-│   │   ├── models/            # 数据模型层
-│   │   │   ├── ComponentModel.ts    # 组件数据模型
-│   │   │   └── PlatformModel.ts     # 平台数据模型
-│   │   ├── viewmodels/        # 视图模型层
-│   │   │   ├── ComponentViewModel.ts    # 组件业务逻辑
-│   │   │   ├── PlatformViewModel.ts     # 平台业务逻辑
-│   │   │   └── HistoryViewModel.ts      # 历史记录管理
-│   │   ├── hooks/             # React Hooks
-│   │   │   ├── usePlatformViewModel.ts  # 平台ViewModel Hook
-│   │   │   └── useComponentViewModel.ts # 组件ViewModel Hook
-│   │   ├── adapters/          # 适配器层
-│   │   │   └── LegacyAdapter.ts         # 兼容现有代码
-│   │   ├── views/             # 视图层
-│   │   │   └── LowCodePlatformView.tsx  # 主视图组件
-│   │   └── index.ts           # 导出文件
-│   ├── presentation/          # 表现层组件
-│   │   ├── components/        # UI组件
-│   │   │   ├── ui/           # 基础UI组件库
-│   │   │   ├── canvas.tsx    # 主画布组件
-│   │   │   ├── component-panel.tsx    # 组件面板
-│   │   │   ├── properties-panel.tsx   # 属性配置面板
-│   │   │   └── ...           # 其他功能组件
-│   │   └── hooks/            # 表现层Hooks
-│   ├── domain/               # 领域层
-│   │   ├── entities/         # 实体定义
-│   │   └── services/         # 领域服务
-│   ├── application/          # 应用层
-│   │   └── services/         # 应用服务
-│   └── models/               # 数据模型（兼容层）
-├── test/                     # 测试文件
-│   └── mvvm/                 # MVVM架构测试
-├── docs/                     # 文档
-│   └── mvvm-migration-guide.md    # MVVM迁移指南
-└── public/                   # 静态资源
-```
+- 🎨 **可视化设计器** - 拖拽式组件编辑，所见即所得
+- 📱 **响应式设计** - 支持桌面、平板、移动端多设备预览
+- 🎯 **MVVM 架构** - 清晰的架构分层，易于维护和扩展
+- 🧩 **丰富组件库** - 基于 Radix UI 的高质量组件
+- 🎨 **主题定制** - 支持自定义主题和样式
+- 📊 **数据绑定** - 支持静态数据、API 和数据库连接
+- 🔄 **实时协作** - 多人协同编辑功能
+- 📝 **代码导出** - 生成可部署的 React 代码
+- 🎭 **动画编辑器** - 可视化动画配置
+- 📋 **表单构建器** - 快速创建复杂表单
+- 🏗️ **模板库** - 预置页面模板，快速开始
 
 ## 🚀 快速开始
 
 ### 环境要求
 
-- Node.js >= 18.0.0
-- npm/yarn/pnpm
+- Node.js 18+ 
+- pnpm (推荐) 或 npm/yarn
 
 ### 安装依赖
 
 ```bash
-# 使用 npm
+# 使用 pnpm (推荐)
+pnpm install
+
+# 或使用 npm
 npm install
 
 # 或使用 yarn
 yarn install
-
-# 或使用 pnpm
-pnpm install
 ```
 
 ### 启动开发服务器
 
 ```bash
-# 使用 pnpm
-npm run dev
-
-# 或使用 yarn
-yarn dev
-
-# 或使用 pnpm
+# 开发模式
 pnpm dev
+
+# 或
+npm run dev
 ```
+
+访问 [http://localhost:3000](http://localhost:3000) 查看应用。
 
 ### 构建生产版本
 
 ```bash
 # 构建
-npm run build
+pnpm build
 
 # 启动生产服务器
-npm run start
+pnpm start
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+## 🏗️ 项目架构
 
-## 🎯 使用指南
+本项目采用 MVVM (Model-View-ViewModel) 架构模式：
 
-### 1. 基础操作
+```
+src/
+├── app/                    # Next.js App Router
+├── mvvm/                   # MVVM 架构核心
+│   ├── models/            # 数据模型层
+│   ├── viewmodels/        # 视图模型层
+│   ├── views/             # 视图层
+│   ├── hooks/             # React Hooks
+│   └── adapters/          # 适配器层
+```
 
-1. **添加组件**: 从左侧组件面板拖拽组件到画布
-2. **选择组件**: 点击画布中的组件进行选择
-3. **配置属性**: 在右侧属性面板修改组件属性
-4. **预览效果**: 点击预览按钮查看最终效果
+### 核心模块
 
-### 2. 高级功能
+- **Models**: 定义数据结构和业务逻辑
+- **ViewModels**: 处理视图状态和用户交互
+- **Views**: React 组件，负责 UI 渲染
+- **Hooks**: 封装状态管理和副作用
+- **Adapters**: 处理数据格式转换和兼容性
 
-- **使用模板**: 从模板库选择预制模板快速开始
-- **自定义主题**: 通过主题编辑器定制界面风格
-- **添加动画**: 使用动画编辑器为组件添加动效
-- **数据绑定**: 在数据面板管理数据源和绑定关系
-- **导出代码**: 将设计转换为可部署的前端代码
+## 🧪 测试
 
-### 3. 协作开发
+```bash
+# 运行测试
+pnpm test
 
-- 支持多人实时协作编辑
-- 版本历史记录和回滚功能
-- 组件库共享和管理
+# 运行测试 UI
+pnpm test:ui
 
-## 🔧 开发
+# 生成覆盖率报告
+pnpm test:coverage
+```
 
-### 添加新组件
+## 📚 技术栈
 
-1. 在 `components/ui/` 目录下创建新组件
-2. 在 `components/component-panel.tsx` 中注册组件
-3. 在 `lib/types.ts` 中定义相关类型
+### 核心框架
+- **Next.js 15** - React 全栈框架
+- **React 19** - 用户界面库
+- **TypeScript** - 类型安全的 JavaScript
 
-### 自定义主题
+### UI 组件
+- **Radix UI** - 无样式的可访问组件
+- **Tailwind CSS** - 实用优先的 CSS 框架
+- **Lucide React** - 图标库
 
-主题配置在 `lib/types.ts` 的 `ThemeConfig` 接口中定义，可以通过主题编辑器进行可视化配置。
+### 状态管理
+- **React Hook Form** - 表单状态管理
+- **Zod** - 模式验证
 
-### 扩展功能
+### 拖拽功能
+- **React DnD** - 拖拽功能实现
 
-- **数据源**: 在 `components/data-panel.tsx` 中添加新的数据连接方式
-- **图表类型**: 在 `components/charts/` 目录下添加新的图表组件
-- **导出格式**: 在 `components/code-export.tsx` 中添加新的导出格式
+### 图表组件
+- **Recharts** - React 图表库
 
-## 🎯 架构特性
+### 开发工具
+- **Vitest** - 单元测试框架
+- **Testing Library** - 测试工具
 
-### MVVM架构优势
-- ✅ **分离关注点**: UI逻辑与业务逻辑完全分离
-- ✅ **可测试性**: ViewModel可独立测试，不依赖React组件
-- ✅ **可维护性**: 清晰的代码结构，易于维护和扩展
-- ✅ **类型安全**: 完整的TypeScript类型定义
-- ✅ **状态管理**: 集中式状态管理，支持撤销/重做
-- ✅ **向后兼容**: 通过适配器确保现有组件正常工作
+## 🎯 核心功能
 
-### 核心组件
-- **Model**: 定义数据结构和业务实体
-- **ViewModel**: 处理业务逻辑和状态管理
-- **View**: 纯UI组件，通过Hooks连接ViewModel
-- **Adapter**: 兼容现有代码的适配层
+### 1. 组件管理
+- 拖拽添加组件到画布
+- 组件属性实时编辑
+- 组件层级管理
+- 组件分组功能
 
-## 📝 待办事项
+### 2. 可视化编辑
+- 所见即所得的编辑体验
+- 实时预览功能
+- 多设备响应式预览
+- 撤销/重做操作
 
-- [x] ✅ MVVM架构迁移
-- [x] ✅ 完整的测试覆盖
-- [x] ✅ 类型安全保障
-- [ ] 增加更多图表类型支持
-- [ ] 实现数据库连接功能
-- [ ] 添加移动端组件库
-- [ ] 支持自定义 CSS 样式编辑
-- [ ] 实现项目管理和版本控制
-- [ ] 添加更多页面模板
-- [ ] 性能监控和优化
-- [ ] 插件系统架构
+### 3. 数据绑定
+- 静态数据配置
+- API 数据源连接
+- 数据字段映射
+- 动态数据渲染
 
-## 🤝 贡献
+### 4. 主题定制
+- 颜色主题配置
+- 字体样式设置
+- 间距和圆角调整
+- 实时主题预览
 
-欢迎提交 Issue 和 Pull Request 来改进项目。
+### 5. 代码生成
+- 导出 React 组件代码
+- 生成完整项目结构
+- 支持多种导出格式
+
+## 📖 使用指南
+
+### 创建第一个页面
+
+1. **选择模板**: 从模板库中选择合适的页面模板
+2. **添加组件**: 从组件面板拖拽组件到画布
+3. **配置属性**: 在属性面板中调整组件样式和行为
+4. **绑定数据**: 在数据面板中配置数据源
+5. **预览测试**: 使用预览模式查看效果
+6. **导出代码**: 生成可部署的代码
+
+### 自定义组件
+
+1. 在组件库管理器中创建新组件
+2. 定义组件属性和默认值
+3. 配置组件样式和行为
+4. 保存到自定义组件库
+
+## 🤝 贡献指南
+
+我们欢迎所有形式的贡献！
+
+### 开发流程
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
+
+### 代码规范
+
+- 使用 TypeScript 进行类型检查
+- 遵循 ESLint 配置的代码规范
+- 编写单元测试覆盖新功能
+- 保持代码注释的完整性
 
 ## 📄 许可证
 
-[MIT License](LICENSE)
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 🔗 相关链接
 
-- [Next.js 文档](https://nextjs.org/docs)
-- [React 文档](https://react.dev)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Radix UI](https://www.radix-ui.com)
+- [在线演示](https://felix-lowcode-platform.vercel.app)
+- [文档中心](./docs)
+- [问题反馈](https://github.com/your-username/felix-lowcode-platform/issues)
+- [更新日志](./CHANGELOG.md)
+
+⭐ 如果这个项目对你有帮助，请给我们一个 Star！
