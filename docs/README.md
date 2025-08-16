@@ -4,13 +4,35 @@
 
 ## 📚 文档目录
 
-### 核心文档
+### 🚀 快速开始
+- **[快速开始指南](./project/getting-started.md)** - 从安装到创建第一个应用的完整指南
+- **[用户使用手册](./project/user-guide.md)** - 详细的功能使用说明和操作指南
+- **[常见问题解答](./project/faq.md)** - 常见问题的解决方案和故障排除
 
-- **[系统架构](./architecture.md)** - 详细介绍平台的 MVVM 架构设计、模块划分和数据流
-- **[组件系统](./component-system.md)** - 组件架构、注册机制、属性系统和自定义组件开发
-- **[数据流设计](./data-flow.md)** - 数据流架构、状态管理、数据绑定和事件系统
-- **[API 参考](./api-reference.md)** - 完整的 API 接口文档和使用示例
-- **[部署指南](./deployment.md)** - 开发、测试和生产环境的部署方案
+### 🏗️ 系统架构
+- **[系统架构文档](./architecture/architecture.md)** - 详细介绍平台的 MVVM 架构设计、模块划分和数据流
+- **[系统设计文档](./architecture/system-design.md)** - UML 图表、类图、时序图等系统设计详情
+
+### 🧩 组件系统
+- **[组件系统文档](./deployment/component-system.md)** - 组件架构、注册机制、属性系统和自定义组件开发
+
+### 📊 数据管理
+- **[数据流设计](./workflows/data-flow.md)** - 数据流架构、状态管理、数据绑定和事件系统
+
+### 🚀 部署运维
+- **[部署指南](./deployment/deployment.md)** - 开发、测试和生产环境的部署方案
+
+### 👨‍💻 开发指南
+- **[API 参考文档](./develop/api-reference.md)** - 完整的 API 接口文档和使用示例
+- **[贡献指南](./develop/contributing.md)** - 如何参与项目开发和贡献代码
+- **[测试指南](./develop/testing-guide.md)** - 测试策略、编写规范和最佳实践
+
+### 🔄 工作流程
+- **[开发工作流程](./workflows/development-workflow.md)** - 完整的开发流程和团队协作规范
+
+### 📋 项目信息
+- **[更新日志](./CHANGELOG.md)** - 版本更新记录和功能变更
+- **[升级指南](./UPGRADE.md)** - 版本升级指导和迁移说明
 
 ## 🏗️ 系统架构概览
 
