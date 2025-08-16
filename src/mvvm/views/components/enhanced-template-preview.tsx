@@ -1,13 +1,13 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Tabs, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
-import { ScrollArea } from "@/presentation/components/ui/scroll-area"
-import { PreviewCanvas } from "@/presentation/components/preview-canvas"
-import { Button } from "@/presentation/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/mvvm/views/components/ui/tabs"
+import { ScrollArea } from "@/mvvm/views/components/ui/scroll-area"
+import { PreviewCanvas } from "@/mvvm/views/components/preview-canvas"
+import { Button } from "@/mvvm/views/components/ui/button"
 import { Smartphone, Tablet, Monitor, Code, Layout, FileJson } from "lucide-react"
-import type {Component, ThemeConfig} from "@/domain/entities/types"
-import { VirtualList } from "@/presentation/components/virtual-list"
+import type {Component, ThemeConfig} from "@/mvvm/models/types"
+import { VirtualList } from "@/mvvm/views/components/virtual-list"
 
 interface EnhancedTemplatePreviewProps {
   templateId: string

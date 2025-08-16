@@ -1,17 +1,17 @@
 import React from 'react';
-import { Button } from '@/presentation/components/ui/button';
+import { Button } from '@/mvvm/views/components/ui/button';
 import { Eye, Undo2, Redo2 } from 'lucide-react';
-import { Header } from '@/presentation/components/header';
-import { ResponsiveControls } from '@/presentation/components/responsive-controls';
-import { TemplateGallery } from '@/presentation/components/template-gallery';
-import { FormBuilder } from '@/presentation/components/form-builder';
-import { ComponentGrouping } from '@/presentation/components/component-grouping';
-import { AnimationEditor } from '@/presentation/components/animation-editor';
-import { ThemeEditor } from '@/presentation/components/theme-editor';
-import { Collaboration } from '@/presentation/components/collaboration';
-import { ComponentLibraryManager } from '@/presentation/components/component-library-manager';
-import { CodeExport } from '@/presentation/components/code-export';
-import type { Component, ThemeConfig, TemplateSelectHandler } from '@/domain/entities/types';
+import { Header } from '@/mvvm/views/components/header';
+import { ResponsiveControls } from '@/mvvm/views/components/responsive-controls';
+import { TemplateGallery } from '@/mvvm/views/components/template-gallery';
+import { FormBuilder } from '@/mvvm/views/components/form-builder';
+import { ComponentGrouping } from '@/mvvm/views/components/component-grouping';
+import { AnimationEditor } from '@/mvvm/views/components/animation-editor';
+import { ThemeEditor } from '@/mvvm/views/components/theme-editor';
+import { Collaboration } from '@/mvvm/views/components/collaboration';
+import { ComponentLibraryManager } from '@/mvvm/views/components/component-library-manager';
+import { CodeExport } from '@/mvvm/views/components/code-export';
+import type { Component, ThemeConfig, TemplateSelectHandler } from '@/mvvm/models/types';
 
 interface PlatformHeaderProps {
   canUndo: boolean;

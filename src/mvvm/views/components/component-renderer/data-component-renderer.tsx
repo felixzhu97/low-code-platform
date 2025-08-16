@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Component, TableColumn } from "@/domain/entities/types";
+import type { Component, TableColumn } from "@/mvvm/models/types";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/presentation/components/ui/card";
+} from "@/mvvm/views/components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,16 +15,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/presentation/components/ui/table";
-import { Button } from "@/presentation/components/ui/button";
-import { Badge } from "@/presentation/components/ui/badge";
+} from "@/mvvm/views/components/ui/table";
+import { Button } from "@/mvvm/views/components/ui/button";
+import { Badge } from "@/mvvm/views/components/ui/badge";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/presentation/components/ui/avatar";
+} from "@/mvvm/views/components/ui/avatar";
 import { ArrowUpDown, Filter } from "lucide-react";
-import { cn } from "@/application/services/utils";
+import { cn } from "@/mvvm/viewmodels/utils";
 
 interface DataComponentRendererProps {
   component: Component;

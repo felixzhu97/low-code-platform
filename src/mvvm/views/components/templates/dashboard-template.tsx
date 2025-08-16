@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
-import { BarChart, LineChart, PieChart, AreaChart, GaugeChart, RadarChart } from "@/presentation/components/charts"
+import { Card, CardContent, CardHeader, CardTitle } from "@/mvvm/views/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/mvvm/views/components/ui/select"
+import { BarChart, LineChart, PieChart, AreaChart, GaugeChart, RadarChart } from "@/mvvm/views/components/charts"
 import { ArrowUpRight, ArrowDownRight, Users, CreditCard, Activity, DollarSign } from "lucide-react"
 
 // 模拟数据

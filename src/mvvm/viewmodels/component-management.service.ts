@@ -1,5 +1,5 @@
-import type { Component, DataSource } from "@/domain/entities/types";
-import { ComponentFactoryService } from "@/domain/services/component-factory.service";
+import type { Component, DataSource } from "@/mvvm/models/types";
+import { ComponentFactoryService } from "@/mvvm/viewmodels/component-factory.service";
 
 /**
  * 组件管理应用层服务

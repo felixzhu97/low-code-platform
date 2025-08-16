@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useRef } from "react"
-import type {Component, ThemeConfig} from "@/domain/entities/types"
+import type {Component, ThemeConfig} from "@/mvvm/models/types"
 
 interface PreviewCanvasProps {
   components: Component[]

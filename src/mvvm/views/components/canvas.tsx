@@ -2,21 +2,21 @@
 
 import React from "react";
 import { useState, useCallback } from "react";
-import { ScrollArea } from "@/presentation/components/ui/scroll-area";
-import { Button } from "@/presentation/components/ui/button";
+import { ScrollArea } from "@/mvvm/views/components/ui/scroll-area";
+import { Button } from "@/mvvm/views/components/ui/button";
 import { Trash2, Smartphone, Tablet } from "lucide-react";
 import type {
   ThemeConfig,
   DataSource,
   Component,
-} from "@/domain/entities/types";
-import { cn } from "@/application/services/utils";
-import { Switch } from "@/presentation/components/ui/switch";
-import { Label } from "@/presentation/components/ui/label";
-import { ComponentManagementService } from "@/application/services/component-management.service";
-import { useCanvasDrag } from "@/presentation/hooks/use-canvas-drag";
-import { useComponentInteraction } from "@/presentation/hooks/use-component-interaction";
-import { ComponentRenderer } from "@/presentation/components/component-renderer";
+} from "@/mvvm/models/types";
+import { cn } from "@/mvvm/viewmodels/utils";
+import { Switch } from "@/mvvm/views/components/ui/switch";
+import { Label } from "@/mvvm/views/components/ui/label";
+import { ComponentManagementService } from "@/mvvm/viewmodels/component-management.service";
+import { useCanvasDrag } from "@/mvvm/hooks/use-canvas-drag";
+import { useComponentInteraction } from "@/mvvm/hooks/use-component-interaction";
+import { ComponentRenderer } from "@/mvvm/views/components/component-renderer";
 
 type CanvasProps = {
   onSelectComponent: (component: Component | null) => void;

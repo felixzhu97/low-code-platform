@@ -9,16 +9,16 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/presentation/components/ui/dialog"
-import { Button } from "@/presentation/components/ui/button"
-import { Input } from "@/presentation/components/ui/input"
-import { Label } from "@/presentation/components/ui/label"
-import { ScrollArea } from "@/presentation/components/ui/scroll-area"
+} from "@/mvvm/views/components/ui/dialog"
+import { Button } from "@/mvvm/views/components/ui/button"
+import { Input } from "@/mvvm/views/components/ui/input"
+import { Label } from "@/mvvm/views/components/ui/label"
+import { ScrollArea } from "@/mvvm/views/components/ui/scroll-area"
 import { Layers, Group } from "lucide-react"
-import { Checkbox } from "@/presentation/components/ui/checkbox"
+import { Checkbox } from "@/mvvm/views/components/ui/checkbox"
 
 
-import {Component} from "@/domain/entities/types";
+import {Component} from "@/mvvm/models/types";
 
 interface ComponentGroupingProps {
   components: Component[]

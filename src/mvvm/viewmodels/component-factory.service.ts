@@ -1,4 +1,4 @@
-import type { Component, ThemeConfig } from "../entities/types";
+import type { Component, ThemeConfig } from "../models/types";
 
 /**
  * 组件工厂领域服务

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
-import type { Component } from "@/domain/entities/types";
-import { ComponentManagementService } from "@/application/services/component-management.service";
+import type { Component } from "@/mvvm/models/types";
+import { ComponentManagementService } from "@/mvvm/viewmodels/component-management.service";
 
 interface UseCanvasDragProps {
   components: Component[];

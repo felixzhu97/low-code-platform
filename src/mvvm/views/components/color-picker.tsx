@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/presentation/components/ui/popover"
-import { Button } from "@/presentation/components/ui/button"
-import { Input } from "@/presentation/components/ui/input"
-import { Label } from "@/presentation/components/ui/label"
-import { cn } from "@/application/services/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/mvvm/views/components/ui/popover"
+import { Button } from "@/mvvm/views/components/ui/button"
+import { Input } from "@/mvvm/views/components/ui/input"
+import { Label } from "@/mvvm/views/components/ui/label"
+import { cn } from "@/mvvm/viewmodels/utils"
 
 interface ColorPickerProps {
   color: string

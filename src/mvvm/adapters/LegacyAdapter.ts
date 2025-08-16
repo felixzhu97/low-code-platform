@@ -5,7 +5,7 @@
 
 import { ComponentModel } from '../models/ComponentModel';
 import { PlatformModel, ThemeModel } from '../models/PlatformModel';
-import { Component, ThemeConfig } from '@/domain/entities/types';
+import { Component, ThemeConfig } from '@/mvvm/models/types';
 
 export class LegacyAdapter {
   // 将ComponentModel转换为Legacy Component
@@ -85,10 +85,10 @@ export class LegacyAdapter {
   // 创建兼容的平台状态
   static createLegacyPlatformState(platformModel: PlatformModel) {
     return {
-      selectedComponent: platformModel.selectedComponentId 
+      selectedComponent: platformModel.selectedComponentId
         ? this.componentModelToLegacy(
             platformModel.components.find(c => c.id === platformModel.selectedComponentId)!
-          ) 
+          )
         : null,
       activeTab: platformModel.activeTab,
       componentsHistory: this.createLegacyHistoryState(platformModel.components),
