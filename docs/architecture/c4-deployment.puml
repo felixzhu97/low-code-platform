@@ -1,0 +1,90 @@
+@startuml
+!include ./c4-plantuml/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Felix 低代码平台 - 部署架构图
+
+Deployment_Node(client, "客户端环境", "用户设备") {
+    Deployment_Node(browser, "Web浏览器", "Chrome/Safari/Firefox") {
+        Container(webapp, "Web应用", "Next.js PWA", "单页应用")
+    }
+    Deployment_Node(mobile, "移动设备", "iOS/Android") {
+        Container(mobile_app, "移动应用", "响应式Web", "移动端适配")
+    }
+}
+
+Deployment_Node(edge, "边缘网络", "全球CDN节点") {
+    Container(cdn, "CDN缓存", "CloudFlare/AWS CloudFront", "静态资源分发")
+    Container(edge_cache, "边缘缓存", "Edge Computing", "动态内容缓存")
+}
+
+Deployment_Node(cloud, "云计算平台", "AWS/Azure/阿里云") {
+    Deployment_Node(k8s, "Kubernetes集群", "容器编排") {
+        Deployment_Node(web_pods, "Web服务Pod", "多副本部署") {
+            Container(nextjs_app, "Next.js应用", "Node.js Runtime", "Web服务器")
+            Container(api_service, "API服务", "Next.js API", "后端服务")
+        }
+        
+        Deployment_Node(realtime_pods, "实时服务Pod", "WebSocket服务") {
+            Container(collaboration, "协作服务", "Socket.io/WebSocket", "实时通信")
+        }
+    }
+    
+    Deployment_Node(data_tier, "数据层", "托管数据库服务") {
+        ContainerDb(postgres, "主数据库", "PostgreSQL", "业务数据存储")
+        ContainerDb(redis, "缓存数据库", "Redis Cluster", "会话和缓存")
+    }
+    
+    Deployment_Node(storage_tier, "存储层", "对象存储服务") {
+        Container(object_storage, "对象存储", "S3/OSS", "文件和静态资源")
+        Container(backup_storage, "备份存储", "冷存储", "数据备份")
+    }
+    
+    Deployment_Node(monitoring, "监控层", "可观测性平台") {
+        Container(prometheus, "指标监控", "Prometheus", "性能指标收集")
+        Container(grafana, "监控面板", "Grafana", "数据可视化")
+        Container(logging, "日志系统", "ELK Stack", "日志聚合分析")
+    }
+}
+
+Deployment_Node(external, "外部服务", "第三方集成") {
+    Container(auth_provider, "认证服务", "Auth0/Okta", "身份认证")
+    Container(git_service, "代码托管", "GitHub/GitLab", "版本控制")
+    Container(email_service, "邮件服务", "SendGrid/SES", "邮件通知")
+    Container(analytics, "分析服务", "Google Analytics", "用户行为分析")
+}
+
+' 网络连接关系
+Rel(browser, cdn, "HTTPS请求", "静态资源")
+Rel(browser, edge_cache, "HTTPS请求", "动态内容")
+Rel(mobile_app, cdn, "HTTPS请求", "移动端资源")
+
+Rel(cdn, object_storage, "回源请求", "资源获取")
+Rel(edge_cache, nextjs_app, "API代理", "负载均衡")
+
+Rel(nextjs_app, api_service, "内部调用", "微服务通信")
+Rel(nextjs_app, collaboration, "WebSocket", "实时连接")
+
+Rel(api_service, postgres, "数据库连接", "TCP/SSL")
+Rel(api_service, redis, "缓存连接", "Redis协议")
+Rel(api_service, object_storage, "文件操作", "S3 API")
+
+Rel(collaboration, redis, "状态同步", "发布订阅")
+
+' 外部服务集成
+Rel(api_service, auth_provider, "认证集成", "OAuth/SAML")
+Rel(api_service, git_service, "代码推送", "Git API")
+Rel(api_service, email_service, "邮件发送", "SMTP/API")
+Rel(webapp, analytics, "数据上报", "JavaScript SDK")
+
+' 监控关系
+Rel(nextjs_app, prometheus, "指标暴露", "HTTP Metrics")
+Rel(api_service, logging, "日志发送", "Log Agent")
+Rel(prometheus, grafana, "数据查询", "PromQL")
+
+' 备份关系
+Rel(postgres, backup_storage, "数据备份", "定时备份")
+Rel(object_storage, backup_storage, "文件备份", "跨区域复制")
+
+@enduml
