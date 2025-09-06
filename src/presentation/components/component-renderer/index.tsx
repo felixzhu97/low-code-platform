@@ -98,9 +98,18 @@ export function ComponentRenderer({
 
     // 表单组件
     if (
-      ["input", "textarea", "select", "checkbox", "radio"].includes(
-        component.type
-      )
+      [
+        "input",
+        "textarea",
+        "select",
+        "checkbox",
+        "radio",
+        "switch",
+        "slider",
+        "date-picker",
+        "time-picker",
+        "file-upload",
+      ].includes(component.type)
     ) {
       return (
         <FormComponentRenderer

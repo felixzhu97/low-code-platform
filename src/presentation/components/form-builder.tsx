@@ -51,7 +51,12 @@ type FormField = {
     | "textarea"
     | "select"
     | "checkbox"
-    | "radio";
+    | "radio"
+    | "switch"
+    | "slider"
+    | "date-picker"
+    | "time-picker"
+    | "file-upload";
   label: string;
   placeholder?: string;
   required?: boolean;
@@ -63,6 +68,14 @@ type FormField = {
     min?: number;
     max?: number;
   };
+  // 新增属性
+  checked?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  multiple?: boolean;
+  accept?: string;
+  maxSize?: string;
 };
 
 export function FormBuilder({ onAddForm }: FormBuilderProps) {
@@ -147,22 +160,6 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
     // 为每个字段创建组件
     let yPosition = 60;
     fields.forEach((field) => {
-      // 创建标签
-      const labelComponent: Component = {
-        id: `label-${field.id}`,
-        type: "text",
-        name: "字段标签",
-        position: { x: 0, y: yPosition },
-        properties: {
-          content: `${field.label}${field.required ? " *" : ""}`,
-          fontSize: 14,
-          fontWeight: "medium",
-          color: "#000000",
-          margin: "0 0 8px 0",
-        },
-        parentId: formContainer.id,
-      };
-
       // 创建输入组件
       let inputComponent: Component;
       const yInputPosition = yPosition + 30;
@@ -219,18 +216,25 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
           };
           break;
         case "checkbox":
+          // 复选框组件不需要单独的标签，因为标签已经包含在组件内部
           inputComponent = {
             id: `checkbox-${field.id}`,
             type: "checkbox",
             name: "复选框",
-            position: { x: 0, y: yInputPosition },
+            position: { x: 0, y: yPosition },
             properties: {
               label: field.label,
               required: field.required || false,
             },
             parentId: formContainer.id,
           };
-          break;
+          if (formContainer.children) {
+            formContainer.children.push(inputComponent);
+          } else {
+            formContainer.children = [inputComponent];
+          }
+          yPosition += 50;
+          return; // 跳过下面的标签和输入组件添加逻辑
         case "radio":
           inputComponent = {
             id: `radio-${field.id}`,
@@ -239,6 +243,84 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
             position: { x: 0, y: yInputPosition },
             properties: {
               options: field.options || [],
+              required: field.required || false,
+            },
+            parentId: formContainer.id,
+          };
+          break;
+        case "switch":
+          // 开关组件不需要单独的标签，因为标签已经包含在组件内部
+          inputComponent = {
+            id: `switch-${field.id}`,
+            type: "switch",
+            name: "开关",
+            position: { x: 0, y: yPosition },
+            properties: {
+              label: field.label,
+              checked: field.checked || false,
+              required: field.required || false,
+            },
+            parentId: formContainer.id,
+          };
+          if (formContainer.children) {
+            formContainer.children.push(inputComponent);
+          } else {
+            formContainer.children = [inputComponent];
+          }
+          yPosition += 50;
+          return; // 跳过下面的标签和输入组件添加逻辑
+        case "slider":
+          inputComponent = {
+            id: `slider-${field.id}`,
+            type: "slider",
+            name: "滑块",
+            position: { x: 0, y: yInputPosition },
+            properties: {
+              min: field.min || 0,
+              max: field.max || 100,
+              step: field.step || 1,
+              defaultValue: [50],
+              required: field.required || false,
+            },
+            parentId: formContainer.id,
+          };
+          break;
+        case "date-picker":
+          inputComponent = {
+            id: `date-picker-${field.id}`,
+            type: "date-picker",
+            name: "日期选择器",
+            position: { x: 0, y: yInputPosition },
+            properties: {
+              placeholder: field.placeholder || "选择日期",
+              required: field.required || false,
+            },
+            parentId: formContainer.id,
+          };
+          break;
+        case "time-picker":
+          inputComponent = {
+            id: `time-picker-${field.id}`,
+            type: "time-picker",
+            name: "时间选择器",
+            position: { x: 0, y: yInputPosition },
+            properties: {
+              placeholder: field.placeholder || "选择时间",
+              required: field.required || false,
+            },
+            parentId: formContainer.id,
+          };
+          break;
+        case "file-upload":
+          inputComponent = {
+            id: `file-upload-${field.id}`,
+            type: "file-upload",
+            name: "文件上传",
+            position: { x: 0, y: yInputPosition },
+            properties: {
+              multiple: field.multiple || false,
+              accept: field.accept || "*",
+              maxSize: field.maxSize || "",
               required: field.required || false,
             },
             parentId: formContainer.id,
@@ -258,6 +340,22 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
             parentId: formContainer.id,
           };
       }
+
+      // 创建标签（除了checkbox和switch，它们已经包含标签）
+      const labelComponent: Component = {
+        id: `label-${field.id}`,
+        type: "text",
+        name: "字段标签",
+        position: { x: 0, y: yPosition },
+        properties: {
+          content: `${field.label}${field.required ? " *" : ""}`,
+          fontSize: 14,
+          fontWeight: "medium",
+          color: "#000000",
+          margin: "0 0 8px 0",
+        },
+        parentId: formContainer.id,
+      };
 
       if (formContainer.children) {
         formContainer.children.push(labelComponent, inputComponent);
@@ -414,6 +512,17 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                 <SelectItem value="select">下拉选择</SelectItem>
                                 <SelectItem value="checkbox">复选框</SelectItem>
                                 <SelectItem value="radio">单选框</SelectItem>
+                                <SelectItem value="switch">开关</SelectItem>
+                                <SelectItem value="slider">滑块</SelectItem>
+                                <SelectItem value="date-picker">
+                                  日期选择器
+                                </SelectItem>
+                                <SelectItem value="time-picker">
+                                  时间选择器
+                                </SelectItem>
+                                <SelectItem value="file-upload">
+                                  文件上传
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -457,6 +566,115 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                   })
                                 }
                               />
+                            </div>
+                          )}
+
+                          {field.type === "switch" && (
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                id="field-checked"
+                                checked={field.checked || false}
+                                onCheckedChange={(checked) =>
+                                  updateField(field.id, { checked: !!checked })
+                                }
+                              />
+                              <Label htmlFor="field-checked">默认开启</Label>
+                            </div>
+                          )}
+
+                          {field.type === "slider" && (
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="grid gap-2">
+                                <Label htmlFor="field-min">最小值</Label>
+                                <Input
+                                  id="field-min"
+                                  type="number"
+                                  value={field.min || 0}
+                                  onChange={(e) =>
+                                    updateField(field.id, {
+                                      min: Number.parseInt(e.target.value) || 0,
+                                    })
+                                  }
+                                />
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="field-max">最大值</Label>
+                                <Input
+                                  id="field-max"
+                                  type="number"
+                                  value={field.max || 100}
+                                  onChange={(e) =>
+                                    updateField(field.id, {
+                                      max:
+                                        Number.parseInt(e.target.value) || 100,
+                                    })
+                                  }
+                                />
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="field-step">步长</Label>
+                                <Input
+                                  id="field-step"
+                                  type="number"
+                                  value={field.step || 1}
+                                  onChange={(e) =>
+                                    updateField(field.id, {
+                                      step:
+                                        Number.parseInt(e.target.value) || 1,
+                                    })
+                                  }
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {field.type === "file-upload" && (
+                            <div className="grid gap-4">
+                              <div className="flex items-center gap-2">
+                                <Checkbox
+                                  id="field-multiple"
+                                  checked={field.multiple || false}
+                                  onCheckedChange={(checked) =>
+                                    updateField(field.id, {
+                                      multiple: !!checked,
+                                    })
+                                  }
+                                />
+                                <Label htmlFor="field-multiple">
+                                  允许多文件
+                                </Label>
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="field-accept">文件类型</Label>
+                                <Input
+                                  id="field-accept"
+                                  value={field.accept || "*"}
+                                  onChange={(e) =>
+                                    updateField(field.id, {
+                                      accept: e.target.value,
+                                    })
+                                  }
+                                  placeholder="例如: .jpg,.png,.pdf"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                  用逗号分隔文件扩展名，* 表示所有类型
+                                </p>
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="field-max-size">
+                                  最大文件大小
+                                </Label>
+                                <Input
+                                  id="field-max-size"
+                                  value={field.maxSize || ""}
+                                  onChange={(e) =>
+                                    updateField(field.id, {
+                                      maxSize: e.target.value,
+                                    })
+                                  }
+                                  placeholder="例如: 10MB"
+                                />
+                              </div>
                             </div>
                           )}
 
