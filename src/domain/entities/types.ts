@@ -74,6 +74,26 @@ export interface TableColumn {
   render?: string;
 }
 
+export interface TreeNode {
+  id: string;
+  title: string;
+  children?: TreeNode[];
+  icon?: string;
+  expanded?: boolean;
+  selected?: boolean;
+  disabled?: boolean;
+}
+
+export interface PaginationConfig {
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  total: number;
+  showSizeChanger?: boolean;
+  showQuickJumper?: boolean;
+  showTotal?: boolean;
+}
+
 // Event handler types for better type safety
 export type ComponentEventHandler = (component: Component | null) => void;
 export type ComponentUpdateHandler = (id: string, properties: any) => void;

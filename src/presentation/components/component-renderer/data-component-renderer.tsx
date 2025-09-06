@@ -1,5 +1,10 @@
 import type React from "react";
-import type { Component, TableColumn } from "@/domain/entities/types";
+import type {
+  Component,
+  TableColumn,
+  TreeNode,
+  PaginationConfig,
+} from "@/domain/entities/types";
 import {
   Card,
   CardContent,
@@ -23,8 +28,25 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/presentation/components/ui/avatar";
-import { ArrowUpDown, Filter } from "lucide-react";
+import {
+  ArrowUpDown,
+  Filter,
+  ChevronRight,
+  ChevronDown,
+  File,
+  Folder,
+  FolderOpen,
+} from "lucide-react";
 import { cn } from "@/application/services/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/presentation/components/ui/pagination";
 
 interface DataComponentRendererProps {
   component: Component;
@@ -306,6 +328,266 @@ export function DataComponentRenderer({
             </div>
           </CardFooter>
         </Card>
+      );
+
+    case "pagination":
+      const totalPages = props.totalPages || 10;
+      const currentPage = props.currentPage || 1;
+      const showSizeChanger = props.showSizeChanger || false;
+      const pageSize = props.pageSize || 10;
+      const showQuickJumper = props.showQuickJumper || false;
+
+      const generatePageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+
+        if (totalPages <= maxVisiblePages) {
+          for (let i = 1; i <= totalPages; i++) {
+            pages.push(i);
+          }
+        } else {
+          if (currentPage <= 3) {
+            for (let i = 1; i <= 4; i++) {
+              pages.push(i);
+            }
+            pages.push("ellipsis");
+            pages.push(totalPages);
+          } else if (currentPage >= totalPages - 2) {
+            pages.push(1);
+            pages.push("ellipsis");
+            for (let i = totalPages - 3; i <= totalPages; i++) {
+              pages.push(i);
+            }
+          } else {
+            pages.push(1);
+            pages.push("ellipsis");
+            for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+              pages.push(i);
+            }
+            pages.push("ellipsis");
+            pages.push(totalPages);
+          }
+        }
+
+        return pages;
+      };
+
+      return (
+        <div
+          className="flex flex-col items-center gap-4"
+          style={{ ...animationStyle }}
+        >
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
+                />
+              </PaginationItem>
+
+              {generatePageNumbers().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink href="#" isActive={page === currentPage}>
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+
+          {props.showTotal && (
+            <div className="text-sm text-muted-foreground">
+              共 {props.total || totalPages * pageSize} 条记录，第 {currentPage}{" "}
+              / {totalPages} 页
+            </div>
+          )}
+
+          {showSizeChanger && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm">每页显示</span>
+              <select
+                className="rounded border px-2 py-1 text-sm"
+                value={pageSize}
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-sm">条</span>
+            </div>
+          )}
+        </div>
+      );
+
+    case "tree":
+      const renderTreeNode = (node: TreeNode, level: number = 0) => {
+        const hasChildren = node.children && node.children.length > 0;
+        const isExpanded = node.expanded || false;
+        const isSelected = node.selected || false;
+        const isDisabled = node.disabled || false;
+
+        return (
+          <div key={node.id} className="select-none">
+            <div
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 hover:bg-muted/50 cursor-pointer rounded-sm",
+                isSelected && "bg-primary/10 text-primary",
+                isDisabled && "opacity-50 cursor-not-allowed",
+                level > 0 && "ml-4"
+              )}
+              style={{ paddingLeft: `${level * 16 + 8}px` }}
+            >
+              {hasChildren ? (
+                <button
+                  className="p-0.5 hover:bg-muted rounded"
+                  disabled={isDisabled}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-3 w-3" />
+                  ) : (
+                    <ChevronRight className="h-3 w-3" />
+                  )}
+                </button>
+              ) : (
+                <div className="w-4" />
+              )}
+
+              <div className="flex items-center gap-1 flex-1">
+                {node.icon === "folder" ? (
+                  isExpanded ? (
+                    <FolderOpen className="h-4 w-4 text-blue-500" />
+                  ) : (
+                    <Folder className="h-4 w-4 text-blue-500" />
+                  )
+                ) : node.icon === "file" ? (
+                  <File className="h-4 w-4 text-gray-500" />
+                ) : null}
+
+                <span className="text-sm">{node.title}</span>
+              </div>
+            </div>
+
+            {hasChildren && isExpanded && (
+              <div>
+                {node.children!.map((child) =>
+                  renderTreeNode(child, level + 1)
+                )}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // 默认树形数据
+      const defaultTreeData: TreeNode[] = [
+        {
+          id: "1",
+          title: "根节点",
+          icon: "folder",
+          expanded: true,
+          children: [
+            {
+              id: "1-1",
+              title: "子节点 1",
+              icon: "folder",
+              expanded: false,
+              children: [
+                {
+                  id: "1-1-1",
+                  title: "子节点 1-1",
+                  icon: "file",
+                },
+                {
+                  id: "1-1-2",
+                  title: "子节点 1-2",
+                  icon: "file",
+                },
+              ],
+            },
+            {
+              id: "1-2",
+              title: "子节点 2",
+              icon: "folder",
+              expanded: false,
+              children: [
+                {
+                  id: "1-2-1",
+                  title: "子节点 2-1",
+                  icon: "file",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "2",
+          title: "另一个根节点",
+          icon: "folder",
+          expanded: false,
+          children: [
+            {
+              id: "2-1",
+              title: "子节点 2-1",
+              icon: "file",
+            },
+          ],
+        },
+      ];
+
+      const treeData = componentData || defaultTreeData;
+
+      return (
+        <div
+          className="w-full overflow-hidden rounded-md border bg-background"
+          style={{ ...animationStyle }}
+        >
+          {props.title && (
+            <div className="bg-muted px-4 py-2 text-sm font-medium border-b">
+              {props.title}
+            </div>
+          )}
+
+          <div className="p-2">
+            {Array.isArray(treeData) && treeData.length > 0 ? (
+              treeData.map((node) => renderTreeNode(node))
+            ) : (
+              <div className="flex h-24 items-center justify-center">
+                <p className="text-muted-foreground">
+                  {componentData ? "无数据" : "请绑定数据源"}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {props.showSearch && (
+            <div className="border-t p-2">
+              <input
+                type="text"
+                placeholder="搜索节点..."
+                className="w-full rounded border px-2 py-1 text-sm"
+              />
+            </div>
+          )}
+        </div>
       );
 
     default:

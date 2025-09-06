@@ -122,7 +122,10 @@ export function ComponentRenderer({
     }
 
     // 数据组件
-    if (component.type.startsWith("data-")) {
+    if (
+      component.type.startsWith("data-") ||
+      ["pagination", "tree"].includes(component.type)
+    ) {
       return (
         <DataComponentRenderer
           component={component}
