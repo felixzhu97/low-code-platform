@@ -20,6 +20,10 @@ interface AreaChartProps {
   dataKeys?: string[];
   colors?: string[];
   title?: string;
+  xField?: string;
+  seriesField?: string;
+  yField?: string;
+  stacked?: boolean;
 }
 
 // 默认数据

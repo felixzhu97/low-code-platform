@@ -18,6 +18,8 @@ interface RadarChartProps {
   dataKeys?: string[];
   colors?: string[];
   title?: string;
+  nameField?: string;
+  dataFields?: string[];
 }
 
 // 默认数据

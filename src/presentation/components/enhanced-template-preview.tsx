@@ -1,46 +1,66 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Tabs, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
-import { ScrollArea } from "@/presentation/components/ui/scroll-area"
-import { PreviewCanvas } from "@/presentation/components/preview-canvas"
-import { Button } from "@/presentation/components/ui/button"
-import { Smartphone, Tablet, Monitor, Code, Layout, FileJson } from "lucide-react"
-import type {Component, ThemeConfig} from "@/domain/entities/types"
-import { VirtualList } from "@/presentation/components/virtual-list"
+import { useState, useMemo } from "react";
+import { Tabs, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs";
+import { ScrollArea } from "@/presentation/components/ui/scroll-area";
+import { PreviewCanvas } from "@/presentation/components/preview-canvas";
+import { Button } from "@/presentation/components/ui/button";
+import {
+  Smartphone,
+  Tablet,
+  Monitor,
+  Code,
+  Layout,
+  FileJson,
+} from "lucide-react";
+import type { Component, ThemeConfig } from "@/domain/entities/types";
+import { VirtualList } from "@/presentation/components/virtual-list";
 
 interface EnhancedTemplatePreviewProps {
-  templateId: string
-  templates: any[]
-  theme: ThemeConfig
+  templateId: string;
+  templates: any[];
+  theme: ThemeConfig;
 }
 
-export function EnhancedTemplatePreview({ templateId, templates, theme }: EnhancedTemplatePreviewProps) {
-  const [activeTab, setActiveTab] = useState("preview")
-  const [activeDevice, setActiveDevice] = useState("desktop")
+export function EnhancedTemplatePreview({
+  templateId,
+  templates,
+  theme,
+}: EnhancedTemplatePreviewProps) {
+  const [activeTab, setActiveTab] = useState("preview");
+  const [activeDevice, setActiveDevice] = useState("desktop");
 
   // 查找模板
-  const template = useMemo(() => templates.find((t) => t.id === templateId), [templateId, templates])
+  const template = useMemo(
+    () => templates.find((t) => t.id === templateId),
+    [templateId, templates]
+  );
 
   if (!template) {
-    return <div className="p-4 text-center text-muted-foreground">未找到模板</div>
+    return (
+      <div className="p-4 text-center text-muted-foreground">未找到模板</div>
+    );
   }
 
   const getDeviceWidth = () => {
-    if (activeTab !== "preview") return 1280 // Default width when not in preview
+    if (activeTab !== "preview") return 1280; // Default width when not in preview
     switch (activeDevice) {
       case "mobile":
-        return 375
+        return 375;
       case "tablet":
-        return 768
+        return 768;
       case "desktop":
       default:
-        return 1280
+        return 1280;
     }
-  }
+  };
 
   // 递归构建组件树
-  const buildComponentTree = (components: Component[], parentId: string | null = null, level = 0): JSX.Element[] => {
+  const buildComponentTree = (
+    components: Component[],
+    parentId: string | null = null,
+    level = 0
+  ): React.ReactElement[] => {
     return components
       .filter((component) => component.parentId === parentId)
       .map((component) => (
@@ -49,44 +69,62 @@ export function EnhancedTemplatePreview({ templateId, templates, theme }: Enhanc
             className="flex items-center rounded px-2 py-1 text-sm hover:bg-muted/50"
             style={{ paddingLeft: `${level * 16 + 8}px` }}
           >
-            <span className="mr-1 text-xs text-muted-foreground">{component.type}</span>
-            <span className="font-medium">{component.name || component.type}</span>
+            <span className="mr-1 text-xs text-muted-foreground">
+              {component.type}
+            </span>
+            <span className="font-medium">
+              {component.name || component.type}
+            </span>
           </div>
           {buildComponentTree(components, component.id, level + 1)}
         </div>
-      ))
-  }
+      ));
+  };
 
   // 扁平化组件树，用于虚拟列表
   const flattenComponentTree = (
     components: Component[],
     parentId: string | null = null,
-    level = 0,
+    level = 0
   ): { component: Component; level: number }[] => {
-    const result: { component: Component; level: number }[] = []
+    const result: { component: Component; level: number }[] = [];
 
     components
       .filter((component) => component.parentId === parentId)
       .forEach((component) => {
-        result.push({ component, level })
-        result.push(...flattenComponentTree(components, component.id, level + 1))
-      })
+        result.push({ component, level });
+        result.push(
+          ...flattenComponentTree(components, component.id, level + 1)
+        );
+      });
 
-    return result
-  }
+    return result;
+  };
 
-  const flattenedComponents = useMemo(() => (template ? flattenComponentTree(template.components) : []), [template])
+  const flattenedComponents = useMemo(
+    () => (template ? flattenComponentTree(template.components) : []),
+    [template]
+  );
 
   return (
-    <div className="mt-4 border rounded-md overflow-hidden flex flex-col" style={{ height: "600px" }}>
+    <div
+      className="mt-4 border rounded-md overflow-hidden flex flex-col"
+      style={{ height: "600px" }}
+    >
       <div className="flex items-center justify-between border-b p-2 flex-shrink-0">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
           <TabsList className="grid w-auto grid-cols-3">
-            <TabsTrigger value="preview" className="px-2 flex items-center gap-1">
+            <TabsTrigger
+              value="preview"
+              className="px-2 flex items-center gap-1"
+            >
               <Layout className="h-4 w-4" />
               <span className="hidden sm:inline">预览</span>
             </TabsTrigger>
-            <TabsTrigger value="structure" className="px-2 flex items-center gap-1">
+            <TabsTrigger
+              value="structure"
+              className="px-2 flex items-center gap-1"
+            >
               <Code className="h-4 w-4" />
               <span className="hidden sm:inline">结构</span>
             </TabsTrigger>
@@ -129,11 +167,12 @@ export function EnhancedTemplatePreview({ templateId, templates, theme }: Enhanc
 
       <div className="flex-1 overflow-hidden">
         {activeTab === "preview" && (
-          <ScrollArea className="h-full" orientation="both">
+          <ScrollArea className="h-full">
             <div
               className="mx-auto bg-white"
               style={{
-                width: activeDevice === "desktop" ? "100%" : `${getDeviceWidth()}px`,
+                width:
+                  activeDevice === "desktop" ? "100%" : `${getDeviceWidth()}px`,
                 padding: "1rem",
               }}
             >
@@ -151,7 +190,9 @@ export function EnhancedTemplatePreview({ templateId, templates, theme }: Enhanc
           <div className="h-full flex flex-col">
             <div className="border-b bg-muted/50 px-4 py-2 flex-shrink-0">
               <h3 className="text-sm font-medium">组件结构</h3>
-              <p className="text-xs text-muted-foreground">共 {template?.components?.length || 0} 个组件</p>
+              <p className="text-xs text-muted-foreground">
+                共 {template?.components?.length || 0} 个组件
+              </p>
             </div>
             <ScrollArea className="flex-1">
               <VirtualList
@@ -162,10 +203,17 @@ export function EnhancedTemplatePreview({ templateId, templates, theme }: Enhanc
                   <div
                     key={component.id}
                     className="flex items-center rounded px-2 py-1 text-sm hover:bg-muted/50"
-                    style={{ paddingLeft: `${level * 16 + 8}px`, height: "32px" }}
+                    style={{
+                      paddingLeft: `${level * 16 + 8}px`,
+                      height: "32px",
+                    }}
                   >
-                    <span className="mr-1 text-xs text-muted-foreground">{component.type}</span>
-                    <span className="font-medium">{component.name || component.type}</span>
+                    <span className="mr-1 text-xs text-muted-foreground">
+                      {component.type}
+                    </span>
+                    <span className="font-medium">
+                      {component.name || component.type}
+                    </span>
                   </div>
                 )}
               />
@@ -179,11 +227,13 @@ export function EnhancedTemplatePreview({ templateId, templates, theme }: Enhanc
               <h3 className="text-sm font-medium">JSON 数据</h3>
             </div>
             <ScrollArea className="flex-1">
-              <pre className="p-4 text-xs">{template ? JSON.stringify(template.components, null, 2) : ""}</pre>
+              <pre className="p-4 text-xs">
+                {template ? JSON.stringify(template.components, null, 2) : ""}
+              </pre>
             </ScrollArea>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

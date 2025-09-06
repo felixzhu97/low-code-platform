@@ -20,6 +20,9 @@ interface LineChartProps {
   dataKeys?: string[];
   colors?: string[];
   title?: string;
+  xField?: string;
+  seriesField?: string;
+  yField?: string;
 }
 
 // 默认数据

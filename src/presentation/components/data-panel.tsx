@@ -1,21 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ScrollArea } from "@/presentation/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
-import { Button } from "@/presentation/components/ui/button"
-import { Input } from "@/presentation/components/ui/input"
-import { Label } from "@/presentation/components/ui/label"
-import { Textarea } from "@/presentation/components/ui/textarea"
-import { PlusCircle, Database, Globe, Table2 } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/presentation/components/ui/card"
+import { useState } from "react";
+import { ScrollArea } from "@/presentation/components/ui/scroll-area";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/presentation/components/ui/tabs";
+import { Button } from "@/presentation/components/ui/button";
+import { Input } from "@/presentation/components/ui/input";
+import { Label } from "@/presentation/components/ui/label";
+import { Textarea } from "@/presentation/components/ui/textarea";
+import { PlusCircle, Database, Globe, Table2 } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/presentation/components/ui/card";
 
 type DataSource = {
-  id: string
-  name: string
-  type: "static" | "api" | "database"
-  data: any
-}
+  id: string;
+  name: string;
+  type: "static" | "api" | "database";
+  data: any;
+};
 
 export function DataPanel() {
   const [dataSources, setDataSources] = useState<DataSource[]>([
@@ -38,28 +50,32 @@ export function DataPanel() {
         method: "GET",
       },
     },
-  ])
+  ]);
 
-  const [newDataSource, setNewDataSource] = useState({
+  const [newDataSource, setNewDataSource] = useState<{
+    name: string;
+    type: "static" | "api" | "database";
+    data: string;
+  }>({
     name: "",
-    type: "static" as const,
+    type: "static",
     data: "",
-  })
+  });
 
   const handleAddDataSource = () => {
-    if (!newDataSource.name) return
+    if (!newDataSource.name) return;
 
-    let parsedData
+    let parsedData;
     try {
       parsedData =
         newDataSource.type === "static"
           ? JSON.parse(newDataSource.data)
           : newDataSource.type === "api"
-            ? { url: newDataSource.data, method: "GET" }
-            : { connection: newDataSource.data }
+          ? { url: newDataSource.data, method: "GET" }
+          : { connection: newDataSource.data };
     } catch (e) {
-      alert("数据格式不正确，请检查JSON格式")
-      return
+      alert("数据格式不正确，请检查JSON格式");
+      return;
     }
 
     const newSource: DataSource = {
@@ -67,15 +83,15 @@ export function DataPanel() {
       name: newDataSource.name,
       type: newDataSource.type,
       data: parsedData,
-    }
+    };
 
-    setDataSources([...dataSources, newSource])
+    setDataSources([...dataSources, newSource]);
     setNewDataSource({
       name: "",
       type: "static",
       data: "",
-    })
-  }
+    });
+  };
 
   return (
     <div className="flex w-64 flex-col border-r">
@@ -95,9 +111,15 @@ export function DataPanel() {
                 <Card key={source.id} className="overflow-hidden">
                   <CardHeader className="p-4 pb-2">
                     <div className="flex items-center gap-2">
-                      {source.type === "static" && <Database className="h-4 w-4 text-blue-500" />}
-                      {source.type === "api" && <Globe className="h-4 w-4 text-green-500" />}
-                      {source.type === "database" && <Table2 className="h-4 w-4 text-purple-500" />}
+                      {source.type === "static" && (
+                        <Database className="h-4 w-4 text-blue-500" />
+                      )}
+                      {source.type === "api" && (
+                        <Globe className="h-4 w-4 text-green-500" />
+                      )}
+                      {source.type === "database" && (
+                        <Table2 className="h-4 w-4 text-purple-500" />
+                      )}
                       <CardTitle className="text-sm">{source.name}</CardTitle>
                     </div>
                     <CardDescription className="text-xs">
@@ -109,16 +131,28 @@ export function DataPanel() {
                   <CardContent className="p-4 pt-0">
                     {source.type === "static" && (
                       <div className="text-xs text-muted-foreground">
-                        {Array.isArray(source.data) ? `${source.data.length} 条记录` : "对象数据"}
+                        {Array.isArray(source.data)
+                          ? `${source.data.length} 条记录`
+                          : "对象数据"}
                       </div>
                     )}
-                    {source.type === "api" && <div className="text-xs text-muted-foreground">{source.data.url}</div>}
+                    {source.type === "api" && (
+                      <div className="text-xs text-muted-foreground">
+                        {source.data.url}
+                      </div>
+                    )}
                     {source.type === "database" && (
-                      <div className="text-xs text-muted-foreground">{source.data.connection}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {source.data.connection}
+                      </div>
                     )}
                   </CardContent>
                   <CardFooter className="border-t bg-muted/50 p-2">
-                    <Button variant="ghost" size="sm" className="h-7 w-full text-xs">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-full text-xs"
+                    >
                       绑定到组件
                     </Button>
                   </CardFooter>
@@ -137,7 +171,9 @@ export function DataPanel() {
                   id="data-name"
                   placeholder="输入数据源名称"
                   value={newDataSource.name}
-                  onChange={(e) => setNewDataSource({ ...newDataSource, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewDataSource({ ...newDataSource, name: e.target.value })
+                  }
                 />
               </div>
 
@@ -145,7 +181,12 @@ export function DataPanel() {
                 <Label htmlFor="data-type">数据源类型</Label>
                 <Tabs
                   value={newDataSource.type}
-                  onValueChange={(value: any) => setNewDataSource({ ...newDataSource, type: value })}
+                  onValueChange={(value: string) =>
+                    setNewDataSource({
+                      ...newDataSource,
+                      type: value as "static" | "api" | "database",
+                    })
+                  }
                   className="w-full"
                 >
                   <TabsList className="grid w-full grid-cols-3">
@@ -165,9 +206,16 @@ export function DataPanel() {
                       placeholder='[{"id": 1, "name": "示例"}]'
                       rows={6}
                       value={newDataSource.data}
-                      onChange={(e) => setNewDataSource({ ...newDataSource, data: e.target.value })}
+                      onChange={(e) =>
+                        setNewDataSource({
+                          ...newDataSource,
+                          data: e.target.value,
+                        })
+                      }
                     />
-                    <p className="text-xs text-muted-foreground">输入有效的JSON数据，例如数组或对象</p>
+                    <p className="text-xs text-muted-foreground">
+                      输入有效的JSON数据，例如数组或对象
+                    </p>
                   </>
                 )}
 
@@ -178,9 +226,16 @@ export function DataPanel() {
                       id="api-url"
                       placeholder="https://api.example.com/data"
                       value={newDataSource.data}
-                      onChange={(e) => setNewDataSource({ ...newDataSource, data: e.target.value })}
+                      onChange={(e) =>
+                        setNewDataSource({
+                          ...newDataSource,
+                          data: e.target.value,
+                        })
+                      }
                     />
-                    <p className="text-xs text-muted-foreground">输入有效的API地址，将在运行时获取数据</p>
+                    <p className="text-xs text-muted-foreground">
+                      输入有效的API地址，将在运行时获取数据
+                    </p>
                   </>
                 )}
 
@@ -191,14 +246,24 @@ export function DataPanel() {
                       id="db-connection"
                       placeholder="数据库连接字符串"
                       value={newDataSource.data}
-                      onChange={(e) => setNewDataSource({ ...newDataSource, data: e.target.value })}
+                      onChange={(e) =>
+                        setNewDataSource({
+                          ...newDataSource,
+                          data: e.target.value,
+                        })
+                      }
                     />
-                    <p className="text-xs text-muted-foreground">输入数据库连接信息</p>
+                    <p className="text-xs text-muted-foreground">
+                      输入数据库连接信息
+                    </p>
                   </>
                 )}
               </div>
 
-              <Button onClick={handleAddDataSource} disabled={!newDataSource.name || !newDataSource.data}>
+              <Button
+                onClick={handleAddDataSource}
+                disabled={!newDataSource.name || !newDataSource.data}
+              >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 添加数据源
               </Button>
@@ -207,5 +272,5 @@ export function DataPanel() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

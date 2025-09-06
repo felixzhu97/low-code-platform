@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,42 +8,65 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/presentation/components/ui/dialog"
-import { Button } from "@/presentation/components/ui/button"
-import { Input } from "@/presentation/components/ui/input"
-import { Label } from "@/presentation/components/ui/label"
-import { Checkbox } from "@/presentation/components/ui/checkbox"
-import { ScrollArea } from "@/presentation/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
-import { FormInput, Plus, Trash2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/presentation/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
+} from "@/presentation/components/ui/dialog";
+import { Button } from "@/presentation/components/ui/button";
+import { Input } from "@/presentation/components/ui/input";
+import { Label } from "@/presentation/components/ui/label";
+import { Checkbox } from "@/presentation/components/ui/checkbox";
+import { ScrollArea } from "@/presentation/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/presentation/components/ui/select";
+import { FormInput, Plus, Trash2 } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/presentation/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/presentation/components/ui/tabs";
 
-
-import {Component} from "@/domain/entities/types";
+import { Component } from "@/domain/entities/types";
 
 interface FormBuilderProps {
-  onAddForm: (components: Component[]) => void
+  onAddForm: (components: Component[]) => void;
 }
 
 type FormField = {
-  id: string
-  type: "text" | "email" | "password" | "number" | "textarea" | "select" | "checkbox" | "radio"
-  label: string
-  placeholder?: string
-  required?: boolean
-  options?: string[]
+  id: string;
+  type:
+    | "text"
+    | "email"
+    | "password"
+    | "number"
+    | "textarea"
+    | "select"
+    | "checkbox"
+    | "radio";
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  options?: string[];
   validation?: {
-    pattern?: string
-    minLength?: number
-    maxLength?: number
-    min?: number
-    max?: number
-  }
-}
+    pattern?: string;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+  };
+};
 
 export function FormBuilder({ onAddForm }: FormBuilderProps) {
-  const [formName, setFormName] = useState("新建表单")
+  const [formName, setFormName] = useState("新建表单");
   const [fields, setFields] = useState<FormField[]>([
     {
       id: `field-${Date.now()}`,
@@ -52,8 +75,10 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
       placeholder: "请输入姓名",
       required: true,
     },
-  ])
-  const [activeFieldId, setActiveFieldId] = useState<string | null>(fields[0]?.id || null)
+  ]);
+  const [activeFieldId, setActiveFieldId] = useState<string | null>(
+    fields[0]?.id || null
+  );
 
   const addField = () => {
     const newField: FormField = {
@@ -62,29 +87,29 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
       label: "新字段",
       placeholder: "请输入",
       required: false,
-    }
-    setFields([...fields, newField])
-    setActiveFieldId(newField.id)
-  }
+    };
+    setFields([...fields, newField]);
+    setActiveFieldId(newField.id);
+  };
 
   const removeField = (id: string) => {
-    const newFields = fields.filter((field) => field.id !== id)
-    setFields(newFields)
+    const newFields = fields.filter((field) => field.id !== id);
+    setFields(newFields);
     if (activeFieldId === id) {
-      setActiveFieldId(newFields[0]?.id || null)
+      setActiveFieldId(newFields[0]?.id || null);
     }
-  }
+  };
 
   const updateField = (id: string, updates: Partial<FormField>) => {
     setFields(
       fields.map((field) => {
         if (field.id === id) {
-          return { ...field, ...updates }
+          return { ...field, ...updates };
         }
-        return field
-      }),
-    )
-  }
+        return field;
+      })
+    );
+  };
 
   const generateFormComponents = (): Component[] => {
     // 创建表单容器
@@ -99,7 +124,7 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
         bgColor: "#ffffff",
       },
       children: [],
-    }
+    };
 
     // 添加表单标题
     const formTitle: Component = {
@@ -115,12 +140,12 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
         margin: "0 0 20px 0",
       },
       parentId: formContainer.id,
-    }
+    };
 
-    formContainer.children = [formTitle]
+    formContainer.children = [formTitle];
 
     // 为每个字段创建组件
-    let yPosition = 60
+    let yPosition = 60;
     fields.forEach((field) => {
       // 创建标签
       const labelComponent: Component = {
@@ -136,11 +161,11 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
           margin: "0 0 8px 0",
         },
         parentId: formContainer.id,
-      }
+      };
 
       // 创建输入组件
-      let inputComponent: Component
-      const yInputPosition = yPosition + 30
+      let inputComponent: Component;
+      const yInputPosition = yPosition + 30;
 
       switch (field.type) {
         case "text":
@@ -160,8 +185,8 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               validation: field.validation,
             },
             parentId: formContainer.id,
-          }
-          break
+          };
+          break;
         case "textarea":
           inputComponent = {
             id: `textarea-${field.id}`,
@@ -176,8 +201,8 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               validation: field.validation,
             },
             parentId: formContainer.id,
-          }
-          break
+          };
+          break;
         case "select":
           inputComponent = {
             id: `select-${field.id}`,
@@ -191,8 +216,8 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               width: "100%",
             },
             parentId: formContainer.id,
-          }
-          break
+          };
+          break;
         case "checkbox":
           inputComponent = {
             id: `checkbox-${field.id}`,
@@ -204,8 +229,8 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               required: field.required || false,
             },
             parentId: formContainer.id,
-          }
-          break
+          };
+          break;
         case "radio":
           inputComponent = {
             id: `radio-${field.id}`,
@@ -217,8 +242,8 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               required: field.required || false,
             },
             parentId: formContainer.id,
-          }
-          break
+          };
+          break;
         default:
           inputComponent = {
             id: `input-${field.id}`,
@@ -231,12 +256,16 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               width: "100%",
             },
             parentId: formContainer.id,
-          }
+          };
       }
 
-      formContainer.children.push(labelComponent, inputComponent)
-      yPosition += field.type === "textarea" ? 150 : 80
-    })
+      if (formContainer.children) {
+        formContainer.children.push(labelComponent, inputComponent);
+      } else {
+        formContainer.children = [labelComponent, inputComponent];
+      }
+      yPosition += field.type === "textarea" ? 150 : 80;
+    });
 
     // 添加提交按钮
     const submitButton: Component = {
@@ -251,12 +280,16 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
         width: "100%",
       },
       parentId: formContainer.id,
+    };
+
+    if (formContainer.children) {
+      formContainer.children.push(submitButton);
+    } else {
+      formContainer.children = [submitButton];
     }
 
-    formContainer.children.push(submitButton)
-
-    return [formContainer]
-  }
+    return [formContainer];
+  };
 
   return (
     <Dialog>
@@ -269,14 +302,21 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>表单构建器</DialogTitle>
-          <DialogDescription>创建自定义表单并添加到您的项目中</DialogDescription>
+          <DialogDescription>
+            创建自定义表单并添加到您的项目中
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-1 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="form-name">表单名称</Label>
-              <Input id="form-name" value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full" />
+              <Input
+                id="form-name"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">
@@ -293,21 +333,27 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                     <div
                       key={field.id}
                       className={`flex items-center justify-between rounded-md border p-2 ${
-                        activeFieldId === field.id ? "border-primary bg-primary/5" : ""
+                        activeFieldId === field.id
+                          ? "border-primary bg-primary/5"
+                          : ""
                       }`}
                       onClick={() => setActiveFieldId(field.id)}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{field.label}</span>
-                        {field.required && <span className="text-xs text-red-500">*</span>}
+                        <span className="text-sm font-medium">
+                          {field.label}
+                        </span>
+                        {field.required && (
+                          <span className="text-xs text-red-500">*</span>
+                        )}
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
                         className="h-6 w-6"
                         onClick={(e) => {
-                          e.stopPropagation()
-                          removeField(field.id)
+                          e.stopPropagation();
+                          removeField(field.id);
                         }}
                       >
                         <Trash2 className="h-3 w-3" />
@@ -342,7 +388,9 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                             <Input
                               id="field-label"
                               value={field.label}
-                              onChange={(e) => updateField(field.id, { label: e.target.value })}
+                              onChange={(e) =>
+                                updateField(field.id, { label: e.target.value })
+                              }
                             />
                           </div>
 
@@ -350,7 +398,9 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                             <Label htmlFor="field-type">字段类型</Label>
                             <Select
                               value={field.type}
-                              onValueChange={(value: any) => updateField(field.id, { type: value })}
+                              onValueChange={(value: any) =>
+                                updateField(field.id, { type: value })
+                              }
                             >
                               <SelectTrigger id="field-type">
                                 <SelectValue placeholder="选择字段类型" />
@@ -374,25 +424,36 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                             field.type === "number" ||
                             field.type === "textarea") && (
                             <div className="grid gap-2">
-                              <Label htmlFor="field-placeholder">占位文本</Label>
+                              <Label htmlFor="field-placeholder">
+                                占位文本
+                              </Label>
                               <Input
                                 id="field-placeholder"
                                 value={field.placeholder || ""}
-                                onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
+                                onChange={(e) =>
+                                  updateField(field.id, {
+                                    placeholder: e.target.value,
+                                  })
+                                }
                               />
                             </div>
                           )}
 
-                          {(field.type === "select" || field.type === "radio") && (
+                          {(field.type === "select" ||
+                            field.type === "radio") && (
                             <div className="grid gap-2">
-                              <Label htmlFor="field-options">选项（每行一个）</Label>
+                              <Label htmlFor="field-options">
+                                选项（每行一个）
+                              </Label>
                               <textarea
                                 id="field-options"
                                 className="min-h-[100px] w-full rounded-md border p-2"
                                 value={(field.options || []).join("\n")}
                                 onChange={(e) =>
                                   updateField(field.id, {
-                                    options: e.target.value.split("\n").filter(Boolean),
+                                    options: e.target.value
+                                      .split("\n")
+                                      .filter(Boolean),
                                   })
                                 }
                               />
@@ -403,19 +464,28 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                             <Checkbox
                               id="field-required"
                               checked={field.required || false}
-                              onCheckedChange={(checked) => updateField(field.id, { required: !!checked })}
+                              onCheckedChange={(checked) =>
+                                updateField(field.id, { required: !!checked })
+                              }
                             />
                             <Label htmlFor="field-required">必填字段</Label>
                           </div>
                         </div>
                       </TabsContent>
 
-                      <TabsContent value="validation" className="space-y-4 py-4">
+                      <TabsContent
+                        value="validation"
+                        className="space-y-4 py-4"
+                      >
                         <div className="grid gap-4">
-                          {(field.type === "text" || field.type === "email" || field.type === "password") && (
+                          {(field.type === "text" ||
+                            field.type === "email" ||
+                            field.type === "password") && (
                             <>
                               <div className="grid gap-2">
-                                <Label htmlFor="field-pattern">正则表达式</Label>
+                                <Label htmlFor="field-pattern">
+                                  正则表达式
+                                </Label>
                                 <Input
                                   id="field-pattern"
                                   value={field.validation?.pattern || ""}
@@ -429,12 +499,16 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                   }
                                   placeholder="例如: ^[A-Za-z0-9]+$"
                                 />
-                                <p className="text-xs text-muted-foreground">用于验证输入格式的正则表达式</p>
+                                <p className="text-xs text-muted-foreground">
+                                  用于验证输入格式的正则表达式
+                                </p>
                               </div>
 
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                  <Label htmlFor="field-min-length">最小长度</Label>
+                                  <Label htmlFor="field-min-length">
+                                    最小长度
+                                  </Label>
                                   <Input
                                     id="field-min-length"
                                     type="number"
@@ -443,14 +517,18 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                       updateField(field.id, {
                                         validation: {
                                           ...field.validation,
-                                          minLength: Number.parseInt(e.target.value) || undefined,
+                                          minLength:
+                                            Number.parseInt(e.target.value) ||
+                                            undefined,
                                         },
                                       })
                                     }
                                   />
                                 </div>
                                 <div className="grid gap-2">
-                                  <Label htmlFor="field-max-length">最大长度</Label>
+                                  <Label htmlFor="field-max-length">
+                                    最大长度
+                                  </Label>
                                   <Input
                                     id="field-max-length"
                                     type="number"
@@ -459,7 +537,9 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                       updateField(field.id, {
                                         validation: {
                                           ...field.validation,
-                                          maxLength: Number.parseInt(e.target.value) || undefined,
+                                          maxLength:
+                                            Number.parseInt(e.target.value) ||
+                                            undefined,
                                         },
                                       })
                                     }
@@ -481,7 +561,9 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                     updateField(field.id, {
                                       validation: {
                                         ...field.validation,
-                                        min: Number.parseInt(e.target.value) || undefined,
+                                        min:
+                                          Number.parseInt(e.target.value) ||
+                                          undefined,
                                       },
                                     })
                                   }
@@ -497,7 +579,9 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                                     updateField(field.id, {
                                       validation: {
                                         ...field.validation,
-                                        max: Number.parseInt(e.target.value) || undefined,
+                                        max:
+                                          Number.parseInt(e.target.value) ||
+                                          undefined,
                                       },
                                     })
                                   }
@@ -506,15 +590,20 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
                             </div>
                           )}
 
-                          {(field.type === "email" || field.type === "password") && (
+                          {(field.type === "email" ||
+                            field.type === "password") && (
                             <Card>
                               <CardHeader>
-                                <CardTitle className="text-sm">内置验证</CardTitle>
+                                <CardTitle className="text-sm">
+                                  内置验证
+                                </CardTitle>
                               </CardHeader>
                               <CardContent>
                                 <p className="text-sm text-muted-foreground">
-                                  {field.type === "email" && "此字段将自动验证电子邮件格式"}
-                                  {field.type === "password" && "密码字段将自动隐藏输入内容"}
+                                  {field.type === "email" &&
+                                    "此字段将自动验证电子邮件格式"}
+                                  {field.type === "password" &&
+                                    "密码字段将自动隐藏输入内容"}
                                 </p>
                               </CardContent>
                             </Card>
@@ -535,12 +624,15 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
         <div className="mt-4 flex justify-between">
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">
-              {fields.length} 个字段 | {fields.filter((f) => f.required).length} 个必填
+              {fields.length} 个字段 | {fields.filter((f) => f.required).length}{" "}
+              个必填
             </p>
           </div>
-          <Button onClick={() => onAddForm(generateFormComponents())}>添加到画布</Button>
+          <Button onClick={() => onAddForm(generateFormComponents())}>
+            添加到画布
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
