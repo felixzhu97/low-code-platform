@@ -1,5 +1,10 @@
-import type { Component, DataSource } from "@/domain/entities/types";
+import type {
+  Component,
+  DataSource,
+  DataMapping,
+} from "@/domain/entities/types";
 import { ComponentFactoryService } from "@/domain/services/component-factory.service";
+import { DataBindingService } from "./data-binding.service";
 
 /**
  * 组件管理应用层服务
@@ -8,6 +13,7 @@ import { ComponentFactoryService } from "@/domain/services/component-factory.ser
 export class ComponentManagementService {
   /**
    * 获取组件绑定的数据源
+   * @deprecated 使用 DataBindingService.getComponentData 替代
    */
   static getComponentData(component: Component, dataSources: DataSource[]) {
     if (!component.dataSource) return null;
@@ -16,6 +22,78 @@ export class ComponentManagementService {
     if (!dataSource) return null;
 
     return dataSource.data;
+  }
+
+  /**
+   * 获取组件绑定的数据（异步版本，支持数据转换）
+   */
+  static async getComponentDataAsync(
+    component: Component,
+    dataSources: DataSource[]
+  ) {
+    return DataBindingService.getComponentData(component, dataSources);
+  }
+
+  /**
+   * 绑定数据源到组件
+   */
+  static bindDataSource(
+    component: Component,
+    dataSourceId: string,
+    dataMapping?: DataMapping[]
+  ): Component {
+    return DataBindingService.bindDataSource(
+      component,
+      dataSourceId,
+      dataMapping
+    );
+  }
+
+  /**
+   * 解绑数据源
+   */
+  static unbindDataSource(component: Component): Component {
+    return DataBindingService.unbindDataSource(component);
+  }
+
+  /**
+   * 创建数据映射
+   */
+  static createDataMapping(
+    field: string,
+    sourcePath: string,
+    targetPath: string,
+    transform?: string,
+    defaultValue?: any
+  ): DataMapping {
+    return DataBindingService.createDataMapping(
+      field,
+      sourcePath,
+      targetPath,
+      transform,
+      defaultValue
+    );
+  }
+
+  /**
+   * 自动生成数据映射
+   */
+  static generateDataMapping(
+    sourceData: any,
+    targetStructure: any
+  ): DataMapping[] {
+    return DataBindingService.generateDataMapping(sourceData, targetStructure);
+  }
+
+  /**
+   * 预览数据映射结果
+   */
+  static previewDataMapping(
+    sourceData: any,
+    mappings: DataMapping[],
+    limit: number = 5
+  ): any[] {
+    return DataBindingService.previewDataMapping(sourceData, mappings, limit);
   }
 
   /**
