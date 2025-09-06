@@ -16,6 +16,12 @@ export class ComponentFactoryService {
     "row",
     "column",
     "card",
+    "collapse",
+    "tabs",
+    "modal",
+    "drawer",
+    "popover",
+    "tooltip",
   ] as const;
 
   /**
@@ -383,6 +389,60 @@ export class ComponentFactoryService {
             lg: 1024,
             xl: 1280,
           },
+          width: "100%",
+          height: "auto",
+        };
+      case "collapse":
+        return {
+          ...baseProperties,
+          title: "折叠面板",
+          defaultOpen: false,
+          width: "100%",
+          height: "auto",
+        };
+      case "tabs":
+        return {
+          ...baseProperties,
+          tabs: [
+            { id: "tab-1", label: "标签1", content: "标签1内容" },
+            { id: "tab-2", label: "标签2", content: "标签2内容" },
+          ],
+          defaultTab: "tab-1",
+          width: "100%",
+          height: "auto",
+        };
+      case "modal":
+        return {
+          ...baseProperties,
+          title: "模态框标题",
+          description: "模态框描述",
+          triggerText: "打开模态框",
+          width: "100%",
+          height: "auto",
+        };
+      case "drawer":
+        return {
+          ...baseProperties,
+          title: "抽屉标题",
+          description: "抽屉描述",
+          triggerText: "打开抽屉",
+          width: "100%",
+          height: "auto",
+        };
+      case "popover":
+        return {
+          ...baseProperties,
+          title: "弹出框标题",
+          description: "弹出框描述",
+          triggerText: "打开弹出框",
+          width: "100%",
+          height: "auto",
+        };
+      case "tooltip":
+        return {
+          ...baseProperties,
+          content: "这是一个提示框",
+          triggerText: "悬停查看提示",
           width: "100%",
           height: "auto",
         };

@@ -7,6 +7,40 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/presentation/components/ui/tabs";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/presentation/components/ui/collapsible";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/presentation/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/presentation/components/ui/drawer";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/presentation/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/presentation/components/ui/tooltip";
+import { Button } from "@/presentation/components/ui/button";
+import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 import { cn } from "@/application/services/utils";
 import { ComponentRenderer } from "./index";
 
@@ -426,6 +460,253 @@ export function LayoutComponentRenderer({
           ) : (
             <div className="text-center text-sm text-muted-foreground">列</div>
           )}
+        </div>
+      );
+
+    case "collapse":
+      return (
+        <div
+          className={cn(
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <Collapsible defaultOpen={props.defaultOpen || false}>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-between p-4"
+                disabled={isPreviewMode}
+              >
+                <span className="font-medium">{props.title || "折叠面板"}</span>
+                <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              {childComponents.length > 0 ? (
+                childComponents.map((child) => renderChildWrapper(child))
+              ) : (
+                <div className="text-center text-sm text-muted-foreground">
+                  折叠面板内容
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      );
+
+    case "tabs":
+      return (
+        <div
+          className={cn(
+            "min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <Tabs defaultValue={props.defaultTab || "tab-1"}>
+            <TabsList className="w-full">
+              {(
+                props.tabs || [
+                  { id: "tab-1", label: "标签1" },
+                  { id: "tab-2", label: "标签2" },
+                ]
+              ).map((tab: any) => (
+                <TabsTrigger key={tab.id} value={tab.id} className="flex-1">
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {(
+              props.tabs || [
+                { id: "tab-1", label: "标签1", content: "标签1内容" },
+                { id: "tab-2", label: "标签2", content: "标签2内容" },
+              ]
+            ).map((tab: any, index: number) => (
+              <TabsContent key={tab.id} value={tab.id} className="p-4">
+                {childComponents[index] ? (
+                  renderChildWrapper(childComponents[index])
+                ) : (
+                  <div className="text-center text-sm text-muted-foreground">
+                    {tab.content || `${tab.label}内容`}
+                  </div>
+                )}
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      );
+
+    case "modal":
+      return (
+        <div
+          className={cn(
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" disabled={isPreviewMode}>
+                {props.triggerText || "打开模态框"}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>{props.title || "模态框标题"}</DialogTitle>
+                {props.description && (
+                  <DialogDescription>{props.description}</DialogDescription>
+                )}
+              </DialogHeader>
+              <div className="py-4">
+                {childComponents.length > 0 ? (
+                  childComponents.map((child) => renderChildWrapper(child))
+                ) : (
+                  <div className="text-center text-sm text-muted-foreground">
+                    模态框内容
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      );
+
+    case "drawer":
+      return (
+        <div
+          className={cn(
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="outline" disabled={isPreviewMode}>
+                {props.triggerText || "打开抽屉"}
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>{props.title || "抽屉标题"}</DrawerTitle>
+                {props.description && (
+                  <DrawerDescription>{props.description}</DrawerDescription>
+                )}
+              </DrawerHeader>
+              <div className="px-4 pb-4">
+                {childComponents.length > 0 ? (
+                  childComponents.map((child) => renderChildWrapper(child))
+                ) : (
+                  <div className="text-center text-sm text-muted-foreground">
+                    抽屉内容
+                  </div>
+                )}
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
+      );
+
+    case "popover":
+      return (
+        <div
+          className={cn(
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" disabled={isPreviewMode}>
+                {props.triggerText || "打开弹出框"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">
+                  {props.title || "弹出框标题"}
+                </h4>
+                {props.description && (
+                  <p className="text-sm text-muted-foreground">
+                    {props.description}
+                  </p>
+                )}
+              </div>
+              <div className="mt-4">
+                {childComponents.length > 0 ? (
+                  childComponents.map((child) => renderChildWrapper(child))
+                ) : (
+                  <div className="text-center text-sm text-muted-foreground">
+                    弹出框内容
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      );
+
+    case "tooltip":
+      return (
+        <div
+          className={cn(
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
+            isDropTarget && "border-primary bg-primary/5"
+          )}
+          style={{
+            width: props.width || "100%",
+            height: props.height || "auto",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" disabled={isPreviewMode}>
+                  {props.triggerText || "悬停查看提示"}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{props.content || "这是一个提示框"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
 
