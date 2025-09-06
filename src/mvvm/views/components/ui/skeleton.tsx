@@ -1,4 +1,4 @@
-import { cn } from "@/mvvm/viewmodels/utils"
+import { cn } from "@/application/services/utils"
 
 function Skeleton({
   className,

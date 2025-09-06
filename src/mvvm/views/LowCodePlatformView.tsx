@@ -17,28 +17,28 @@ import { useComponentViewModel } from "../hooks/useComponentViewModel";
 import { LegacyAdapter } from "../adapters/LegacyAdapter";
 
 // UI Components (保持现有的组件)
-import { ComponentPanel } from "@/mvvm/views/components/component-panel";
-import { Canvas } from "@/mvvm/views/components/canvas";
-import { PropertiesPanel } from "@/mvvm/views/components/properties-panel";
-import { Header } from "@/mvvm/views/components/header";
-import { DataPanel } from "@/mvvm/views/components/data-panel";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/mvvm/views/components/ui/tabs";
-import { CodeExport } from "@/mvvm/views/components/code-export";
-import { TemplateGallery } from "@/mvvm/views/components/template-gallery";
-import { ResponsiveControls } from "@/mvvm/views/components/responsive-controls";
-import { ThemeEditor } from "@/mvvm/views/components/theme-editor";
-import { FormBuilder } from "@/mvvm/views/components/form-builder";
-import { AnimationEditor } from "@/mvvm/views/components/animation-editor";
-import { Collaboration } from "@/mvvm/views/components/collaboration";
-import { ComponentLibraryManager } from "@/mvvm/views/components/component-library-manager";
-import { ComponentGrouping } from "@/mvvm/views/components/component-grouping";
-import { ComponentTree } from "@/mvvm/views/components/component-tree";
-import { Button } from "@/mvvm/views/components/ui/button";
+import { ComponentPanel } from "@/presentation/components/component-panel";
+import { Canvas } from "@/presentation/components/canvas";
+import { PropertiesPanel } from "@/presentation/components/properties-panel";
+import { Header } from "@/presentation/components/header";
+import { DataPanel } from "@/presentation/components/data-panel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs";
+import { CodeExport } from "@/presentation/components/code-export";
+import { TemplateGallery } from "@/presentation/components/template-gallery";
+import { ResponsiveControls } from "@/presentation/components/responsive-controls";
+import { ThemeEditor } from "@/presentation/components/theme-editor";
+import { FormBuilder } from "@/presentation/components/form-builder";
+import { AnimationEditor } from "@/presentation/components/animation-editor";
+import { Collaboration } from "@/presentation/components/collaboration";
+import { ComponentLibraryManager } from "@/presentation/components/component-library-manager";
+import { ComponentGrouping } from "@/presentation/components/component-grouping";
+import { ComponentTree } from "@/presentation/components/component-tree";
+import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { toast } from "@/mvvm/views/components/ui/use-toast";
+import { toast } from "@/presentation/components/ui/use-toast";
 
 // Types
-import { Component } from "@/mvvm/models/types";
+import { Component } from "@/domain/entities/types";
 
 export default function LowCodePlatformView() {
   // 使用MVVM Hooks
@@ -74,7 +74,7 @@ export default function LowCodePlatformView() {
 
   // 转换为Legacy格式以兼容现有组件
   const legacyComponents = LegacyAdapter.componentModelsToLegacy(components);
-  const legacySelectedComponent = selectedComponent
+  const legacySelectedComponent = selectedComponent 
     ? LegacyAdapter.componentModelToLegacy(selectedComponent)
     : null;
   const legacyTheme = LegacyAdapter.themeModelToLegacy(state.theme);
@@ -105,7 +105,7 @@ export default function LowCodePlatformView() {
     try {
       const componentModels = LegacyAdapter.legacyToComponentModels(templateComponents);
       applyTemplate(componentModels);
-
+      
       toast({
         title: "模板应用成功",
         description: `已添加 ${templateComponents.length} 个组件到画布`,
@@ -225,7 +225,7 @@ export default function LowCodePlatformView() {
             <CodeExport components={legacyComponents} />
           </div>
         </Header>
-
+        
         <div className="flex flex-1 overflow-hidden">
           {!state.previewMode && (
             <Tabs
@@ -265,7 +265,7 @@ export default function LowCodePlatformView() {
               </TabsContent>
             </Tabs>
           )}
-
+          
           <div
             className="flex-1 overflow-auto"
             style={{
@@ -284,7 +284,7 @@ export default function LowCodePlatformView() {
               onUpdateComponents={handleUpdateComponents}
             />
           </div>
-
+          
           {!state.previewMode && (
             <PropertiesPanel
               selectedComponent={legacySelectedComponent}

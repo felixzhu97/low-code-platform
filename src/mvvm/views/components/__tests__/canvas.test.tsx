@@ -8,7 +8,7 @@ import type {
   Component,
   ThemeConfig,
   DataSource,
-} from "@/mvvm/models/types";
+} from "@/domain/entities/types";
 
 // Mock the recharts library
 vi.mock("recharts", () => ({

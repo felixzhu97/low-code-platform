@@ -1,8 +1,8 @@
 import type React from "react";
-import type { Component, ThemeConfig } from "@/mvvm/models/types";
-import { Button } from "@/mvvm/views/components/ui/button";
-import { Separator } from "@/mvvm/views/components/ui/separator";
-import { cn } from "@/mvvm/viewmodels/utils";
+import type { Component, ThemeConfig } from "@/domain/entities/types";
+import { Button } from "@/presentation/components/ui/button";
+import { Separator } from "@/presentation/components/ui/separator";
+import { cn } from "@/application/services/utils";
 
 interface BasicComponentRendererProps {
   component: Component;

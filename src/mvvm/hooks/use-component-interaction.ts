@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { Component } from "@/mvvm/models/types";
-import { ComponentManagementService } from "@/mvvm/viewmodels/component-management.service";
+import type { Component } from "@/domain/entities/types";
+import { ComponentManagementService } from "@/application/services/component-management.service";
 
 interface UseComponentInteractionProps {
   components: Component[];

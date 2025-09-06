@@ -1,17 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Input } from "@/mvvm/views/components/ui/input"
-import { Label } from "@/mvvm/views/components/ui/label"
-import { Switch } from "@/mvvm/views/components/ui/switch"
-import { Slider } from "@/mvvm/views/components/ui/slider"
-import { ScrollArea } from "@/mvvm/views/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/mvvm/views/components/ui/select"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/mvvm/views/components/ui/accordion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/mvvm/views/components/ui/tabs"
+import { Input } from "@/presentation/components/ui/input"
+import { Label } from "@/presentation/components/ui/label"
+import { Switch } from "@/presentation/components/ui/switch"
+import { Slider } from "@/presentation/components/ui/slider"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/presentation/components/ui/accordion"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
 import { ColorPicker } from "./color-picker"
 
-import {Component} from "@/mvvm/models/types";
+import {Component} from "@/domain/entities/types";
 
 type PropertiesPanelProps = {
   selectedComponent: Component | null

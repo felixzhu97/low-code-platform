@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { Canvas } from './canvas';
-import type { Component, ThemeConfig } from '@/mvvm/models/types';
+import type { Component, ThemeConfig } from '@/domain/entities/types';
 
 interface OptimizedCanvasProps {
   components: Component[];

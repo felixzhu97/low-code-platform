@@ -1,12 +1,12 @@
 import type React from "react";
-import type { Component, ThemeConfig } from "@/mvvm/models/types";
-import { ComponentManagementService } from "@/mvvm/viewmodels/component-management.service";
+import type { Component, ThemeConfig } from "@/domain/entities/types";
+import { ComponentManagementService } from "@/application/services/component-management.service";
 import { BasicComponentRenderer } from "./basic-component-renderer";
 import { ChartComponentRenderer } from "./chart-component-renderer";
 import { FormComponentRenderer } from "./form-component-renderer";
 import { DataComponentRenderer } from "./data-component-renderer";
 import { LayoutComponentRenderer } from "./layout-component-renderer";
-import { cn } from "@/mvvm/viewmodels/utils";
+import { cn } from "@/application/services/utils";
 
 interface ComponentRendererProps {
   component: Component;

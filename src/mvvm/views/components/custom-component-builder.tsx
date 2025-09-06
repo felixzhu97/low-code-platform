@@ -9,19 +9,19 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/mvvm/views/components/ui/dialog"
-import { Button } from "@/mvvm/views/components/ui/button"
-import { Input } from "@/mvvm/views/components/ui/input"
-import { Label } from "@/mvvm/views/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/mvvm/views/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/mvvm/views/components/ui/select"
-import { ScrollArea } from "@/mvvm/views/components/ui/scroll-area"
+} from "@/presentation/components/ui/dialog"
+import { Button } from "@/presentation/components/ui/button"
+import { Input } from "@/presentation/components/ui/input"
+import { Label } from "@/presentation/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select"
+import { ScrollArea } from "@/presentation/components/ui/scroll-area"
 import { PlusCircle, Save } from "lucide-react"
-import { Card, CardContent } from "@/mvvm/views/components/ui/card"
-import { Switch } from "@/mvvm/views/components/ui/switch"
+import { Card, CardContent } from "@/presentation/components/ui/card"
+import { Switch } from "@/presentation/components/ui/switch"
 
 
-import {Component} from "@/mvvm/models/types";
+import {Component} from "@/domain/entities/types";
 
 interface CustomComponentBuilderProps {
   onSaveComponent: (component: any) => void

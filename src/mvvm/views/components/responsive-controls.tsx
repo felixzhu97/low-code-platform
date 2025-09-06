@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Tabs, TabsList, TabsTrigger } from "@/mvvm/views/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs"
 import { Laptop, Smartphone, Tablet } from "lucide-react"
 
 interface ResponsiveControlsProps {

@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Component } from "@/mvvm/models/types";
+import type { Component } from "@/domain/entities/types";
 import {
   BarChart,
   LineChart,
@@ -10,7 +10,7 @@ import {
   GaugeChart,
   RadialBarChart,
   TreemapChart,
-} from "@/mvvm/views/components/charts";
+} from "@/presentation/components/charts";
 
 interface ChartComponentRendererProps {
   component: Component;

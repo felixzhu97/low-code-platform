@@ -1,20 +1,20 @@
 import type React from "react";
-import type { Component } from "@/mvvm/models/types";
-import { Input } from "@/mvvm/views/components/ui/input";
-import { Textarea } from "@/mvvm/views/components/ui/textarea";
-import { Checkbox } from "@/mvvm/views/components/ui/checkbox";
+import type { Component } from "@/domain/entities/types";
+import { Input } from "@/presentation/components/ui/input";
+import { Textarea } from "@/presentation/components/ui/textarea";
+import { Checkbox } from "@/presentation/components/ui/checkbox";
 import {
   RadioGroup,
   RadioGroupItem,
-} from "@/mvvm/views/components/ui/radio-group";
+} from "@/presentation/components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/mvvm/views/components/ui/select";
-import { Label } from "@/mvvm/views/components/ui/label";
+} from "@/presentation/components/ui/select";
+import { Label } from "@/presentation/components/ui/label";
 
 interface FormComponentRendererProps {
   component: Component;

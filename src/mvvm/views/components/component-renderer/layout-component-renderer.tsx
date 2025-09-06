@@ -1,13 +1,13 @@
 import type React from "react";
-import type { Component, ThemeConfig } from "@/mvvm/models/types";
-import { Card, CardContent } from "@/mvvm/views/components/ui/card";
+import type { Component, ThemeConfig } from "@/domain/entities/types";
+import { Card, CardContent } from "@/presentation/components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/mvvm/views/components/ui/tabs";
-import { cn } from "@/mvvm/viewmodels/utils";
+} from "@/presentation/components/ui/tabs";
+import { cn } from "@/application/services/utils";
 import { ComponentRenderer } from "./index";
 
 interface LayoutComponentRendererProps {
