@@ -71,8 +71,23 @@ export function ComponentRenderer({
 
   // 渲染组件内容
   const renderComponentContent = () => {
-    // 基础组件
-    if (["text", "button", "image", "divider"].includes(component.type)) {
+    // 基础组件和高级组件
+    if (
+      [
+        "text",
+        "button",
+        "image",
+        "divider",
+        "carousel",
+        "steps",
+        "progress",
+        "avatar",
+        "badge",
+        "tag",
+        "timeline",
+        "rating",
+      ].includes(component.type)
+    ) {
       return (
         <BasicComponentRenderer
           component={component}
@@ -80,6 +95,13 @@ export function ComponentRenderer({
           theme={theme}
           animationStyle={animationStyle}
           themeStyle={themeStyle}
+          childComponents={childComponents}
+          components={components}
+          isPreviewMode={isPreviewMode}
+          selectedId={selectedId}
+          dropTargetId={dropTargetId}
+          onSelectComponent={onSelectComponent}
+          onMouseDown={onMouseDown}
         />
       );
     }

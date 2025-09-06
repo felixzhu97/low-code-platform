@@ -446,6 +446,96 @@ export class ComponentFactoryService {
           width: "100%",
           height: "auto",
         };
+      case "carousel":
+        return {
+          ...baseProperties,
+          loop: false,
+          showArrows: true,
+          autoplay: false,
+          autoplayDelay: 3000,
+          width: "100%",
+          height: "auto",
+        };
+      case "steps":
+        return {
+          ...baseProperties,
+          currentStep: 1,
+          steps: [
+            { title: "步骤1", description: "第一步描述" },
+            { title: "步骤2", description: "第二步描述" },
+            { title: "步骤3", description: "第三步描述" },
+          ],
+          direction: "horizontal",
+          width: "100%",
+          height: "auto",
+        };
+      case "progress":
+        return {
+          ...baseProperties,
+          value: 50,
+          max: 100,
+          label: "进度",
+          description: "进度描述",
+          showValue: true,
+          size: "default",
+          width: "100%",
+          height: "auto",
+        };
+      case "avatar":
+        return {
+          ...baseProperties,
+          src: "",
+          alt: "头像",
+          fallback: "U",
+          size: "default",
+          showInfo: false,
+          name: "用户名",
+          description: "用户描述",
+          width: "auto",
+          height: "auto",
+        };
+      case "badge":
+        return {
+          ...baseProperties,
+          text: "徽章",
+          variant: "default",
+          showClose: false,
+          width: "auto",
+          height: "auto",
+        };
+      case "tag":
+        return {
+          ...baseProperties,
+          tags: ["标签1", "标签2", "标签3"],
+          variant: "default",
+          closable: false,
+          width: "100%",
+          height: "auto",
+        };
+      case "timeline":
+        return {
+          ...baseProperties,
+          items: [
+            { title: "事件1", description: "事件描述1", time: "2023-01-01" },
+            { title: "事件2", description: "事件描述2", time: "2023-01-02" },
+            { title: "事件3", description: "事件描述3", time: "2023-01-03" },
+          ],
+          direction: "vertical",
+          width: "100%",
+          height: "auto",
+        };
+      case "rating":
+        return {
+          ...baseProperties,
+          rating: 0,
+          maxRating: 5,
+          size: "default",
+          readonly: false,
+          showValue: false,
+          allowHalf: false,
+          width: "auto",
+          height: "auto",
+        };
       default:
         return baseProperties;
     }
