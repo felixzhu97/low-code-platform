@@ -40,59 +40,43 @@
 
 - **框架**: Next.js 15.2.4 + React 19
 - **语言**: TypeScript
-- **架构**: MVVM (Model-View-ViewModel) 🆕
 - **样式**: Tailwind CSS + CSS 变量主题系统
 - **UI 组件库**: Radix UI
 - **拖拽**: React DnD
 - **图表**: Recharts
 - **表单**: React Hook Form + Zod 验证
-- **状态管理**: MVVM ViewModel + 观察者模式
-- **测试**: Vitest + Testing Library
+- **状态管理**: React Hooks + 历史记录系统
 - **构建工具**: Next.js 构建系统
 
 ## 📦 项目结构
 
 ```
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── page.tsx           # 主页面入口（使用MVVM架构）
-│   │   ├── layout.tsx         # 根布局
-│   │   └── globals.css        # 全局样式
-│   ├── mvvm/                  # MVVM架构核心 🆕
-│   │   ├── models/            # 数据模型层
-│   │   │   ├── ComponentModel.ts    # 组件数据模型
-│   │   │   └── PlatformModel.ts     # 平台数据模型
-│   │   ├── viewmodels/        # 视图模型层
-│   │   │   ├── ComponentViewModel.ts    # 组件业务逻辑
-│   │   │   ├── PlatformViewModel.ts     # 平台业务逻辑
-│   │   │   └── HistoryViewModel.ts      # 历史记录管理
-│   │   ├── hooks/             # React Hooks
-│   │   │   ├── usePlatformViewModel.ts  # 平台ViewModel Hook
-│   │   │   └── useComponentViewModel.ts # 组件ViewModel Hook
-│   │   ├── adapters/          # 适配器层
-│   │   │   └── LegacyAdapter.ts         # 兼容现有代码
-│   │   ├── views/             # 视图层
-│   │   │   └── LowCodePlatformView.tsx  # 主视图组件
-│   │   └── index.ts           # 导出文件
-│   ├── presentation/          # 表现层组件
-│   │   ├── components/        # UI组件
-│   │   │   ├── ui/           # 基础UI组件库
-│   │   │   ├── canvas.tsx    # 主画布组件
-│   │   │   ├── component-panel.tsx    # 组件面板
-│   │   │   ├── properties-panel.tsx   # 属性配置面板
-│   │   │   └── ...           # 其他功能组件
-│   │   └── hooks/            # 表现层Hooks
-│   ├── domain/               # 领域层
-│   │   ├── entities/         # 实体定义
-│   │   └── services/         # 领域服务
-│   ├── application/          # 应用层
-│   │   └── services/         # 应用服务
-│   └── models/               # 数据模型（兼容层）
-├── test/                     # 测试文件
-│   └── mvvm/                 # MVVM架构测试
-├── docs/                     # 文档
-│   └── mvvm-migration-guide.md    # MVVM迁移指南
-└── public/                   # 静态资源
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # 主页面 - 低代码编辑器
+│   ├── layout.tsx         # 根布局
+│   └── globals.css        # 全局样式
+├── components/            # 组件目录
+│   ├── ui/               # 基础UI组件库
+│   ├── charts/           # 图表组件
+│   ├── templates/        # 页面模板
+│   ├── canvas.tsx        # 主画布组件
+│   ├── component-panel.tsx    # 组件面板
+│   ├── properties-panel.tsx   # 属性配置面板
+│   ├── template-gallery.tsx   # 模板库
+│   ├── theme-editor.tsx       # 主题编辑器
+│   ├── form-builder.tsx       # 表单构建器
+│   ├── code-export.tsx        # 代码导出
+│   └── ...               # 其他功能组件
+├── lib/                  # 工具库
+│   ├── types.ts          # TypeScript类型定义
+│   ├── utils.ts          # 工具函数
+│   └── history.ts        # 历史记录管理
+├── hooks/                # 自定义Hooks
+├── styles/               # 样式文件
+├── public/               # 静态资源
+└── src/                  # 业务逻辑
+    ├── domains/          # 领域模型
+    └── shared/           # 共享模块
 ```
 
 ## 🚀 快速开始
@@ -181,35 +165,14 @@ npm run start
 - **图表类型**: 在 `components/charts/` 目录下添加新的图表组件
 - **导出格式**: 在 `components/code-export.tsx` 中添加新的导出格式
 
-## 🎯 架构特性
-
-### MVVM架构优势
-- ✅ **分离关注点**: UI逻辑与业务逻辑完全分离
-- ✅ **可测试性**: ViewModel可独立测试，不依赖React组件
-- ✅ **可维护性**: 清晰的代码结构，易于维护和扩展
-- ✅ **类型安全**: 完整的TypeScript类型定义
-- ✅ **状态管理**: 集中式状态管理，支持撤销/重做
-- ✅ **向后兼容**: 通过适配器确保现有组件正常工作
-
-### 核心组件
-- **Model**: 定义数据结构和业务实体
-- **ViewModel**: 处理业务逻辑和状态管理
-- **View**: 纯UI组件，通过Hooks连接ViewModel
-- **Adapter**: 兼容现有代码的适配层
-
 ## 📝 待办事项
 
-- [x] ✅ MVVM架构迁移
-- [x] ✅ 完整的测试覆盖
-- [x] ✅ 类型安全保障
 - [ ] 增加更多图表类型支持
 - [ ] 实现数据库连接功能
 - [ ] 添加移动端组件库
 - [ ] 支持自定义 CSS 样式编辑
 - [ ] 实现项目管理和版本控制
 - [ ] 添加更多页面模板
-- [ ] 性能监控和优化
-- [ ] 插件系统架构
 
 ## 🤝 贡献
 
