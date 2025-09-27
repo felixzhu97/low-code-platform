@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
 import type { Component } from "@/domain/entities/types";
 import { ComponentManagementService } from "@/application/services/component-management.service";
+import { useComponentStore } from "@/shared/stores";
 
 interface UseCanvasDragProps {
   components: Component[];
@@ -18,7 +19,7 @@ export function useCanvasDrag({
   snapToGrid,
   theme,
 }: UseCanvasDragProps) {
-  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const { dropTargetId, setDropTarget, addComponent } = useComponentStore();
 
   // 拖拽Drop处理
   const [{ isOver }, drop] = useDrop(
@@ -59,8 +60,8 @@ export function useCanvasDrag({
                 theme
               );
 
-              onUpdateComponents([...components, newComponent]);
-              setDropTargetId(null);
+              addComponent(newComponent);
+              setDropTarget(null);
               return newComponent;
             }
           }
@@ -73,7 +74,7 @@ export function useCanvasDrag({
             theme
           );
 
-          onUpdateComponents([...components, newComponent]);
+          addComponent(newComponent);
           return newComponent;
         }
       },
@@ -82,7 +83,7 @@ export function useCanvasDrag({
       }),
       hover: (item: any, monitor) => {
         // 清除之前的目标
-        setDropTargetId(null);
+        setDropTarget(null);
 
         // 获取当前鼠标位置
         const clientOffset = monitor.getClientOffset();
@@ -105,7 +106,7 @@ export function useCanvasDrag({
               component &&
               ComponentManagementService.isContainer(component.type)
             ) {
-              setDropTargetId(componentId);
+              setDropTarget(componentId);
               break;
             }
           }
@@ -117,8 +118,9 @@ export function useCanvasDrag({
       snapToGrid,
       isPreviewMode,
       dropTargetId,
-      onUpdateComponents,
+      addComponent,
       theme,
+      setDropTarget,
     ]
   );
 

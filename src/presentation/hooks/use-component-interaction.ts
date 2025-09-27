@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { Component } from "@/domain/entities/types";
 import { ComponentManagementService } from "@/application/services/component-management.service";
+import { useComponentStore, useCanvasStore } from "@/shared/stores";
 
 interface UseComponentInteractionProps {
   components: Component[];
@@ -17,9 +18,16 @@ export function useComponentInteraction({
   isPreviewMode,
   snapToGrid,
 }: UseComponentInteractionProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  // 从 store 获取状态
+  const {
+    selectedComponentId,
+    isDragging,
+    dragOffset,
+    selectComponent,
+    setDragging,
+    setDragOffset,
+  } = useComponentStore();
+
   const canvasRef = useRef<HTMLDivElement>(null);
 
   // 选择组件
@@ -27,17 +35,17 @@ export function useComponentInteraction({
     (component: Component) => {
       if (isPreviewMode) return;
 
-      setSelectedId(component.id);
+      selectComponent(component);
       onSelectComponent(component);
     },
-    [isPreviewMode, onSelectComponent]
+    [isPreviewMode, onSelectComponent, selectComponent]
   );
 
   // 清除选择
   const handleClearSelection = useCallback(() => {
-    setSelectedId(null);
+    selectComponent(null);
     onSelectComponent(null);
-  }, [onSelectComponent]);
+  }, [onSelectComponent, selectComponent]);
 
   // 鼠标按下开始拖动
   const handleMouseDown = useCallback(
@@ -45,7 +53,7 @@ export function useComponentInteraction({
       if (isPreviewMode) return;
 
       e.stopPropagation();
-      setSelectedId(component.id);
+      selectComponent(component);
       onSelectComponent(component);
 
       const rect = e.currentTarget.getBoundingClientRect();
@@ -54,15 +62,21 @@ export function useComponentInteraction({
         y: e.clientY - rect.top,
       });
 
-      setIsDragging(true);
+      setDragging(true);
     },
-    [isPreviewMode, onSelectComponent]
+    [
+      isPreviewMode,
+      onSelectComponent,
+      selectComponent,
+      setDragOffset,
+      setDragging,
+    ]
   );
 
   // 鼠标移动拖拽
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isDragging || !selectedId || isPreviewMode) return;
+      if (!isDragging || !selectedComponentId || isPreviewMode) return;
 
       const canvasRect = canvasRef.current?.getBoundingClientRect();
       if (!canvasRect) return;
@@ -80,7 +94,7 @@ export function useComponentInteraction({
       // 更新组件位置
       const updatedComponents =
         ComponentManagementService.updateComponentPosition(
-          selectedId,
+          selectedComponentId,
           position,
           components
         );
@@ -89,7 +103,7 @@ export function useComponentInteraction({
     },
     [
       isDragging,
-      selectedId,
+      selectedComponentId,
       isPreviewMode,
       dragOffset,
       snapToGrid,
@@ -100,13 +114,13 @@ export function useComponentInteraction({
 
   // 鼠标抬起结束拖拽
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    setDragging(false);
+  }, [setDragging]);
 
   // 键盘操作
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (!selectedId || isPreviewMode) return;
+      if (!selectedComponentId || isPreviewMode) return;
 
       const step = snapToGrid ? 20 : 1;
       let deltaX = 0;
@@ -133,7 +147,7 @@ export function useComponentInteraction({
         e.preventDefault();
 
         const updatedComponents = components.map((component) => {
-          if (component.id === selectedId) {
+          if (component.id === selectedComponentId) {
             return {
               ...component,
               position: {
@@ -148,28 +162,40 @@ export function useComponentInteraction({
         onUpdateComponents(updatedComponents);
       }
     },
-    [selectedId, isPreviewMode, snapToGrid, components, onUpdateComponents]
+    [
+      selectedComponentId,
+      isPreviewMode,
+      snapToGrid,
+      components,
+      onUpdateComponents,
+    ]
   );
 
   // 删除选中的组件
   const handleDeleteSelected = useCallback(() => {
-    if (!selectedId) return;
+    if (!selectedComponentId) return;
 
     const newComponents = ComponentManagementService.deleteComponentAndChildren(
-      selectedId,
+      selectedComponentId,
       components
     );
     onUpdateComponents(newComponents);
-    setSelectedId(null);
+    selectComponent(null);
     onSelectComponent(null);
-  }, [selectedId, components, onUpdateComponents, onSelectComponent]);
+  }, [
+    selectedComponentId,
+    components,
+    onUpdateComponents,
+    onSelectComponent,
+    selectComponent,
+  ]);
 
   // 清空所有组件
   const handleClear = useCallback(() => {
     onUpdateComponents([]);
-    setSelectedId(null);
+    selectComponent(null);
     onSelectComponent(null);
-  }, [onUpdateComponents, onSelectComponent]);
+  }, [onUpdateComponents, onSelectComponent, selectComponent]);
 
   // 键盘事件监听
   useEffect(() => {
@@ -177,7 +203,10 @@ export function useComponentInteraction({
       if (isPreviewMode) return;
 
       // Delete: Delete or Backspace
-      if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
+      if (
+        (e.key === "Delete" || e.key === "Backspace") &&
+        selectedComponentId
+      ) {
         e.preventDefault();
         handleDeleteSelected();
       }
@@ -185,17 +214,17 @@ export function useComponentInteraction({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedId, isPreviewMode, handleDeleteSelected]);
+  }, [selectedComponentId, isPreviewMode, handleDeleteSelected]);
 
   // 预览模式变化时清除选择
   useEffect(() => {
     if (isPreviewMode) {
-      setSelectedId(null);
+      selectComponent(null);
     }
-  }, [isPreviewMode]);
+  }, [isPreviewMode, selectComponent]);
 
   return {
-    selectedId,
+    selectedId: selectedComponentId,
     isDragging,
     canvasRef,
     handleSelectComponent,

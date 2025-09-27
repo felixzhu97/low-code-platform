@@ -3,12 +3,7 @@
 import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { ScrollArea } from "../ui/scroll-area";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
@@ -24,8 +19,11 @@ import {
 } from "lucide-react";
 
 import { ComponentCategory } from "@/domain/entities/types";
+import { useUIStore } from "@/shared/stores";
 
 export function ComponentPanel() {
+  // 从 store 获取状态
+  const { activeTab, setActiveTab } = useUIStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 

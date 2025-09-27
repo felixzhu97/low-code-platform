@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,31 +8,39 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./dialog"
-import { Button } from "./button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
-import { Label } from "./label"
-import { Palette } from "lucide-react"
-import { ColorPicker } from "./color-picker"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
-import type { ThemeConfig } from "@/domain/entities/types"
+} from "./dialog";
+import { Button } from "./button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import { Label } from "./label";
+import { Palette } from "lucide-react";
+import { ColorPicker } from "./color-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+import type { ThemeConfig } from "@/domain/entities/types";
+import { useThemeStore } from "@/shared/stores";
 
 interface ThemeEditorProps {
-  theme: ThemeConfig
-  onThemeChange: (theme: ThemeConfig) => void
+  // 移除 props，现在从 store 获取状态
 }
 
-export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
-  const [localTheme, setLocalTheme] = useState<ThemeConfig>(theme)
+export function ThemeEditor({}: ThemeEditorProps) {
+  // 从 store 获取状态
+  const { theme, updateTheme } = useThemeStore();
+  const [localTheme, setLocalTheme] = useState<ThemeConfig>(theme);
 
   const handleChange = (key: keyof ThemeConfig, value: string) => {
-    const updatedTheme = { ...localTheme, [key]: value }
-    setLocalTheme(updatedTheme)
-  }
+    const updatedTheme = { ...localTheme, [key]: value };
+    setLocalTheme(updatedTheme);
+  };
 
   const handleApply = () => {
-    onThemeChange(localTheme)
-  }
+    updateTheme(localTheme);
+  };
 
   const presetThemes = [
     {
@@ -71,7 +79,7 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
         spacing: "1.25rem",
       },
     },
-  ]
+  ];
 
   return (
     <Dialog>
@@ -119,7 +127,10 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="textColor">文本颜色</Label>
-                <ColorPicker color={localTheme.textColor} onChange={(color) => handleChange("textColor", color)} />
+                <ColorPicker
+                  color={localTheme.textColor}
+                  onChange={(color) => handleChange("textColor", color)}
+                />
               </div>
             </div>
           </TabsContent>
@@ -128,16 +139,25 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="fontFamily">字体</Label>
-                <Select value={localTheme.fontFamily} onValueChange={(value) => handleChange("fontFamily", value)}>
+                <Select
+                  value={localTheme.fontFamily}
+                  onValueChange={(value) => handleChange("fontFamily", value)}
+                >
                   <SelectTrigger id="fontFamily">
                     <SelectValue placeholder="选择字体" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="system-ui, sans-serif">系统默认</SelectItem>
+                    <SelectItem value="system-ui, sans-serif">
+                      系统默认
+                    </SelectItem>
                     <SelectItem value="'Inter', sans-serif">Inter</SelectItem>
                     <SelectItem value="'Roboto', sans-serif">Roboto</SelectItem>
-                    <SelectItem value="'Noto Sans SC', sans-serif">Noto Sans SC</SelectItem>
-                    <SelectItem value="'Helvetica Neue', sans-serif">Helvetica Neue</SelectItem>
+                    <SelectItem value="'Noto Sans SC', sans-serif">
+                      Noto Sans SC
+                    </SelectItem>
+                    <SelectItem value="'Helvetica Neue', sans-serif">
+                      Helvetica Neue
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -148,7 +168,10 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="borderRadius">圆角</Label>
-                <Select value={localTheme.borderRadius} onValueChange={(value) => handleChange("borderRadius", value)}>
+                <Select
+                  value={localTheme.borderRadius}
+                  onValueChange={(value) => handleChange("borderRadius", value)}
+                >
                   <SelectTrigger id="borderRadius">
                     <SelectValue placeholder="选择圆角大小" />
                   </SelectTrigger>
@@ -165,7 +188,10 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="spacing">基础间距</Label>
-                <Select value={localTheme.spacing} onValueChange={(value) => handleChange("spacing", value)}>
+                <Select
+                  value={localTheme.spacing}
+                  onValueChange={(value) => handleChange("spacing", value)}
+                >
                   <SelectTrigger id="spacing">
                     <SelectValue placeholder="选择基础间距" />
                   </SelectTrigger>
@@ -246,5 +272,5 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

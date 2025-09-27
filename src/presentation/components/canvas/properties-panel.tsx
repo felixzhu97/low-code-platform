@@ -24,16 +24,15 @@ import {
 } from "@/presentation/components/ui";
 
 import { Component } from "@/domain/entities/types";
+import { useComponentStore } from "@/shared/stores";
 
 type PropertiesPanelProps = {
-  selectedComponent: Component | null;
-  onUpdateComponent?: (id: string, properties: any) => void;
+  // 移除 props，现在从 store 获取状态
 };
 
-export function PropertiesPanel({
-  selectedComponent,
-  onUpdateComponent,
-}: PropertiesPanelProps) {
+export function PropertiesPanel({}: PropertiesPanelProps) {
+  // 从 store 获取状态
+  const { selectedComponent, updateComponent } = useComponentStore();
   const [properties, setProperties] = useState<any>({});
 
   useEffect(() => {
@@ -182,8 +181,8 @@ export function PropertiesPanel({
     const updatedProperties = { ...properties, [key]: value };
     setProperties(updatedProperties);
 
-    if (selectedComponent && onUpdateComponent) {
-      onUpdateComponent(selectedComponent.id, updatedProperties);
+    if (selectedComponent) {
+      updateComponent(selectedComponent.id, { properties: updatedProperties });
     }
   };
 
@@ -200,8 +199,8 @@ export function PropertiesPanel({
     };
     setProperties(updatedProperties);
 
-    if (selectedComponent && onUpdateComponent) {
-      onUpdateComponent(selectedComponent.id, updatedProperties);
+    if (selectedComponent) {
+      updateComponent(selectedComponent.id, { properties: updatedProperties });
     }
   };
 
@@ -217,8 +216,8 @@ export function PropertiesPanel({
     const updatedProperties = { ...properties, [arrayKey]: array };
     setProperties(updatedProperties);
 
-    if (selectedComponent && onUpdateComponent) {
-      onUpdateComponent(selectedComponent.id, updatedProperties);
+    if (selectedComponent) {
+      updateComponent(selectedComponent.id, { properties: updatedProperties });
     }
   };
 
@@ -229,8 +228,8 @@ export function PropertiesPanel({
     const updatedProperties = { ...properties, [arrayKey]: array };
     setProperties(updatedProperties);
 
-    if (selectedComponent && onUpdateComponent) {
-      onUpdateComponent(selectedComponent.id, updatedProperties);
+    if (selectedComponent) {
+      updateComponent(selectedComponent.id, { properties: updatedProperties });
     }
   };
 
@@ -241,8 +240,8 @@ export function PropertiesPanel({
     const updatedProperties = { ...properties, [arrayKey]: array };
     setProperties(updatedProperties);
 
-    if (selectedComponent && onUpdateComponent) {
-      onUpdateComponent(selectedComponent.id, updatedProperties);
+    if (selectedComponent) {
+      updateComponent(selectedComponent.id, { properties: updatedProperties });
     }
   };
 

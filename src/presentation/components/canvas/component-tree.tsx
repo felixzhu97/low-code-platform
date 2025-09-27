@@ -16,24 +16,22 @@ import {
 import { cn } from "../../../application/services/utils";
 
 import { Component } from "@/domain/entities/types";
+import { useStores } from "@/shared/stores";
 
 interface ComponentTreeProps {
-  components: Component[];
-  selectedId: string | null;
-  onSelectComponent: (component: Component) => void;
-  onDeleteComponent: (id: string) => void;
-  onToggleVisibility: (id: string, visible: boolean) => void;
-  onMoveComponent: (id: string, parentId: string | null) => void;
+  // 移除 props，现在从 store 获取状态
 }
 
-export function ComponentTree({
-  components,
-  selectedId,
-  onSelectComponent,
-  onDeleteComponent,
-  onToggleVisibility,
-  onMoveComponent,
-}: ComponentTreeProps) {
+export function ComponentTree({}: ComponentTreeProps) {
+  // 从 store 获取状态
+  const {
+    components,
+    selectedComponentId,
+    selectComponent,
+    deleteComponent,
+    updateComponent,
+  } = useStores();
+
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>(
     {}
   );
@@ -88,7 +86,9 @@ export function ComponentTree({
 
     // 如果目标是画布（targetComponent为null）或者是容器类组件
     if (!targetComponent || isContainer(targetComponent.type)) {
-      onMoveComponent(componentId, targetComponent?.id || null);
+      updateComponent(componentId, {
+        parentId: targetComponent?.id || null,
+      });
     }
   };
 
@@ -138,7 +138,7 @@ export function ComponentTree({
   const renderTreeNode = (component: Component, level = 0) => {
     const hasChildren = component.children && component.children.length > 0;
     const isExpanded = expandedNodes[component.id] || false;
-    const isSelected = component.id === selectedId;
+    const isSelected = component.id === selectedComponentId;
     const isContainer = [
       "container",
       "grid-layout",
@@ -159,7 +159,7 @@ export function ComponentTree({
             isSelected && "bg-primary/10 text-primary"
           )}
           style={{ paddingLeft: `${level * 12 + 8}px` }}
-          onClick={() => onSelectComponent(component)}
+          onClick={() => selectComponent(component)}
           draggable
           onDragStart={(e) => handleDragStart(e, component)}
           onDragOver={(e) => handleDragOver(e, component)}
@@ -200,10 +200,12 @@ export function ComponentTree({
                 className="h-6 w-6 text-muted-foreground hover:text-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onToggleVisibility(
-                    component.id,
-                    component.properties?.visible !== false
-                  );
+                  updateComponent(component.id, {
+                    properties: {
+                      ...component.properties,
+                      visible: component.properties?.visible === false,
+                    },
+                  });
                 }}
               >
                 {component.properties?.visible === false ? (
@@ -218,7 +220,7 @@ export function ComponentTree({
                 className="h-6 w-6 text-muted-foreground hover:text-destructive"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDeleteComponent(component.id);
+                  deleteComponent(component.id);
                 }}
               >
                 <Trash2 className="h-3.5 w-3.5" />

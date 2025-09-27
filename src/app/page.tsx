@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import {
@@ -30,79 +30,77 @@ import { ComponentLibraryManager } from "@/presentation/components/ui";
 import { ComponentGrouping } from "@/presentation/components/ui";
 import { ComponentTree } from "@/presentation/components/canvas";
 import { toast } from "@/presentation/hooks/use-toast";
-import { usePlatformState } from "@/presentation/hooks/use-platform-state";
+import { useStores } from "@/shared/stores";
 import { DataPanel } from "@/presentation/components/data";
 
 export default function LowCodePlatform() {
+  // 从 stores 获取状态
   const {
-    state,
-    updateState,
-    updateComponentsHistory,
-    handleUndo,
-    handleRedo,
-  } = usePlatformState();
-
-  const {
+    // 组件状态
+    components,
     selectedComponent,
-    activeTab,
-    componentsHistory,
-    previewMode,
-    projectName,
+    addComponent,
+    updateComponent,
+    deleteComponent,
+    selectComponent,
+    // 画布状态
+    isPreviewMode,
     viewportWidth,
     activeDevice,
+    setPreviewMode,
+    setViewportWidth,
+    setActiveDevice,
+    // 主题状态
     theme,
-    customComponents,
-  } = state;
+    updateTheme,
+    // UI状态
+    activeTab,
+    projectName,
+    setActiveTab,
+    // 历史记录状态
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    addToHistory,
+  } = useStores();
 
-  const components = componentsHistory.present;
-
-  // 添加调试日志
-  useEffect(() => {
-    console.log("Current components:", components);
-  }, [components]);
-
+  // 处理自定义组件（暂时使用空实现，后续可以添加到UI store）
   const handleAddCustomComponent = (component: any) => {
-    updateState({ customComponents: [...customComponents, component] });
+    // TODO: 添加到自定义组件管理
   };
 
   const handleRemoveCustomComponent = (componentId: string) => {
-    updateState({
-      customComponents: customComponents.filter((c) => c.id !== componentId),
-    });
+    // TODO: 从自定义组件管理移除
   };
 
   const handleImportComponents = (components: any[]) => {
-    updateState({ customComponents: [...customComponents, ...components] });
+    // TODO: 导入自定义组件
   };
 
   const handleUpdateComponent = (id: string, properties: any) => {
-    const updatedComponents = components.map((component) => {
-      if (component.id === id) {
-        return { ...component, properties };
-      }
-      return component;
-    });
-
-    updateComponentsHistory(updatedComponents);
+    updateComponent(id, { properties });
+    addToHistory(components);
   };
 
   const handleSelectComponent = (component: Component | null) => {
-    updateState({ selectedComponent: component });
+    selectComponent(component);
   };
 
   const togglePreviewMode = () => {
-    updateState({
-      previewMode: !previewMode,
-      selectedComponent: !previewMode ? null : selectedComponent,
-    });
+    setPreviewMode(!isPreviewMode);
+    if (!isPreviewMode) {
+      selectComponent(null);
+    }
   };
 
   const handleViewportChange = (width: number, device: string) => {
-    updateState({ viewportWidth: width, activeDevice: device });
+    setViewportWidth(width);
+    setActiveDevice(device);
   };
 
   const handleThemeChange = (newTheme: ThemeConfig) => {
-    updateState({ theme: newTheme });
+    updateTheme(newTheme);
   };
 
   // 处理模板选择
@@ -111,7 +109,13 @@ export default function LowCodePlatform() {
       try {
         const processedComponents =
           TemplateService.applyTemplate(templateComponents);
-        updateComponentsHistory(processedComponents);
+
+        // 添加组件到store
+        processedComponents.forEach((component) => {
+          addComponent(component);
+        });
+
+        addToHistory(components);
 
         toast({
           title: "模板应用成功",
@@ -135,28 +139,24 @@ export default function LowCodePlatform() {
         }
       }
     },
-    [updateComponentsHistory]
+    [addComponent, addToHistory, components]
   );
 
   const handleAddForm = (formComponents: Component[]) => {
-    updateComponentsHistory([...components, ...formComponents]);
+    formComponents.forEach((component) => {
+      addComponent(component);
+    });
+    addToHistory(components);
   };
 
   const handleApplyAnimation = (componentId: string, animation: any) => {
-    const updatedComponents = components.map((component) => {
-      if (component.id === componentId) {
-        return {
-          ...component,
-          properties: {
-            ...component.properties,
-            animation,
-          },
-        };
-      }
-      return component;
+    updateComponent(componentId, {
+      properties: {
+        ...components.find((c) => c.id === componentId)?.properties,
+        animation,
+      },
     });
-
-    updateComponentsHistory(updatedComponents);
+    addToHistory(components);
   };
 
   const handleGroupComponents = (componentIds: string[], groupName: string) => {
@@ -207,55 +207,29 @@ export default function LowCodePlatform() {
     );
 
     // 添加新的组容器
-    updateComponentsHistory([...remainingComponents, groupContainer]);
+    addComponent(groupContainer);
+    addToHistory(components);
   };
 
   // 处理组件树中的组件删除
   const handleDeleteComponent = (id: string) => {
-    // 递归删除组件及其子组件
-    const deleteComponentAndChildren = (
-      componentId: string,
-      comps: Component[]
-    ): Component[] => {
-      // 找出所有子组件ID
-      const childIds = comps
-        .filter((comp) => comp.parentId === componentId)
-        .map((comp) => comp.id);
-
-      // 递归删除所有子组件
-      let updatedComps = [...comps];
-      for (const childId of childIds) {
-        updatedComps = deleteComponentAndChildren(childId, updatedComps);
-      }
-
-      // 删除当前组件
-      return updatedComps.filter((comp) => comp.id !== componentId);
-    };
-
-    const newComponents = deleteComponentAndChildren(id, components);
-    updateComponentsHistory(newComponents);
+    deleteComponent(id);
+    addToHistory(components);
 
     if (selectedComponent?.id === id) {
-      updateState({ selectedComponent: null });
+      selectComponent(null);
     }
   };
 
   // 处理组件可见性切换
   const handleToggleVisibility = (id: string, visible: boolean) => {
-    const updatedComponents = components.map((component) => {
-      if (component.id === id) {
-        return {
-          ...component,
-          properties: {
-            ...component.properties,
-            visible: !visible,
-          },
-        };
-      }
-      return component;
+    updateComponent(id, {
+      properties: {
+        ...components.find((c) => c.id === id)?.properties,
+        visible: !visible,
+      },
     });
-
-    updateComponentsHistory(updatedComponents);
+    addToHistory(components);
   };
 
   // 处理组件移动
@@ -263,61 +237,12 @@ export default function LowCodePlatform() {
     const componentToMove = components.find((comp) => comp.id === id);
     if (!componentToMove) return;
 
-    // 如果目标是画布（targetParentId为null）
-    if (targetParentId === null) {
-      // 如果组件已经在画布上，不需要移动
-      if (componentToMove.parentId === null) return;
-
-      // 找到当前父组件，计算全局位置
-      const calculateGlobalPosition = (
-        comp: Component
-      ): { x: number; y: number } => {
-        if (!comp.parentId) {
-          return comp.position || { x: 0, y: 0 };
-        }
-
-        const parent = components.find((p) => p.id === comp.parentId);
-        if (!parent) {
-          return comp.position || { x: 0, y: 0 };
-        }
-
-        const parentPos = calculateGlobalPosition(parent);
-        return {
-          x: (comp.position?.x || 0) + parentPos.x,
-          y: (comp.position?.y || 0) + parentPos.y,
-        };
-      };
-
-      const globalPosition = calculateGlobalPosition(componentToMove);
-
-      // 更新组件，移动到画布上
-      const updatedComponents = components.map((comp) => {
-        if (comp.id === id) {
-          return {
-            ...comp,
-            parentId: null,
-            position: globalPosition,
-          };
-        }
-        return comp;
-      });
-
-      updateComponentsHistory(updatedComponents);
-    } else {
-      // 移动到目标容器中
-      const updatedComponents = components.map((comp) => {
-        if (comp.id === id) {
-          return {
-            ...comp,
-            parentId: targetParentId,
-            position: { x: 10, y: 10 }, // 设置相对于容器的初始位置
-          };
-        }
-        return comp;
-      });
-
-      updateComponentsHistory(updatedComponents);
-    }
+    // 简化移动逻辑，直接更新父组件ID
+    updateComponent(id, {
+      parentId: targetParentId,
+      position: targetParentId ? { x: 10, y: 10 } : componentToMove.position,
+    });
+    addToHistory(components);
   };
 
   return (
@@ -328,8 +253,8 @@ export default function LowCodePlatform() {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleUndo}
-              disabled={componentsHistory.past.length === 0}
+              onClick={undo}
+              disabled={!canUndo()}
             >
               <Undo2 className="mr-2 h-4 w-4" />
               撤销
@@ -337,17 +262,17 @@ export default function LowCodePlatform() {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleRedo}
-              disabled={componentsHistory.future.length === 0}
+              onClick={redo}
+              disabled={!canRedo()}
             >
               <Redo2 className="mr-2 h-4 w-4" />
               重做
             </Button>
             <Button variant="outline" size="sm" onClick={togglePreviewMode}>
               <Eye className="mr-2 h-4 w-4" />
-              {previewMode ? "退出预览" : "预览"}
+              {isPreviewMode ? "退出预览" : "预览"}
             </Button>
-            <ResponsiveControls onViewportChange={handleViewportChange} />
+            <ResponsiveControls />
             <TemplateGallery
               onSelectTemplate={handleSelectTemplate}
               theme={theme}
@@ -361,10 +286,10 @@ export default function LowCodePlatform() {
               componentId={selectedComponent?.id || null}
               onApplyAnimation={handleApplyAnimation}
             />
-            <ThemeEditor theme={theme} onThemeChange={handleThemeChange} />
+            <ThemeEditor />
             <Collaboration projectName={projectName} />
             <ComponentLibraryManager
-              customComponents={customComponents}
+              customComponents={[]} // TODO: 从store获取
               onAddComponent={handleAddCustomComponent}
               onRemoveComponent={handleRemoveCustomComponent}
               onImportComponents={handleImportComponents}
@@ -374,10 +299,10 @@ export default function LowCodePlatform() {
           </div>
         </Header>
         <div className="flex flex-1 overflow-hidden">
-          {!previewMode && (
+          {!isPreviewMode && (
             <Tabs
               value={activeTab}
-              onValueChange={(value) => updateState({ activeTab: value })}
+              onValueChange={setActiveTab}
               className="w-64 border-r flex flex-col"
             >
               <TabsList className="grid w-full grid-cols-3 shrink-0">
@@ -395,14 +320,7 @@ export default function LowCodePlatform() {
                 value="tree"
                 className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
               >
-                <ComponentTree
-                  components={components}
-                  selectedId={selectedComponent?.id || null}
-                  onSelectComponent={handleSelectComponent}
-                  onDeleteComponent={handleDeleteComponent}
-                  onToggleVisibility={handleToggleVisibility}
-                  onMoveComponent={handleMoveComponent}
-                />
+                <ComponentTree />
               </TabsContent>
               <TabsContent
                 value="data"
@@ -415,27 +333,14 @@ export default function LowCodePlatform() {
           <div
             className="flex-1 overflow-auto"
             style={{
-              maxWidth: previewMode ? viewportWidth + "px" : "none",
-              margin: previewMode ? "0 auto" : "0",
+              maxWidth: isPreviewMode ? viewportWidth + "px" : "none",
+              margin: isPreviewMode ? "0 auto" : "0",
               transition: "max-width 0.3s ease",
             }}
           >
-            <Canvas
-              onSelectComponent={handleSelectComponent}
-              isPreviewMode={previewMode}
-              theme={theme}
-              viewportWidth={viewportWidth}
-              activeDevice={activeDevice}
-              components={components}
-              onUpdateComponents={updateComponentsHistory}
-            />
+            <Canvas />
           </div>
-          {!previewMode && (
-            <PropertiesPanel
-              selectedComponent={selectedComponent}
-              onUpdateComponent={handleUpdateComponent}
-            />
-          )}
+          {!isPreviewMode && <PropertiesPanel />}
         </div>
       </div>
     </DndProvider>
