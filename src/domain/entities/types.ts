@@ -60,7 +60,7 @@ export interface Component {
   children?: (Component | string)[];
   parentId?: string | null;
   dataSource?: string | null;
-  dataMapping?: Record<string, string>;
+  dataMapping?: DataMapping[];
 }
 
 export interface ComponentCategory {

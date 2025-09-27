@@ -63,7 +63,7 @@ export class ComponentManagementService {
     field: string,
     sourcePath: string,
     targetPath: string,
-    transform?: string,
+    transform?: "string" | "number" | "boolean" | "date" | "json",
     defaultValue?: any
   ): DataMapping {
     return DataBindingService.createDataMapping(

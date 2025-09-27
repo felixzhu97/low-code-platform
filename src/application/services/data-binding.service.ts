@@ -197,14 +197,14 @@ export class DataBindingService {
     field: string,
     sourcePath: string,
     targetPath: string,
-    transform?: string,
+    transform?: "string" | "number" | "boolean" | "date" | "json",
     defaultValue?: any
   ): DataMapping {
     return {
       field,
       sourcePath,
       targetPath,
-      transform: transform as any,
+      transform,
       defaultValue,
     };
   }
@@ -263,7 +263,9 @@ export class DataBindingService {
   /**
    * 推断数据类型转换
    */
-  private static inferTransform(value: any): string {
+  private static inferTransform(
+    value: any
+  ): "string" | "number" | "boolean" | "date" | "json" {
     if (typeof value === "string") {
       // 检查是否为日期格式
       if (!isNaN(Date.parse(value))) {

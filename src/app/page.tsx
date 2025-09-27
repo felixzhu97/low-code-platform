@@ -3,34 +3,35 @@
 import { useEffect, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ComponentPanel } from "@/presentation/components/component-panel";
-import { Canvas } from "@/presentation/components/canvas";
-import { PropertiesPanel } from "@/presentation/components/properties-panel";
-import { Header } from "@/presentation/components/header";
-import { DataPanel } from "@/presentation/components/data-panel";
+import {
+  Canvas,
+  ComponentPanel,
+  PropertiesPanel,
+} from "@/presentation/components/canvas";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/presentation/components/ui/tabs";
-import { CodeExport } from "@/presentation/components/code-export";
-import { TemplateGallery } from "@/presentation/components/template-gallery";
-import { ResponsiveControls } from "@/presentation/components/responsive-controls";
-import { ThemeEditor } from "@/presentation/components/theme-editor";
-import { FormBuilder } from "@/presentation/components/form-builder";
-import { AnimationEditor } from "@/presentation/components/animation-editor";
-import { Collaboration } from "@/presentation/components/collaboration";
+import { CodeExport, Header } from "@/presentation/components/ui";
+import { TemplateGallery } from "@/presentation/components/templates";
+import { ResponsiveControls } from "@/presentation/components/ui";
+import { ThemeEditor } from "@/presentation/components/ui";
+import { FormBuilder } from "@/presentation/components/forms";
+import { AnimationEditor } from "@/presentation/components/ui";
+import { Collaboration } from "@/presentation/components/ui";
 import type { Component, ThemeConfig } from "@/domain/entities/types";
 import { TemplateApplicationError } from "@/domain/entities/types";
 import { TemplateService } from "@/application/services/template-command.service";
 import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager } from "@/presentation/components/component-library-manager";
-import { ComponentGrouping } from "@/presentation/components/component-grouping";
-import { ComponentTree } from "@/presentation/components/component-tree";
-import { toast } from "@/presentation/components/ui/use-toast";
+import { ComponentLibraryManager } from "@/presentation/components/ui";
+import { ComponentGrouping } from "@/presentation/components/ui";
+import { ComponentTree } from "@/presentation/components/canvas";
+import { toast } from "@/presentation/hooks/use-toast";
 import { usePlatformState } from "@/presentation/hooks/use-platform-state";
+import { DataPanel } from "@/presentation/components/data";
 
 export default function LowCodePlatform() {
   const {
@@ -65,7 +66,9 @@ export default function LowCodePlatform() {
   };
 
   const handleRemoveCustomComponent = (componentId: string) => {
-    updateState({ customComponents: customComponents.filter((c) => c.id !== componentId) });
+    updateState({
+      customComponents: customComponents.filter((c) => c.id !== componentId),
+    });
   };
 
   const handleImportComponents = (components: any[]) => {
@@ -88,9 +91,9 @@ export default function LowCodePlatform() {
   };
 
   const togglePreviewMode = () => {
-    updateState({ 
+    updateState({
       previewMode: !previewMode,
-      selectedComponent: !previewMode ? null : selectedComponent
+      selectedComponent: !previewMode ? null : selectedComponent,
     });
   };
 
@@ -103,33 +106,37 @@ export default function LowCodePlatform() {
   };
 
   // 处理模板选择
-  const handleSelectTemplate = useCallback((templateComponents: Component[]) => {
-    try {
-      const processedComponents = TemplateService.applyTemplate(templateComponents);
-      updateComponentsHistory(processedComponents);
+  const handleSelectTemplate = useCallback(
+    (templateComponents: Component[]) => {
+      try {
+        const processedComponents =
+          TemplateService.applyTemplate(templateComponents);
+        updateComponentsHistory(processedComponents);
 
-      toast({
-        title: "模板应用成功",
-        description: `已添加 ${processedComponents.length} 个组件到画布`,
-      });
-    } catch (error) {
-      console.error("应用模板时出错:", error);
-      
-      if (error instanceof TemplateApplicationError) {
         toast({
-          title: "模板应用失败",
-          description: error.message,
-          variant: "destructive",
+          title: "模板应用成功",
+          description: `已添加 ${processedComponents.length} 个组件到画布`,
         });
-      } else {
-        toast({
-          title: "应用模板失败",
-          description: "处理模板时发生未知错误",
-          variant: "destructive",
-        });
+      } catch (error) {
+        console.error("应用模板时出错:", error);
+
+        if (error instanceof TemplateApplicationError) {
+          toast({
+            title: "模板应用失败",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "应用模板失败",
+            description: "处理模板时发生未知错误",
+            variant: "destructive",
+          });
+        }
       }
-    }
-  }, [updateComponentsHistory]);
+    },
+    [updateComponentsHistory]
+  );
 
   const handleAddForm = (formComponents: Component[]) => {
     updateComponentsHistory([...components, ...formComponents]);
