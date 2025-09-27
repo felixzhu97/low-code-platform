@@ -94,10 +94,8 @@ export function LayoutComponentRenderer({
     <div
       key={child.id}
       className={cn(
-        "relative transition-all duration-200 ease-in-out",
-        !isPreviewMode && "cursor-move component-hover",
-        selectedId === child.id && !isPreviewMode && "component-selected",
-        !isPreviewMode && "hover:shadow-soft"
+        "relative",
+        !isPreviewMode && "cursor-move component-hover"
       )}
       style={{
         width: child.properties?.width || "auto",
@@ -109,10 +107,7 @@ export function LayoutComponentRenderer({
         border: child.properties?.border
           ? `1px solid ${child.properties?.borderColor || "rgb(229 231 235)"}`
           : "none",
-        boxShadow:
-          selectedId === child.id
-            ? "0 4px 16px rgba(59, 130, 246, 0.15), 0 2px 6px rgba(59, 130, 246, 0.1)"
-            : "0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08)",
+        boxShadow: "none",
         ...additionalStyle,
       }}
       onClick={(e) => {
@@ -130,8 +125,8 @@ export function LayoutComponentRenderer({
       return (
         <Card
           className={cn(
-            "transition-all duration-300 ease-in-out component-hover",
-            props.shadow ? "shadow-medium hover:shadow-strong" : "shadow-soft",
+            "component-hover",
+            props.shadow ? "shadow-medium" : "shadow-soft",
             props.rounded ? "rounded-lg" : "",
             props.border ? "border" : "border-0",
             props.gradient && "gradient-primary text-white",
@@ -179,7 +174,7 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
             isDropTarget && "component-drag-over",
             props.gradient && "gradient-cool",
             props.glass && "glass-morphism",
@@ -221,7 +216,7 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
             isDropTarget && "component-drag-over",
             props.gradient && "gradient-warm",
             props.glass && "glass-morphism",
@@ -375,7 +370,7 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
             isDropTarget && "component-drag-over",
             props.gradient && "gradient-success",
             `grid-cols-${props.columns || 3}`,
@@ -399,8 +394,7 @@ export function LayoutComponentRenderer({
               <Card
                 key={child.id}
                 className={cn(
-                  "overflow-hidden transition-all duration-300 ease-in-out component-hover",
-                  "hover:shadow-strong hover:scale-105",
+                  "overflow-hidden component-hover",
                   index % 3 === 0 && "gradient-primary text-white",
                   index % 3 === 1 && "gradient-secondary text-white",
                   index % 3 === 2 && "gradient-success text-white"
@@ -411,13 +405,13 @@ export function LayoutComponentRenderer({
             ))
           ) : (
             <>
-              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-primary">
+              <Card className="p-4 gradient-primary">
                 <div className="text-center text-sm text-white">卡片1</div>
               </Card>
-              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-secondary">
+              <Card className="p-4 gradient-secondary">
                 <div className="text-center text-sm text-white">卡片2</div>
               </Card>
-              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-success">
+              <Card className="p-4 gradient-success">
                 <div className="text-center text-sm text-white">卡片3</div>
               </Card>
             </>

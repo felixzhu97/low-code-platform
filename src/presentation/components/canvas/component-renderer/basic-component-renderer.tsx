@@ -96,10 +96,8 @@ export function BasicComponentRenderer({
           disabled={props.disabled}
           className={cn(
             props.fullWidth ? "w-full" : "",
-            "transition-all duration-200 ease-in-out",
-            "hover:scale-105 active:scale-95",
             props.gradient && "gradient-primary text-white border-0",
-            props.shadow && "shadow-medium hover:shadow-strong",
+            props.shadow && "shadow-medium",
             props.floating && "floating"
           )}
           style={{
@@ -117,15 +115,11 @@ export function BasicComponentRenderer({
           }}
         >
           {props.icon && props.iconPosition === "left" && (
-            <span className="mr-2 transition-transform duration-200 group-hover:scale-110">
-              {renderIcon(props.icon)}
-            </span>
+            <span className="mr-2">{renderIcon(props.icon)}</span>
           )}
           {props.text || "按钮"}
           {props.icon && props.iconPosition === "right" && (
-            <span className="ml-2 transition-transform duration-200 group-hover:scale-110">
-              {renderIcon(props.icon)}
-            </span>
+            <span className="ml-2">{renderIcon(props.icon)}</span>
           )}
         </Button>
       );
@@ -133,11 +127,7 @@ export function BasicComponentRenderer({
     case "image":
       return (
         <div
-          className={cn(
-            "transition-all duration-300 ease-in-out",
-            props.hoverEffect && "hover:scale-105",
-            props.floating && "floating"
-          )}
+          className={cn(props.floating && "floating")}
           style={{ ...animationStyle }}
         >
           <div className="relative overflow-hidden group">
@@ -147,11 +137,10 @@ export function BasicComponentRenderer({
               width={props.width || 300}
               height={props.height || 200}
               className={cn(
-                "object-cover transition-all duration-300 ease-in-out",
+                "object-cover",
                 props.rounded && "rounded-lg",
-                props.shadow && "shadow-medium hover:shadow-strong",
+                props.shadow && "shadow-medium",
                 props.border && "border-2 border-gray-200",
-                props.hoverEffect && "group-hover:scale-110",
                 props.gradientOverlay && "group-hover:brightness-110"
               )}
               style={{
@@ -212,7 +201,7 @@ export function BasicComponentRenderer({
                 childComponents.map((child, index) => (
                   <CarouselItem key={child.id}>
                     <div className="p-1">
-                      <Card className="transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105">
+                      <Card>
                         <CardContent className="flex aspect-square items-center justify-center p-6">
                           <ComponentRenderer
                             component={child}
@@ -235,7 +224,7 @@ export function BasicComponentRenderer({
                 <>
                   <CarouselItem>
                     <div className="p-1">
-                      <Card className="transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-primary">
+                      <Card className="gradient-primary">
                         <CardContent className="flex aspect-square items-center justify-center p-6">
                           <span className="text-4xl font-semibold text-white">
                             1
@@ -246,7 +235,7 @@ export function BasicComponentRenderer({
                   </CarouselItem>
                   <CarouselItem>
                     <div className="p-1">
-                      <Card className="transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-secondary">
+                      <Card className="gradient-secondary">
                         <CardContent className="flex aspect-square items-center justify-center p-6">
                           <span className="text-4xl font-semibold text-white">
                             2
@@ -257,7 +246,7 @@ export function BasicComponentRenderer({
                   </CarouselItem>
                   <CarouselItem>
                     <div className="p-1">
-                      <Card className="transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-success">
+                      <Card className="gradient-success">
                         <CardContent className="flex aspect-square items-center justify-center p-6">
                           <span className="text-4xl font-semibold text-white">
                             3
@@ -271,8 +260,8 @@ export function BasicComponentRenderer({
             </CarouselContent>
             {props.showArrows !== false && (
               <>
-                <CarouselPrevious className="transition-all duration-200 hover:scale-110" />
-                <CarouselNext className="transition-all duration-200 hover:scale-110" />
+                <CarouselPrevious />
+                <CarouselNext />
               </>
             )}
           </Carousel>
@@ -406,8 +395,6 @@ export function BasicComponentRenderer({
             variant={props.variant || "default"}
             className={cn(
               props.className,
-              "transition-all duration-200 ease-in-out",
-              "hover:scale-105 active:scale-95",
               props.pulse && "animate-pulse",
               props.gradient && "gradient-primary text-white border-0"
             )}
@@ -424,7 +411,7 @@ export function BasicComponentRenderer({
           </Badge>
           {props.showClose && (
             <button
-              className="ml-1 h-4 w-4 rounded-full hover:bg-muted transition-colors duration-200 hover:scale-110"
+              className="ml-1 h-4 w-4 rounded-full hover:bg-muted"
               onClick={() => {}}
             >
               ×
@@ -441,18 +428,15 @@ export function BasicComponentRenderer({
               <div
                 key={index}
                 className={cn(
-                  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-all duration-200 ease-in-out",
-                  "hover:scale-105 active:scale-95",
+                  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold",
                   props.variant === "secondary" &&
-                    "border-transparent bg-secondary text-secondary-foreground hover:shadow-soft",
+                    "border-transparent bg-secondary text-secondary-foreground",
                   props.variant === "destructive" &&
-                    "border-transparent bg-destructive text-destructive-foreground hover:shadow-soft",
-                  props.variant === "outline" &&
-                    "text-foreground hover:shadow-soft",
+                    "border-transparent bg-destructive text-destructive-foreground",
+                  props.variant === "outline" && "text-foreground",
                   !props.variant &&
-                    "border-transparent bg-primary text-primary-foreground hover:shadow-soft",
-                  props.gradient &&
-                    "gradient-primary text-white border-0 hover:shadow-colored"
+                    "border-transparent bg-primary text-primary-foreground",
+                  props.gradient && "gradient-primary text-white border-0"
                 )}
                 style={{
                   background: props.gradient
@@ -468,7 +452,7 @@ export function BasicComponentRenderer({
                 {tag}
                 {props.closable && (
                   <button
-                    className="ml-1 h-3 w-3 rounded-full hover:bg-muted transition-colors duration-200 hover:scale-110"
+                    className="ml-1 h-3 w-3 rounded-full hover:bg-muted"
                     onClick={() => {}}
                   >
                     ×

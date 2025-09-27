@@ -276,13 +276,12 @@
 
 /* 组件交互效果类 */
 .component-hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: none;
 }
 
 .component-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: none;
+  box-shadow: none;
 }
 
 .component-selected {
@@ -290,28 +289,9 @@
   overflow: visible;
 }
 
-.component-selected::before {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
-  border-radius: inherit;
-  z-index: -1;
-  animation: gradientShift 3s ease infinite;
-  opacity: 0.6;
-}
-
 .component-drag-over {
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.1) 0%,
-    rgba(139, 92, 246, 0.1) 100%
-  );
+  background: rgba(59, 130, 246, 0.05);
   border-color: #3b82f6;
-  animation: glow 2s ease-in-out infinite;
 }
 
 .component-loading {
@@ -373,9 +353,6 @@
 
 /* 响应式动画 */
 @media (prefers-reduced-motion: reduce) {
-  .component-hover,
-  .component-selected,
-  .component-drag-over,
   .component-loading,
   .floating {
     animation: none;
