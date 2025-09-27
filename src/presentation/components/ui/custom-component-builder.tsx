@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,34 +9,41 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "./dialog"
-import { Button } from "./button"
-import { Input } from "./input"
-import { Label } from "./label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
-import { ScrollArea } from "./scroll-area"
-import { PlusCircle, Save } from "lucide-react"
-import { Card, CardContent } from "./card"
-import { Switch } from "./switch"
+} from "./dialog";
+import { Button } from "./button";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+import { ScrollArea } from "./scroll-area";
+import { PlusCircle, Save } from "lucide-react";
+import { Card, CardContent } from "./card";
+import { Switch } from "./switch";
 
-
-import {Component} from "@/domain/entities/types";
+import { Component } from "@/domain/entities/types";
+import { useStores } from "@/shared/stores";
 
 interface CustomComponentBuilderProps {
-  onSaveComponent: (component: any) => void
-  existingComponents: Component[]
+  // 移除 props，现在从 store 获取状态
 }
 
-export function CustomComponentBuilder({ onSaveComponent, existingComponents }: CustomComponentBuilderProps) {
-  const [componentName, setComponentName] = useState("")
-  const [componentType, setComponentType] = useState("container")
-  const [componentCategory, setComponentCategory] = useState("layout")
-  const [isContainer, setIsContainer] = useState(false)
-  const [selectedComponents, setSelectedComponents] = useState<string[]>([])
+export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
+  // 从 store 获取状态
+  const { addCustomComponent, components: existingComponents } = useStores();
+  const [componentName, setComponentName] = useState("");
+  const [componentType, setComponentType] = useState("container");
+  const [componentCategory, setComponentCategory] = useState("layout");
+  const [isContainer, setIsContainer] = useState(false);
+  const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
 
   const handleSave = () => {
-    if (!componentName.trim()) return
+    if (!componentName.trim()) return;
 
     const newComponent = {
       id: `custom-${Date.now()}`,
@@ -45,35 +52,26 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
       category: componentCategory,
       isContainer,
       isCustom: true,
-      childComponents: selectedComponents.map((id) => {
-        const component = existingComponents.find((c) => c.id === id)
-        return {
-          id: `${component?.type}-${Date.now()}`,
-          type: component?.type || "text",
-          name: component?.name || "组件",
-          position: { x: 0, y: 0 },
-          properties: {},
-        }
-      }),
-    }
+      childComponents: selectedComponents,
+    };
 
-    onSaveComponent(newComponent)
+    addCustomComponent(newComponent);
 
     // 重置表单
-    setComponentName("")
-    setComponentType("container")
-    setComponentCategory("layout")
-    setIsContainer(false)
-    setSelectedComponents([])
-  }
+    setComponentName("");
+    setComponentType("container");
+    setComponentCategory("layout");
+    setIsContainer(false);
+    setSelectedComponents([]);
+  };
 
   const toggleComponentSelection = (id: string) => {
     if (selectedComponents.includes(id)) {
-      setSelectedComponents(selectedComponents.filter((cId) => cId !== id))
+      setSelectedComponents(selectedComponents.filter((cId) => cId !== id));
     } else {
-      setSelectedComponents([...selectedComponents, id])
+      setSelectedComponents([...selectedComponents, id]);
     }
-  }
+  };
 
   return (
     <Dialog>
@@ -86,7 +84,9 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>创建自定义组件</DialogTitle>
-          <DialogDescription>组合现有组件创建可复用的自定义组件</DialogDescription>
+          <DialogDescription>
+            组合现有组件创建可复用的自定义组件
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="basic">
@@ -124,7 +124,10 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
 
               <div className="grid gap-2">
                 <Label htmlFor="component-category">组件分类</Label>
-                <Select value={componentCategory} onValueChange={setComponentCategory}>
+                <Select
+                  value={componentCategory}
+                  onValueChange={setComponentCategory}
+                >
                   <SelectTrigger id="component-category">
                     <SelectValue placeholder="选择组件分类" />
                   </SelectTrigger>
@@ -139,7 +142,11 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
               </div>
 
               <div className="flex items-center gap-2">
-                <Switch id="is-container" checked={isContainer} onCheckedChange={setIsContainer} />
+                <Switch
+                  id="is-container"
+                  checked={isContainer}
+                  onCheckedChange={setIsContainer}
+                />
                 <Label htmlFor="is-container">可以包含其他组件</Label>
               </div>
             </div>
@@ -154,7 +161,9 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
                     <Card
                       key={component.id}
                       className={`cursor-pointer transition-colors ${
-                        selectedComponents.includes(component.id) ? "border-primary bg-primary/5" : ""
+                        selectedComponents.includes(component.id)
+                          ? "border-primary bg-primary/5"
+                          : ""
                       }`}
                       onClick={() => toggleComponentSelection(component.id)}
                     >
@@ -162,7 +171,9 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="font-medium">{component.name}</div>
-                            <div className="text-xs text-muted-foreground">{component.type}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {component.type}
+                            </div>
                           </div>
                           {selectedComponents.includes(component.id) && (
                             <div className="rounded-full bg-primary p-1 text-primary-foreground">
@@ -187,7 +198,9 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
                   ))}
                 </div>
               </ScrollArea>
-              <div className="text-sm text-muted-foreground">已选择 {selectedComponents.length} 个组件</div>
+              <div className="text-sm text-muted-foreground">
+                已选择 {selectedComponents.length} 个组件
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -200,5 +213,5 @@ export function CustomComponentBuilder({ onSaveComponent, existingComponents }: 
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

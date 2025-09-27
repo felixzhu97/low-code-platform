@@ -30,7 +30,7 @@ import { ComponentLibraryManager } from "@/presentation/components/ui";
 import { ComponentGrouping } from "@/presentation/components/ui";
 import { ComponentTree } from "@/presentation/components/canvas";
 import { toast } from "@/presentation/hooks/use-toast";
-import { useStores } from "@/shared/stores";
+import { useStores, useSimplifiedActions } from "@/shared/stores";
 import { DataPanel } from "@/presentation/components/data";
 
 export default function LowCodePlatform() {
@@ -39,20 +39,10 @@ export default function LowCodePlatform() {
     // 组件状态
     components,
     selectedComponent,
-    addComponent,
-    updateComponent,
-    deleteComponent,
     selectComponent,
     // 画布状态
     isPreviewMode,
-    viewportWidth,
-    activeDevice,
     setPreviewMode,
-    setViewportWidth,
-    setActiveDevice,
-    // 主题状态
-    theme,
-    updateTheme,
     // UI状态
     activeTab,
     projectName,
@@ -62,30 +52,12 @@ export default function LowCodePlatform() {
     redo,
     canUndo,
     canRedo,
-    addToHistory,
   } = useStores();
 
-  // 处理自定义组件（暂时使用空实现，后续可以添加到UI store）
-  const handleAddCustomComponent = (component: any) => {
-    // TODO: 添加到自定义组件管理
-  };
+  // 使用简化的操作hooks
+  const { addComponentsWithHistory } = useSimplifiedActions();
 
-  const handleRemoveCustomComponent = (componentId: string) => {
-    // TODO: 从自定义组件管理移除
-  };
-
-  const handleImportComponents = (components: any[]) => {
-    // TODO: 导入自定义组件
-  };
-
-  const handleUpdateComponent = (id: string, properties: any) => {
-    updateComponent(id, { properties });
-    addToHistory(components);
-  };
-
-  const handleSelectComponent = (component: Component | null) => {
-    selectComponent(component);
-  };
+  // 简化的处理函数
 
   const togglePreviewMode = () => {
     setPreviewMode(!isPreviewMode);
@@ -94,14 +66,7 @@ export default function LowCodePlatform() {
     }
   };
 
-  const handleViewportChange = (width: number, device: string) => {
-    setViewportWidth(width);
-    setActiveDevice(device);
-  };
-
-  const handleThemeChange = (newTheme: ThemeConfig) => {
-    updateTheme(newTheme);
-  };
+  // 移除不必要的处理函数，组件直接使用store actions
 
   // 处理模板选择
   const handleSelectTemplate = useCallback(
@@ -111,11 +76,7 @@ export default function LowCodePlatform() {
           TemplateService.applyTemplate(templateComponents);
 
         // 添加组件到store
-        processedComponents.forEach((component) => {
-          addComponent(component);
-        });
-
-        addToHistory(components);
+        addComponentsWithHistory(processedComponents);
 
         toast({
           title: "模板应用成功",
@@ -139,111 +100,10 @@ export default function LowCodePlatform() {
         }
       }
     },
-    [addComponent, addToHistory, components]
+    [addComponentsWithHistory]
   );
 
-  const handleAddForm = (formComponents: Component[]) => {
-    formComponents.forEach((component) => {
-      addComponent(component);
-    });
-    addToHistory(components);
-  };
-
-  const handleApplyAnimation = (componentId: string, animation: any) => {
-    updateComponent(componentId, {
-      properties: {
-        ...components.find((c) => c.id === componentId)?.properties,
-        animation,
-      },
-    });
-    addToHistory(components);
-  };
-
-  const handleGroupComponents = (componentIds: string[], groupName: string) => {
-    if (componentIds.length < 2) return;
-
-    // 找出要分组的组件
-    const groupComponents = components.filter((c) =>
-      componentIds.includes(c.id)
-    );
-
-    // 计算组的位置（使用第一个组件的位置）
-    const firstComponent = groupComponents[0];
-    const groupPosition = firstComponent.position || { x: 0, y: 0 };
-
-    // 创建组容器
-    const groupContainer: Component = {
-      id: `group-${Date.now()}`,
-      type: "container",
-      name: groupName,
-      position: groupPosition,
-      properties: {
-        width: "auto",
-        height: "auto",
-        padding: "10px",
-        bgColor: "rgba(0, 0, 0, 0.03)",
-        isGroup: true,
-      },
-      children: [],
-    };
-
-    // 调整子组件的位置为相对于组的位置
-    const childComponents = groupComponents.map((component) => {
-      const relativeX = (component.position?.x || 0) - groupPosition.x;
-      const relativeY = (component.position?.y || 0) - groupPosition.y;
-
-      return {
-        ...component,
-        position: { x: relativeX, y: relativeY },
-        parentId: groupContainer.id,
-      };
-    });
-
-    groupContainer.children = childComponents;
-
-    // 从画布中移除被分组的组件
-    const remainingComponents = components.filter(
-      (c) => !componentIds.includes(c.id)
-    );
-
-    // 添加新的组容器
-    addComponent(groupContainer);
-    addToHistory(components);
-  };
-
-  // 处理组件树中的组件删除
-  const handleDeleteComponent = (id: string) => {
-    deleteComponent(id);
-    addToHistory(components);
-
-    if (selectedComponent?.id === id) {
-      selectComponent(null);
-    }
-  };
-
-  // 处理组件可见性切换
-  const handleToggleVisibility = (id: string, visible: boolean) => {
-    updateComponent(id, {
-      properties: {
-        ...components.find((c) => c.id === id)?.properties,
-        visible: !visible,
-      },
-    });
-    addToHistory(components);
-  };
-
-  // 处理组件移动
-  const handleMoveComponent = (id: string, targetParentId: string | null) => {
-    const componentToMove = components.find((comp) => comp.id === id);
-    if (!componentToMove) return;
-
-    // 简化移动逻辑，直接更新父组件ID
-    updateComponent(id, {
-      parentId: targetParentId,
-      position: targetParentId ? { x: 10, y: 10 } : componentToMove.position,
-    });
-    addToHistory(components);
-  };
+  // 移除不必要的处理函数，组件直接使用store actions
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -275,23 +135,11 @@ export default function LowCodePlatform() {
             <ResponsiveControls />
             <TemplateGallery />
             <FormBuilder />
-            <ComponentGrouping
-              components={components}
-              onGroupComponents={handleGroupComponents}
-            />
-            <AnimationEditor
-              componentId={selectedComponent?.id || null}
-              onApplyAnimation={handleApplyAnimation}
-            />
+            <ComponentGrouping />
+            <AnimationEditor />
             <ThemeEditor />
-            <Collaboration projectName={projectName} />
-            <ComponentLibraryManager
-              customComponents={[]} // TODO: 从store获取
-              onAddComponent={handleAddCustomComponent}
-              onRemoveComponent={handleRemoveCustomComponent}
-              onImportComponents={handleImportComponents}
-              existingComponents={components}
-            />
+            <Collaboration />
+            <ComponentLibraryManager />
             <CodeExport />
           </div>
         </Header>
@@ -330,7 +178,7 @@ export default function LowCodePlatform() {
           <div
             className="flex-1 overflow-auto"
             style={{
-              maxWidth: isPreviewMode ? viewportWidth + "px" : "none",
+              maxWidth: isPreviewMode ? "100%" : "none",
               margin: isPreviewMode ? "0 auto" : "0",
               transition: "max-width 0.3s ease",
             }}

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,80 +10,85 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./dialog"
-import { Button } from "./button"
-import { Input } from "./input"
-import { ScrollArea } from "./scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
-import { Library, Search, Star, Trash2, Import, ImportIcon as Export, Edit } from "lucide-react"
-import { Card, CardContent, CardFooter } from "./card"
-import { Badge } from "./badge"
-import { CustomComponentBuilder } from "./custom-component-builder"
+} from "./dialog";
+import { Button } from "./button";
+import { Input } from "./input";
+import { ScrollArea } from "./scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import {
+  Library,
+  Search,
+  Star,
+  Trash2,
+  Import,
+  ImportIcon as Export,
+  Edit,
+} from "lucide-react";
+import { Card, CardContent, CardFooter } from "./card";
+import { Badge } from "./badge";
+import { CustomComponentBuilder } from "./custom-component-builder";
 
-
-import {Component} from "@/domain/entities/types";
+import { Component } from "@/domain/entities/types";
+import { useStores } from "@/shared/stores";
 
 interface ComponentLibraryManagerProps {
-  customComponents: any[]
-  onAddComponent: (component: any) => void
-  onRemoveComponent: (componentId: string) => void
-  onImportComponents: (components: any[]) => void
-  existingComponents: Component[]
+  // 移除 props，现在从 store 获取状态
 }
 
-export function ComponentLibraryManager({
-  customComponents,
-  onAddComponent,
-  onRemoveComponent,
-  onImportComponents,
-  existingComponents,
-}: ComponentLibraryManagerProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [favorites, setFavorites] = useState<string[]>([])
+export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
+  // 从 store 获取状态
+  const {
+    customComponents,
+    favorites,
+    searchTerm,
+    selectedCategory,
+    isBuilderOpen,
+    isLibraryOpen,
+    addCustomComponent,
+    removeCustomComponent,
+    importCustomComponents,
+    toggleFavorite,
+    setSearchTerm,
+    setSelectedCategory,
+    setBuilderOpen,
+    setLibraryOpen,
+    getFilteredComponents,
+    components: existingComponents,
+  } = useStores();
 
-  const filteredComponents = customComponents.filter(
-    (component) =>
-      component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      component.category.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
-  const toggleFavorite = (componentId: string) => {
-    if (favorites.includes(componentId)) {
-      setFavorites(favorites.filter((id) => id !== componentId))
-    } else {
-      setFavorites([...favorites, componentId])
-    }
-  }
+  const filteredComponents = getFilteredComponents();
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const components = JSON.parse(event.target?.result as string)
-        onImportComponents(Array.isArray(components) ? components : [components])
+        const components = JSON.parse(event.target?.result as string);
+        importCustomComponents(
+          Array.isArray(components) ? components : [components]
+        );
       } catch (error) {
-        console.error("导入组件库失败:", error)
-        alert("导入失败，请检查文件格式")
+        console.error("导入组件库失败:", error);
+        alert("导入失败，请检查文件格式");
       }
-    }
-    reader.readAsText(file)
-  }
+    };
+    reader.readAsText(file);
+  };
 
   const handleExport = () => {
-    const data = JSON.stringify(customComponents, null, 2)
-    const blob = new Blob([data], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "component-library.json"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+    const data = JSON.stringify(customComponents, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "component-library.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <Dialog>
@@ -109,7 +114,7 @@ export function ComponentLibraryManager({
               className="pl-8"
             />
           </div>
-          <CustomComponentBuilder onSaveComponent={onAddComponent} existingComponents={existingComponents} />
+          <CustomComponentBuilder />
           <div className="relative">
             <Input
               type="file"
@@ -123,7 +128,12 @@ export function ComponentLibraryManager({
               导入
             </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={customComponents.length === 0}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={customComponents.length === 0}
+          >
             <Export className="mr-2 h-4 w-4" />
             导出
           </Button>
@@ -145,7 +155,9 @@ export function ComponentLibraryManager({
                         <div className="mb-2 flex items-center justify-between">
                           <div className="font-medium">{component.name}</div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline">{component.category}</Badge>
+                            <Badge variant="outline">
+                              {component.category}
+                            </Badge>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -154,7 +166,9 @@ export function ComponentLibraryManager({
                             >
                               <Star
                                 className={`h-4 w-4 ${
-                                  favorites.includes(component.id) ? "fill-yellow-400 text-yellow-400" : ""
+                                  favorites.includes(component.id)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : ""
                                 }`}
                               />
                             </Button>
@@ -179,7 +193,7 @@ export function ComponentLibraryManager({
                           variant="ghost"
                           size="sm"
                           className="text-destructive"
-                          onClick={() => onRemoveComponent(component.id)}
+                          onClick={() => removeCustomComponent(component.id)}
                         >
                           <Trash2 className="mr-1 h-3 w-3" />
                           删除
@@ -190,7 +204,9 @@ export function ComponentLibraryManager({
                 ) : (
                   <div className="col-span-2 flex h-32 items-center justify-center rounded-md border border-dashed">
                     <p className="text-center text-muted-foreground">
-                      {searchTerm ? "没有找到匹配的组件" : "暂无自定义组件，点击“创建自定义组件”按钮开始创建"}
+                      {searchTerm
+                        ? "没有找到匹配的组件"
+                        : "暂无自定义组件，点击“创建自定义组件”按钮开始创建"}
                     </p>
                   </div>
                 )}
@@ -201,7 +217,9 @@ export function ComponentLibraryManager({
           <TabsContent value="favorites">
             <ScrollArea className="h-[400px]">
               <div className="grid grid-cols-2 gap-4 p-2">
-                {filteredComponents.filter((component) => favorites.includes(component.id)).length > 0 ? (
+                {filteredComponents.filter((component) =>
+                  favorites.includes(component.id)
+                ).length > 0 ? (
                   filteredComponents
                     .filter((component) => favorites.includes(component.id))
                     .map((component) => (
@@ -210,7 +228,9 @@ export function ComponentLibraryManager({
                           <div className="mb-2 flex items-center justify-between">
                             <div className="font-medium">{component.name}</div>
                             <div className="flex items-center gap-1">
-                              <Badge variant="outline">{component.category}</Badge>
+                              <Badge variant="outline">
+                                {component.category}
+                              </Badge>
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -235,7 +255,7 @@ export function ComponentLibraryManager({
                             variant="ghost"
                             size="sm"
                             className="text-destructive"
-                            onClick={() => onRemoveComponent(component.id)}
+                            onClick={() => removeCustomComponent(component.id)}
                           >
                             <Trash2 className="mr-1 h-3 w-3" />
                             删除
@@ -245,7 +265,9 @@ export function ComponentLibraryManager({
                     ))
                 ) : (
                   <div className="col-span-2 flex h-32 items-center justify-center rounded-md border border-dashed">
-                    <p className="text-center text-muted-foreground">暂无收藏组件</p>
+                    <p className="text-center text-muted-foreground">
+                      暂无收藏组件
+                    </p>
                   </div>
                 )}
               </div>
@@ -254,5 +276,5 @@ export function ComponentLibraryManager({
         </Tabs>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

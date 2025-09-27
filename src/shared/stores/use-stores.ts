@@ -4,6 +4,7 @@ import { useThemeStore } from "./theme.store";
 import { useDataStore } from "./data.store";
 import { useHistoryStore } from "./history.store";
 import { useUIStore } from "./ui.store";
+import { useCustomComponentsStore } from "./custom-components.store";
 
 /**
  * 组合所有 stores 的 hook
@@ -16,6 +17,7 @@ export function useStores() {
   const dataStore = useDataStore();
   const historyStore = useHistoryStore();
   const uiStore = useUIStore();
+  const customComponentsStore = useCustomComponentsStore();
 
   return {
     // 组件相关
@@ -86,5 +88,27 @@ export function useStores() {
     addNotification: uiStore.addNotification,
     removeNotification: uiStore.removeNotification,
     clearNotifications: uiStore.clearNotifications,
+
+    // 自定义组件相关
+    customComponents: customComponentsStore.customComponents,
+    favorites: customComponentsStore.favorites,
+    searchTerm: customComponentsStore.searchTerm,
+    selectedCategory: customComponentsStore.selectedCategory,
+    isBuilderOpen: customComponentsStore.isBuilderOpen,
+    isLibraryOpen: customComponentsStore.isLibraryOpen,
+    addCustomComponent: customComponentsStore.addCustomComponent,
+    removeCustomComponent: customComponentsStore.removeCustomComponent,
+    updateCustomComponent: customComponentsStore.updateCustomComponent,
+    toggleFavorite: customComponentsStore.toggleFavorite,
+    setSearchTerm: customComponentsStore.setSearchTerm,
+    setSelectedCategory: customComponentsStore.setSelectedCategory,
+    setBuilderOpen: customComponentsStore.setBuilderOpen,
+    setLibraryOpen: customComponentsStore.setLibraryOpen,
+    importCustomComponents: customComponentsStore.importCustomComponents,
+    exportCustomComponents: customComponentsStore.exportCustomComponents,
+    clearAllCustomComponents: customComponentsStore.clearAllCustomComponents,
+    getFilteredComponents: customComponentsStore.getFilteredComponents,
+    getComponentsByCategory: customComponentsStore.getComponentsByCategory,
+    getFavoriteComponents: customComponentsStore.getFavoriteComponents,
   };
 }
