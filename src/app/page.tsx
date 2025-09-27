@@ -273,11 +273,8 @@ export default function LowCodePlatform() {
               {isPreviewMode ? "退出预览" : "预览"}
             </Button>
             <ResponsiveControls />
-            <TemplateGallery
-              onSelectTemplate={handleSelectTemplate}
-              theme={theme}
-            />
-            <FormBuilder onAddForm={handleAddForm} />
+            <TemplateGallery />
+            <FormBuilder />
             <ComponentGrouping
               components={components}
               onGroupComponents={handleGroupComponents}
@@ -295,7 +292,7 @@ export default function LowCodePlatform() {
               onImportComponents={handleImportComponents}
               existingComponents={components}
             />
-            <CodeExport components={components} />
+            <CodeExport />
           </div>
         </Header>
         <div className="flex flex-1 overflow-hidden">

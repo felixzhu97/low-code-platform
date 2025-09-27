@@ -22,16 +22,16 @@ import { TemplateFilters } from "./template-filters";
 import { useTemplateGallery } from "../../hooks/use-template-gallery";
 import type { Component, ThemeConfig } from "@/domain/entities/types";
 import type { Template } from "@/presentation/data/templates";
+import { useComponentStore, useThemeStore } from "@/shared/stores";
 
 interface TemplateGalleryProps {
-  onSelectTemplate: (components: Component[]) => void;
-  theme: ThemeConfig;
+  // 移除 props，现在从 store 获取状态
 }
 
-export function TemplateGallery({
-  onSelectTemplate,
-  theme,
-}: TemplateGalleryProps) {
+export function TemplateGallery({}: TemplateGalleryProps) {
+  // 从 store 获取状态
+  const { addComponent } = useComponentStore();
+  const { theme } = useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null
@@ -78,7 +78,9 @@ export function TemplateGallery({
 
   // 处理使用模板
   const handleUseTemplate = (components: Component[]) => {
-    onSelectTemplate(components);
+    components.forEach((component) => {
+      addComponent(component);
+    });
     setIsOpen(false);
   };
 

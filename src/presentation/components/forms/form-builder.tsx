@@ -26,9 +26,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 import { Component } from "@/domain/entities/types";
+import { useComponentStore } from "@/shared/stores";
 
 interface FormBuilderProps {
-  onAddForm: (components: Component[]) => void;
+  // 移除 props，现在从 store 获取状态
 }
 
 type FormField = {
@@ -299,7 +300,9 @@ const createFieldComponent = (
   return components;
 };
 
-export function FormBuilder({ onAddForm }: FormBuilderProps) {
+export function FormBuilder({}: FormBuilderProps) {
+  // 从 store 获取状态
+  const { addComponent } = useComponentStore();
   const [formName, setFormName] = useState("新建表单");
   const [fields, setFields] = useState<FormField[]>([
     {
@@ -847,7 +850,14 @@ export function FormBuilder({ onAddForm }: FormBuilderProps) {
               个必填
             </p>
           </div>
-          <Button onClick={() => onAddForm(generateFormComponents())}>
+          <Button
+            onClick={() => {
+              const formComponents = generateFormComponents();
+              formComponents.forEach((component) => {
+                addComponent(component);
+              });
+            }}
+          >
             添加到画布
           </Button>
         </div>
