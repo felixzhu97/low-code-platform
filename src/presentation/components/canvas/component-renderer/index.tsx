@@ -193,11 +193,13 @@ export function ComponentRenderer({
       <div
         key={component.id}
         className={cn(
-          "absolute",
-          !isPreviewMode && "cursor-grab",
+          "absolute transition-all duration-200 ease-in-out",
+          !isPreviewMode && "cursor-grab component-hover",
           selectedId === component.id && "cursor-grabbing",
-          isSelected && "ring-2 ring-primary ring-offset-2",
-          isDropTarget && "ring-2 ring-primary ring-offset-2"
+          isSelected && "component-selected",
+          isDropTarget && "component-drag-over",
+          !isPreviewMode && "hover:shadow-medium",
+          isSelected && "shadow-colored"
         )}
         style={{
           left: `${component.position?.x || 0}px`,
@@ -208,6 +210,14 @@ export function ComponentRenderer({
           padding: props.padding || "0",
           backgroundColor: props.bgColor || "transparent",
           zIndex: isSelected ? 10 : 1,
+          borderRadius: props.borderRadius || "0.5rem",
+          border: props.border
+            ? `1px solid ${props.borderColor || "rgb(229 231 235)"}`
+            : "none",
+          boxShadow: isSelected
+            ? "0 4px 16px rgba(59, 130, 246, 0.15), 0 2px 6px rgba(59, 130, 246, 0.1)"
+            : "0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08)",
+          ...animationStyle,
         }}
         onMouseDown={(e) => onMouseDown(e, component)}
         onClick={(e) => {

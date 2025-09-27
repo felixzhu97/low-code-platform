@@ -94,11 +94,10 @@ export function LayoutComponentRenderer({
     <div
       key={child.id}
       className={cn(
-        "relative",
-        !isPreviewMode && "cursor-move",
-        selectedId === child.id &&
-          !isPreviewMode &&
-          "ring-2 ring-primary ring-offset-2"
+        "relative transition-all duration-200 ease-in-out",
+        !isPreviewMode && "cursor-move component-hover",
+        selectedId === child.id && !isPreviewMode && "component-selected",
+        !isPreviewMode && "hover:shadow-soft"
       )}
       style={{
         width: child.properties?.width || "auto",
@@ -106,6 +105,14 @@ export function LayoutComponentRenderer({
         margin: child.properties?.margin || "0",
         padding: child.properties?.padding || "0",
         backgroundColor: child.properties?.bgColor || "transparent",
+        borderRadius: child.properties?.borderRadius || "0.5rem",
+        border: child.properties?.border
+          ? `1px solid ${child.properties?.borderColor || "rgb(229 231 235)"}`
+          : "none",
+        boxShadow:
+          selectedId === child.id
+            ? "0 4px 16px rgba(59, 130, 246, 0.15), 0 2px 6px rgba(59, 130, 246, 0.1)"
+            : "0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08)",
         ...additionalStyle,
       }}
       onClick={(e) => {
@@ -123,24 +130,44 @@ export function LayoutComponentRenderer({
       return (
         <Card
           className={cn(
-            props.shadow ? "shadow-md" : "",
+            "transition-all duration-300 ease-in-out component-hover",
+            props.shadow ? "shadow-medium hover:shadow-strong" : "shadow-soft",
             props.rounded ? "rounded-lg" : "",
-            props.border ? "border" : "border-0"
+            props.border ? "border" : "border-0",
+            props.gradient && "gradient-primary text-white",
+            props.floating && "floating"
           )}
           style={{
             padding: props.padding || "1rem",
+            background: props.gradient ? undefined : props.backgroundColor,
+            borderRadius: props.borderRadius || "0.5rem",
+            border: props.border
+              ? `2px solid ${props.borderColor || "rgb(229 231 235)"}`
+              : "none",
             ...themeStyle,
             ...animationStyle,
           }}
         >
           {props.title && (
-            <div className="border-b p-4 font-medium">{props.title}</div>
+            <div
+              className={cn(
+                "border-b p-4 font-medium transition-colors duration-200",
+                props.gradient && "border-white/20 text-white"
+              )}
+            >
+              {props.title}
+            </div>
           )}
           <CardContent className="p-4">
             {childComponents.length > 0 ? (
               childComponents.map((child) => renderChildWrapper(child))
             ) : (
-              <div className="text-center text-sm text-muted-foreground">
+              <div
+                className={cn(
+                  "text-center text-sm transition-colors duration-200",
+                  props.gradient ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
                 卡片内容
               </div>
             )}
@@ -152,8 +179,10 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
-            isDropTarget && "border-primary bg-primary/5",
+            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            isDropTarget && "component-drag-over",
+            props.gradient && "gradient-cool",
+            props.glass && "glass-morphism",
             `grid-cols-${props.columns || 3}`,
             `gap-${props.gap || 2}`
           )}
@@ -163,6 +192,11 @@ export function LayoutComponentRenderer({
               : "auto",
             width: props.width || "100%",
             height: props.height || "auto",
+            borderRadius: props.borderRadius || "0.5rem",
+            background: props.gradient ? undefined : props.backgroundColor,
+            boxShadow: props.shadow
+              ? "0 4px 16px rgba(0, 0, 0, 0.08)"
+              : undefined,
             ...themeStyle,
             ...animationStyle,
           }}
@@ -171,7 +205,12 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">
+            <div
+              className={cn(
+                "text-center text-sm transition-colors duration-200",
+                props.gradient ? "text-gray-700" : "text-muted-foreground"
+              )}
+            >
               网格布局
             </div>
           )}
@@ -182,8 +221,10 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
-            isDropTarget && "border-primary bg-primary/5",
+            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            isDropTarget && "component-drag-over",
+            props.gradient && "gradient-warm",
+            props.glass && "glass-morphism",
             props.direction === "column" ? "flex-col" : "flex-row",
             props.wrap ? "flex-wrap" : "flex-nowrap",
             `justify-${props.justifyContent || "start"}`,
@@ -194,6 +235,11 @@ export function LayoutComponentRenderer({
             display: "flex",
             width: props.width || "100%",
             height: props.height || "auto",
+            borderRadius: props.borderRadius || "0.5rem",
+            background: props.gradient ? undefined : props.backgroundColor,
+            boxShadow: props.shadow
+              ? "0 4px 16px rgba(0, 0, 0, 0.08)"
+              : undefined,
             ...themeStyle,
             ...animationStyle,
           }}
@@ -202,7 +248,12 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">
+            <div
+              className={cn(
+                "text-center text-sm transition-colors duration-200",
+                props.gradient ? "text-gray-700" : "text-muted-foreground"
+              )}
+            >
               弹性布局
             </div>
           )}
@@ -324,41 +375,50 @@ export function LayoutComponentRenderer({
       return (
         <div
           className={cn(
-            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4",
-            isDropTarget && "border-primary bg-primary/5",
+            "grid min-h-40 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 transition-all duration-300 ease-in-out",
+            isDropTarget && "component-drag-over",
+            props.gradient && "gradient-success",
             `grid-cols-${props.columns || 3}`,
             `gap-${props.gap || 2}`
           )}
           style={{
             width: props.width || "100%",
             height: props.height || "auto",
+            borderRadius: props.borderRadius || "0.5rem",
+            background: props.gradient ? undefined : props.backgroundColor,
+            boxShadow: props.shadow
+              ? "0 4px 16px rgba(0, 0, 0, 0.08)"
+              : undefined,
             ...themeStyle,
             ...animationStyle,
           }}
           data-component-id={component.id}
         >
           {childComponents.length > 0 ? (
-            childComponents.map((child) => (
-              <Card key={child.id} className="overflow-hidden">
+            childComponents.map((child, index) => (
+              <Card
+                key={child.id}
+                className={cn(
+                  "overflow-hidden transition-all duration-300 ease-in-out component-hover",
+                  "hover:shadow-strong hover:scale-105",
+                  index % 3 === 0 && "gradient-primary text-white",
+                  index % 3 === 1 && "gradient-secondary text-white",
+                  index % 3 === 2 && "gradient-success text-white"
+                )}
+              >
                 {renderChildWrapper(child)}
               </Card>
             ))
           ) : (
             <>
-              <Card className="p-4">
-                <div className="text-center text-sm text-muted-foreground">
-                  卡片1
-                </div>
+              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-primary">
+                <div className="text-center text-sm text-white">卡片1</div>
               </Card>
-              <Card className="p-4">
-                <div className="text-center text-sm text-muted-foreground">
-                  卡片2
-                </div>
+              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-secondary">
+                <div className="text-center text-sm text-white">卡片2</div>
               </Card>
-              <Card className="p-4">
-                <div className="text-center text-sm text-muted-foreground">
-                  卡片3
-                </div>
+              <Card className="p-4 transition-all duration-300 ease-in-out hover:shadow-strong hover:scale-105 gradient-success">
+                <div className="text-center text-sm text-white">卡片3</div>
               </Card>
             </>
           )}
