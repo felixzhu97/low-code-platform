@@ -7,10 +7,69 @@ Felix 低代码平台是一个基于 Next.js 和 React 的现代化可视化页�
 ## 架构设计原则
 
 - **分层架构**：采用 DDD（领域驱动设计）的分层架构，清晰分离业务逻辑和技术实现
+- **整洁架构**：遵循 Clean Architecture 原则，确保依赖方向从外到内
 - **组件化设计**：高度模块化的组件系统，支持自定义组件和扩展
 - **响应式架构**：支持多端适配和响应式设计
 - **可扩展性**：插件化的架构设计，便于功能扩展
 - **实时协作**：支持多人同时编辑和实时同步
+
+## 整洁架构 UML 图
+
+本项目采用整洁架构（Clean Architecture）设计，以下 UML 图展示了架构的各个层面：
+
+### 1. 包依赖图 (Package Diagram)
+
+- 文件：[clean-architecture-package.puml](./clean-architecture-package.puml)
+- 描述：展示各层之间的依赖关系和包结构
+- 核心内容：
+  - Presentation Layer（表现层）：UI 组件、适配器、Hooks
+  - Application Layer（应用层）：用例、DTO、Mapper、端口
+  - Domain Layer（领域层）：实体、值对象、仓储接口、领域服务
+  - Infrastructure Layer（基础设施层）：持久化实现、状态管理、数据源
+  - Shared Layer（共享层）：工具函数、类型定义、常量
+
+### 2. 类图 (Class Diagram)
+
+- 文件：[clean-architecture-class.puml](./clean-architecture-class.puml)
+- 描述：展示组件管理功能的类结构和关系
+- 核心内容：
+  - 领域实体：ComponentEntity、ComponentProperties、Position
+  - 仓储接口：IComponentRepository
+  - 应用用例：CreateComponentUseCase、UpdateComponentUseCase、DeleteComponentUseCase
+  - 基础设施实现：LocalStorageComponentRepository
+  - 表现层适配器：ComponentAdapter
+
+### 3. 序列图 (Sequence Diagram)
+
+- 文件：[clean-architecture-sequence.puml](./clean-architecture-sequence.puml)
+- 描述：展示创建组件用例的完整执行流程
+- 核心流程：
+  1. 用户操作触发 UI 组件
+  2. 适配器调用应用用例
+  3. 用例使用领域服务创建实体
+  4. 用例调用仓储接口保存数据
+  5. 基础设施层实现持久化
+  6. 结果返回并更新 UI
+
+### 4. 层次结构图 (Layers Diagram)
+
+- 文件：[clean-architecture-layers.puml](./clean-architecture-layers.puml)
+- 描述：可视化展示各层的组件和依赖关系
+- 特点：使用不同颜色区分各层，清晰展示依赖方向
+
+### 5. 组件图 (Component Diagram)
+
+- 文件：[clean-architecture-component.puml](./clean-architecture-component.puml)
+- 描述：展示完整系统的组件结构和交互关系
+- 包含：画布管理、组件管理、数据源管理等完整功能模块
+
+### 整洁架构文档
+
+详细的架构重构方案和指南请参考：
+
+- [整洁架构重构方案](./CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
+- [架构对比分析](./ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
+- [整洁架构快速指南](./CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
 
 ## C4 架构模型
 

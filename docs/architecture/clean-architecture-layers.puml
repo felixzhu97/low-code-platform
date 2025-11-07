@@ -1,0 +1,92 @@
+@startuml
+!theme plain
+skinparam rectangle {
+  BackgroundColor<<domain>> #E8F5E9
+  BackgroundColor<<application>> #E3F2FD
+  BackgroundColor<<infrastructure>> #FFF3E0
+  BackgroundColor<<presentation>> #F3E5F5
+  BackgroundColor<<shared>> #F5F5F5
+}
+
+title 整洁架构 - 层次结构图
+
+rectangle "Presentation Layer\n表现层" <<presentation>> {
+  component [UI Components] as UI
+  component [Adapters] as Adapters
+  component [Hooks] as Hooks
+  component [Providers] as Providers
+}
+
+rectangle "Application Layer\n应用层" <<application>> {
+  component [Use Cases] as UseCases
+  component [DTOs] as DTOs
+  component [Mappers] as Mappers
+  component [Ports] as Ports
+}
+
+rectangle "Domain Layer\n领域层" <<domain>> {
+  component [Entities] as Entities
+  component [Value Objects] as ValueObjects
+  component [Repository\nInterfaces] as RepoInterfaces
+  component [Domain Services] as DomainServices
+}
+
+rectangle "Infrastructure Layer\n基础设施层" <<infrastructure>> {
+  component [Persistence\nImplementations] as Persistence
+  component [State Management] as StateMgmt
+  component [Data Sources] as DataSources
+  component [Event Bus] as EventBus
+}
+
+rectangle "Shared\n共享层" <<shared>> {
+  component [Utils] as Utils
+  component [Types] as Types
+  component [Constants] as Constants
+}
+
+' 依赖关系
+UI --> Adapters
+Adapters --> UseCases
+Hooks --> UI
+Providers --> UI
+
+UseCases --> Entities
+UseCases --> RepoInterfaces
+UseCases --> DomainServices
+UseCases --> DTOs
+UseCases --> Mappers
+UseCases --> Ports
+
+DomainServices --> Entities
+DomainServices --> ValueObjects
+RepoInterfaces --> Entities
+
+Persistence ..|> RepoInterfaces
+StateMgmt ..|> Ports
+DataSources ..|> Ports
+EventBus ..|> Ports
+
+UI --> Utils
+UseCases --> Types
+Entities --> Types
+
+note top of Entities
+  **核心层**
+  不依赖任何外部层
+  包含业务规则
+end note
+
+note right of UseCases
+  **编排层**
+  协调领域对象
+  实现用例
+end note
+
+note right of Persistence
+  **实现层**
+  实现所有接口
+  包含技术细节
+end note
+
+@enduml
+

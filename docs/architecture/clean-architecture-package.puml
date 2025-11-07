@@ -1,0 +1,85 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam roundcorner 10
+skinparam shadowing false
+
+title 整洁架构 - 包依赖图
+
+package "Presentation Layer\n(表现层)" {
+  [Components] as PresentationComponents
+  [Adapters] as PresentationAdapters
+  [Hooks] as PresentationHooks
+  [Providers] as PresentationProviders
+}
+
+package "Application Layer\n(应用层)" {
+  [Use Cases] as ApplicationUseCases
+  [DTOs] as ApplicationDTOs
+  [Mappers] as ApplicationMappers
+  [Ports] as ApplicationPorts
+}
+
+package "Domain Layer\n(领域层)" {
+  [Entities] as DomainEntities
+  [Value Objects] as DomainValueObjects
+  [Repositories\n(Interfaces)] as DomainRepositories
+  [Services] as DomainServices
+}
+
+package "Infrastructure Layer\n(基础设施层)" {
+  [Persistence\n(Implementations)] as InfrastructurePersistence
+  [State Management] as InfrastructureState
+  [Data Sources] as InfrastructureDataSources
+  [Event Bus] as InfrastructureEventBus
+}
+
+package "Shared\n(共享层)" {
+  [Utils] as SharedUtils
+  [Types] as SharedTypes
+  [Constants] as SharedConstants
+}
+
+' 依赖关系
+PresentationComponents --> PresentationAdapters
+PresentationAdapters --> ApplicationUseCases
+PresentationHooks --> PresentationComponents
+PresentationProviders --> PresentationComponents
+
+ApplicationUseCases --> DomainEntities
+ApplicationUseCases --> DomainRepositories
+ApplicationUseCases --> DomainServices
+ApplicationUseCases --> ApplicationDTOs
+ApplicationUseCases --> ApplicationMappers
+ApplicationUseCases --> ApplicationPorts
+
+DomainServices --> DomainEntities
+DomainServices --> DomainValueObjects
+DomainRepositories --> DomainEntities
+
+InfrastructurePersistence ..|> DomainRepositories
+InfrastructureState ..|> ApplicationPorts
+InfrastructureDataSources ..|> ApplicationPorts
+InfrastructureEventBus ..|> ApplicationPorts
+
+PresentationComponents --> SharedUtils
+ApplicationUseCases --> SharedTypes
+DomainEntities --> SharedTypes
+
+note right of DomainEntities
+  领域层是核心
+  不依赖任何外部层
+end note
+
+note right of ApplicationUseCases
+  应用层编排业务逻辑
+  依赖领域层接口
+end note
+
+note right of InfrastructurePersistence
+  基础设施层实现
+  领域层定义的接口
+end note
+
+@enduml
+
