@@ -1,0 +1,35 @@
+@startuml C4_Context
+!include c4-plantuml/C4_Context.puml
+
+title System Context Diagram - Felix 低代码平台
+
+Person(designer, "页面设计师", "使用平台创建和编辑页面")
+Person(developer, "开发者", "导出代码并进行二次开发")
+Person(end_user, "终端用户", "访问生成的页面")
+Person(admin, "管理员", "管理系统配置和用户权限")
+
+System(lowcode_platform, "Felix 低代码平台", "可视化页面搭建平台，支持拖拽式组件编辑、实时协作、代码导出等功能")
+
+System_Ext(cdn, "CDN 服务", "提供静态资源加速和分发")
+System_Ext(storage, "对象存储", "存储用户上传的文件和资源")
+System_Ext(auth_service, "认证服务", "提供用户认证和授权服务")
+System_Ext(analytics, "数据分析", "收集和分析用户行为数据")
+System_Ext(third_party_api, "第三方 API", "集成外部服务和数据源")
+System_Ext(code_repo, "代码托管", "Git 仓库，用于代码导出和版本管理")
+
+Rel(designer, lowcode_platform, "使用", "HTTPS")
+Rel(developer, lowcode_platform, "使用", "HTTPS")
+Rel(end_user, lowcode_platform, "访问生成的页面", "HTTPS")
+Rel(admin, lowcode_platform, "管理", "HTTPS")
+
+Rel(lowcode_platform, cdn, "获取静态资源", "HTTPS")
+Rel(lowcode_platform, storage, "存储文件", "HTTPS")
+Rel(lowcode_platform, auth_service, "验证用户身份", "HTTPS")
+Rel(lowcode_platform, analytics, "发送分析数据", "HTTPS")
+Rel(lowcode_platform, third_party_api, "调用外部 API", "HTTPS")
+Rel(lowcode_platform, code_repo, "导出代码", "HTTPS/SSH")
+
+SHOW_LEGEND()
+
+@enduml
+

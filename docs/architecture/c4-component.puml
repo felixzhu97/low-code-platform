@@ -1,0 +1,98 @@
+@startuml C4_Component
+!include c4-plantuml/C4_Component.puml
+
+title Component Diagram - Felix 低代码平台 (Web 应用容器)
+
+Person(designer, "页面设计师", "使用平台创建和编辑页面")
+
+System_Boundary(web_app, "Web 应用容器") {
+
+    ' 表现层组件
+    System_Boundary(presentation_layer, "表现层 (Presentation Layer)") {
+        Component(canvas_component, "画布组件", "React", "可视化编辑画布，支持拖拽和编辑")
+        Component(component_panel, "组件面板", "React", "显示可用组件列表")
+        Component(properties_panel, "属性面板", "React", "编辑选中组件的属性")
+        Component(component_tree, "组件树", "React", "显示组件层级结构")
+        Component(template_gallery, "模板库", "React", "展示和管理页面模板")
+        Component(theme_editor, "主题编辑器", "React", "可视化编辑主题配置")
+        Component(code_export, "代码导出", "React", "导出为 React/Next.js 代码")
+        Component(component_adapter, "组件适配器", "TypeScript", "适配组件相关用例")
+        Component(canvas_adapter, "画布适配器", "TypeScript", "适配画布相关用例")
+        Component(template_adapter, "模板适配器", "TypeScript", "适配模板相关用例")
+    }
+
+    ' 应用层组件
+    System_Boundary(application_layer, "应用层 (Application Layer)") {
+        Component(create_component_uc, "创建组件用例", "TypeScript", "处理组件创建逻辑")
+        Component(update_component_uc, "更新组件用例", "TypeScript", "处理组件更新逻辑")
+        Component(delete_component_uc, "删除组件用例", "TypeScript", "处理组件删除逻辑")
+        Component(get_components_uc, "获取组件用例", "TypeScript", "处理组件查询逻辑")
+        Component(apply_template_uc, "应用模板用例", "TypeScript", "处理模板应用逻辑")
+        Component(component_service, "组件管理服务", "TypeScript", "组件业务逻辑处理")
+        Component(template_service, "模板服务", "TypeScript", "模板业务逻辑处理")
+    }
+
+    ' 领域层组件
+    System_Boundary(domain_layer, "领域层 (Domain Layer)") {
+        Component(component_entity, "组件实体", "TypeScript", "组件领域模型")
+        Component(template_entity, "模板实体", "TypeScript", "模板领域模型")
+        Component(data_source_entity, "数据源实体", "TypeScript", "数据源领域模型")
+        Component(component_factory, "组件工厂", "TypeScript", "创建组件实例")
+        Component(component_repo_interface, "组件仓储接口", "TypeScript", "定义组件持久化接口")
+        Component(template_repo_interface, "模板仓储接口", "TypeScript", "定义模板持久化接口")
+    }
+
+    ' 基础设施层组件
+    System_Boundary(infrastructure_layer, "基础设施层 (Infrastructure Layer)") {
+        Component(component_store, "组件状态管理", "Zustand", "管理组件状态")
+        Component(canvas_store, "画布状态管理", "Zustand", "管理画布状态")
+        Component(theme_store, "主题状态管理", "Zustand", "管理主题状态")
+        Component(history_store, "历史记录管理", "Zustand", "管理操作历史")
+        Component(state_adapter, "状态管理适配器", "TypeScript", "实现状态管理端口")
+        Component(component_repo_impl, "组件仓储实现", "TypeScript", "实现组件持久化")
+        Component(template_repo_impl, "模板仓储实现", "TypeScript", "实现模板持久化")
+        Component(local_storage, "本地存储", "LocalStorage", "浏览器本地存储")
+    }
+}
+
+Rel(designer, canvas_component, "使用")
+Rel(designer, component_panel, "使用")
+Rel(designer, properties_panel, "使用")
+Rel(designer, template_gallery, "使用")
+
+Rel(canvas_component, component_adapter, "调用")
+Rel(component_panel, component_adapter, "调用")
+Rel(properties_panel, component_adapter, "调用")
+Rel(template_gallery, template_adapter, "调用")
+
+Rel(component_adapter, create_component_uc, "调用")
+Rel(component_adapter, update_component_uc, "调用")
+Rel(component_adapter, delete_component_uc, "调用")
+Rel(component_adapter, get_components_uc, "调用")
+Rel(template_adapter, apply_template_uc, "调用")
+
+Rel(create_component_uc, component_factory, "使用")
+Rel(create_component_uc, component_repo_interface, "使用")
+Rel(update_component_uc, component_repo_interface, "使用")
+Rel(delete_component_uc, component_repo_interface, "使用")
+Rel(get_components_uc, component_repo_interface, "使用")
+Rel(apply_template_uc, template_repo_interface, "使用")
+
+Rel(component_repo_interface, component_repo_impl, "实现")
+Rel(template_repo_interface, template_repo_impl, "实现")
+
+Rel(component_repo_impl, local_storage, "使用")
+Rel(template_repo_impl, local_storage, "使用")
+
+Rel(component_adapter, state_adapter, "使用")
+Rel(canvas_adapter, state_adapter, "使用")
+
+Rel(state_adapter, component_store, "使用")
+Rel(state_adapter, canvas_store, "使用")
+Rel(state_adapter, theme_store, "使用")
+Rel(state_adapter, history_store, "使用")
+
+SHOW_LEGEND()
+
+@enduml
+

@@ -1,50 +1,181 @@
-@startuml
-!define table(x) class x << (T,#FFAAAA) >>
+@startuml ER_Diagram
+!theme plain
+skinparam linetype ortho
+skinparam packageStyle rectangle
 
-' 用户表
-entity User {
-  *id : string
-  *username : string
-  *email : string
-  password : string
-  createdAt : datetime
+title Felix 低代码平台 - 实体关系图 (ER Diagram)
+
+' ============================================
+' 核心实体定义
+' ============================================
+
+entity Component {
+  * id : string <<PK>>
+  --
+  * type : string
+  * name : string
+  position_x : number
+  position_y : number
+  properties : json
+  parentId : string <<FK>>
+  dataSourceId : string <<FK>>
+  --
+  组件类型、名称、位置、属性配置
+  支持父子关系和数据源绑定
 }
 
-' 页面表
-entity Page {
-  *id : string
-  *name : string
-  ownerId : string
+entity Template {
+  * id : string <<PK>>
+  --
+  * name : string
+  description : string
+  thumbnail : string
+  category : string
+  tags : json
   createdAt : datetime
   updatedAt : datetime
+  --
+  模板名称、描述、缩略图
+  分类和标签用于组织管理
 }
 
-' 组件表
-entity Component {
-  *id : string
-  *pageId : string
-  type : string
+entity DataSource {
+  * id : string <<PK>>
+  --
+  * name : string
+  * type : string
+  data : json
   config : json
+  lastUpdated : datetime
+  status : string
+  error : string
+  --
+  数据源类型：static/api/database/file/websocket
+  配置信息存储在 config JSON 字段中
+}
+
+entity DataMapping {
+  * id : string <<PK>>
+  --
+  * componentId : string <<FK>>
+  * dataSourceId : string <<FK>>
+  field : string
+  sourcePath : string
+  targetPath : string
+  transform : string
+  defaultValue : json
+  --
+  组件与数据源的映射关系
+  定义数据转换规则
+}
+
+entity ThemeConfig {
+  * id : string <<PK>>
+  --
+  * name : string
+  primaryColor : string
+  secondaryColor : string
+  backgroundColor : string
+  textColor : string
+  fontFamily : string
+  borderRadius : string
+  spacing : string
+  isDarkMode : boolean
+  createdAt : datetime
+  updatedAt : datetime
+  --
+  主题配置信息
+  支持深色/浅色模式
+}
+
+entity Project {
+  * id : string <<PK>>
+  --
+  * name : string
+  description : string
+  themeId : string <<FK>>
+  createdAt : datetime
+  updatedAt : datetime
+  --
+  项目信息
+  关联主题配置
+}
+
+entity ComponentCategory {
+  * id : string <<PK>>
+  --
+  * name : string
+  icon : string
   order : int
+  --
+  组件分类信息
+  用于组件面板组织
 }
 
-' 表单表
-entity Form {
-  *id : string
-  *pageId : string
-  schema : json
-}
+' ============================================
+' 关系定义
+' ============================================
 
-' 模板表
-entity Template {
-  *id : string
-  *name : string
-  content : json
-}
+' Component 自引用关系（父子组件）
+Component ||--o{ Component : "parentId\n(父子关系)"
 
-User ||--o{ Page : 拥有
-Page ||--o{ Component : 包含
-Page ||--o{ Form : 包含
-User ||--o{ Template : 拥有
+' Component 与 DataSource 的关系
+Component }o--|| DataSource : "dataSourceId\n(数据源绑定)"
 
-@enduml 
+' Component 与 DataMapping 的关系
+Component ||--o{ DataMapping : "componentId\n(数据映射)"
+
+' DataSource 与 DataMapping 的关系
+DataSource ||--o{ DataMapping : "dataSourceId\n(数据映射)"
+
+' Template 包含 Component（通过 JSON 数组存储）
+Template ||--o{ Component : "components[]\n(模板组件)"
+
+' Project 与 ThemeConfig 的关系
+Project }o--|| ThemeConfig : "themeId\n(主题配置)"
+
+' Component 与 ComponentCategory 的关系（通过 type 关联）
+Component }o--o| ComponentCategory : "type\n(组件分类)"
+
+note right of Component
+  **组件实体**
+  
+  核心业务实体，支持：
+  - 层级结构（parentId）
+  - 位置信息（position）
+  - 属性配置（properties JSON）
+  - 数据源绑定（dataSourceId）
+  - 数据映射（DataMapping）
+end note
+
+note right of Template
+  **模板实体**
+  
+  预定义的页面模板：
+  - 包含组件数组（components）
+  - 支持分类和标签
+  - 存储缩略图用于预览
+end note
+
+note right of DataSource
+  **数据源实体**
+  
+  支持多种数据源类型：
+  - static: 静态数据
+  - api: REST API
+  - database: 数据库
+  - file: 文件
+  - websocket: WebSocket 实时数据
+end note
+
+note right of DataMapping
+  **数据映射实体**
+  
+  定义组件与数据源的映射：
+  - 字段映射（field）
+  - 路径映射（sourcePath/targetPath）
+  - 数据转换（transform）
+  - 默认值（defaultValue）
+end note
+
+@enduml
