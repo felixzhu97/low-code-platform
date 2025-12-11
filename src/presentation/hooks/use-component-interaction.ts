@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { Component } from "@/domain/entities/types";
 import { ComponentManagementService } from "@/application/services/component-management.service";
-import { useComponentStore, useCanvasStore } from "@/shared/stores";
+import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 interface UseComponentInteractionProps {
   components: Component[];

@@ -23,7 +23,7 @@ import { Play, Sparkles } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 
-import { useStores } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
 
 interface AnimationEditorProps {
   // 移除 props，现在从 store 获取状态
@@ -31,7 +31,7 @@ interface AnimationEditorProps {
 
 export function AnimationEditor({}: AnimationEditorProps) {
   // 从 store 获取状态
-  const { selectedComponentId: componentId, updateComponent } = useStores();
+  const { selectedComponentId: componentId, updateComponent } = useAllStores();
   const [animation, setAnimation] = useState({
     type: "fade",
     duration: 500,

@@ -16,7 +16,7 @@ import {
 import { cn } from "../../../application/services/utils";
 
 import { Component } from "@/domain/entities/types";
-import { useStores } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
 
 interface ComponentTreeProps {
   // 移除 props，现在从 store 获取状态
@@ -30,7 +30,7 @@ export function ComponentTree({}: ComponentTreeProps) {
     selectComponent,
     deleteComponent,
     updateComponent,
-  } = useStores();
+  } = useAllStores();
 
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>(
     {}

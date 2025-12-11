@@ -29,7 +29,7 @@ import { Badge } from "./badge";
 import { CustomComponentBuilder } from "./custom-component-builder";
 
 import { Component } from "@/domain/entities/types";
-import { useStores } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
 
 interface ComponentLibraryManagerProps {
   // 移除 props，现在从 store 获取状态
@@ -54,7 +54,7 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
     setLibraryOpen,
     getFilteredComponents,
     components: existingComponents,
-  } = useStores();
+  } = useAllStores();
 
   const filteredComponents = getFilteredComponents();
 

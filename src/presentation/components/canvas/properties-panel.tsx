@@ -24,7 +24,7 @@ import {
 } from "@/presentation/components/ui";
 
 import { Component } from "@/domain/entities/types";
-import { useComponentStore } from "@/shared/stores";
+import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 type PropertiesPanelProps = {
   // 移除 props，现在从 store 获取状态

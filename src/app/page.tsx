@@ -30,7 +30,8 @@ import { ComponentLibraryManager } from "@/presentation/components/ui";
 import { ComponentGrouping } from "@/presentation/components/ui";
 import { ComponentTree } from "@/presentation/components/canvas";
 import { toast } from "@/presentation/hooks/use-toast";
-import { useStores, useSimplifiedActions } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
+import { useSimplifiedActions } from "@/shared/hooks/use-simplified-actions";
 import { DataPanel } from "@/presentation/components/data";
 
 export default function LowCodePlatform() {
@@ -52,7 +53,7 @@ export default function LowCodePlatform() {
     redo,
     canUndo,
     canRedo,
-  } = useStores();
+  } = useAllStores();
 
   // 使用简化的操作hooks
   const { addComponentsWithHistory } = useSimplifiedActions();

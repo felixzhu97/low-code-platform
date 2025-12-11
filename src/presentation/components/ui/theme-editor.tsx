@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "./select";
 import type { ThemeConfig } from "@/domain/entities/types";
-import { useThemeStore } from "@/shared/stores";
+import { useThemeStore } from "@/infrastructure/state-management/stores";
 
 interface ThemeEditorProps {
   // 移除 props，现在从 store 获取状态

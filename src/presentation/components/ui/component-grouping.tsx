@@ -18,7 +18,8 @@ import { Layers, Group } from "lucide-react";
 import { Checkbox } from "./checkbox";
 
 import { Component } from "@/domain/entities/types";
-import { useStores, useSimplifiedActions } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
+import { useSimplifiedActions } from "@/shared/hooks/use-simplified-actions";
 
 interface ComponentGroupingProps {
   // 移除 props，现在从 store 获取状态
@@ -26,7 +27,7 @@ interface ComponentGroupingProps {
 
 export function ComponentGrouping({}: ComponentGroupingProps) {
   // 从 store 获取状态
-  const { components } = useStores();
+  const { components } = useAllStores();
   const { addComponentWithHistory } = useSimplifiedActions();
   const [groupName, setGroupName] = useState("新建组");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

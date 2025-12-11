@@ -26,7 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 import { Component } from "@/domain/entities/types";
-import { useComponentStore } from "@/shared/stores";
+import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 interface FormBuilderProps {
   // 移除 props，现在从 store 获取状态

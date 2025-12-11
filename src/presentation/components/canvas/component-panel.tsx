@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 import { ComponentCategory } from "@/domain/entities/types";
-import { useUIStore } from "@/shared/stores";
+import { useUIStore } from "@/infrastructure/state-management/stores";
 
 export function ComponentPanel() {
   // 从 store 获取状态

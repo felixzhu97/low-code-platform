@@ -15,7 +15,7 @@ import { ScrollArea } from "./scroll-area";
 import { Code, Copy, Download } from "lucide-react";
 
 import { Component } from "@/domain/entities/types";
-import { useComponentStore } from "@/shared/stores";
+import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 interface CodeExportProps {
   // 移除 props，现在从 store 获取状态

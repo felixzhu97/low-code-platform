@@ -2,7 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 import { Laptop, Smartphone, Tablet } from "lucide-react";
-import { useCanvasStore } from "@/shared/stores";
+import { useCanvasStore } from "@/infrastructure/state-management/stores";
 
 interface ResponsiveControlsProps {
   // 移除 props，现在从 store 获取状态

@@ -22,7 +22,7 @@ import { TemplateFilters } from "./template-filters";
 import { useTemplateGallery } from "../../hooks/use-template-gallery";
 import type { Component, ThemeConfig } from "@/domain/entities/types";
 import type { Template } from "@/presentation/data/templates";
-import { useComponentStore, useThemeStore } from "@/shared/stores";
+import { useComponentStore, useThemeStore } from "@/infrastructure/state-management/stores";
 
 interface TemplateGalleryProps {
   // 移除 props，现在从 store 获取状态

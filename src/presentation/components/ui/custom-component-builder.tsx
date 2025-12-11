@@ -27,7 +27,7 @@ import { Card, CardContent } from "./card";
 import { Switch } from "./switch";
 
 import { Component } from "@/domain/entities/types";
-import { useStores } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
 
 interface CustomComponentBuilderProps {
   // 移除 props，现在从 store 获取状态
@@ -35,7 +35,7 @@ interface CustomComponentBuilderProps {
 
 export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
   // 从 store 获取状态
-  const { addCustomComponent, components: existingComponents } = useStores();
+  const { addCustomComponent, components: existingComponents } = useAllStores();
   const [componentName, setComponentName] = useState("");
   const [componentType, setComponentType] = useState("container");
   const [componentCategory, setComponentCategory] = useState("layout");

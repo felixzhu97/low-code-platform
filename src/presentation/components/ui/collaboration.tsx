@@ -27,7 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Badge } from "./badge";
 import { Users, Send, Copy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { useStores } from "@/shared/stores";
+import { useAllStores } from "@/presentation/hooks";
 
 interface CollaborationProps {
   // 移除 props，现在从 store 获取状态
@@ -52,7 +52,7 @@ type Comment = {
 
 export function Collaboration({}: CollaborationProps) {
   // 从 store 获取状态
-  const { projectName } = useStores();
+  const { projectName } = useAllStores();
   const [shareLink, setShareLink] = useState(
     "https://lowcode.example.com/share/abc123"
   );

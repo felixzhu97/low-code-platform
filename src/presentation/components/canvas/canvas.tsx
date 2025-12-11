@@ -12,7 +12,8 @@ import { ComponentManagementService } from "@/application/services/component-man
 import { useCanvasDrag } from "@/presentation";
 import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
-import { useStores, useComponentStore } from "@/shared/stores";
+import { useAllStores, useComponentState } from "@/presentation/hooks";
+import { useComponentStore } from "@/infrastructure/state-management/stores";
 import type { Component } from "@/domain/entities/types";
 
 type CanvasProps = {
@@ -38,7 +39,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
     toggleSnapToGrid,
     // 数据状态
     dataSources,
-  } = useStores();
+  } = useAllStores();
 
   // 使用自定义Hook处理组件交互
   const {
