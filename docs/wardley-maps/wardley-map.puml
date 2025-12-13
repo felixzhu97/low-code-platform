@@ -1,0 +1,300 @@
+@startuml Wardley_Map
+!theme plain
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+title Felix 低代码平台 - 沃德利地图 (Wardley Map)
+
+' ============================================
+' 价值网络和组件演化阶段
+' ============================================
+'
+' Y轴（从上到下）：价值网络 - 从用户需求到基础设施
+' X轴（从左到右）：演化阶段 - Genesis → Custom Built → Product → Commodity
+'
+
+package "用户需求层 (User Needs)" #E3F2FD {
+  class UserNeeds {
+    + 页面设计师需求
+    + 开发者需求
+    + 终端用户需求
+    --
+    快速搭建页面
+    可视化编辑
+    代码导出
+    页面访问
+  }
+}
+
+package "应用层 (Application)" #BBDEFB {
+  class VisualEditor {
+    + 可视化编辑器
+    --
+    拖拽式编辑
+    实时预览
+    属性配置
+    布局调整
+  }
+  
+  class TemplateSystem {
+    + 模板系统
+    --
+    模板库
+    模板应用
+    模板管理
+  }
+  
+  class Collaboration {
+    + 协作功能
+    --
+    多人编辑
+    实时同步
+    冲突解决
+  }
+}
+
+package "平台层 (Platform)" #90CAF9 {
+  class ComponentSystem {
+    + 组件系统
+    --
+    组件库
+    组件管理
+    自定义组件
+  }
+  
+  class DataBinding {
+    + 数据绑定
+    --
+    数据源管理
+    数据映射
+    实时更新
+  }
+  
+  class ThemeSystem {
+    + 主题系统
+    --
+    主题编辑
+    主题管理
+    响应式设计
+  }
+  
+  class CodeGenerator {
+    + 代码生成引擎
+    --
+    React 代码生成
+    Next.js 项目导出
+    Git 集成
+  }
+}
+
+package "基础设施层 (Infrastructure)" #64B5F6 {
+  class DeploymentService {
+    + 部署服务
+    --
+    自动化部署
+    环境管理
+    版本控制
+  }
+  
+  class StorageService {
+    + 存储服务
+    --
+    文件存储
+    对象存储
+    资源管理
+  }
+  
+  class CDNService {
+    + CDN 服务
+    --
+    静态资源加速
+    全球分发
+    缓存策略
+  }
+  
+  class DatabaseService {
+    + 数据库服务
+    --
+    数据持久化
+    数据查询
+    数据备份
+  }
+  
+  class AuthService {
+    + 认证服务
+    --
+    用户认证
+    权限管理
+    OAuth 集成
+  }
+}
+
+' ============================================
+' 演化阶段标注
+' ============================================
+
+package "Genesis (创新)" #FFF9C4 {
+  class AIAssistant {
+    + AI 辅助设计
+    --
+    智能布局推荐
+    组件自动生成
+    设计建议
+  }
+  
+  class SmartLayout {
+    + 智能布局
+    --
+    自动对齐
+    响应式建议
+    布局优化
+  }
+}
+
+package "Custom Built (定制构建)" #FFE0B2 {
+  note right of VisualEditor
+    定制构建阶段
+    平台核心差异化能力
+  end note
+  
+  note right of Collaboration
+    定制构建阶段
+    实时协作技术
+  end note
+}
+
+package "Product (产品化)" #C8E6C9 {
+  note right of ComponentSystem
+    产品化阶段
+    标准化组件库
+  end note
+  
+  note right of TemplateSystem
+    产品化阶段
+    模板化解决方案
+  end note
+  
+  note right of CodeGenerator
+    产品化阶段
+    标准化代码生成
+  end note
+  
+  note right of DataBinding
+    产品化阶段
+    通用数据绑定方案
+  end note
+  
+  note right of ThemeSystem
+    产品化阶段
+    主题系统标准化
+  end note
+}
+
+package "Commodity (商品化)" #E1BEE7 {
+  note right of CDNService
+    商品化阶段
+    标准化云服务
+  end note
+  
+  note right of StorageService
+    商品化阶段
+    标准化存储服务
+  end note
+  
+  note right of DatabaseService
+    商品化阶段
+    标准化数据库服务
+  end note
+  
+  note right of AuthService
+    商品化阶段
+    标准化认证服务
+  end note
+}
+
+' ============================================
+' 价值网络依赖关系
+' ============================================
+
+UserNeeds --> VisualEditor : 使用
+UserNeeds --> TemplateSystem : 使用
+UserNeeds --> Collaboration : 使用
+
+VisualEditor --> ComponentSystem : 依赖
+VisualEditor --> DataBinding : 依赖
+VisualEditor --> ThemeSystem : 依赖
+VisualEditor --> CodeGenerator : 使用
+
+TemplateSystem --> ComponentSystem : 依赖
+TemplateSystem --> ThemeSystem : 依赖
+
+Collaboration --> VisualEditor : 增强
+
+ComponentSystem --> DeploymentService : 需要
+DataBinding --> DatabaseService : 需要
+CodeGenerator --> StorageService : 需要
+CodeGenerator --> CDNService : 需要
+
+DeploymentService --> StorageService : 使用
+DeploymentService --> CDNService : 使用
+DeploymentService --> AuthService : 使用
+
+' ============================================
+' 演化路径说明
+' ============================================
+
+note top of AIAssistant
+  **Genesis (创新阶段)**
+  
+  新兴技术和服务：
+  - AI 辅助设计：利用 AI 技术提供智能设计建议
+  - 智能布局：自动优化页面布局
+  - 这些功能处于创新阶段，具有高差异化和不确定性
+end note
+
+note top of VisualEditor
+  **Custom Built (定制构建阶段)**
+  
+  平台核心能力：
+  - 可视化编辑器：平台的核心差异化功能
+  - 实时协作：定制开发的协作机制
+  - 这些功能需要持续投入和优化
+end note
+
+note top of ComponentSystem
+  **Product (产品化阶段)**
+  
+  标准化产品：
+  - 组件系统：标准化的组件库
+  - 模板系统：可复用的模板解决方案
+  - 代码生成：标准化的代码导出功能
+  - 这些功能已经产品化，可以稳定提供
+end note
+
+note top of CDNService
+  **Commodity (商品化阶段)**
+  
+  基础设施服务：
+  - CDN、存储、数据库、认证等服务
+  - 这些是标准化的云服务
+  - 可以轻松替换和采购
+end note
+
+' ============================================
+' 图例说明
+' ============================================
+
+legend right
+  |<#FFF9C4> Genesis | 创新阶段 - 新兴技术，高不确定性 |
+  |<#FFE0B2> Custom Built | 定制构建阶段 - 核心差异化能力 |
+  |<#C8E6C9> Product | 产品化阶段 - 标准化产品 |
+  |<#E1BEE7> Commodity | 商品化阶段 - 标准化服务 |
+  |
+  |<#E3F2FD> 用户需求层 | 最终用户的需求和价值 |
+  |<#BBDEFB> 应用层 | 面向用户的应用功能 |
+  |<#90CAF9> 平台层 | 平台核心能力 |
+  |<#64B5F6> 基础设施层 | 底层支撑服务 |
+endlegend
+
+@enduml
+

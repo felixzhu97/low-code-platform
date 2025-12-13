@@ -64,10 +64,6 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# docs
-docs/*
-!docs/architecture
-
 # kiro
 .kiro
 

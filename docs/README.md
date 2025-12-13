@@ -188,7 +188,7 @@ src/
 
 ### 1. 包依赖图 (Package Diagram)
 
-- 文件：[clean-architecture-package.puml](./clean-architecture-package.puml)
+- 文件：[clean-architecture-package.puml](./architecture/clean-architecture-package.puml)
 - 描述：展示各层之间的依赖关系和包结构
 - 核心内容：
   - Presentation Layer（表现层）：UI 组件、适配器、Hooks
@@ -199,7 +199,7 @@ src/
 
 ### 2. 类图 (Class Diagram)
 
-- 文件：[clean-architecture-class.puml](./clean-architecture-class.puml)
+- 文件：[clean-architecture-class.puml](./architecture/clean-architecture-class.puml)
 - 描述：展示组件管理功能的类结构和关系
 - 核心内容：
   - 领域实体：ComponentEntity、ComponentProperties、Position
@@ -210,7 +210,7 @@ src/
 
 ### 3. 序列图 (Sequence Diagram)
 
-- 文件：[clean-architecture-sequence.puml](./clean-architecture-sequence.puml)
+- 文件：[clean-architecture-sequence.puml](./architecture/clean-architecture-sequence.puml)
 - 描述：展示创建组件用例的完整执行流程
 - 核心流程：
   1. 用户操作触发 UI 组件
@@ -222,13 +222,13 @@ src/
 
 ### 4. 层次结构图 (Layers Diagram)
 
-- 文件：[clean-architecture-layers.puml](./clean-architecture-layers.puml)
+- 文件：[clean-architecture-layers.puml](./architecture/clean-architecture-layers.puml)
 - 描述：可视化展示各层的组件和依赖关系
 - 特点：使用不同颜色区分各层，清晰展示依赖方向
 
 ### 5. 组件图 (Component Diagram)
 
-- 文件：[clean-architecture-component.puml](./clean-architecture-component.puml)
+- 文件：[clean-architecture-component.puml](./architecture/clean-architecture-component.puml)
 - 描述：展示完整系统的组件结构和交互关系
 - 包含：画布管理、组件管理、数据源管理等完整功能模块
 
@@ -236,9 +236,9 @@ src/
 
 详细的架构重构方案和指南请参考：
 
-- [整洁架构重构方案](./CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
-- [架构对比分析](./ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
-- [整洁架构快速指南](./CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
+- [整洁架构重构方案](./architecture/CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
+- [架构对比分析](./architecture/ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
+- [整洁架构快速指南](./architecture/CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
 
 ## C4 架构模型
 
@@ -246,14 +246,14 @@ src/
 
 ### 1. 系统上下文图 (Context)
 
-- 文件：[c4-context.puml](./c4-context.puml)
+- 文件：[c4-context.puml](./architecture/c4-context.puml)
 - 描述：展示系统与外部用户和系统的交互关系
 - 核心用户：页面设计师、开发者、终端用户、管理员
 - 外部系统：CDN 服务、对象存储、认证服务、数据分析、第三方 API、代码托管
 
 ### 2. 容器架构图 (Container)
 
-- 文件：[c4-container.puml](./c4-container.puml)
+- 文件：[c4-container.puml](./architecture/c4-container.puml)
 - 描述：展示系统内部的主要容器和它们之间的关系
 - 核心容器：
   - Web 应用 (Next.js 15 + React 19)
@@ -264,8 +264,8 @@ src/
 
 ### 3. 组件架构图 (Component)
 
-- 前端组件架构：[c4-component.puml](./c4-component.puml) - 展示 Web 应用容器内的组件结构
-- 整洁架构层次：[c4-clean-architecture.puml](./c4-clean-architecture.puml) - 详细展示整洁架构的层次结构和依赖关系
+- 前端组件架构：[c4-component.puml](./architecture/c4-component.puml) - 展示 Web 应用容器内的组件结构
+- 整洁架构层次：[c4-clean-architecture.puml](./architecture/c4-clean-architecture.puml) - 详细展示整洁架构的层次结构和依赖关系
 - 描述：详细展示各个容器内部的组件结构，包括表现层、应用层、领域层和基础设施层
 
 #### 前端架构层次
@@ -286,13 +286,13 @@ src/
 
 ### 4. 代码级别图 (Code)
 
-- 文件：[c4-code.puml](./c4-code.puml)
+- 文件：[c4-code.puml](./architecture/c4-code.puml)
 - 描述：展示关键类和方法的具体实现
 - 包含：类型定义、服务类、React 组件、用例类、仓储接口和实现、状态管理
 
 ### 5. 部署架构图 (Deployment)
 
-- 文件：[c4-deployment.puml](./c4-deployment.puml)
+- 文件：[c4-deployment.puml](./architecture/c4-deployment.puml)
 - 描述：展示系统的部署拓扑和运行环境
 - 部署环境：
   - 客户端环境：Web 浏览器、移动设备
@@ -302,7 +302,7 @@ src/
 
 ## C4 模型文件清单
 
-所有 C4 模型文件位于 `docs/architecture/` 目录：
+所有 C4 模型文件位于 `architecture/` 目录：
 
 1. **c4-context.puml** - 系统上下文图，展示系统与外部用户和系统的关系
 2. **c4-container.puml** - 容器架构图，展示系统内部的主要容器
@@ -330,6 +330,116 @@ plantuml -tpng docs/architecture/c4-component.puml
 plantuml -tpng docs/architecture/c4-clean-architecture.puml
 plantuml -tpng docs/architecture/c4-code.puml
 plantuml -tpng docs/architecture/c4-deployment.puml
+```
+
+## 用户地图文档
+
+用户地图文档帮助理解平台的不同用户角色、使用流程、协作关系和用户特征，为产品设计和开发提供重要参考。
+
+### 1. 用户角色/权限地图
+
+- 文件：[user-role-permission-map.puml](./user-maps/user-role-permission-map.puml)
+- 描述：展示四种用户角色（页面设计师、开发者、终端用户、管理员）及其权限范围
+- 核心内容：
+  - 用户角色定义和职责说明
+  - 功能权限矩阵（项目管理、页面编辑、模板管理、代码导出、协作功能等）
+  - 角色之间的权限层级关系
+  - 各角色的权限说明和限制
+
+### 2. 用户旅程图
+
+- 文件：[user-journey-map.puml](./user-maps/user-journey-map.puml)
+- 描述：展示用户从注册到使用平台的完整流程
+- 核心内容：
+  - 页面设计师旅程：从注册到导出代码的完整流程
+  - 开发者旅程：从登录到二次开发的流程
+  - 终端用户旅程：访问和使用生成页面的流程
+  - 管理员旅程：系统管理和配置的流程
+  - 关键触点和用户情绪点标注
+
+### 3. 用户协作关系图
+
+- 文件：[user-collaboration-map.puml](./user-maps/user-collaboration-map.puml)
+- 描述：展示多人协作时的用户关系和交互流程
+- 核心内容：
+  - 邀请协作者的流程
+  - 实时协作编辑的场景和同步机制
+  - 冲突检测和解决流程（最后写入优先、手动合并、操作回滚）
+  - 权限管理和变更通知
+  - 操作历史同步机制
+
+### 4. 用户画像地图
+
+- 文件：[user-persona-map.puml](./user-maps/user-persona-map.puml)
+- 描述：展示不同用户角色的特征、需求和使用场景
+- 核心内容：
+  - 页面设计师画像：背景、目标、痛点、使用场景和使用习惯
+  - 开发者画像：技术背景、开发目标、痛点和使用习惯
+  - 终端用户画像：基本信息、使用目标和体验需求
+  - 管理员画像：管理职责、系统管理需求和使用习惯
+  - 用户与平台功能的映射关系
+
+### 用户地图文件清单
+
+所有用户地图文件位于 `user-maps/` 目录：
+
+1. **user-role-permission-map.puml** - 用户角色/权限地图，定义用户角色和权限矩阵
+2. **user-journey-map.puml** - 用户旅程图，展示不同角色的使用流程
+3. **user-collaboration-map.puml** - 用户协作关系图，展示多人协作场景
+4. **user-persona-map.puml** - 用户画像地图，展示用户特征和需求
+
+### 用户地图使用说明
+
+这些用户地图文件可以使用以下工具渲染：
+
+- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
+- **VS Code 插件**：PlantUML
+- **命令行工具**：PlantUML CLI
+
+### 用户地图查看方式
+
+```bash
+# 使用 PlantUML CLI 生成图片
+plantuml -tpng docs/user-maps/user-role-permission-map.puml
+plantuml -tpng docs/user-maps/user-journey-map.puml
+plantuml -tpng docs/user-maps/user-collaboration-map.puml
+plantuml -tpng docs/user-maps/user-persona-map.puml
+```
+
+## 沃德利地图文档
+
+沃德利地图（Wardley Map）是一种战略地图，用于可视化价值网络和组件演化阶段，帮助理解平台各组件在演化图谱中的位置，为技术决策和战略规划提供重要参考。
+
+### 沃德利地图
+
+- 文件：[wardley-map.puml](./wardley-maps/wardley-map.puml)
+- 描述：展示平台的价值网络和组件演化阶段
+- 核心内容：
+  - **价值网络（Y 轴）**：从用户需求层到基础设施层的完整价值链条
+    - 用户需求层：页面设计师、开发者、终端用户的需求
+    - 应用层：可视化编辑器、模板系统、协作功能
+    - 平台层：组件系统、数据绑定、主题系统、代码生成引擎
+    - 基础设施层：部署服务、存储服务、CDN 服务、数据库服务、认证服务
+  - **演化阶段（X 轴）**：各组件的演化位置
+    - **Genesis（创新）**：AI 辅助设计、智能布局推荐等新兴技术
+    - **Custom Built（定制构建）**：可视化编辑器、实时协作等平台核心差异化能力
+    - **Product（产品化）**：组件系统、模板系统、代码生成等标准化产品
+    - **Commodity（商品化）**：CDN、存储、数据库、认证等标准化云服务
+  - **依赖关系**：展示组件之间的依赖和价值流动
+
+### 沃德利地图使用说明
+
+沃德利地图文件可以使用以下工具渲染：
+
+- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
+- **VS Code 插件**：PlantUML
+- **命令行工具**：PlantUML CLI
+
+### 沃德利地图查看方式
+
+```bash
+# 使用 PlantUML CLI 生成图片
+plantuml -tpng docs/wardley-maps/wardley-map.puml
 ```
 
 ## 技术栈
@@ -505,10 +615,15 @@ npm run dev
 
 ## 相关文档
 
-- [整洁架构重构方案](./CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
-- [架构对比分析](./ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
-- [整洁架构快速指南](./CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
-- [ER 设计图](./er-design.puml) - 数据库实体关系图
+- [整洁架构重构方案](./architecture/CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
+- [架构对比分析](./architecture/ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
+- [整洁架构快速指南](./architecture/CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
+- [ER 设计图](./architecture/er-design.puml) - 数据库实体关系图
+- [用户角色/权限地图](./user-maps/user-role-permission-map.puml) - 用户角色和权限定义
+- [用户旅程图](./user-maps/user-journey-map.puml) - 用户使用流程
+- [用户协作关系图](./user-maps/user-collaboration-map.puml) - 多人协作场景
+- [用户画像地图](./user-maps/user-persona-map.puml) - 用户特征和需求
+- [沃德利地图](./wardley-maps/wardley-map.puml) - 价值网络和组件演化阶段
 
 ---
 

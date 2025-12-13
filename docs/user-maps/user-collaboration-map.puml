@@ -1,0 +1,179 @@
+@startuml User_Collaboration_Map
+!theme plain
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+
+title Felix 低代码平台 - 用户协作关系图
+
+' ============================================
+' 协作场景：多人同时编辑
+' ============================================
+
+participant "项目所有者\n(Designer A)" as Owner
+participant "协作者1\n(Designer B)" as Collaborator1
+participant "协作者2\n(Designer C)" as Collaborator2
+participant "WebSocket服务" as WS
+participant "状态管理" as State
+participant "冲突检测" as Conflict
+
+== 邀请协作者 ==
+
+Owner -> WS: 邀请用户加入项目
+activate WS
+WS -> Collaborator1: 发送邀请通知
+WS -> Collaborator2: 发送邀请通知
+deactivate WS
+
+Collaborator1 -> WS: 接受邀请
+activate WS
+WS -> State: 添加协作者权限
+WS -> Owner: 通知协作者加入
+WS -> Collaborator2: 广播新成员加入
+deactivate WS
+
+== 实时协作编辑 ==
+
+Owner -> State: 添加组件到画布
+activate State
+State -> WS: 广播操作事件
+deactivate State
+
+WS -> Collaborator1: 推送组件添加事件
+WS -> Collaborator2: 推送组件添加事件
+
+note right of Collaborator1
+  收到实时更新
+  自动同步到本地画布
+end note
+
+Collaborator1 -> State: 修改组件属性
+activate State
+State -> Conflict: 检查冲突
+activate Conflict
+
+alt 无冲突
+  Conflict -> State: 允许操作
+  State -> WS: 广播属性更新
+  WS -> Owner: 推送更新
+  WS -> Collaborator2: 推送更新
+else 检测到冲突
+  Conflict -> Collaborator1: 返回冲突警告
+  Conflict -> State: 阻止操作
+  note right of Collaborator1
+    冲突解决策略：
+    1. 最后写入优先
+    2. 手动合并
+    3. 操作回滚
+  end note
+end
+
+deactivate Conflict
+deactivate State
+
+== 冲突解决流程 ==
+
+Collaborator2 -> State: 尝试修改同一组件
+activate State
+State -> Conflict: 检测到冲突
+activate Conflict
+Conflict -> Collaborator2: 显示冲突提示
+Conflict -> WS: 通知所有协作者
+WS -> Owner: 冲突通知
+WS -> Collaborator1: 冲突通知
+
+Collaborator2 -> Conflict: 选择解决策略
+alt 最后写入优先
+  Conflict -> State: 应用最新操作
+  State -> WS: 广播解决结果
+else 手动合并
+  Conflict -> Collaborator2: 显示合并界面
+  Collaborator2 -> Conflict: 手动选择保留内容
+  Conflict -> State: 应用合并结果
+  State -> WS: 广播合并结果
+else 操作回滚
+  Conflict -> State: 回滚到冲突前状态
+  State -> WS: 广播回滚结果
+end
+
+WS -> Owner: 推送解决结果
+WS -> Collaborator1: 推送解决结果
+deactivate Conflict
+deactivate State
+
+== 权限管理 ==
+
+Owner -> State: 修改协作者权限
+activate State
+State -> WS: 广播权限变更
+WS -> Collaborator1: 通知权限变更
+
+alt 权限提升
+  note right of Collaborator1
+    获得更多权限：
+    - 可以编辑更多组件
+    - 可以邀请新成员
+  end note
+else 权限降低
+  note right of Collaborator1
+    权限受限：
+    - 只能查看
+    - 无法编辑
+  end note
+end
+
+deactivate State
+
+== 操作历史同步 ==
+
+Owner -> State: 查看操作历史
+activate State
+State -> Owner: 返回历史记录
+
+note right of Owner
+  操作历史包括：
+  - 所有协作者的操作
+  - 操作时间戳
+  - 操作类型和内容
+  - 冲突解决记录
+end note
+
+Owner -> State: 执行撤销操作
+State -> WS: 广播撤销事件
+WS -> Collaborator1: 推送撤销结果
+WS -> Collaborator2: 推送撤销结果
+
+deactivate State
+
+== 离开协作 ==
+
+Collaborator1 -> WS: 离开项目
+activate WS
+WS -> State: 移除协作者
+WS -> Owner: 通知成员离开
+WS -> Collaborator2: 广播成员离开
+deactivate WS
+
+' ============================================
+' 协作模式说明
+' ============================================
+
+note over Owner, Collaborator2
+  **协作模式**
+  
+  1. **实时同步**: 所有操作实时同步到所有协作者
+  2. **冲突检测**: 自动检测并发操作冲突
+  3. **权限控制**: 基于角色的权限管理
+  4. **操作历史**: 完整记录所有协作操作
+  5. **离线支持**: 支持离线编辑和后续同步
+end note
+
+legend right
+  |<#E3F2FD> 实时同步 | 操作立即同步到所有用户 |
+  |<#FFF3E0> 冲突检测 | 自动检测并发冲突 |
+  |<#F3E5F5> 权限管理 | 基于角色的权限控制 |
+  |<#E8F5E9> 操作历史 | 完整的操作记录 |
+endlegend
+
+@enduml
+
