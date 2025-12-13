@@ -1,5 +1,6 @@
 {
   "framework": "nextjs",
   "buildCommand": "pnpm --filter @lowcode-platform/web build",
-  "installCommand": "corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install --frozen-lockfile"
+  "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install",
+  "outputDirectory": "apps/web/.next"
 }
