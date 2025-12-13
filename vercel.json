@@ -1,4 +1,5 @@
 {
   "framework": "nextjs",
-  "rootDirectory": "apps/web"
+  "buildCommand": "pnpm --filter @lowcode-platform/web build",
+  "installCommand": "pnpm install"
 }
