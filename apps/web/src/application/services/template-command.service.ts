@@ -1,4 +1,4 @@
-import type { Component } from '@/domain/entities/types';
+import type { Component } from "@/domain/entities/types";
 
 export interface TemplateCommand {
   execute(): Component[];
@@ -16,7 +16,7 @@ export class ApplyTemplateCommand implements TemplateCommand {
   execute(): Component[] {
     try {
       if (!this.templateComponents || this.templateComponents.length === 0) {
-        throw new Error('No template components provided');
+        throw new Error("No template components provided");
       }
 
       // Generate new IDs and create mapping
@@ -24,10 +24,10 @@ export class ApplyTemplateCommand implements TemplateCommand {
         if (!component.type) {
           throw new Error(`Component missing type: ${component.id}`);
         }
-        
+
         const newId = this.generateUniqueId(component.type);
         this.idMapping.set(component.id, newId);
-        
+
         return {
           ...component,
           id: newId,
@@ -37,8 +37,10 @@ export class ApplyTemplateCommand implements TemplateCommand {
       // Update references
       return this.updateComponentReferences(processedComponents);
     } catch (error) {
-      console.error('Template application failed:', error);
-      throw error instanceof Error ? error : new Error('Failed to apply template');
+      console.error("Template application failed:", error);
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to apply template");
     }
   }
 
@@ -52,19 +54,20 @@ export class ApplyTemplateCommand implements TemplateCommand {
 
       // Update parentId
       if (component.parentId) {
-        updatedComponent.parentId = this.idMapping.get(component.parentId) || null;
+        updatedComponent.parentId =
+          this.idMapping.get(component.parentId) || null;
       }
 
       // Update children references
       if (component.children && Array.isArray(component.children)) {
-        updatedComponent.children = component.children
-          .map((childId) => {
-            if (typeof childId === 'string') {
+        updatedComponent.children = component.children.map(
+          (childId: Component | string) => {
+            if (typeof childId === "string") {
               return this.idMapping.get(childId) || childId;
             }
             return childId;
-          })
-          .filter((child): child is Component => typeof child !== 'string');
+          }
+        );
       }
 
       return updatedComponent;

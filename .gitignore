@@ -2,13 +2,21 @@
 
 # dependencies
 /node_modules
+apps/*/node_modules
+packages/*/node_modules
 
 # next.js
 /.next/
 /out/
+apps/*/.next/
+apps/*/out/
 
 # production
 /build
+apps/*/dist/
+apps/*/build/
+packages/*/dist/
+packages/*/build/
 
 # debug
 npm-debug.log*
@@ -25,19 +33,46 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+apps/*/next-env.d.ts
+apps/*/*.tsbuildinfo
+packages/*/*.tsbuildinfo
+
+# NestJS
+apps/*/dist/
+apps/*/coverage/
+apps/*/.nest/
+
+# testing
+coverage/
+*.lcov
+.nyc_output/
 
 # IDE
 .idea
+.vscode
+*.swp
+*.swo
+*~
 
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # docs
 docs/*
 !docs/architecture
 
-#  kiro
+# kiro
 .kiro
 
-# IDE
-.vscode
+# pnpm
+.pnpm-store/
+
+# turbo (if using turbo)
+.turbo/
