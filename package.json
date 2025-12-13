@@ -2,6 +2,7 @@
   "name": "felix-lowcode-platform",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "pnpm --filter @lowcode-platform/web dev & pnpm --filter @lowcode-platform/server start:dev",
     "dev:web": "pnpm --filter @lowcode-platform/web dev",
