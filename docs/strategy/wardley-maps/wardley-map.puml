@@ -1,7 +1,6 @@
 @startuml Wardley_Map
 !theme plain
 skinparam linetype ortho
-skinparam packageStyle rectangle
 
 title Felix 低代码平台 - 沃德利地图 (Wardley Map)
 
@@ -35,7 +34,7 @@ package "应用层 (Application)" #BBDEFB {
     属性配置
     布局调整
   }
-  
+
   class TemplateSystem {
     + 模板系统
     --
@@ -43,7 +42,7 @@ package "应用层 (Application)" #BBDEFB {
     模板应用
     模板管理
   }
-  
+
   class Collaboration {
     + 协作功能
     --
@@ -61,7 +60,7 @@ package "平台层 (Platform)" #90CAF9 {
     组件管理
     自定义组件
   }
-  
+
   class DataBinding {
     + 数据绑定
     --
@@ -69,7 +68,7 @@ package "平台层 (Platform)" #90CAF9 {
     数据映射
     实时更新
   }
-  
+
   class ThemeSystem {
     + 主题系统
     --
@@ -77,7 +76,7 @@ package "平台层 (Platform)" #90CAF9 {
     主题管理
     响应式设计
   }
-  
+
   class CodeGenerator {
     + 代码生成引擎
     --
@@ -95,7 +94,7 @@ package "基础设施层 (Infrastructure)" #64B5F6 {
     环境管理
     版本控制
   }
-  
+
   class StorageService {
     + 存储服务
     --
@@ -103,7 +102,7 @@ package "基础设施层 (Infrastructure)" #64B5F6 {
     对象存储
     资源管理
   }
-  
+
   class CDNService {
     + CDN 服务
     --
@@ -111,7 +110,7 @@ package "基础设施层 (Infrastructure)" #64B5F6 {
     全球分发
     缓存策略
   }
-  
+
   class DatabaseService {
     + 数据库服务
     --
@@ -119,7 +118,7 @@ package "基础设施层 (Infrastructure)" #64B5F6 {
     数据查询
     数据备份
   }
-  
+
   class AuthService {
     + 认证服务
     --
@@ -141,7 +140,7 @@ package "Genesis (创新)" #FFF9C4 {
     组件自动生成
     设计建议
   }
-  
+
   class SmartLayout {
     + 智能布局
     --
@@ -156,7 +155,7 @@ package "Custom Built (定制构建)" #FFE0B2 {
     定制构建阶段
     平台核心差异化能力
   end note
-  
+
   note right of Collaboration
     定制构建阶段
     实时协作技术
@@ -168,22 +167,22 @@ package "Product (产品化)" #C8E6C9 {
     产品化阶段
     标准化组件库
   end note
-  
+
   note right of TemplateSystem
     产品化阶段
     模板化解决方案
   end note
-  
+
   note right of CodeGenerator
     产品化阶段
     标准化代码生成
   end note
-  
+
   note right of DataBinding
     产品化阶段
     通用数据绑定方案
   end note
-  
+
   note right of ThemeSystem
     产品化阶段
     主题系统标准化
@@ -195,17 +194,17 @@ package "Commodity (商品化)" #E1BEE7 {
     商品化阶段
     标准化云服务
   end note
-  
+
   note right of StorageService
     商品化阶段
     标准化存储服务
   end note
-  
+
   note right of DatabaseService
     商品化阶段
     标准化数据库服务
   end note
-  
+
   note right of AuthService
     商品化阶段
     标准化认证服务
@@ -245,7 +244,7 @@ DeploymentService --> AuthService : 使用
 
 note top of AIAssistant
   **Genesis (创新阶段)**
-  
+
   新兴技术和服务：
   - AI 辅助设计：利用 AI 技术提供智能设计建议
   - 智能布局：自动优化页面布局
@@ -254,7 +253,7 @@ end note
 
 note top of VisualEditor
   **Custom Built (定制构建阶段)**
-  
+
   平台核心能力：
   - 可视化编辑器：平台的核心差异化功能
   - 实时协作：定制开发的协作机制
@@ -263,7 +262,7 @@ end note
 
 note top of ComponentSystem
   **Product (产品化阶段)**
-  
+
   标准化产品：
   - 组件系统：标准化的组件库
   - 模板系统：可复用的模板解决方案
@@ -273,7 +272,7 @@ end note
 
 note top of CDNService
   **Commodity (商品化阶段)**
-  
+
   基础设施服务：
   - CDN、存储、数据库、认证等服务
   - 这些是标准化的云服务

@@ -1,0 +1,240 @@
+@startuml Technology_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF 技术架构 - Felix 低代码平台
+
+' ============================================
+' 技术栈分层
+' ============================================
+
+package "前端技术栈 (Frontend Technology Stack)" {
+  
+  component [Web浏览器\nWeb Browser] as Browser
+  component [React 19\nUI框架] as React
+  component [Next.js 15\n全栈框架] as NextJS
+  component [TypeScript\n类型系统] as TypeScript
+  component [Tailwind CSS\n样式框架] as Tailwind
+  component [Radix UI\n组件库] as RadixUI
+  component [React DnD\n拖拽库] as ReactDnD
+  component [Recharts\n图表库] as Recharts
+  component [Zustand\n状态管理] as Zustand
+  
+  Browser --> React
+  Browser --> NextJS
+  Browser --> TypeScript
+  Browser --> Tailwind
+  Browser --> RadixUI
+  Browser --> ReactDnD
+  Browser --> Recharts
+  Browser --> Zustand
+}
+
+package "后端技术栈 (Backend Technology Stack)" {
+  
+  component [应用服务器\nApplication Server] as AppServer
+  component [NestJS 11\n后端框架] as NestJS
+  component [TypeScript\n类型系统] as TSBackend
+  component [Express\nHTTP服务器] as Express
+  component [Socket.IO\nWebSocket] as SocketIO
+  component [TypeORM\nORM框架] as TypeORM
+  
+  AppServer --> NestJS
+  AppServer --> TSBackend
+  AppServer --> Express
+  AppServer --> SocketIO
+  AppServer --> TypeORM
+}
+
+package "数据存储层 (Data Storage Layer)" {
+  
+  component [PostgreSQL\n关系数据库] as PostgreSQL
+  component [主数据库\nPrimary DB] as PrimaryDB
+  component [从数据库\nReplica DB] as ReplicaDB
+  
+  component [Redis\n缓存数据库] as Redis
+  component [缓存集群\nCache Cluster] as CacheCluster
+  component [会话存储\nSession Store] as SessionStore
+  component [消息队列\nMessage Queue] as MessageQueue
+  
+  component [对象存储\nObject Storage] as ObjectStorage
+  component [S3/OSS兼容\n文件存储] as FileStorage
+  
+  PostgreSQL --> PrimaryDB
+  PostgreSQL --> ReplicaDB
+  Redis --> CacheCluster
+  Redis --> SessionStore
+  Redis --> MessageQueue
+  ObjectStorage --> FileStorage
+}
+
+package "基础设施层 (Infrastructure Layer)" {
+  
+  component [云平台\nCloud Platform] as CloudPlatform
+  component [负载均衡器\nLoad Balancer] as LoadBalancer
+  
+  component [Web服务器集群\nWeb Server Cluster] as WebCluster
+  component [Next.js SSR\n服务器端渲染] as NextSSR
+  component [静态资源服务\nStatic Assets] as StaticAssets
+  
+  component [API服务器集群\nAPI Server Cluster] as APICluster
+  component [RESTful API\nREST API] as RESTAPI
+  component [GraphQL API\nGraphQL] as GraphQL
+  
+  component [WebSocket服务器\nWebSocket Server] as WSServer
+  component [实时协作服务\nCollaboration] as CollaborationWS
+  component [消息广播\nMessage Broadcast] as MessageBroadcast
+  
+  component [任务队列\nTask Queue] as TaskQueue
+  component [代码生成任务\nCode Generation] as CodeGenTask
+  component [数据同步任务\nData Sync] as DataSyncTask
+  
+  CloudPlatform --> LoadBalancer
+  CloudPlatform --> WebCluster
+  CloudPlatform --> APICluster
+  CloudPlatform --> WSServer
+  CloudPlatform --> TaskQueue
+  
+  WebCluster --> NextSSR
+  WebCluster --> StaticAssets
+  
+  APICluster --> RESTAPI
+  APICluster --> GraphQL
+  
+  WSServer --> CollaborationWS
+  WSServer --> MessageBroadcast
+  
+  TaskQueue --> CodeGenTask
+  TaskQueue --> DataSyncTask
+}
+
+package "网络与安全 (Network & Security)" {
+  
+  component [CDN\n内容分发网络] as CDN
+  component [WAF\nWeb应用防火墙] as WAF
+  component [SSL/TLS\n加密传输] as SSL
+  component [认证服务\nAuth Service] as AuthService
+  component [API网关\nAPI Gateway] as APIGateway
+}
+
+package "监控与运维 (Monitoring & Operations)" {
+  
+  component [Prometheus\n指标监控] as Prometheus
+  component [Grafana\n可视化面板] as Grafana
+  component [ELK Stack\n日志分析] as ELK
+  component [Sentry\n错误追踪] as Sentry
+  component [健康检查\nHealth Check] as HealthCheck
+}
+
+package "CI/CD与部署 (CI/CD & Deployment)" {
+  
+  component [Git仓库\nGit Repository] as GitRepo
+  component [CI/CD流水线\nCI/CD Pipeline] as CICD
+  component [容器编排\nKubernetes] as K8s
+  component [Docker容器\nDocker Container] as Docker
+}
+
+' ============================================
+' 技术架构连接关系
+' ============================================
+
+Browser --> CDN : HTTPS
+CDN --> LoadBalancer : HTTPS
+LoadBalancer --> WAF : 安全检查
+WAF --> WebCluster : 路由
+WAF --> APIGateway : API路由
+
+WebCluster --> APICluster : 内部调用
+APIGateway --> APICluster : API请求
+APIGateway --> AuthService : 身份验证
+
+APICluster --> PostgreSQL : SQL连接
+APICluster --> Redis : 缓存访问
+APICluster --> ObjectStorage : 文件操作
+APICluster --> TaskQueue : 异步任务
+
+Browser <--> WSServer : WebSocket连接
+WSServer --> Redis : 消息队列
+WSServer --> PostgreSQL : 状态持久化
+
+TaskQueue --> ObjectStorage : 结果存储
+TaskQueue --> GitRepo : 代码推送
+
+' ============================================
+' 部署架构
+' ============================================
+
+component [生产环境\nProduction] as ProdEnv
+component [开发环境\nDevelopment] as DevEnv
+component [开发服务器\nDev Server] as DevServer
+component [本地数据库\nLocal DB] as LocalDB
+component [测试环境\nTesting] as TestEnv
+component [测试服务器\nTest Server] as TestServer
+component [测试数据库\nTest DB] as TestDB
+
+DevEnv --> DevServer
+DevEnv --> LocalDB
+TestEnv --> TestServer
+TestEnv --> TestDB
+
+CICD --> ProdEnv : 自动部署
+CICD --> TestEnv : 测试部署
+Docker --> K8s : 容器编排
+K8s --> ProdEnv : 资源调度
+
+' ============================================
+' 监控连接
+' ============================================
+
+WebCluster --> Prometheus : 指标上报
+APICluster --> Prometheus : 指标上报
+WSServer --> Prometheus : 指标上报
+PostgreSQL --> Prometheus : 指标上报
+Redis --> Prometheus : 指标上报
+
+Prometheus --> Grafana : 数据可视化
+WebCluster --> ELK : 日志收集
+APICluster --> ELK : 日志收集
+WebCluster --> Sentry : 错误上报
+APICluster --> Sentry : 错误上报
+
+APICluster --> HealthCheck : 健康检查
+WSServer --> HealthCheck : 健康检查
+
+' ============================================
+' 技术选型说明
+' ============================================
+
+note right of Browser
+  **前端技术选型：**
+  - Next.js: SSR/SSG支持
+  - React 19: 最新UI框架
+  - TypeScript: 类型安全
+  - Tailwind CSS: 原子化CSS
+  - Zustand: 轻量级状态管理
+end note
+
+note right of AppServer
+  **后端技术选型：**
+  - NestJS: 模块化架构
+  - TypeORM: 数据库ORM
+  - Socket.IO: 实时通信
+  - Express: HTTP服务器
+end note
+
+note right of PostgreSQL
+  **数据存储选型：**
+  - PostgreSQL: 关系型数据
+  - Redis: 缓存和会话
+  - 对象存储: 文件和媒体
+end note
+
+note right of CloudPlatform
+  **部署架构：**
+  - 微服务架构
+  - 水平扩展
+  - 负载均衡
+  - 高可用设计
+end note
+
+@enduml

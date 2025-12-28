@@ -1,0 +1,172 @@
+@startuml Application_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF 应用架构 - Felix 低代码平台
+
+' ============================================
+' 应用系统边界
+' ============================================
+
+package "Felix 低代码平台应用系统" {
+  
+  ' ============================================
+  ' 表现层应用组件
+  ' ============================================
+  package "表现层 (Presentation Layer)" {
+    
+    component [可视化编辑器\nVisual Editor] as VisualEditor
+    interface "编辑器接口" as VisualEditorInterface
+    
+    component [组件面板\nComponent Panel] as ComponentPanel
+    interface "组件选择接口" as ComponentPanelInterface
+    
+    component [属性面板\nProperty Panel] as PropertyPanel
+    interface "属性配置接口" as PropertyPanelInterface
+    
+    component [模板库\nTemplate Library] as TemplateLibrary
+    interface "模板管理接口" as TemplateLibraryInterface
+    
+    component [数据面板\nData Panel] as DataPanel
+    interface "数据管理接口" as DataPanelInterface
+    
+    VisualEditor --> VisualEditorInterface
+    ComponentPanel --> ComponentPanelInterface
+    PropertyPanel --> PropertyPanelInterface
+    TemplateLibrary --> TemplateLibraryInterface
+    DataPanel --> DataPanelInterface
+  }
+  
+  ' ============================================
+  ' 应用层组件
+  ' ============================================
+  package "应用层 (Application Layer)" {
+    
+    component [组件管理服务\nComponent Management Service] as ComponentService
+    interface "组件操作接口" as ComponentServiceInterface
+    
+    component [模板管理服务\nTemplate Management Service] as TemplateService
+    interface "模板操作接口" as TemplateServiceInterface
+    
+    component [数据绑定服务\nData Binding Service] as DataBindingService
+    interface "数据绑定接口" as DataBindingServiceInterface
+    
+    component [画布管理服务\nCanvas Management Service] as CanvasService
+    interface "画布操作接口" as CanvasServiceInterface
+    
+    component [历史记录服务\nHistory Service] as HistoryService
+    interface "历史操作接口" as HistoryServiceInterface
+    
+    ComponentService --> ComponentServiceInterface
+    TemplateService --> TemplateServiceInterface
+    DataBindingService --> DataBindingServiceInterface
+    CanvasService --> CanvasServiceInterface
+    HistoryService --> HistoryServiceInterface
+  }
+  
+  ' ============================================
+  ' 领域层组件
+  ' ============================================
+  package "领域层 (Domain Layer)" {
+    
+    component [组件实体\nComponent Entity] as ComponentEntity
+    component [模板实体\nTemplate Entity] as TemplateEntity
+    component [项目实体\nProject Entity] as ProjectEntity
+    component [数据源实体\nDataSource Entity] as DataSourceEntity
+    component [组件工厂\nComponent Factory] as ComponentFactory
+  }
+  
+  ' ============================================
+  ' 基础设施层组件
+  ' ============================================
+  package "基础设施层 (Infrastructure Layer)" {
+    
+    component [组件仓储\nComponent Repository] as ComponentRepo
+    interface "仓储接口" as ComponentRepoInterface
+    
+    component [模板仓储\nTemplate Repository] as TemplateRepo
+    interface "仓储接口" as TemplateRepoInterface
+    
+    component [数据源仓储\nDataSource Repository] as DataSourceRepo
+    interface "仓储接口" as DataSourceRepoInterface
+    
+    component [状态管理\nState Management] as StateManagement
+    interface "状态接口" as StateManagementInterface
+    
+    component [协作服务\nCollaboration Service] as CollaborationService
+    interface "协作接口" as CollaborationServiceInterface
+    
+    component [代码生成器\nCode Generator] as CodeGenerator
+    interface "代码生成接口" as CodeGeneratorInterface
+    
+    ComponentRepo --> ComponentRepoInterface
+    TemplateRepo --> TemplateRepoInterface
+    DataSourceRepo --> DataSourceRepoInterface
+    StateManagement --> StateManagementInterface
+    CollaborationService --> CollaborationServiceInterface
+    CodeGenerator --> CodeGeneratorInterface
+  }
+}
+
+' ============================================
+' 外部系统
+' ============================================
+
+package "外部系统 (External Systems)" {
+  component [认证服务\nAuthentication Service] as AuthService
+  component [数据库\nDatabase] as Database
+  component [缓存服务\nCache Service] as CacheService
+  component [对象存储\nObject Storage] as ObjectStorage
+  component [Git仓库\nGit Repository] as GitRepo
+  component [CDN服务\nCDN Service] as CDNService
+}
+
+' ============================================
+' 应用交互关系
+' ============================================
+
+VisualEditor --> ComponentService : 调用
+VisualEditor --> CanvasService : 调用
+VisualEditor --> HistoryService : 调用
+ComponentPanel --> ComponentService : 调用
+PropertyPanel --> ComponentService : 调用
+PropertyPanel --> DataBindingService : 调用
+TemplateLibrary --> TemplateService : 调用
+DataPanel --> DataBindingService : 调用
+
+ComponentService --> ComponentEntity : 使用
+ComponentService --> ComponentRepo : 使用
+TemplateService --> TemplateEntity : 使用
+TemplateService --> TemplateRepo : 使用
+DataBindingService --> DataSourceEntity : 使用
+DataBindingService --> DataSourceRepo : 使用
+CanvasService --> ComponentFactory : 使用
+
+ComponentRepo --> Database : 读写
+TemplateRepo --> Database : 读写
+DataSourceRepo --> Database : 读写
+StateManagement --> CacheService : 读写
+CodeGenerator --> GitRepo : 推送代码
+
+CollaborationService --> StateManagement : 同步状态
+CollaborationService --> CacheService : 消息队列
+
+ComponentService ..> AuthService : 验证权限
+TemplateService ..> AuthService : 验证权限
+
+CodeGenerator --> ObjectStorage : 存储代码包
+VisualEditor --> CDNService : 加载静态资源
+
+' ============================================
+' 数据流
+' ============================================
+
+note right of VisualEditor
+  **主要数据流：**
+  1. 组件操作 → 应用服务 → 领域实体
+  2. 数据变更 → 状态管理 → 协作服务
+  3. 代码生成 → 代码生成器 → Git/存储
+end note
+
+@enduml
+

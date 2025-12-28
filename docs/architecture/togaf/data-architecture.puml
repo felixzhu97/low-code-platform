@@ -1,0 +1,262 @@
+@startuml Data_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF 数据架构 - Felix 低代码平台
+
+' ============================================
+' 数据实体组件
+' ============================================
+
+package "核心数据实体 (Core Data Entities)" {
+  
+  component [Component\n组件实体] as Component
+  component [id: String] as ComponentId
+  component [name: String] as ComponentName
+  component [type: String] as ComponentType
+  component [props: Object] as ComponentProps
+  component [style: Object] as ComponentStyle
+  component [position: Position] as ComponentPosition
+  component [children: List] as ComponentChildren
+  component [parentId: String] as ComponentParentId
+  component [dataBinding: Object] as ComponentDataBinding
+  
+  component [Template\n模板实体] as Template
+  component [Template_id: String] as TemplateId
+  component [Template_name: String] as TemplateName
+  component [Template_description: String] as TemplateDescription
+  component [Template_category: String] as TemplateCategory
+  component [rootComponent: Component] as TemplateRootComponent
+  component [Template_preview: Object] as TemplatePreview
+  component [Template_authorId: String] as TemplateAuthorId
+  component [Template_isPublic: Boolean] as TemplateIsPublic
+  
+  component [Project\n项目实体] as Project
+  component [Project_id: String] as ProjectId
+  component [Project_name: String] as ProjectName
+  component [Project_description: String] as ProjectDescription
+  component [Project_rootComponent: Component] as ProjectRootComponent
+  component [Project_theme: ThemeConfig] as ProjectTheme
+  component [Project_dataSources: List] as ProjectDataSources
+  component [Project_ownerId: String] as ProjectOwnerId
+  component [Project_collaborators: List] as ProjectCollaborators
+  component [Project_status: ProjectStatus] as ProjectStatus
+  
+  component [DataSource\n数据源实体] as DataSource
+  component [DataSource_id: String] as DataSourceId
+  component [DataSource_name: String] as DataSourceName
+  component [DataSource_type: DataSourceType] as DataSourceType
+  component [DataSource_config: Object] as DataSourceConfig
+  component [DataSource_data: Object] as DataSourceData
+  component [DataSource_status: DataSourceStatus] as DataSourceStatus
+  component [DataSource_errorMessage: String] as DataSourceErrorMessage
+  
+  component [DataMapping\n数据映射实体] as DataMapping
+  component [DataMapping_id: String] as DataMappingId
+  component [DataMapping_componentId: String] as DataMappingComponentId
+  component [DataMapping_dataSourceId: String] as DataMappingDataSourceId
+  component [DataMapping_field: String] as DataMappingField
+  component [DataMapping_sourcePath: String] as DataMappingSourcePath
+  component [DataMapping_targetPath: String] as DataMappingTargetPath
+  component [DataMapping_transform: TransformType] as DataMappingTransform
+  
+  component [User\n用户实体] as User
+  component [User_id: String] as UserId
+  component [User_username: String] as UserUsername
+  component [User_email: String] as UserEmail
+  component [User_role: String] as UserRole
+  component [User_preferences: UserPreferences] as UserPreferences
+  
+  component [ThemeConfig\n主题配置实体] as ThemeConfig
+  component [ThemeConfig_id: String] as ThemeConfigId
+  component [ThemeConfig_name: String] as ThemeConfigName
+  component [ThemeConfig_colors: ColorPalette] as ThemeConfigColors
+  component [ThemeConfig_typography: TypographyConfig] as ThemeConfigTypography
+  component [ThemeConfig_spacing: SpacingConfig] as ThemeConfigSpacing
+  component [ThemeConfig_isDarkMode: Boolean] as ThemeConfigIsDarkMode
+  
+  component [HistoryRecord\n历史记录实体] as HistoryRecord
+  component [HistoryRecord_id: String] as HistoryRecordId
+  component [HistoryRecord_projectId: String] as HistoryRecordProjectId
+  component [HistoryRecord_userId: String] as HistoryRecordUserId
+  component [HistoryRecord_operation: OperationType] as HistoryRecordOperation
+  component [HistoryRecord_data: Object] as HistoryRecordData
+  component [HistoryRecord_timestamp: DateTime] as HistoryRecordTimestamp
+}
+
+' ============================================
+' 实体关系
+' ============================================
+
+Component "1" *-- "0..*" Component : 父子关系
+Project "1" *-- "1" Component : 根组件
+Project "1" *-- "0..*" DataSource : 数据源
+Project "1" *-- "1" ThemeConfig : 主题配置
+Template "1" *-- "1" Component : 根组件
+DataSource "1" *-- "0..*" DataMapping : 数据映射
+Component "1" *-- "0..*" DataMapping : 数据绑定
+Project "1" *-- "1" User : 所有者
+Project "1" *-- "0..*" User : 协作者
+HistoryRecord "1" *-- "1" Project : 历史记录
+
+' ============================================
+' 数据存储组件
+' ============================================
+
+package "数据存储层 (Data Storage Layer)" {
+  
+  component [PostgreSQL\n关系型数据库] as PostgreSQL
+  component [components表] as ComponentsTable
+  component [projects表] as ProjectsTable
+  component [templates表] as TemplatesTable
+  component [data_sources表] as DataSourcesTable
+  component [users表] as UsersTable
+  component [history_records表] as HistoryRecordsTable
+  
+  component [Redis\n缓存数据库] as Redis
+  component [session_cache] as SessionCache
+  component [project_cache] as ProjectCache
+  component [collaboration_state] as CollaborationState
+  
+  component [对象存储\nObject Storage] as ObjectStorage
+  component [user_files桶] as UserFilesBucket
+  component [exported_code桶] as ExportedCodeBucket
+  component [template_previews桶] as TemplatePreviewsBucket
+  
+  PostgreSQL --> ComponentsTable
+  PostgreSQL --> ProjectsTable
+  PostgreSQL --> TemplatesTable
+  PostgreSQL --> DataSourcesTable
+  PostgreSQL --> UsersTable
+  PostgreSQL --> HistoryRecordsTable
+  
+  Redis --> SessionCache
+  Redis --> ProjectCache
+  Redis --> CollaborationState
+  
+  ObjectStorage --> UserFilesBucket
+  ObjectStorage --> ExportedCodeBucket
+  ObjectStorage --> TemplatePreviewsBucket
+}
+
+' ============================================
+' 数据流组件
+' ============================================
+
+package "关键数据流场景 (Key Data Flow Scenarios)" {
+  
+  component [组件编辑数据流] as ComponentEditFlow
+  component [用户拖拽组件] as UserDragComponent
+  component [编辑器创建Component实体] as EditorCreateComponent
+  component [应用服务验证数据] as ServiceValidateData
+  component [状态管理更新本地状态] as StateUpdateLocal
+  component [协作服务广播操作] as CollaborationBroadcast
+  component [仓储持久化到数据库] as RepositoryPersist
+  component [缓存更新] as CacheUpdate
+  
+  component [数据绑定数据流] as DataBindingFlow
+  component [用户配置数据源] as UserConfigDataSource
+  component [创建DataSource实体] as CreateDataSourceEntity
+  component [测试数据连接] as TestDataConnection
+  component [创建DataMapping映射] as CreateDataMappingEntity
+  component [绑定到Component] as BindToComponentEntity
+  component [实时数据获取] as RealTimeDataFetch
+  component [组件渲染更新] as ComponentRenderUpdate
+  
+  component [协作同步数据流] as CollaborationFlow
+  component [用户操作] as UserOperation
+  component [生成操作事件] as GenerateOperationEvent
+  component [协作服务接收] as CollaborationReceive
+  component [广播给其他用户] as BroadcastToUsers
+  component [状态合并] as StateMerge
+  component [冲突解决] as ConflictResolve
+  component [状态持久化] as StatePersist
+  
+  component [代码生成数据流] as CodeGenFlow
+  component [用户触发导出] as UserTriggerExport
+  component [读取Project和Component数据] as ReadProjectData
+  component [代码生成器处理] as CodeGeneratorProcess
+  component [生成React组件代码] as GenerateReactCode
+  component [打包为项目文件] as PackageProject
+  component [上传到对象存储] as UploadToStorage
+  component [推送到Git仓库] as PushToGit
+  
+  ComponentEditFlow --> UserDragComponent
+  ComponentEditFlow --> EditorCreateComponent
+  ComponentEditFlow --> ServiceValidateData
+  ComponentEditFlow --> StateUpdateLocal
+  ComponentEditFlow --> CollaborationBroadcast
+  ComponentEditFlow --> RepositoryPersist
+  ComponentEditFlow --> CacheUpdate
+  
+  DataBindingFlow --> UserConfigDataSource
+  DataBindingFlow --> CreateDataSourceEntity
+  DataBindingFlow --> TestDataConnection
+  DataBindingFlow --> CreateDataMappingEntity
+  DataBindingFlow --> BindToComponentEntity
+  DataBindingFlow --> RealTimeDataFetch
+  DataBindingFlow --> ComponentRenderUpdate
+  
+  CollaborationFlow --> UserOperation
+  CollaborationFlow --> GenerateOperationEvent
+  CollaborationFlow --> CollaborationReceive
+  CollaborationFlow --> BroadcastToUsers
+  CollaborationFlow --> StateMerge
+  CollaborationFlow --> ConflictResolve
+  CollaborationFlow --> StatePersist
+  
+  CodeGenFlow --> UserTriggerExport
+  CodeGenFlow --> ReadProjectData
+  CodeGenFlow --> CodeGeneratorProcess
+  CodeGenFlow --> GenerateReactCode
+  CodeGenFlow --> PackageProject
+  CodeGenFlow --> UploadToStorage
+  CodeGenFlow --> PushToGit
+}
+
+' ============================================
+' 数据访问关系
+' ============================================
+
+Component ..> PostgreSQL : 持久化
+Template ..> PostgreSQL : 持久化
+Project ..> PostgreSQL : 持久化
+DataSource ..> PostgreSQL : 持久化
+User ..> PostgreSQL : 持久化
+HistoryRecord ..> PostgreSQL : 持久化
+
+Component ..> Redis : 缓存
+Project ..> Redis : 缓存
+Project ..> ObjectStorage : 文件存储
+
+ComponentEditFlow --> PostgreSQL : 数据持久化
+ComponentEditFlow --> Redis : 缓存更新
+
+DataBindingFlow --> DataSource : 使用
+DataBindingFlow --> DataMapping : 使用
+DataBindingFlow --> Component : 绑定
+
+CollaborationFlow --> Redis : 消息队列
+CollaborationFlow --> PostgreSQL : 状态持久化
+
+CodeGenFlow --> Project : 读取
+CodeGenFlow --> Component : 读取
+CodeGenFlow --> ObjectStorage : 存储
+
+note right of PostgreSQL
+  **数据访问模式：**
+  - 读写分离
+  - 主从复制
+  - 分片策略（按项目ID）
+  - 索引优化
+end note
+
+note right of Redis
+  **缓存策略：**
+  - 热点数据缓存
+  - 会话数据存储
+  - 协作状态同步
+  - TTL过期策略
+end note
+
+@enduml
