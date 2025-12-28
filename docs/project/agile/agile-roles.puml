@@ -1,0 +1,249 @@
+@startuml Agile_Roles
+!theme plain
+skinparam linetype ortho
+
+title 敏捷角色和职责 - Felix 低代码平台
+
+' ============================================
+' 核心角色定义
+' ============================================
+
+package "Scrum 核心角色" {
+  class "产品负责人\n(Product Owner)" as PO {
+    + 管理 Product Backlog
+    + 定义产品愿景
+    + 确定优先级
+    + 接受或拒绝工作成果
+    --
+    **核心职责**
+    - 最大化产品价值
+    - 与利益相关者沟通
+    - 确保 Backlog 透明
+    - 做出产品决策
+  }
+
+  class "Scrum Master" as SM {
+    + 促进 Scrum 流程
+    + 移除团队阻碍
+    + 保护团队
+    + 指导团队改进
+    --
+    **核心职责**
+    - 确保 Scrum 正确实施
+    - 促进团队协作
+    - 移除阻碍和干扰
+    - 帮助团队自组织
+  }
+
+  class "开发团队\n(Development Team)" as DevTeam {
+    + 交付可工作的软件
+    + 自组织工作
+    + 跨职能协作
+    + 持续改进
+    --
+    **核心职责**
+    - 完成 Sprint 目标
+    - 高质量交付
+    - 协作和沟通
+    - 技术决策
+  }
+}
+
+' ============================================
+' 利益相关者
+' ============================================
+
+package "利益相关者 (Stakeholders)" {
+  class "业务方\n(Business Stakeholder)" as Business {
+    + 提供业务需求
+    + 定义业务价值
+    + 参与评审
+    + 提供反馈
+  }
+
+  class "最终用户\n(End User)" as EndUser {
+    + 使用产品
+    + 提供使用反馈
+    + 报告问题
+    + 提出改进建议
+  }
+
+  class "管理层\n(Management)" as Management {
+    + 提供资源支持
+    + 设定战略目标
+    + 评估项目进展
+    + 做出决策
+  }
+}
+
+' ============================================
+' 角色职责详细说明
+' ============================================
+
+package "Product Owner 详细职责" {
+  class "PO 职责 - 产品管理" as PODuties1 {
+    + 定义产品愿景和路线图
+    + 管理 Product Backlog
+    + 确定需求优先级
+    + 编写用户故事
+    + 定义验收标准
+  }
+
+  class "PO 职责 - 沟通协调" as PODuties2 {
+    + 与利益相关者沟通
+    + 收集和整理需求
+    + 解释业务价值
+    + 参与 Sprint Review
+    + 接受或拒绝工作成果
+  }
+}
+
+package "Scrum Master 详细职责" {
+  class "SM 职责 - 流程促进" as SMDuties1 {
+    + 促进 Scrum 仪式
+    + 确保流程正确执行
+    + 保护团队不受干扰
+    + 移除阻碍和障碍
+    + 促进团队协作
+  }
+
+  class "SM 职责 - 团队发展" as SMDuties2 {
+    + 指导团队自组织
+    + 促进持续改进
+    + 提供培训和指导
+    + 帮助解决冲突
+    + 提升团队效能
+  }
+}
+
+package "开发团队详细职责" {
+  class "团队职责 - 交付" as TeamDuties1 {
+    + 完成 Sprint 目标
+    + 交付可工作的软件
+    + 确保代码质量
+    + 编写测试用例
+    + 代码审查
+  }
+
+  class "团队职责 - 协作" as TeamDuties2 {
+    + 自组织工作分配
+    + 跨职能协作
+    + 知识分享
+    + 技术决策
+    + 持续学习
+  }
+}
+
+' ============================================
+' 角色关系
+' ============================================
+
+PO --> PODuties1 : 负责
+PO --> PODuties2 : 负责
+PO --> Business : 沟通
+PO --> EndUser : 收集反馈
+PO --> Management : 汇报
+
+SM --> SMDuties1 : 负责
+SM --> SMDuties2 : 负责
+SM --> DevTeam : 服务和支持
+SM --> PO : 协助
+
+DevTeam --> TeamDuties1 : 负责
+DevTeam --> TeamDuties2 : 负责
+DevTeam --> PO : 协作
+DevTeam --> SM : 接受支持
+
+Business --> PO : 提供需求
+EndUser --> PO : 提供反馈
+Management --> PO : 设定目标
+
+' ============================================
+' 角色协作场景
+' ============================================
+
+package "协作场景" {
+  note right of PO
+    **Product Owner 协作**
+    
+    - 与业务方讨论需求
+    - 与开发团队细化用户故事
+    - 在 Sprint Review 中收集反馈
+    - 与 Scrum Master 协调优先级
+  end note
+
+  note right of SM
+    **Scrum Master 协作**
+    
+    - 帮助 PO 优化 Backlog
+    - 支持开发团队移除阻碍
+    - 促进团队内部沟通
+    - 与组织协调资源
+  end note
+
+  note right of DevTeam
+    **开发团队协作**
+    
+    - 与 PO 澄清需求
+    - 与 SM 讨论阻碍
+    - 团队内部知识分享
+    - 跨职能协作交付
+  end note
+}
+
+' ============================================
+' 角色技能要求
+' ============================================
+
+package "技能要求" {
+  class "PO 技能" as POSkills {
+    + 产品思维
+    + 业务理解
+    + 沟通能力
+    + 决策能力
+    + 优先级管理
+  }
+
+  class "SM 技能" as SMSkills {
+    + 敏捷知识
+    + 引导技巧
+    + 冲突解决
+    + 教练能力
+    + 服务型领导
+  }
+
+  class "团队技能" as TeamSkills {
+    + 技术能力
+    + 协作能力
+    + 自组织能力
+    + 学习能力
+    + 质量意识
+  }
+}
+
+PO --> POSkills : 需要
+SM --> SMSkills : 需要
+DevTeam --> TeamSkills : 需要
+
+' ============================================
+' 图例说明
+' ============================================
+
+legend right
+  |<#E3F2FD> Scrum 核心角色 | Product Owner、Scrum Master、Development Team |
+  |<#BBDEFB> 利益相关者 | 业务方、最终用户、管理层 |
+  |<#FFF9C4> PO 职责 | 产品管理和沟通协调 |
+  |<#FFE0B2> SM 职责 | 流程促进和团队发展 |
+  |<#C8E6C9> 团队职责 | 交付和协作 |
+  |<#E1BEE7> 协作场景 | 角色之间的协作方式 |
+  |<#F8BBD0> 技能要求 | 各角色需要的核心技能 |
+  |
+  **关键原则**
+  - 每个角色都有明确的职责
+  - 角色之间需要密切协作
+  - 职责不重叠，但需要配合
+  - 所有角色共同对产品成功负责
+endlegend
+
+@enduml
+

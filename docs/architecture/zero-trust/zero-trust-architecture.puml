@@ -1,0 +1,393 @@
+@startuml Zero_Trust_Architecture
+!theme plain
+skinparam linetype ortho
+
+title 零信任网络架构 - Felix 低代码平台
+
+' ============================================
+' 用户/设备层
+' ============================================
+
+package "用户/设备层 (User/Device Layer)" {
+  
+  component [用户终端\nUser Terminal] as UserTerminal
+  component [Web浏览器\nWeb Browser] as Browser
+  component [移动设备\nMobile Device] as MobileDevice
+  component [桌面应用\nDesktop App] as DesktopApp
+  
+  component [设备代理\nDevice Agent] as DeviceAgent
+  component [设备证书\nDevice Certificate] as DeviceCert
+  component [设备合规检查\nDevice Compliance] as DeviceCompliance
+}
+
+' ============================================
+' 接入层 - 零信任代理和网关
+' ============================================
+
+package "接入层 (Access Layer)" {
+  
+  component [零信任代理\nZTNA Gateway] as ZTNAGateway
+  component [身份验证代理\nAuth Proxy] as AuthProxy
+  component [设备验证服务\nDevice Verification] as DeviceVerification
+  
+  component [API网关\nAPI Gateway] as APIGateway
+  component [策略执行点\nPolicy Enforcement Point] as PEP
+  component [速率限制\nRate Limiting] as RateLimit
+  component [API认证\nAPI Authentication] as APIAuth
+  
+  component [负载均衡器\nLoad Balancer] as LoadBalancer
+  component [SSL/TLS终止\nSSL/TLS Termination] as SSLTLS
+  component [WAF\nWeb应用防火墙] as WAF
+}
+
+' ============================================
+' 控制层 - 身份与访问管理
+' ============================================
+
+package "控制层 - 身份与访问管理 (Control Layer - IAM)" {
+  
+  component [身份提供者\nIdentity Provider] as IdP
+  component [多因素认证\nMFA Service] as MFA
+  component [单点登录\nSSO Service] as SSO
+  component [访问令牌管理\nToken Management] as TokenMgmt
+  component [OAuth2/OIDC\nOAuth2/OIDC] as OAuth2
+  
+  component [策略决策点\nPolicy Decision Point] as PDP
+  component [策略管理点\nPolicy Admin Point] as PAP
+  component [访问控制策略\nAccess Control Policy] as AccessPolicy
+  component [动态授权\nDynamic Authorization] as DynamicAuth
+}
+
+' ============================================
+' 控制层 - 设备与信任管理
+' ============================================
+
+package "控制层 - 设备与信任管理 (Control Layer - Device & Trust)" {
+  
+  component [设备注册服务\nDevice Registration] as DeviceReg
+  component [设备合规检查\nDevice Compliance Check] as DeviceComplianceCheck
+  component [设备信任评分\nDevice Trust Score] as DeviceTrustScore
+  component [设备证书管理\nDevice Certificate Mgmt] as DeviceCertMgmt
+  
+  component [信任评分引擎\nTrust Score Engine] as TrustScoreEngine
+  component [行为分析\nBehavior Analysis] as BehaviorAnalysis
+  component [异常检测\nAnomaly Detection] as AnomalyDetection
+  component [风险评估\nRisk Assessment] as RiskAssessment
+}
+
+' ============================================
+' 控制层 - 监控与响应
+' ============================================
+
+package "控制层 - 监控与响应 (Control Layer - Monitoring & Response)" {
+  
+  component [安全信息与事件管理\nSIEM] as SIEM
+  component [日志聚合\nLog Aggregation] as LogAggregation
+  component [安全分析\nSecurity Analytics] as SecurityAnalytics
+  component [威胁检测\nThreat Detection] as ThreatDetection
+  
+  component [事件响应\nIncident Response] as IncidentResponse
+  component [自动化响应\nAutomated Response] as AutoResponse
+  component [告警系统\nAlert System] as AlertSystem
+}
+
+' ============================================
+' 应用层 - Web应用
+' ============================================
+
+package "应用层 - Web应用 (Application Layer - Web)" {
+  
+  component [Web应用集群\nWeb App Cluster] as WebAppCluster
+  component [Next.js应用\nNext.js App] as NextJSApp
+  component [React前端\nReact Frontend] as ReactFrontend
+  component [API路由\nAPI Routes] as APIRoutes
+  
+  component [会话管理\nSession Management] as SessionMgmt
+  component [应用级认证\nApp-level Auth] as AppAuth
+}
+
+' ============================================
+' 应用层 - 后端服务
+' ============================================
+
+package "应用层 - 后端服务 (Application Layer - Backend)" {
+  
+  component [API服务集群\nAPI Server Cluster] as APIServerCluster
+  component [NestJS服务\nNestJS Service] as NestJSService
+  component [微服务\nMicroservices] as Microservices
+  
+  component [服务网格\nService Mesh] as ServiceMesh
+  component [服务间认证\nService-to-Service Auth] as ServiceAuth
+  component [服务发现\nService Discovery] as ServiceDiscovery
+}
+
+' ============================================
+' 应用层 - 实时服务
+' ============================================
+
+package "应用层 - 实时服务 (Application Layer - Real-time)" {
+  
+  component [WebSocket服务器\nWebSocket Server] as WSServer
+  component [实时协作服务\nCollaboration Service] as CollaborationService
+  component [消息队列\nMessage Queue] as MessageQueue
+}
+
+' ============================================
+' 数据层 - 数据保护
+' ============================================
+
+package "数据层 - 数据保护 (Data Layer - Data Protection)" {
+  
+  component [数据加密服务\nData Encryption Service] as DataEncryption
+  component [传输加密\nIn-Transit Encryption] as TransitEncryption
+  component [静态加密\nAt-Rest Encryption] as RestEncryption
+  component [密钥管理\nKey Management] as KeyManagement
+  
+  component [数据分类\nData Classification] as DataClassification
+  component [数据标记\nData Labeling] as DataLabeling
+  component [数据丢失防护\nDLP] as DLP
+}
+
+' ============================================
+' 数据层 - 数据存储
+' ============================================
+
+package "数据层 - 数据存储 (Data Layer - Data Storage)" {
+  
+  component [PostgreSQL\n主数据库] as PostgreSQL
+  component [数据库加密\nDatabase Encryption] as DBEncryption
+  component [数据库访问控制\nDB Access Control] as DBAccessControl
+  
+  component [Redis\n缓存数据库] as Redis
+  component [缓存加密\nCache Encryption] as CacheEncryption
+  
+  component [对象存储\nObject Storage] as ObjectStorage
+  component [文件加密\nFile Encryption] as FileEncryption
+  component [访问审计\nAccess Audit] as AccessAudit
+}
+
+' ============================================
+' 网络层 - 网络分段
+' ============================================
+
+package "网络层 - 网络分段 (Network Layer - Segmentation)" {
+  
+  component [网络分段策略\nNetwork Segmentation] as NetworkSegmentation
+  component [微隔离\nMicro-segmentation] as MicroSegmentation
+  component [虚拟网络\nVirtual Network] as VirtualNetwork
+  component [网络策略\nNetwork Policy] as NetworkPolicy
+  
+  component [安全隧道\nSecure Tunnel] as SecureTunnel
+  component [VPN网关\nVPN Gateway] as VPNGateway
+  component [网络监控\nNetwork Monitoring] as NetworkMonitoring
+}
+
+' ============================================
+' 零信任架构连接关系
+' ============================================
+
+' 用户/设备层到接入层
+UserTerminal --> DeviceAgent : 设备代理
+Browser --> DeviceAgent : 设备代理
+MobileDevice --> DeviceAgent : 设备代理
+DesktopApp --> DeviceAgent : 设备代理
+
+DeviceAgent --> DeviceCert : 设备证书
+DeviceAgent --> DeviceCompliance : 合规检查
+
+DeviceAgent --> ZTNAGateway : 零信任连接
+DeviceAgent --> AuthProxy : 身份验证
+
+' 接入层到控制层
+ZTNAGateway --> DeviceVerification : 设备验证
+AuthProxy --> IdP : 身份验证
+AuthProxy --> MFA : 多因素认证
+AuthProxy --> SSO : 单点登录
+
+APIGateway --> PEP : 策略执行
+PEP --> PDP : 策略决策
+PEP --> APIAuth : API认证
+PEP --> RateLimit : 速率限制
+
+LoadBalancer --> WAF : 安全检查
+LoadBalancer --> SSLTLS : 加密终止
+
+' 控制层内部连接
+IdP --> OAuth2 : OAuth2/OIDC
+IdP --> TokenMgmt : 令牌管理
+MFA --> IdP : 认证验证
+SSO --> IdP : 单点登录
+
+PDP --> PAP : 策略查询
+PAP --> AccessPolicy : 策略管理
+PDP --> DynamicAuth : 动态授权
+
+DeviceVerification --> DeviceReg : 设备注册
+DeviceVerification --> DeviceComplianceCheck : 合规检查
+DeviceComplianceCheck --> DeviceTrustScore : 信任评分
+DeviceReg --> DeviceCertMgmt : 证书管理
+
+TrustScoreEngine --> BehaviorAnalysis : 行为分析
+TrustScoreEngine --> AnomalyDetection : 异常检测
+TrustScoreEngine --> RiskAssessment : 风险评估
+BehaviorAnalysis --> TrustScoreEngine : 信任评分
+AnomalyDetection --> TrustScoreEngine : 信任评分
+
+SIEM --> LogAggregation : 日志收集
+SIEM --> SecurityAnalytics : 安全分析
+SIEM --> ThreatDetection : 威胁检测
+ThreatDetection --> IncidentResponse : 事件响应
+IncidentResponse --> AutoResponse : 自动响应
+ThreatDetection --> AlertSystem : 告警
+
+' 接入层到应用层
+ZTNAGateway --> WebAppCluster : 安全连接
+APIGateway --> APIServerCluster : API路由
+LoadBalancer --> WebAppCluster : 负载均衡
+LoadBalancer --> APIServerCluster : 负载均衡
+
+' 应用层内部连接
+WebAppCluster --> NextJSApp : 应用服务
+NextJSApp --> ReactFrontend : 前端渲染
+NextJSApp --> APIRoutes : API路由
+WebAppCluster --> SessionMgmt : 会话管理
+WebAppCluster --> AppAuth : 应用认证
+
+APIServerCluster --> NestJSService : 后端服务
+APIServerCluster --> Microservices : 微服务
+Microservices --> ServiceMesh : 服务网格
+ServiceMesh --> ServiceAuth : 服务认证
+ServiceMesh --> ServiceDiscovery : 服务发现
+
+WSServer --> CollaborationService : 协作服务
+WSServer --> MessageQueue : 消息队列
+
+' 应用层到数据层
+WebAppCluster --> DataEncryption : 数据加密
+APIServerCluster --> DataEncryption : 数据加密
+WSServer --> DataEncryption : 数据加密
+
+DataEncryption --> TransitEncryption : 传输加密
+DataEncryption --> RestEncryption : 静态加密
+DataEncryption --> KeyManagement : 密钥管理
+
+DataEncryption --> DataClassification : 数据分类
+DataClassification --> DataLabeling : 数据标记
+DataLabeling --> DLP : 数据丢失防护
+
+APIServerCluster --> PostgreSQL : 数据库访问
+PostgreSQL --> DBEncryption : 数据库加密
+PostgreSQL --> DBAccessControl : 访问控制
+
+APIServerCluster --> Redis : 缓存访问
+Redis --> CacheEncryption : 缓存加密
+
+APIServerCluster --> ObjectStorage : 对象存储
+ObjectStorage --> FileEncryption : 文件加密
+ObjectStorage --> AccessAudit : 访问审计
+
+' 网络层连接
+WebAppCluster --> NetworkSegmentation : 网络分段
+APIServerCluster --> NetworkSegmentation : 网络分段
+PostgreSQL --> NetworkSegmentation : 网络分段
+Redis --> NetworkSegmentation : 网络分段
+ObjectStorage --> NetworkSegmentation : 网络分段
+
+NetworkSegmentation --> MicroSegmentation : 微隔离
+NetworkSegmentation --> VirtualNetwork : 虚拟网络
+NetworkSegmentation --> NetworkPolicy : 网络策略
+
+MicroSegmentation --> SecureTunnel : 安全隧道
+SecureTunnel --> VPNGateway : VPN网关
+NetworkSegmentation --> NetworkMonitoring : 网络监控
+
+' 监控连接
+WebAppCluster --> SIEM : 日志上报
+APIServerCluster --> SIEM : 日志上报
+WSServer --> SIEM : 日志上报
+ZTNAGateway --> SIEM : 日志上报
+APIGateway --> SIEM : 日志上报
+PEP --> SIEM : 日志上报
+
+PostgreSQL --> SIEM : 日志上报
+Redis --> SIEM : 日志上报
+ObjectStorage --> SIEM : 日志上报
+
+NetworkMonitoring --> SIEM : 网络日志
+TrustScoreEngine --> SIEM : 信任评分日志
+
+' ============================================
+' 零信任原则说明
+' ============================================
+
+note right of ZTNAGateway
+  **零信任核心原则：**
+  - 永不信任，始终验证
+  - 最小权限访问
+  - 持续监控和验证
+  - 假设网络已被入侵
+end note
+
+note right of PDP
+  **访问控制策略：**
+  - 基于身份的策略
+  - 基于设备的策略
+  - 基于位置的策略
+  - 基于行为的策略
+  - 动态风险评估
+end note
+
+note right of TrustScoreEngine
+  **信任评分因素：**
+  - 设备合规性
+  - 用户行为模式
+  - 网络位置
+  - 访问时间
+  - 历史安全事件
+  - 实时威胁情报
+end note
+
+note right of DataEncryption
+  **数据保护策略：**
+  - 端到端加密
+  - 传输加密 (TLS 1.3)
+  - 静态加密 (AES-256)
+  - 密钥轮换
+  - 数据分类分级
+end note
+
+note right of NetworkSegmentation
+  **网络分段策略：**
+  - 应用层分段
+  - 数据层分段
+  - 服务间隔离
+  - 东西向流量控制
+  - 南北向流量控制
+end note
+
+note right of SIEM
+  **持续监控：**
+  - 实时日志分析
+  - 异常行为检测
+  - 威胁情报集成
+  - 自动化响应
+  - 安全事件关联分析
+end note
+
+' ============================================
+' 零信任架构流程
+' ============================================
+
+note bottom of UserTerminal
+  **零信任访问流程：**
+  1. 设备验证和合规检查
+  2. 用户身份认证 (MFA)
+  3. 设备信任评分
+  4. 策略决策和授权
+  5. 建立安全连接
+  6. 持续监控和验证
+  7. 动态调整访问权限
+end note
+
+@enduml
+

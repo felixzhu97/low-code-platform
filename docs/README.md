@@ -332,6 +332,50 @@ plantuml -tpng docs/architecture/c4-code.puml
 plantuml -tpng docs/architecture/c4-deployment.puml
 ```
 
+## 零信任网络架构文档
+
+零信任网络架构文档描述了 Felix 低代码平台的零信任安全架构设计，采用"永不信任，始终验证"的安全模型，确保所有用户、设备、应用和数据都经过严格的身份验证和授权。
+
+### 零信任架构
+
+- 文件：[zero-trust-architecture.puml](./architecture/zero-trust/zero-trust-architecture.puml)
+- 描述：展示整个平台的零信任网络架构设计
+- 核心内容：
+  - **用户/设备层**：用户终端、设备代理、设备验证和合规检查
+  - **接入层**：零信任代理、API 网关、策略执行点、负载均衡器
+  - **控制层 - IAM**：身份提供者、多因素认证、单点登录、策略决策点
+  - **控制层 - 设备与信任管理**：设备注册、信任评分引擎、行为分析、异常检测
+  - **控制层 - 监控与响应**：SIEM、安全分析、威胁检测、事件响应
+  - **应用层**：Web 应用、后端服务、实时服务、服务网格
+  - **数据层 - 数据保护**：数据加密、传输加密、静态加密、密钥管理、DLP
+  - **数据层 - 数据存储**：PostgreSQL、Redis、对象存储及其安全控制
+  - **网络层 - 网络分段**：网络分段策略、微隔离、安全隧道、网络监控
+
+### 零信任核心原则
+
+1. **永不信任，始终验证**：不假设任何用户、设备或网络是可信的，所有访问请求都必须经过验证
+2. **最小权限访问**：用户和设备只能访问其工作所需的最小资源集
+3. **持续监控和验证**：持续监控用户行为、设备状态和网络活动，动态调整访问权限
+4. **假设网络已被入侵**：采用纵深防御策略，假设攻击者可能已经进入网络内部
+
+### 零信任架构使用说明
+
+零信任架构文件可以使用以下工具渲染：
+
+- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
+- **VS Code 插件**：PlantUML
+- **命令行工具**：PlantUML CLI
+
+### 零信任架构查看方式
+
+```bash
+# 使用 PlantUML CLI 生成图片
+plantuml -tpng docs/architecture/zero-trust/zero-trust-architecture.puml
+plantuml -tsvg docs/architecture/zero-trust/zero-trust-architecture.puml
+```
+
+详细的零信任架构说明和使用方法，请参考：[零信任架构文档](./architecture/zero-trust/README.md)
+
 ## 用户地图文档
 
 用户地图文档帮助理解平台的不同用户角色、使用流程、协作关系和用户特征，为产品设计和开发提供重要参考。
@@ -623,7 +667,8 @@ npm run dev
 - [用户旅程图](./user-maps/user-journey-map.puml) - 用户使用流程
 - [用户协作关系图](./user-maps/user-collaboration-map.puml) - 多人协作场景
 - [用户画像地图](./user-maps/user-persona-map.puml) - 用户特征和需求
-- [沃德利地图](./wardley-maps/wardley-map.puml) - 价值网络和组件演化阶段
+- [沃德利地图](./strategy/wardley-maps/wardley-map.puml) - 价值网络和组件演化阶段
+- [零信任网络架构](./architecture/zero-trust/zero-trust-architecture.puml) - 零信任安全架构设计
 
 ---
 

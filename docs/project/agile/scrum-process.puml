@@ -1,0 +1,218 @@
+@startuml Scrum_Process
+!theme plain
+skinparam linetype ortho
+
+title Scrum 流程总览 - Felix 低代码平台
+
+' ============================================
+' Scrum 三个角色
+' ============================================
+
+package "Scrum 角色 (Roles)" {
+  class "产品负责人\n(Product Owner)" as PO
+  class "Scrum Master" as SM
+  class "开发团队\n(Development Team)" as DevTeam
+}
+
+' ============================================
+' Scrum 三个工件
+' ============================================
+
+package "Scrum 工件 (Artifacts)" {
+  class "产品待办事项\n(Product Backlog)" as ProductBacklog {
+    + 用户故事列表
+    + 功能需求
+    + 技术债务
+    + Bug 修复
+    --
+    按优先级排序
+    持续细化
+    动态调整
+  }
+
+  class "Sprint 待办事项\n(Sprint Backlog)" as SprintBacklog {
+    + 本 Sprint 要完成的工作
+    + 任务分解
+    + 工作量估算
+    --
+    由团队承诺
+    每日更新
+    可调整
+  }
+
+  class "增量\n(Increment)" as Increment {
+    + 可工作的软件
+    + 完成的功能
+    + 测试通过
+    --
+    潜在可发布
+    符合定义完成
+    累积价值
+  }
+}
+
+' ============================================
+' Scrum 五个仪式
+' ============================================
+
+package "Scrum 仪式 (Ceremonies)" {
+  class "Sprint 规划\n(Sprint Planning)" as SprintPlanning {
+    + 选择待办事项
+    + 分解任务
+    + 估算工作量
+    + 制定 Sprint 目标
+    --
+    时长: 2-4 小时
+    参与者: 全体团队
+    产出: Sprint Backlog
+  }
+
+  class "每日站会\n(Daily Standup)" as DailyStandup {
+    + 昨天做了什么
+    + 今天计划做什么
+    + 遇到什么阻碍
+    --
+    时长: 15 分钟
+    参与者: 全体团队
+    目的: 同步进度
+  }
+
+  class "Sprint 评审\n(Sprint Review)" as SprintReview {
+    + 演示完成的功能
+    + 收集反馈
+    + 讨论下一步
+    --
+    时长: 1-2 小时
+    参与者: 团队 + 利益相关者
+    产出: 反馈和调整
+  }
+
+  class "Sprint 回顾\n(Retrospective)" as Retrospective {
+    + 做得好的地方
+    + 需要改进的地方
+    + 制定改进计划
+    --
+    时长: 1-2 小时
+    参与者: 全体团队
+    产出: 改进行动项
+  }
+
+  class "待办事项细化\n(Backlog Refinement)" as BacklogRefinement {
+    + 细化用户故事
+    + 估算工作量
+    + 调整优先级
+    + 准备 Sprint Planning
+    --
+    持续进行
+    参与者: PO + 团队
+    产出: 准备好的待办事项
+  }
+}
+
+' ============================================
+' Sprint 循环流程
+' ============================================
+
+package "Sprint 循环 (Sprint Cycle)" {
+  note right of SprintPlanning
+    **Sprint 开始**
+
+    1. 选择 Product Backlog 中的高优先级项
+    2. 团队讨论和分解任务
+    3. 估算工作量
+    4. 制定 Sprint 目标
+    5. 创建 Sprint Backlog
+  end note
+
+  note right of DailyStandup
+    **每日同步**
+
+    1. 昨天完成了什么
+    2. 今天计划做什么
+    3. 遇到什么阻碍
+    4. 是否需要帮助
+  end note
+
+  note right of SprintReview
+    **Sprint 结束 - 评审**
+
+    1. 演示完成的功能
+    2. 收集利益相关者反馈
+    3. 讨论产品方向
+    4. 更新 Product Backlog
+  end note
+
+  note right of Retrospective
+    **Sprint 结束 - 回顾**
+
+    1. 回顾 Sprint 过程
+    2. 识别做得好的地方
+    3. 找出需要改进的地方
+    4. 制定改进计划
+  end note
+}
+
+' ============================================
+' 角色与工件的交互
+' ============================================
+
+PO --> ProductBacklog : 管理和维护
+PO --> BacklogRefinement : 参与细化
+PO --> SprintPlanning : 参与规划
+PO --> SprintReview : 参与评审
+
+SM --> SprintPlanning : 促进会议
+SM --> DailyStandup : 促进会议
+SM --> SprintReview : 促进会议
+SM --> Retrospective : 促进会议
+SM --> DevTeam : 移除阻碍
+
+DevTeam --> SprintPlanning : 参与规划
+DevTeam --> DailyStandup : 参与站会
+DevTeam --> SprintBacklog : 更新进度
+DevTeam --> Increment : 交付增量
+DevTeam --> SprintReview : 演示功能
+DevTeam --> Retrospective : 参与回顾
+DevTeam --> BacklogRefinement : 参与细化
+
+' ============================================
+' 工件之间的流转
+' ============================================
+
+ProductBacklog --> SprintPlanning : 选择待办事项
+SprintPlanning --> SprintBacklog : 创建 Sprint 待办事项
+SprintBacklog --> DailyStandup : 每日更新
+SprintBacklog --> Increment : 完成交付
+Increment --> SprintReview : 演示评审
+SprintReview --> ProductBacklog : 反馈和调整
+
+' ============================================
+' Sprint 循环流程
+' ============================================
+
+SprintPlanning --> DailyStandup : Sprint 进行中
+DailyStandup --> DailyStandup : 每日重复
+DailyStandup --> SprintReview : Sprint 结束
+SprintReview --> Retrospective : Sprint 结束
+Retrospective --> BacklogRefinement : 准备下一个 Sprint
+BacklogRefinement --> SprintPlanning : 下一个 Sprint 开始
+
+' ============================================
+' 图例说明
+' ============================================
+
+legend right
+  |<#E3F2FD> 角色 | Scrum 团队中的三个核心角色 |
+  |<#BBDEFB> 工件 | Scrum 的三个核心工件 |
+  |<#C8E6C9> 仪式 | Scrum 的五个核心仪式 |
+  |<#FFF9C4> Sprint 循环 | Sprint 的完整生命周期 |
+  |
+  **Scrum 核心要素**
+  - 3 个角色：Product Owner、Scrum Master、Development Team
+  - 3 个工件：Product Backlog、Sprint Backlog、Increment
+  - 5 个仪式：Sprint Planning、Daily Standup、Sprint Review、Retrospective、Backlog Refinement
+  - Sprint 通常为 1-4 周
+endlegend
+
+@enduml
+

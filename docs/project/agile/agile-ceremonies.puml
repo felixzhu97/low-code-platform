@@ -1,0 +1,391 @@
+@startuml Agile_Ceremonies
+!theme plain
+skinparam linetype ortho
+
+title 敏捷仪式详细流程 - Felix 低代码平台
+
+' ============================================
+' Sprint Planning
+' ============================================
+
+package "Sprint Planning (Sprint 规划)" {
+  class "第一部分：做什么\n(What to do)" as PlanningPart1 {
+    + Product Owner 介绍\n高优先级待办事项
+    + 团队提问和讨论
+    + 澄清需求
+    + 选择 Sprint 待办事项
+    + 确定 Sprint 目标
+    --
+    **时长**: 1-2 小时
+    **参与者**: 全体团队
+    **产出**: Sprint 目标、选定的待办事项
+  }
+
+  class "第二部分：怎么做\n(How to do)" as PlanningPart2 {
+    + 分解任务
+    + 估算工作量
+    + 分配任务
+    + 识别风险和依赖
+    + 创建 Sprint Backlog
+    --
+    **时长**: 1-2 小时
+    **参与者**: 全体团队
+    **产出**: Sprint Backlog、任务分解
+  }
+
+  class "Sprint Planning 产出" as PlanningOutput {
+    + Sprint 目标
+    + Sprint Backlog
+    + 任务分解
+    + 工作量估算
+    + 风险识别
+  }
+}
+
+PlanningPart1 --> PlanningPart2 : 顺序进行
+PlanningPart2 --> PlanningOutput : 产出
+
+' ============================================
+' Daily Standup
+' ============================================
+
+package "Daily Standup (每日站会)" {
+  class "站会前准备" as BeforeStandup {
+    + 更新任务状态
+    + 准备要分享的内容
+    + 识别阻碍
+    + 查看看板
+  }
+
+  class "站会进行中" as DuringStandup {
+    + 昨天完成了什么
+    + 今天计划做什么
+    + 遇到什么阻碍
+    + 是否需要帮助
+    --
+    **时长**: 15 分钟
+    **参与者**: 全体团队
+    **规则**: 
+    - 准时开始
+    - 聚焦进度和阻碍
+    - 不深入讨论问题
+    - 站立进行
+  }
+
+  class "站会后行动" as AfterStandup {
+    + 更新看板
+    + 解决阻碍
+    + 协调工作
+    + 继续开发
+  }
+
+  class "站会产出" as StandupOutput {
+    + 进度同步
+    + 阻碍识别
+    + 工作协调
+    + 团队对齐
+  }
+}
+
+BeforeStandup --> DuringStandup : 准备
+DuringStandup --> AfterStandup : 行动
+AfterStandup --> StandupOutput : 产出
+
+' ============================================
+' Sprint Review
+' ============================================
+
+package "Sprint Review (Sprint 评审)" {
+  class "准备演示" as PrepareDemo {
+    + 准备演示环境
+    + 准备演示内容
+    + 邀请利益相关者
+    + 准备反馈收集
+  }
+
+  class "功能演示" as FeatureDemo {
+    + 演示完成的功能
+    + 展示用户故事实现
+    + 演示验收标准
+    + 展示增量价值
+    --
+    **时长**: 1-2 小时
+    **参与者**: 团队 + 利益相关者
+    **重点**: 
+    - 展示可工作的软件
+    - 演示业务价值
+    - 收集反馈
+  }
+
+  class "收集反馈" as CollectFeedback {
+    + 利益相关者反馈
+    + 用户反馈
+    + 改进建议
+    + 新需求识别
+  }
+
+  class "讨论和调整" as DiscussAdjust {
+    + 讨论产品方向
+    + 调整优先级
+    + 识别新需求
+    + 更新 Product Backlog
+  }
+
+  class "Review 产出" as ReviewOutput {
+    + 功能演示
+    + 利益相关者反馈
+    + Product Backlog 更新
+    + 下一步计划
+  }
+}
+
+PrepareDemo --> FeatureDemo : 演示
+FeatureDemo --> CollectFeedback : 收集反馈
+CollectFeedback --> DiscussAdjust : 讨论调整
+DiscussAdjust --> ReviewOutput : 产出
+
+' ============================================
+' Sprint Retrospective
+' ============================================
+
+package "Sprint Retrospective (Sprint 回顾)" {
+  class "回顾准备" as RetroPrepare {
+    + 准备回顾材料
+    + 选择回顾方法
+    + 创建安全环境
+    + 准备行动项模板
+  }
+
+  class "回顾方法" as RetroMethods {
+    + Start-Stop-Continue
+    + 4Ls (Liked, Learned, Lacked, Longed)
+    + 5 Whys
+    + 时间线回顾
+    + 开心/不开心
+    --
+    **时长**: 1-2 小时
+    **参与者**: 全体团队
+    **原则**: 
+    - 安全的环境
+    - 聚焦改进
+    - 行动导向
+  }
+
+  class "识别改进点" as IdentifyImprovements {
+    + 做得好的地方（保持）
+    + 需要改进的地方（改进）
+    + 根本原因分析
+    + 优先级排序
+  }
+
+  class "制定行动项" as CreateActions {
+    + 制定改进行动项
+    + 分配责任人
+    + 设定时间表
+    + 定义成功标准
+  }
+
+  class "Retrospective 产出" as RetroOutput {
+    + 做得好的地方（保持）
+    + 需要改进的地方（改进）
+    + 改进行动项
+    + 责任人分配
+    + 跟踪计划
+  }
+}
+
+RetroPrepare --> RetroMethods : 选择方法
+RetroMethods --> IdentifyImprovements : 识别改进
+IdentifyImprovements --> CreateActions : 制定行动
+CreateActions --> RetroOutput : 产出
+
+' ============================================
+' Backlog Refinement
+' ============================================
+
+package "Backlog Refinement (待办事项细化)" {
+  class "细化活动" as RefinementActivity {
+    + 细化用户故事
+    + 添加验收标准
+    + 估算故事点
+    + 调整优先级
+    + 识别依赖关系
+    --
+    **时长**: 持续进行
+    **频率**: 每周 1-2 次
+    **参与者**: PO + 团队
+    **目的**: 准备 Sprint Planning
+  }
+
+  class "故事点估算" as StoryPointEstimation {
+    + Planning Poker
+    + T-Shirt Size
+    + 相对估算
+    + 团队共识
+  }
+
+  class "优先级调整" as PriorityAdjustment {
+    + 业务价值评估
+    + 技术依赖分析
+    + 风险考虑
+    + 利益相关者输入
+  }
+
+  class "Refinement 产出" as RefinementOutput {
+    + 细化的用户故事
+    + 故事点估算
+    + 优先级排序
+    + 准备好的待办事项
+  }
+}
+
+RefinementActivity --> StoryPointEstimation : 估算
+RefinementActivity --> PriorityAdjustment : 调整优先级
+StoryPointEstimation --> RefinementOutput : 产出
+PriorityAdjustment --> RefinementOutput : 产出
+
+' ============================================
+' 仪式之间的关系
+' ============================================
+
+package "仪式关系" {
+  note right of PlanningPart1
+    **Sprint Planning**
+    
+    - Sprint 开始时的规划会议
+    - 确定 Sprint 目标和待办事项
+    - 为整个 Sprint 设定方向
+  end note
+
+  note right of DuringStandup
+    **Daily Standup**
+    
+    - 每日同步进度
+    - 识别阻碍
+    - 保持团队对齐
+    - Sprint 期间持续进行
+  end note
+
+  note right of FeatureDemo
+    **Sprint Review**
+    
+    - Sprint 结束时的评审
+    - 演示完成的功能
+    - 收集反馈
+    - 更新 Product Backlog
+  end note
+
+  note right of RetroMethods
+    **Sprint Retrospective**
+    
+    - Sprint 结束时的回顾
+    - 识别改进机会
+    - 制定改进行动项
+    - 持续改进团队效能
+  end note
+
+  note right of RefinementActivity
+    **Backlog Refinement**
+    
+    - 持续进行的活动
+    - 准备 Product Backlog
+    - 为 Sprint Planning 做准备
+    - 确保待办事项清晰
+  end note
+}
+
+' ============================================
+' 仪式时间安排示例
+' ============================================
+
+package "2 周 Sprint 时间安排示例" {
+  class "第 1 天" as Day1 {
+    + Sprint Planning
+    + 2-4 小时
+  }
+
+  class "第 2-9 天" as Day2to9 {
+    + Daily Standup
+    + 每天 15 分钟
+    + Backlog Refinement
+    + 每周 1-2 次
+  }
+
+  class "第 10 天" as Day10 {
+    + Sprint Review
+    + 1-2 小时
+    + Retrospective
+    + 1-2 小时
+  }
+}
+
+Day1 --> Day2to9 : Sprint 执行
+Day2to9 --> Day10 : Sprint 结束
+
+' ============================================
+' 仪式最佳实践
+' ============================================
+
+package "最佳实践" {
+  class "Sprint Planning 最佳实践" as PlanningBest {
+    + 提前准备 Product Backlog
+    + PO 清晰介绍需求
+    + 团队充分讨论
+    + 设定明确的 Sprint 目标
+    + 合理估算工作量
+  }
+
+  class "Daily Standup 最佳实践" as StandupBest {
+    + 准时开始和结束
+    + 聚焦进度和阻碍
+    + 不深入讨论问题
+    + 站立进行
+    + 更新看板
+  }
+
+  class "Sprint Review 最佳实践" as ReviewBest {
+    + 演示可工作的软件
+    + 邀请利益相关者
+    + 收集真实反馈
+    + 更新 Product Backlog
+    + 讨论产品方向
+  }
+
+  class "Retrospective 最佳实践" as RetroBest {
+    + 创建安全环境
+    + 聚焦改进
+    + 制定具体行动项
+    + 跟踪行动项执行
+    + 持续改进
+  }
+}
+
+PlanningPart2 --> PlanningBest : 遵循
+DuringStandup --> StandupBest : 遵循
+FeatureDemo --> ReviewBest : 遵循
+RetroMethods --> RetroBest : 遵循
+
+' ============================================
+' 图例说明
+' ============================================
+
+legend right
+  |<#E3F2FD> Sprint Planning | Sprint 规划会议 |
+  |<#BBDEFB> Daily Standup | 每日站会 |
+  |<#C8E6C9> Sprint Review | Sprint 评审会议 |
+  |<#FFF9C4> Sprint Retrospective | Sprint 回顾会议 |
+  |<#FFE0B2> Backlog Refinement | 待办事项细化 |
+  |<#E1BEE7> 仪式关系 | 各仪式之间的关系 |
+  |<#F8BBD0> 时间安排 | 2 周 Sprint 时间安排示例 |
+  |<#BBDEFB> 最佳实践 | 各仪式的最佳实践 |
+  |
+  **Scrum 仪式核心原则**
+  - 每个仪式都有明确的目的
+  - 参与者需要充分准备
+  - 聚焦价值和改进
+  - 持续优化仪式效果
+  - 确保仪式产出可执行
+endlegend
+
+@enduml
+

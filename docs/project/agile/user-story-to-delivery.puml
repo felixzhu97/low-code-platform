@@ -1,0 +1,376 @@
+@startuml User_Story_to_Delivery
+!theme plain
+skinparam linetype ortho
+
+title 用户故事到交付流程 - Felix 低代码平台
+
+' ============================================
+' 需求来源和 Epic
+' ============================================
+
+package "需求来源 (Requirements Source)" {
+  class "业务需求\n(Business Requirements)" as BusinessReq {
+    + 业务目标
+    + 用户需求
+    + 市场反馈
+    + 竞争分析
+  }
+
+  class "技术需求\n(Technical Requirements)" as TechnicalReq {
+    + 技术债务
+    + 性能优化
+    + 架构改进
+    + 安全加固
+  }
+
+  class "Epic\n(大型功能模块)" as Epic {
+    + 可视化编辑器
+    + 组件系统
+    + 数据绑定
+    + 模板管理
+    + 协作功能
+    + 代码导出
+    --
+    大型功能模块
+    包含多个用户故事
+    跨多个 Sprint
+  }
+}
+
+BusinessReq --> Epic : 转化为
+TechnicalReq --> Epic : 转化为
+
+' ============================================
+' 用户故事定义
+' ============================================
+
+package "用户故事 (User Story)" {
+  class "用户故事格式" as UserStory {
+    + 作为 [角色]
+    + 我想要 [功能]
+    + 以便于 [价值]
+    --
+    **包含要素**
+    - 角色 (As a)
+    - 功能 (I want)
+    - 价值 (So that)
+    - 验收标准
+    - 优先级
+    - 依赖关系
+  }
+
+  class "用户故事示例" as StoryExample {
+    **US-1.1: 拖拽组件到画布**
+    
+    作为 页面设计师
+    我想要 从组件面板拖拽组件到画布上
+    以便于 快速添加组件到页面中
+    
+    验收标准：
+    - 可以从组件面板拖拽任意组件
+    - 拖拽到画布时显示预览效果
+    - 释放后组件成功添加
+  }
+}
+
+Epic --> UserStory : 分解为
+UserStory --> StoryExample : 示例
+
+' ============================================
+' Product Backlog 管理
+' ============================================
+
+package "Product Backlog (产品待办事项)" {
+  class "Product Backlog" as ProductBacklog {
+    + 用户故事列表
+    + 按优先级排序
+    + 持续细化
+    + 动态调整
+    --
+    **管理活动**
+    - Backlog Refinement
+    - 优先级调整
+    - 故事点估算
+    - 依赖关系管理
+  }
+
+  class "待办事项细化\n(Backlog Refinement)" as Refinement {
+    + 细化用户故事
+    + 估算故事点
+    + 调整优先级
+    + 识别依赖
+    + 准备 Sprint Planning
+  }
+}
+
+UserStory --> ProductBacklog : 添加到
+ProductBacklog --> Refinement : 持续细化
+
+' ============================================
+' Sprint Planning
+' ============================================
+
+package "Sprint Planning (Sprint 规划)" {
+  class "选择待办事项" as SelectItems {
+    + PO 介绍高优先级项
+    + 团队讨论和提问
+    + 选择 Sprint 待办事项
+    + 确定 Sprint 目标
+  }
+
+  class "任务分解" as TaskBreakdown {
+    + 分解为具体任务
+    + 估算工作量
+    + 分配任务
+    + 识别风险
+  }
+
+  class "Sprint Backlog" as SprintBacklog {
+    + 选定的用户故事
+    + 任务列表
+    + 工作量估算
+    + Sprint 目标
+  }
+}
+
+ProductBacklog --> SelectItems : Sprint Planning
+SelectItems --> TaskBreakdown : 任务分解
+TaskBreakdown --> SprintBacklog : 创建
+
+' ============================================
+' 开发阶段
+' ============================================
+
+package "开发阶段 (Development)" {
+  class "需求澄清" as Clarification {
+    + 与 PO 讨论细节
+    + 确认验收标准
+    + 理解业务价值
+  }
+
+  class "设计" as Design {
+    + 技术设计
+    + 接口设计
+    + 数据库设计
+    + UI/UX 设计
+  }
+
+  class "编码" as Coding {
+    + 编写代码
+    + 遵循编码规范
+    + 编写注释
+    + 代码自检
+  }
+
+  class "单元测试" as UnitTest {
+    + 编写单元测试
+    + 测试覆盖率
+    + 测试通过
+  }
+
+  class "代码审查\n(Code Review)" as CodeReview {
+    + 提交 PR
+    + 同行审查
+    + 修改建议
+    + 批准合并
+  }
+}
+
+SprintBacklog --> Clarification : 开始开发
+Clarification --> Design : 设计
+Design --> Coding : 编码
+Coding --> UnitTest : 单元测试
+UnitTest --> CodeReview : 代码审查
+
+' ============================================
+' 测试和集成
+' ============================================
+
+package "测试和集成 (Testing & Integration)" {
+  class "集成测试" as IntegrationTest {
+    + 功能集成测试
+    + API 测试
+    + 组件集成测试
+  }
+
+  class "验收测试" as AcceptanceTest {
+    + 验收标准验证
+    + PO 验收
+    + 用户验收测试
+  }
+
+  class "持续集成\n(CI)" as CI {
+    + 自动化构建
+    + 自动化测试
+    + 代码质量检查
+    + 部署到测试环境
+  }
+}
+
+CodeReview --> IntegrationTest : 集成
+IntegrationTest --> AcceptanceTest : 验收
+AcceptanceTest --> CI : 持续集成
+
+' ============================================
+' 部署流程
+' ============================================
+
+package "部署流程 (Deployment)" {
+  class "测试环境部署" as TestDeploy {
+    + 部署到测试环境
+    + 测试验证
+    + 问题修复
+  }
+
+  class "预发布环境" as StagingDeploy {
+    + 部署到预发布环境
+    + 完整测试
+    + 性能测试
+  }
+
+  class "生产环境部署" as ProdDeploy {
+    + 部署到生产环境
+    + 监控和验证
+    + 回滚准备
+  }
+
+  class "发布后验证" as PostDeploy {
+    + 功能验证
+    + 性能监控
+    + 用户反馈收集
+  }
+}
+
+CI --> TestDeploy : 测试环境
+TestDeploy --> StagingDeploy : 预发布
+StagingDeploy --> ProdDeploy : 生产环境
+ProdDeploy --> PostDeploy : 验证
+
+' ============================================
+' Sprint Review 和反馈
+' ============================================
+
+package "Sprint Review (Sprint 评审)" {
+  class "功能演示" as Demo {
+    + 演示完成的功能
+    + 展示用户故事实现
+    + 演示验收标准
+  }
+
+  class "收集反馈" as Feedback {
+    + 利益相关者反馈
+    + 用户反馈
+    + 改进建议
+  }
+
+  class "更新 Backlog" as UpdateBacklog {
+    + 根据反馈调整
+    + 新增需求
+    + 调整优先级
+  }
+}
+
+PostDeploy --> Demo : Sprint Review
+Demo --> Feedback : 收集反馈
+Feedback --> UpdateBacklog : 更新
+UpdateBacklog --> ProductBacklog : 反馈到
+
+' ============================================
+' 完整流程序列
+' ============================================
+
+package "流程序列" {
+  note right of Epic
+    **Epic 到 User Story**
+    
+    1. 业务需求和技术需求
+    2. 识别和定义 Epic
+    3. Epic 分解为 User Story
+    4. User Story 遵循标准格式
+  end note
+
+  note right of ProductBacklog
+    **Product Backlog 管理**
+    
+    1. User Story 添加到 Backlog
+    2. 持续细化和估算
+    3. 按优先级排序
+    4. 准备 Sprint Planning
+  end note
+
+  note right of SprintBacklog
+    **Sprint 执行**
+    
+    1. Sprint Planning 选择 Story
+    2. 任务分解和分配
+    3. 开发、测试、审查
+    4. 持续集成和部署
+  end note
+
+  note right of PostDeploy
+    **交付和反馈**
+    
+    1. 部署到生产环境
+    2. Sprint Review 演示
+    3. 收集反馈
+    4. 更新 Product Backlog
+    5. 开始下一个 Sprint
+  end note
+}
+
+' ============================================
+' 关键指标
+' ============================================
+
+package "关键指标 (Metrics)" {
+  class "开发指标" as DevMetrics {
+    + 故事点完成数
+    + 代码提交次数
+    + 代码审查时间
+    + 缺陷发现率
+  }
+
+  class "质量指标" as QualityMetrics {
+    + 测试覆盖率
+    + 缺陷密度
+    + 代码质量评分
+    + 技术债务
+  }
+
+  class "交付指标" as DeliveryMetrics {
+    + 交付周期
+    + 部署频率
+    + 变更失败率
+    + 恢复时间
+  }
+}
+
+PostDeploy --> DevMetrics : 跟踪
+PostDeploy --> QualityMetrics : 跟踪
+PostDeploy --> DeliveryMetrics : 跟踪
+
+' ============================================
+' 图例说明
+' ============================================
+
+legend right
+  |<#E3F2FD> 需求来源 | 业务需求和技术需求 |
+  |<#BBDEFB> 用户故事 | Epic 分解为 User Story |
+  |<#C8E6C9> Product Backlog | 产品待办事项管理 |
+  |<#FFF9C4> Sprint Planning | Sprint 规划 |
+  |<#FFE0B2> 开发阶段 | 需求澄清到代码审查 |
+  |<#E1BEE7> 测试和集成 | 集成测试、验收测试、CI |
+  |<#F8BBD0> 部署流程 | 测试环境到生产环境 |
+  |<#C8E6C9> Sprint Review | 演示和反馈 |
+  |<#FFF9C4> 关键指标 | 开发、质量、交付指标 |
+  |
+  **流程关键点**
+  - 从需求到交付的完整流程
+  - 每个阶段都有明确的产出
+  - 持续集成和持续交付
+  - 反馈循环持续改进
+  - 与用户故事文档关联
+endlegend
+
+@enduml
+
