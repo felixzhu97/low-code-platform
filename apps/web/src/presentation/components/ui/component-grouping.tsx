@@ -17,7 +17,7 @@ import { ScrollArea } from "./scroll-area";
 import { Layers, Group } from "lucide-react";
 import { Checkbox } from "./checkbox";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 import { useSimplifiedActions } from "@/shared/hooks/use-simplified-actions";
 

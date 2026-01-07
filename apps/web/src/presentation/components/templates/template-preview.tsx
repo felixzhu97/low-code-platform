@@ -16,7 +16,7 @@ import {
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react";
 import { PreviewCanvas } from "@/presentation/components/canvas/preview-canvas";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 
 interface Template {
   id: string;

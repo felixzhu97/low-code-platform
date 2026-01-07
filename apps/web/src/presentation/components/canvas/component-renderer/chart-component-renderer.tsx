@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Component } from "../../../../domain/entities/types";
+import type { Component } from "@/domain/component";
 import {
   BarChart,
   LineChart,

@@ -28,7 +28,7 @@ import { Card, CardContent, CardFooter } from "./card";
 import { Badge } from "./badge";
 import { CustomComponentBuilder } from "./custom-component-builder";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
 interface ComponentLibraryManagerProps {

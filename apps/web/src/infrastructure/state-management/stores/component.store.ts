@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { ComponentManagementService } from "@/application/services/component-management.service";
 
 interface ComponentState {

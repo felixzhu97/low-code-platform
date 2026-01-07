@@ -1,8 +1,5 @@
-import type {
-  Component,
-  DataSource,
-  DataMapping,
-} from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { DataSource, DataMapping } from "@/domain/datasource";
 import { DataSourceService } from "./data-source.service";
 
 /**

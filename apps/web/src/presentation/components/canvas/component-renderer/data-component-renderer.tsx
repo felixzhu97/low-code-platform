@@ -1,9 +1,6 @@
 import type React from "react";
-import type {
-  Component,
-  TableColumn,
-  TreeNode,
-} from "../../../../domain/entities/types";
+import type { TableColumn, TreeNode } from "@/domain/chart";
+import type { Component } from "@/domain/component";
 import {
   Card,
   CardContent,

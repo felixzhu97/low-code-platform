@@ -23,7 +23,7 @@ import {
   ColorPicker,
 } from "@/presentation/components/ui";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 type PropertiesPanelProps = {

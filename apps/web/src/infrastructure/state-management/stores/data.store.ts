@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { DataSource, DataMapping } from "@/domain/entities/types";
+import type { DataSource, DataMapping } from "@/domain/datasource";
 import { DataBindingService } from "@/application/services/data-binding.service";
 
 interface DataState {

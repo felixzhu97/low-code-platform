@@ -1,4 +1,4 @@
-import type { ITemplateRepository } from "@/domain/repositories";
+import type { ITemplateRepository } from "@/domain/template";
 
 /**
  * 模板仓储端口

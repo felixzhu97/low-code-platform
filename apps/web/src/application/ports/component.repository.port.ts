@@ -1,4 +1,4 @@
-import type { IComponentRepository } from "@/domain/repositories";
+import type { IComponentRepository } from "@/domain/component";
 
 /**
  * 组件仓储端口

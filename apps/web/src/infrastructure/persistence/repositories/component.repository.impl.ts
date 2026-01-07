@@ -1,5 +1,5 @@
-import type { Component } from "@/domain/entities/types";
-import type { IComponentRepository } from "@/domain/repositories";
+import type { Component } from "@/domain/component";
+import type { IComponentRepository } from "@/domain/component";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 /**

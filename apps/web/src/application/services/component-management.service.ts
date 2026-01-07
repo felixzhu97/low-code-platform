@@ -1,9 +1,6 @@
-import type {
-  Component,
-  DataSource,
-  DataMapping,
-} from "@/domain/entities/types";
-import { ComponentFactoryService } from "@/domain/services/component-factory.service";
+import type { Component } from "@/domain/component";
+import type { DataSource, DataMapping } from "@/domain/datasource";
+import { ComponentFactoryService } from "@/domain/component";
 import { DataBindingService } from "./data-binding.service";
 
 /**

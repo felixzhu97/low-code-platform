@@ -1,5 +1,5 @@
-import type { DataSource } from "@/domain/entities/types";
-import type { IDataSourceRepository } from "@/domain/repositories";
+import type { DataSource } from "@/domain/datasource";
+import type { IDataSourceRepository } from "@/domain/datasource";
 import { useDataStore } from "@/infrastructure/state-management/stores";
 
 /**

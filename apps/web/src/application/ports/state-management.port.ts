@@ -1,5 +1,7 @@
-import type { Component, DataSource, ThemeConfig } from "@/domain/entities/types";
-import type { Template } from "@/domain/repositories";
+import type { Component } from "@/domain/component";
+import type { DataSource } from "@/domain/datasource";
+import type { ThemeConfig } from "@/domain/theme";
+import type { Template } from "@/domain/template";
 
 /**
  * 组件状态接口
@@ -121,4 +123,3 @@ export interface IStateManagementPort {
   canUndo(): boolean;
   canRedo(): boolean;
 }
-

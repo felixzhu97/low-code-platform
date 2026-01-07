@@ -1,4 +1,4 @@
-import type { IDataSourceRepository } from "@/domain/repositories";
+import type { IDataSourceRepository } from "@/domain/datasource";
 
 /**
  * 数据源仓储端口

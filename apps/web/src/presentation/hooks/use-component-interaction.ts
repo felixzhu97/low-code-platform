@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { ComponentManagementService } from "@/application/services/component-management.service";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 

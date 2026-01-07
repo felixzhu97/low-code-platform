@@ -12,11 +12,8 @@ import {
 } from "@/presentation/components/ui";
 import { Eye, Undo2, Redo2 } from "lucide-react";
 
-import type {
-  Component,
-  ThemeConfig,
-  TemplateSelectHandler,
-} from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
 import { TemplateGallery } from "../templates";
 import { FormBuilder } from "../forms";
 
@@ -33,7 +30,7 @@ interface PlatformHeaderProps {
   onRedo: () => void;
   onTogglePreview: () => void;
   onViewportChange: (width: number, device: string) => void;
-  onSelectTemplate: TemplateSelectHandler;
+  onSelectTemplate: (templateComponents: Component[]) => void;
   onAddForm: (formComponents: Component[]) => void;
   onGroupComponents: (componentIds: string[], groupName: string) => void;
   onApplyAnimation: (componentId: string, animation: any) => void;

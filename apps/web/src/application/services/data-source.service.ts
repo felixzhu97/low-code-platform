@@ -1,4 +1,4 @@
-import type { DataSource, DataSourceConfig } from "@/domain/entities/types";
+import type { DataSource, DataSourceConfig } from "@/domain/datasource";
 
 /**
  * 数据源管理服务

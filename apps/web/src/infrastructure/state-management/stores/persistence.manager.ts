@@ -3,7 +3,13 @@ import { useCanvasStore } from "./canvas.store";
 import { useThemeStore } from "./theme.store";
 import { useDataStore } from "./data.store";
 import { useUIStore } from "./ui.store";
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import {
+  PageSchema,
+  validateSchema,
+  migrateSchema,
+  schemaToProjectData,
+} from "@/domain/entities/schema.types";
 
 export interface ProjectData {
   id: string;
@@ -118,49 +124,72 @@ class PersistenceManager {
 
   /**
    * 导入项目数据到stores
+   * 支持 ProjectData 和 PageSchema 两种格式
    */
-  static importProjectData(projectData: ProjectData): void {
+  static importProjectData(
+    projectData: ProjectData | PageSchema
+  ): void {
     try {
+      // 如果是 Schema 格式，转换为 ProjectData
+      let data: ProjectData;
+      if (this.isSchemaFormat(projectData)) {
+        const migratedSchema = migrateSchema(projectData);
+        data = schemaToProjectData(migratedSchema);
+      } else {
+        data = projectData as ProjectData;
+      }
+
       // 导入组件数据
-      useComponentStore.getState().updateComponents(projectData.components);
+      useComponentStore.getState().updateComponents(data.components);
 
       // 导入画布设置
       const canvasStore = useCanvasStore.getState();
-      if (projectData.canvas.showGrid !== undefined) {
-        canvasStore.showGrid = projectData.canvas.showGrid;
+      if (data.canvas.showGrid !== undefined) {
+        canvasStore.showGrid = data.canvas.showGrid;
       }
-      if (projectData.canvas.snapToGrid !== undefined) {
-        canvasStore.snapToGrid = projectData.canvas.snapToGrid;
+      if (data.canvas.snapToGrid !== undefined) {
+        canvasStore.snapToGrid = data.canvas.snapToGrid;
       }
-      if (projectData.canvas.viewportWidth !== undefined) {
-        canvasStore.viewportWidth = projectData.canvas.viewportWidth;
+      if (data.canvas.viewportWidth !== undefined) {
+        canvasStore.viewportWidth = data.canvas.viewportWidth;
       }
-      if (projectData.canvas.activeDevice !== undefined) {
-        canvasStore.activeDevice = projectData.canvas.activeDevice;
+      if (data.canvas.activeDevice !== undefined) {
+        canvasStore.activeDevice = data.canvas.activeDevice;
       }
 
       // 导入主题
-      useThemeStore.getState().setTheme(projectData.theme);
+      useThemeStore.getState().setTheme(data.theme);
 
       // 导入数据源
       const dataStore = useDataStore.getState();
-      projectData.dataSources.forEach((ds) => {
+      // 先删除所有现有数据源
+      const existingDataSourceIds = [...dataStore.dataSources.map((ds) => ds.id)];
+      existingDataSourceIds.forEach((id) => {
+        dataStore.deleteDataSource(id);
+      });
+      // 然后添加新的数据源
+      data.dataSources.forEach((ds) => {
         dataStore.addDataSource(ds);
       });
 
       // 导入UI设置
       const uiStore = useUIStore.getState();
-      if (projectData.settings.activeTab) {
-        uiStore.setActiveTab(projectData.settings.activeTab);
+      if (data.settings?.activeTab) {
+        uiStore.setActiveTab(data.settings.activeTab);
       }
-      if (projectData.settings.sidebarCollapsed !== undefined) {
-        uiStore.sidebarCollapsed = projectData.settings.sidebarCollapsed;
+      if (data.settings?.sidebarCollapsed !== undefined) {
+        uiStore.sidebarCollapsed = data.settings.sidebarCollapsed;
       }
-      if (projectData.settings.rightPanelCollapsed !== undefined) {
-        uiStore.rightPanelCollapsed = projectData.settings.rightPanelCollapsed;
+      if (data.settings?.rightPanelCollapsed !== undefined) {
+        uiStore.rightPanelCollapsed = data.settings.rightPanelCollapsed;
       }
-      if (projectData.settings.leftPanelCollapsed !== undefined) {
-        uiStore.leftPanelCollapsed = projectData.settings.leftPanelCollapsed;
+      if (data.settings?.leftPanelCollapsed !== undefined) {
+        uiStore.leftPanelCollapsed = data.settings.leftPanelCollapsed;
+      }
+
+      // 更新项目名称
+      if (data.name) {
+        uiStore.setProjectName(data.name);
       }
     } catch (error) {
       console.error("导入项目数据失败:", error);
@@ -246,6 +275,7 @@ class PersistenceManager {
 
   /**
    * 从文件导入项目
+   * 支持 ProjectData 和 PageSchema 两种格式
    */
   static async importFromFile(file: File): Promise<ProjectData> {
     return new Promise((resolve, reject) => {
@@ -253,14 +283,25 @@ class PersistenceManager {
 
       reader.onload = (e) => {
         try {
-          const projectData = JSON.parse(e.target?.result as string);
+          const data = JSON.parse(e.target?.result as string);
 
-          // 验证项目数据格式
-          if (!this.validateProjectData(projectData)) {
-            throw new Error("无效的项目文件格式");
+          // 检查是否是 Schema 格式
+          if (this.isSchemaFormat(data)) {
+            // 迁移和验证 Schema
+            const migratedSchema = migrateSchema(data);
+            if (!validateSchema(migratedSchema)) {
+              throw new Error("无效的 Schema 格式");
+            }
+            // 转换为 ProjectData
+            const projectData = schemaToProjectData(migratedSchema);
+            resolve(projectData);
+          } else {
+            // 验证项目数据格式
+            if (!this.validateProjectData(data)) {
+              throw new Error("无效的项目文件格式");
+            }
+            resolve(data);
           }
-
-          resolve(projectData);
         } catch (error) {
           reject(error);
         }
@@ -272,6 +313,19 @@ class PersistenceManager {
 
       reader.readAsText(file);
     });
+  }
+
+  /**
+   * 检查数据是否是 Schema 格式
+   */
+  private static isSchemaFormat(data: any): boolean {
+    return (
+      data &&
+      typeof data === "object" &&
+      typeof data.version === "string" &&
+      data.metadata &&
+      typeof data.metadata === "object"
+    );
   }
 
   /**

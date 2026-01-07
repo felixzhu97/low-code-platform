@@ -1,4 +1,5 @@
-import type { Component, ThemeConfig } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
 import {
   CreateComponentUseCase,
   UpdateComponentUseCase,

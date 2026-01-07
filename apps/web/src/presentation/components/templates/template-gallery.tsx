@@ -20,7 +20,8 @@ import { TemplatePreview } from "./template-preview";
 import { TemplateCard } from "./template-card";
 import { TemplateFilters } from "./template-filters";
 import { useTemplateGallery } from "../../hooks/use-template-gallery";
-import type { Component, ThemeConfig } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
 import type { Template } from "@/presentation/data/templates";
 import { useComponentStore, useThemeStore } from "@/infrastructure/state-management/stores";
 

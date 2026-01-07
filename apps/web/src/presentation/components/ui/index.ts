@@ -59,6 +59,7 @@ export * from "./enhanced-template-preview";
 export * from "./header";
 export * from "./platform-header";
 export * from "./responsive-controls";
+export * from "./schema-import";
 export * from "./theme-editor";
 export * from "./theme-provider";
 export * from "./virtual-list";

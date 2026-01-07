@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 
 export interface CustomComponent {
   id: string;

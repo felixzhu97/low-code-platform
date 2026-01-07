@@ -1,5 +1,5 @@
-import type { ITemplateRepository, Template } from "@/domain/repositories";
-import type { Component } from "@/domain/entities/types";
+import type { ITemplateRepository, Template } from "@/domain/template";
+import type { Component } from "@/domain/component";
 
 /**
  * 模板仓储实现（基于 LocalStorage）

@@ -1,4 +1,4 @@
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import type { IComponentRepositoryPort } from "@/application/ports";
 
 /**

@@ -1,6 +1,10 @@
-import type { Component, ThemeConfig } from "@/domain/entities/types";
-import type { IComponentRepositoryPort, IStateManagementPort } from "@/application/ports";
-import { ComponentFactoryService } from "@/domain/services/component-factory.service";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
+import type {
+  IComponentRepositoryPort,
+  IStateManagementPort,
+} from "@/application/ports";
+import { ComponentFactoryService } from "@/domain/component";
 
 /**
  * 创建组件用例
@@ -37,4 +41,3 @@ export class CreateComponentUseCase {
     return savedComponent;
   }
 }
-

@@ -7,7 +7,9 @@ import type {
   UIState,
   HistoryState,
 } from "@/application/ports/state-management.port";
-import type { Component, DataSource, ThemeConfig } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { DataSource } from "@/domain/datasource";
+import type { ThemeConfig } from "@/domain/theme";
 import { useComponentStore } from "../stores/component.store";
 import { useCanvasStore } from "../stores/canvas.store";
 import { useThemeStore } from "../stores/theme.store";

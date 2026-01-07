@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "../../../application/services/utils";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
 interface ComponentTreeProps {

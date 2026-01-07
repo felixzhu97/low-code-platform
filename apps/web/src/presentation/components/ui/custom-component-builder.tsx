@@ -26,7 +26,7 @@ import { PlusCircle, Save } from "lucide-react";
 import { Card, CardContent } from "./card";
 import { Switch } from "./switch";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
 interface CustomComponentBuilderProps {

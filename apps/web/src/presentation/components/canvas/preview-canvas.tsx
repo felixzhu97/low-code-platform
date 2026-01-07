@@ -3,16 +3,55 @@
 import type React from "react"
 
 import { useRef } from "react"
-import type {Component, ThemeConfig} from "@/domain/entities/types"
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
+import type { PageSchema } from "@/domain/entities/schema.types"
+import { SchemaRenderer } from "./schema-renderer"
 
 interface PreviewCanvasProps {
-  components: Component[]
+  components?: Component[]
   width: number
   theme?: ThemeConfig
   isAnimating?: boolean
+  schema?: PageSchema | string // 支持 Schema JSON
 }
 
-export function PreviewCanvas({ components, width, theme, isAnimating = false }: PreviewCanvasProps) {
+export function PreviewCanvas({ 
+  components, 
+  width, 
+  theme, 
+  isAnimating = false,
+  schema 
+}: PreviewCanvasProps) {
+  // 如果提供了 Schema，使用 SchemaRenderer
+  if (schema) {
+    return (
+      <div
+        style={{
+          width: `${width}px`,
+          overflow: "auto",
+        }}
+      >
+        <SchemaRenderer schema={schema} isReadOnly={true} />
+      </div>
+    )
+  }
+
+  // 如果没有提供 components，返回空状态
+  if (!components || components.length === 0) {
+    return (
+      <div
+        className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed"
+        style={{
+          width: `${width}px`,
+        }}
+      >
+        <div className="text-center text-muted-foreground">
+          <p>没有组件可预览</p>
+        </div>
+      </div>
+    )
+  }
   const canvasRef = useRef<HTMLDivElement>(null)
 
   // 递归渲染组件

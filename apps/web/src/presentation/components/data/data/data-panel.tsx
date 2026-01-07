@@ -46,7 +46,7 @@ import {
   CheckCircle,
   Clock,
 } from "lucide-react";
-import type { DataSource, DataSourceConfig } from "@/domain/entities/types";
+import type { DataSource, DataSourceConfig } from "@/domain/datasource";
 import { DataSourceService } from "@/application/services/data-source.service";
 
 export function DataPanel() {

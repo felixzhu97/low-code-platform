@@ -14,7 +14,7 @@ import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
 import { useAllStores, useComponentState } from "@/presentation/hooks";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
-import type { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 
 type CanvasProps = {
   // 移除 props，现在从 store 获取状态

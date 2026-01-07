@@ -14,15 +14,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/presentation/components/ui/tabs";
-import { CodeExport, Header } from "@/presentation/components/ui";
+import { CodeExport, Header, SchemaImport } from "@/presentation/components/ui";
 import { TemplateGallery } from "@/presentation/components/templates";
 import { ResponsiveControls } from "@/presentation/components/ui";
 import { ThemeEditor } from "@/presentation/components/ui";
 import { FormBuilder } from "@/presentation/components/forms";
 import { AnimationEditor } from "@/presentation/components/ui";
 import { Collaboration } from "@/presentation/components/ui";
-import type { Component, ThemeConfig } from "@/domain/entities/types";
-import { TemplateApplicationError } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
+import { TemplateApplicationError } from "@/domain/shared/errors";
 import { TemplateService } from "@/application/services/template-command.service";
 import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
@@ -141,6 +142,7 @@ export default function LowCodePlatform() {
             <ThemeEditor />
             <Collaboration />
             <ComponentLibraryManager />
+            <SchemaImport />
             <CodeExport />
           </div>
         </Header>

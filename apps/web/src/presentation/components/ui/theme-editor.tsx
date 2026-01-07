@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
-import type { ThemeConfig } from "@/domain/entities/types";
+import type { ThemeConfig } from "@/domain/theme";
 import { useThemeStore } from "@/infrastructure/state-management/stores";
 
 interface ThemeEditorProps {

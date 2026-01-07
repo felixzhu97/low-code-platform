@@ -18,7 +18,7 @@ import {
   BarChart4,
 } from "lucide-react";
 
-import { ComponentCategory } from "@/domain/entities/types";
+import type { ComponentCategory } from "@/domain/component";
 import { useUIStore } from "@/infrastructure/state-management/stores";
 
 export function ComponentPanel() {

@@ -1,5 +1,6 @@
 import type React from "react";
-import type { Component, ThemeConfig } from "../../../../domain/entities/types";
+import type { Component } from "@/domain/component";
+import type { ThemeConfig } from "@/domain/theme";
 import { ComponentManagementService } from "@/application/services/component-management.service";
 import { BasicComponentRenderer } from "./basic-component-renderer";
 import { ChartComponentRenderer } from "./chart-component-renderer";

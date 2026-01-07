@@ -25,7 +25,7 @@ import { FormInput, Plus, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
-import { Component } from "@/domain/entities/types";
+import type { Component } from "@/domain/component";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 
 interface FormBuilderProps {

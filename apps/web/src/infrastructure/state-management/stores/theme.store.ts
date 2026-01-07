@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { ThemeConfig } from "@/domain/entities/types";
+import type { ThemeConfig } from "@/domain/theme";
 
 interface ThemeState {
   // 主题状态
