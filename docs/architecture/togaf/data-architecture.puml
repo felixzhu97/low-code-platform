@@ -82,6 +82,15 @@ package "核心数据实体 (Core Data Entities)" {
   component [HistoryRecord_operation: OperationType] as HistoryRecordOperation
   component [HistoryRecord_data: Object] as HistoryRecordData
   component [HistoryRecord_timestamp: DateTime] as HistoryRecordTimestamp
+  
+  component [PageSchema\n页面Schema实体] as PageSchema
+  component [PageSchema_version: String] as PageSchemaVersion
+  component [PageSchema_metadata: SchemaMetadata] as PageSchemaMetadata
+  component [PageSchema_components: List<Component>] as PageSchemaComponents
+  component [PageSchema_canvas: CanvasConfig] as PageSchemaCanvas
+  component [PageSchema_theme: ThemeConfig] as PageSchemaTheme
+  component [PageSchema_dataSources: List<DataSource>] as PageSchemaDataSources
+  component [PageSchema_settings: ProjectSettings] as PageSchemaSettings
 }
 
 ' ============================================
@@ -98,6 +107,10 @@ Component "1" *-- "0..*" DataMapping : 数据绑定
 Project "1" *-- "1" User : 所有者
 Project "1" *-- "0..*" User : 协作者
 HistoryRecord "1" *-- "1" Project : 历史记录
+PageSchema "1" *-- "1" Project : 基于项目
+PageSchema "1" *-- "0..*" Component : 包含组件
+PageSchema "1" *-- "0..*" DataSource : 包含数据源
+PageSchema "1" *-- "1" ThemeConfig : 包含主题
 
 ' ============================================
 ' 数据存储组件
@@ -122,6 +135,7 @@ package "数据存储层 (Data Storage Layer)" {
   component [user_files桶] as UserFilesBucket
   component [exported_code桶] as ExportedCodeBucket
   component [template_previews桶] as TemplatePreviewsBucket
+  component [schema_files桶] as SchemaFilesBucket
   
   PostgreSQL --> ComponentsTable
   PostgreSQL --> ProjectsTable
@@ -137,6 +151,7 @@ package "数据存储层 (Data Storage Layer)" {
   ObjectStorage --> UserFilesBucket
   ObjectStorage --> ExportedCodeBucket
   ObjectStorage --> TemplatePreviewsBucket
+  ObjectStorage --> SchemaFilesBucket
 }
 
 ' ============================================
@@ -181,6 +196,24 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   component [上传到对象存储] as UploadToStorage
   component [推送到Git仓库] as PushToGit
   
+  component [Schema导出数据流] as SchemaExportFlow
+  component [用户触发Schema导出] as UserTriggerSchemaExport
+  component [读取Project完整数据] as ReadFullProjectData
+  component [转换为PageSchema实体] as ConvertToPageSchema
+  component [验证Schema格式] as ValidateSchemaFormat
+  component [序列化为JSON] as SerializeToJSON
+  component [下载Schema文件] as DownloadSchemaFile
+  component [存储到对象存储] as StoreToObjectStorage
+  
+  component [Schema导入数据流] as SchemaImportFlow
+  component [用户上传Schema文件] as UserUploadSchemaFile
+  component [解析JSON数据] as ParseJSONData
+  component [验证Schema版本] as ValidateSchemaVersion
+  component [迁移旧版本Schema] as MigrateOldSchema
+  component [转换为Project数据] as ConvertToProjectData
+  component [导入到状态管理] as ImportToStateManagement
+  component [渲染到画布] as RenderToCanvas
+  
   ComponentEditFlow --> UserDragComponent
   ComponentEditFlow --> EditorCreateComponent
   ComponentEditFlow --> ServiceValidateData
@@ -212,6 +245,22 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   CodeGenFlow --> PackageProject
   CodeGenFlow --> UploadToStorage
   CodeGenFlow --> PushToGit
+  
+  SchemaExportFlow --> UserTriggerSchemaExport
+  SchemaExportFlow --> ReadFullProjectData
+  SchemaExportFlow --> ConvertToPageSchema
+  SchemaExportFlow --> ValidateSchemaFormat
+  SchemaExportFlow --> SerializeToJSON
+  SchemaExportFlow --> DownloadSchemaFile
+  SchemaExportFlow --> StoreToObjectStorage
+  
+  SchemaImportFlow --> UserUploadSchemaFile
+  SchemaImportFlow --> ParseJSONData
+  SchemaImportFlow --> ValidateSchemaVersion
+  SchemaImportFlow --> MigrateOldSchema
+  SchemaImportFlow --> ConvertToProjectData
+  SchemaImportFlow --> ImportToStateManagement
+  SchemaImportFlow --> RenderToCanvas
 }
 
 ' ============================================
@@ -224,10 +273,12 @@ Project ..> PostgreSQL : 持久化
 DataSource ..> PostgreSQL : 持久化
 User ..> PostgreSQL : 持久化
 HistoryRecord ..> PostgreSQL : 持久化
+PageSchema ..> ObjectStorage : 文件存储
 
 Component ..> Redis : 缓存
 Project ..> Redis : 缓存
 Project ..> ObjectStorage : 文件存储
+PageSchema ..> Redis : 缓存
 
 ComponentEditFlow --> PostgreSQL : 数据持久化
 ComponentEditFlow --> Redis : 缓存更新
@@ -242,6 +293,20 @@ CollaborationFlow --> PostgreSQL : 状态持久化
 CodeGenFlow --> Project : 读取
 CodeGenFlow --> Component : 读取
 CodeGenFlow --> ObjectStorage : 存储
+
+SchemaExportFlow --> Project : 读取
+SchemaExportFlow --> Component : 读取
+SchemaExportFlow --> DataSource : 读取
+SchemaExportFlow --> ThemeConfig : 读取
+SchemaExportFlow --> PageSchema : 创建
+SchemaExportFlow --> ObjectStorage : 存储
+
+SchemaImportFlow --> PageSchema : 读取
+SchemaImportFlow --> Project : 创建
+SchemaImportFlow --> Component : 创建
+SchemaImportFlow --> DataSource : 创建
+SchemaImportFlow --> ThemeConfig : 创建
+SchemaImportFlow --> Redis : 状态更新
 
 note right of PostgreSQL
   **数据访问模式：**

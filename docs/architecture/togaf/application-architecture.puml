@@ -30,11 +30,19 @@ package "Felix 低代码平台应用系统" {
     component [数据面板\nData Panel] as DataPanel
     interface "数据管理接口" as DataPanelInterface
     
+    component [Schema导出组件\nSchema Export] as SchemaExport
+    interface "Schema导出接口" as SchemaExportUIInterface
+    
+    component [Schema导入组件\nSchema Import] as SchemaImport
+    interface "Schema导入接口" as SchemaImportUIInterface
+    
     VisualEditor --> VisualEditorInterface
     ComponentPanel --> ComponentPanelInterface
     PropertyPanel --> PropertyPanelInterface
     TemplateLibrary --> TemplateLibraryInterface
     DataPanel --> DataPanelInterface
+    SchemaExport --> SchemaExportUIInterface
+    SchemaImport --> SchemaImportUIInterface
   }
   
   ' ============================================
@@ -57,11 +65,15 @@ package "Felix 低代码平台应用系统" {
     component [历史记录服务\nHistory Service] as HistoryService
     interface "历史操作接口" as HistoryServiceInterface
     
+    component [Schema管理服务\nSchema Management Service] as SchemaService
+    interface "Schema操作接口" as SchemaServiceInterface
+    
     ComponentService --> ComponentServiceInterface
     TemplateService --> TemplateServiceInterface
     DataBindingService --> DataBindingServiceInterface
     CanvasService --> CanvasServiceInterface
     HistoryService --> HistoryServiceInterface
+    SchemaService --> SchemaServiceInterface
   }
   
   ' ============================================
@@ -73,6 +85,7 @@ package "Felix 低代码平台应用系统" {
     component [模板实体\nTemplate Entity] as TemplateEntity
     component [项目实体\nProject Entity] as ProjectEntity
     component [数据源实体\nDataSource Entity] as DataSourceEntity
+    component [Schema实体\nPageSchema Entity] as SchemaEntity
     component [组件工厂\nComponent Factory] as ComponentFactory
   }
   
@@ -96,15 +109,27 @@ package "Felix 低代码平台应用系统" {
     component [协作服务\nCollaboration Service] as CollaborationService
     interface "协作接口" as CollaborationServiceInterface
     
-    component [代码生成器\nCode Generator] as CodeGenerator
-    interface "代码生成接口" as CodeGeneratorInterface
+    component [Schema导出服务\nSchema Export Service] as SchemaExportService
+    interface "Schema导出接口" as SchemaExportInterface
+    
+    component [Schema导入服务\nSchema Import Service] as SchemaImportService
+    interface "Schema导入接口" as SchemaImportInterface
+    
+    component [Schema渲染器\nSchema Renderer] as SchemaRenderer
+    interface "Schema渲染接口" as SchemaRendererInterface
+    
+    component [持久化管理器\nPersistence Manager] as PersistenceManager
+    interface "持久化接口" as PersistenceManagerInterface
     
     ComponentRepo --> ComponentRepoInterface
     TemplateRepo --> TemplateRepoInterface
     DataSourceRepo --> DataSourceRepoInterface
     StateManagement --> StateManagementInterface
     CollaborationService --> CollaborationServiceInterface
-    CodeGenerator --> CodeGeneratorInterface
+    SchemaExportService --> SchemaExportInterface
+    SchemaImportService --> SchemaImportInterface
+    SchemaRenderer --> SchemaRendererInterface
+    PersistenceManager --> PersistenceManagerInterface
   }
 }
 
@@ -133,6 +158,8 @@ PropertyPanel --> ComponentService : 调用
 PropertyPanel --> DataBindingService : 调用
 TemplateLibrary --> TemplateService : 调用
 DataPanel --> DataBindingService : 调用
+SchemaExport --> SchemaExportService : 调用
+SchemaImport --> SchemaImportService : 调用
 
 ComponentService --> ComponentEntity : 使用
 ComponentService --> ComponentRepo : 使用
@@ -141,21 +168,31 @@ TemplateService --> TemplateRepo : 使用
 DataBindingService --> DataSourceEntity : 使用
 DataBindingService --> DataSourceRepo : 使用
 CanvasService --> ComponentFactory : 使用
+SchemaExportService --> SchemaEntity : 使用
+SchemaExportService --> PersistenceManager : 使用
+SchemaImportService --> SchemaEntity : 使用
+SchemaImportService --> PersistenceManager : 使用
+SchemaRenderer --> SchemaEntity : 使用
+SchemaRenderer --> ComponentService : 使用
 
 ComponentRepo --> Database : 读写
 TemplateRepo --> Database : 读写
 DataSourceRepo --> Database : 读写
 StateManagement --> CacheService : 读写
-CodeGenerator --> GitRepo : 推送代码
+PersistenceManager --> Database : 读写
 
 CollaborationService --> StateManagement : 同步状态
 CollaborationService --> CacheService : 消息队列
 
 ComponentService ..> AuthService : 验证权限
 TemplateService ..> AuthService : 验证权限
+SchemaExportService ..> AuthService : 验证权限
+SchemaImportService ..> AuthService : 验证权限
 
-CodeGenerator --> ObjectStorage : 存储代码包
+SchemaExportService --> ObjectStorage : 存储Schema文件
+SchemaImportService --> ObjectStorage : 读取Schema文件
 VisualEditor --> CDNService : 加载静态资源
+SchemaRenderer --> CDNService : 加载静态资源
 
 ' ============================================
 ' 数据流
@@ -165,7 +202,9 @@ note right of VisualEditor
   **主要数据流：**
   1. 组件操作 → 应用服务 → 领域实体
   2. 数据变更 → 状态管理 → 协作服务
-  3. 代码生成 → 代码生成器 → Git/存储
+  3. Schema导出 → Schema导出服务 → 持久化管理器 → 文件存储
+  4. Schema导入 → Schema导入服务 → 持久化管理器 → 状态管理
+  5. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
 end note
 
 @enduml

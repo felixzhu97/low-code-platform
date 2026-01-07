@@ -51,6 +51,13 @@ package "业务能力 (Business Capabilities)" {
   component [Git集成] as GitIntegration
   component [部署支持] as DeploymentSupport
   
+  component [Schema管理能力] as SchemaMgmtCapability
+  component [Schema导出] as SchemaExport
+  component [Schema导入] as SchemaImport
+  component [Schema渲染] as SchemaRender
+  component [Schema验证] as SchemaValidation
+  component [Schema版本管理] as SchemaVersionMgmt
+  
   component [模板管理能力] as TemplateMgmtCapability
   component [模板库] as TemplateLibrary
   component [模板应用] as TemplateApply
@@ -81,6 +88,12 @@ package "业务能力 (Business Capabilities)" {
   CodeGenCapability --> FormatConversion
   CodeGenCapability --> GitIntegration
   CodeGenCapability --> DeploymentSupport
+  
+  SchemaMgmtCapability --> SchemaExport
+  SchemaMgmtCapability --> SchemaImport
+  SchemaMgmtCapability --> SchemaRender
+  SchemaMgmtCapability --> SchemaValidation
+  SchemaMgmtCapability --> SchemaVersionMgmt
   
   TemplateMgmtCapability --> TemplateLibrary
   TemplateMgmtCapability --> TemplateApply
@@ -133,6 +146,21 @@ package "核心业务流程 (Core Business Processes)" {
   component [进行二次开发] as SecondaryDevelopment
   component [部署到生产环境] as DeployToProduction
   
+  component [Schema导出流程] as SchemaExportProcess
+  component [用户选择导出Schema] as SelectExportSchema
+  component [系统生成Schema JSON] as GenerateSchemaJSON
+  component [验证Schema格式] as ValidateSchemaFormat
+  component [下载Schema文件] as DownloadSchemaFile
+  component [分享Schema给其他用户] as ShareSchema
+  
+  component [Schema导入流程] as SchemaImportProcess
+  component [用户选择导入Schema] as SelectImportSchema
+  component [上传Schema文件] as UploadSchemaFile
+  component [验证Schema版本] as ValidateSchemaVersion
+  component [迁移旧版本Schema] as MigrateSchema
+  component [导入到画布] as ImportToCanvas
+  component [渲染页面] as RenderPage
+  
   component [数据管理流程] as DataMgmtProcess
   component [创建数据源] as CreateDataSource
   component [配置数据连接] as ConfigDataConnection
@@ -177,6 +205,19 @@ package "核心业务流程 (Core Business Processes)" {
   CodeExportProcess --> SecondaryDevelopment
   CodeExportProcess --> DeployToProduction
   
+  SchemaExportProcess --> SelectExportSchema
+  SchemaExportProcess --> GenerateSchemaJSON
+  SchemaExportProcess --> ValidateSchemaFormat
+  SchemaExportProcess --> DownloadSchemaFile
+  SchemaExportProcess --> ShareSchema
+  
+  SchemaImportProcess --> SelectImportSchema
+  SchemaImportProcess --> UploadSchemaFile
+  SchemaImportProcess --> ValidateSchemaVersion
+  SchemaImportProcess --> MigrateSchema
+  SchemaImportProcess --> ImportToCanvas
+  SchemaImportProcess --> RenderPage
+  
   DataMgmtProcess --> CreateDataSource
   DataMgmtProcess --> ConfigDataConnection
   DataMgmtProcess --> TestDataConnection
@@ -219,9 +260,11 @@ Designer --> ComponentMgmtCapability : 使用
 Designer --> DataBindingCapability : 使用
 Designer --> CollaborationCapability : 使用
 Designer --> TemplateMgmtCapability : 使用
+Designer --> SchemaMgmtCapability : 使用
 
 Developer --> CodeGenCapability : 使用
 Developer --> VisualEditCapability : 使用
+Developer --> SchemaMgmtCapability : 使用
 
 Admin --> ComponentMgmtCapability : 管理
 Admin --> TemplateMgmtCapability : 管理
@@ -239,6 +282,9 @@ TemplateProcess --> ComponentMgmtCapability : 依赖
 CollaborationProcess --> CollaborationCapability : 依赖
 
 CodeExportProcess --> CodeGenCapability : 依赖
+
+SchemaExportProcess --> SchemaMgmtCapability : 依赖
+SchemaImportProcess --> SchemaMgmtCapability : 依赖
 
 DataMgmtProcess --> DataBindingCapability : 依赖
 
