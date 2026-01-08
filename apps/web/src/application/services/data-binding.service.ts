@@ -1,6 +1,7 @@
 import type { Component } from "@/domain/component";
 import type { DataSource, DataMapping } from "@/domain/datasource";
 import { DataSourceService } from "./data-source.service";
+import { DataSourceStructureService } from "./data-source-structure.service";
 
 /**
  * 数据绑定服务
@@ -336,5 +337,64 @@ export class DataBindingService {
     return sourceData
       .slice(0, limit)
       .map((item) => this.applyDataMapping(item, mappings));
+  }
+
+  /**
+   * 获取数据源结构
+   */
+  static async getDataSourceStructure(
+    dataSource: DataSource
+  ): Promise<string[]> {
+    return DataSourceStructureService.parseDataSourceStructure(dataSource);
+  }
+
+  /**
+   * 验证源路径是否有效
+   */
+  static async validateSourcePath(
+    sourcePath: string,
+    dataSource: DataSource
+  ): Promise<boolean> {
+    if (!sourcePath || !sourcePath.trim()) {
+      return false;
+    }
+    return DataSourceStructureService.validatePath(dataSource, sourcePath);
+  }
+
+  /**
+   * 预览映射结果
+   */
+  static async previewMappingResult(
+    mapping: DataMapping,
+    dataSource: DataSource
+  ): Promise<any> {
+    try {
+      const sourceData = await DataSourceService.getDataSourceData(dataSource);
+      const value = this.getNestedValue(sourceData, mapping.sourcePath);
+      return this.transformValue(value, mapping.transform, mapping.defaultValue);
+    } catch (error) {
+      console.error(`预览映射结果失败:`, error);
+      return mapping.defaultValue;
+    }
+  }
+
+  /**
+   * 获取路径的示例值
+   */
+  static async getPathSample(
+    dataSource: DataSource,
+    path: string
+  ): Promise<string> {
+    return DataSourceStructureService.getPathSample(dataSource, path);
+  }
+
+  /**
+   * 获取路径的数据类型
+   */
+  static async getPathType(
+    dataSource: DataSource,
+    path: string
+  ): Promise<string> {
+    return DataSourceStructureService.getPathType(dataSource, path);
   }
 }

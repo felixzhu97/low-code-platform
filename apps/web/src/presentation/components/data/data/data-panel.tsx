@@ -48,39 +48,52 @@ import {
 } from "lucide-react";
 import type { DataSource, DataSourceConfig } from "@/domain/datasource";
 import { DataSourceService } from "@/application/services/data-source.service";
+import { useDataStore } from "@/infrastructure/state-management/stores";
 
 export function DataPanel() {
-  const [dataSources, setDataSources] = useState<DataSource[]>([
-    {
-      id: "static-1",
-      name: "用户列表",
-      type: "static",
-      data: [
-        { id: 1, name: "张三", age: 28, role: "管理员" },
-        { id: 2, name: "李四", age: 32, role: "编辑" },
-        { id: 3, name: "王五", age: 24, role: "用户" },
-      ],
-      lastUpdated: new Date().toISOString(),
-      status: "active",
-    },
-    {
-      id: "api-1",
-      name: "产品数据",
-      type: "api",
-      data: null,
-      config: {
-        url: "https://api.example.com/products",
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        timeout: 10000,
-        retryCount: 3,
-        cacheEnabled: true,
-        cacheTTL: 300,
-      },
-      lastUpdated: new Date().toISOString(),
-      status: "active",
-    },
-  ]);
+  // 使用全局store管理数据源
+  const { dataSources, addDataSource, updateDataSource, deleteDataSource } = useDataStore();
+
+  // 初始化默认数据源（如果store为空）
+  useEffect(() => {
+    if (dataSources.length === 0) {
+      // 添加示例数据源
+      const exampleDataSource1: DataSource = {
+        id: "static-1",
+        name: "用户列表",
+        type: "static",
+        data: [
+          { id: 1, name: "张三", age: 28, role: "管理员" },
+          { id: 2, name: "李四", age: 32, role: "编辑" },
+          { id: 3, name: "王五", age: 24, role: "用户" },
+        ],
+        lastUpdated: new Date().toISOString(),
+        status: "active",
+      };
+
+      const exampleDataSource2: DataSource = {
+        id: "api-1",
+        name: "产品数据",
+        type: "api",
+        data: null,
+        config: {
+          url: "https://api.example.com/products",
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          timeout: 10000,
+          retryCount: 3,
+          cacheEnabled: true,
+          cacheTTL: 300,
+        },
+        lastUpdated: new Date().toISOString(),
+        status: "active",
+      };
+
+      // 只在初始化时添加一次
+      addDataSource(exampleDataSource1);
+      addDataSource(exampleDataSource2);
+    }
+  }, [dataSources.length, addDataSource]);
 
   const [newDataSource, setNewDataSource] = useState<{
     name: string;
@@ -197,7 +210,8 @@ export function DataPanel() {
         return;
       }
 
-      setDataSources([...dataSources, newSource]);
+      // 使用store的方法添加数据源
+      addDataSource(newSource);
       setNewDataSource({
         name: "",
         type: "static",
@@ -212,7 +226,7 @@ export function DataPanel() {
   // 删除数据源
   const handleDeleteDataSource = (id: string) => {
     if (confirm("确定要删除这个数据源吗？")) {
-      setDataSources(DataSourceService.deleteDataSource(id, dataSources));
+      deleteDataSource(id);
     }
   };
 
@@ -228,18 +242,14 @@ export function DataPanel() {
         error: undefined,
       });
 
-      setDataSources((prev) =>
-        prev.map((ds) => (ds.id === dataSource.id ? updatedDataSource : ds))
-      );
+      updateDataSource(dataSource.id, updatedDataSource);
     } catch (error) {
       const updatedDataSource = DataSourceService.updateDataSource(dataSource, {
         status: "error",
         error: error instanceof Error ? error.message : "未知错误",
       });
 
-      setDataSources((prev) =>
-        prev.map((ds) => (ds.id === dataSource.id ? updatedDataSource : ds))
-      );
+      updateDataSource(dataSource.id, updatedDataSource);
     } finally {
       setLoading((prev) => ({ ...prev, [dataSource.id]: false }));
     }
@@ -903,11 +913,7 @@ export function DataPanel() {
             <Button
               onClick={() => {
                 if (editingDataSource) {
-                  setDataSources((prev) =>
-                    prev.map((ds) =>
-                      ds.id === editingDataSource.id ? editingDataSource : ds
-                    )
-                  );
+                  updateDataSource(editingDataSource.id, editingDataSource);
                   setEditingDataSource(null);
                 }
               }}

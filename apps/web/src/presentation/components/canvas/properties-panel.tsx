@@ -23,17 +23,28 @@ import {
   ColorPicker,
 } from "@/presentation/components/ui";
 
-import type { Component } from "@/domain/component";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
+import { useDataBinding } from "@/presentation/hooks/use-data-binding";
+import {
+  DataSourceSelector,
+  DataMappingList,
+} from "@/presentation/components/data-binding";
 
-type PropertiesPanelProps = {
-  // 移除 props，现在从 store 获取状态
-};
-
-export function PropertiesPanel({}: PropertiesPanelProps) {
+export function PropertiesPanel() {
   // 从 store 获取状态
   const { selectedComponent, updateComponent } = useComponentStore();
   const [properties, setProperties] = useState<any>({});
+
+  // 数据绑定相关
+  const {
+    dataSources,
+    currentDataSource,
+    currentMappings,
+    bindDataSource,
+    updateMappings,
+  } = useDataBinding({
+    componentId: selectedComponent?.id || null,
+  });
 
   useEffect(() => {
     if (selectedComponent?.properties) {
@@ -179,65 +190,6 @@ export function PropertiesPanel({}: PropertiesPanelProps) {
 
   const handlePropertyChange = (key: string, value: any) => {
     const updatedProperties = { ...properties, [key]: value };
-    setProperties(updatedProperties);
-
-    if (selectedComponent) {
-      updateComponent(selectedComponent.id, { properties: updatedProperties });
-    }
-  };
-
-  const handleNestedPropertyChange = (
-    parentKey: string,
-    key: string,
-    value: any
-  ) => {
-    const parentValue = properties[parentKey] || {};
-    const updatedParentValue = { ...parentValue, [key]: value };
-    const updatedProperties = {
-      ...properties,
-      [parentKey]: updatedParentValue,
-    };
-    setProperties(updatedProperties);
-
-    if (selectedComponent) {
-      updateComponent(selectedComponent.id, { properties: updatedProperties });
-    }
-  };
-
-  const handleArrayItemChange = (
-    arrayKey: string,
-    index: number,
-    key: string,
-    value: any
-  ) => {
-    const array = [...(properties[arrayKey] || [])];
-    array[index] = { ...array[index], [key]: value };
-
-    const updatedProperties = { ...properties, [arrayKey]: array };
-    setProperties(updatedProperties);
-
-    if (selectedComponent) {
-      updateComponent(selectedComponent.id, { properties: updatedProperties });
-    }
-  };
-
-  const handleAddArrayItem = (arrayKey: string, newItem: any) => {
-    const array = [...(properties[arrayKey] || [])];
-    array.push(newItem);
-
-    const updatedProperties = { ...properties, [arrayKey]: array };
-    setProperties(updatedProperties);
-
-    if (selectedComponent) {
-      updateComponent(selectedComponent.id, { properties: updatedProperties });
-    }
-  };
-
-  const handleRemoveArrayItem = (arrayKey: string, index: number) => {
-    const array = [...(properties[arrayKey] || [])];
-    array.splice(index, 1);
-
-    const updatedProperties = { ...properties, [arrayKey]: array };
     setProperties(updatedProperties);
 
     if (selectedComponent) {
@@ -972,36 +924,30 @@ export function PropertiesPanel({}: PropertiesPanelProps) {
         <TabsContent value="data">
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="p-4">
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="data-binding">数据绑定</Label>
-                  <Select>
-                    <SelectTrigger id="data-binding">
-                      <SelectValue placeholder="选择数据源" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">无</SelectItem>
-                      <SelectItem value="static-1">用户列表</SelectItem>
-                      <SelectItem value="api-1">产品数据</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="data-field">数据字段</Label>
-                  <Select disabled>
-                    <SelectTrigger id="data-field">
-                      <SelectValue placeholder="选择数据字段" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name">名称</SelectItem>
-                      <SelectItem value="price">价格</SelectItem>
-                      <SelectItem value="description">描述</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    请先选择数据源
-                  </p>
-                </div>
+              <div className="grid gap-6">
+                {/* 数据源选择器 */}
+                <DataSourceSelector
+                  dataSources={dataSources}
+                  selectedDataSourceId={currentDataSource?.id || null}
+                  onDataSourceChange={bindDataSource}
+                />
+
+                {/* 数据映射列表 */}
+                {currentDataSource && (
+                  <DataMappingList
+                    mappings={currentMappings}
+                    dataSource={currentDataSource}
+                    componentType={selectedComponent?.type}
+                    onChange={updateMappings}
+                  />
+                )}
+
+                {/* 无数据源提示 */}
+                {!currentDataSource && (
+                  <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+                    <p>请先选择数据源以配置数据映射</p>
+                  </div>
+                )}
               </div>
             </div>
           </ScrollArea>

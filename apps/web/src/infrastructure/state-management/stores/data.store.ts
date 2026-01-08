@@ -127,6 +127,7 @@ export const useDataStore = create<DataState>()(
             false,
             "bindComponentToDataSource"
           );
+          // 注意: 组件的 dataSource 字段更新由 useDataBinding hook 通过 updateComponent 处理
         },
 
         // 解绑组件数据源
@@ -154,6 +155,7 @@ export const useDataStore = create<DataState>()(
             false,
             "updateDataMappings"
           );
+          // 注意: 组件的 dataMapping 字段更新由 useDataBinding hook 通过 updateComponent 处理
         },
 
         // 获取组件数据
