@@ -134,7 +134,7 @@ export default function LowCodePlatform() {
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
-              className="w-64 border-r flex flex-col"
+              className="w-80 border-r flex flex-col"
             >
               <TabsList className="grid w-full grid-cols-3 shrink-0">
                 <TabsTrigger value="components">组件</TabsTrigger>

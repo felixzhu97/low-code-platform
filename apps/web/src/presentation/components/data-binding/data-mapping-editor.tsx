@@ -12,8 +12,7 @@ import {
   Button,
   Switch,
 } from "@/presentation/components/ui";
-import type { DataMapping } from "@/domain/datasource";
-import type { DataSource } from "@/domain/datasource";
+import type { DataMapping, DataSource } from "@/domain/datasource";
 import { DataBindingService } from "@/application/services/data-binding.service";
 
 interface DataMappingEditorProps {
@@ -76,9 +75,7 @@ export function DataMappingEditor({
           dataSource
         );
         setIsValid(valid);
-        setValidationError(
-          valid ? "" : "源路径无效或不存在于数据源中"
-        );
+        setValidationError(valid ? "" : "源路径无效或不存在于数据源中");
       } catch (error) {
         setIsValid(false);
         setValidationError("验证路径时出错");
@@ -214,8 +211,14 @@ export function DataMappingEditor({
             )}
           </div>
           {sourcePathInputMode === "select" && availablePaths.length > 0 ? (
-            <Select value={sourcePath} onValueChange={handleSourcePathSelectChange}>
-              <SelectTrigger id="source-path" className={!isValid ? "border-destructive" : ""}>
+            <Select
+              value={sourcePath}
+              onValueChange={handleSourcePathSelectChange}
+            >
+              <SelectTrigger
+                id="source-path"
+                className={!isValid ? "border-destructive" : ""}
+              >
                 <SelectValue placeholder="选择或输入路径" />
               </SelectTrigger>
               <SelectContent>
@@ -275,7 +278,9 @@ export function DataMappingEditor({
             value={transform || "none"}
             onValueChange={(value) =>
               setTransform(
-                value === "none" ? undefined : (value as DataMapping["transform"])
+                value === "none"
+                  ? undefined
+                  : (value as DataMapping["transform"])
               )
             }
           >

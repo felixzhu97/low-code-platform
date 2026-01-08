@@ -38,6 +38,10 @@ package "业务能力 (Business Capabilities)" {
   component [数据映射] as DataMapping
   component [实时数据更新] as RealTimeDataUpdate
   component [数据验证] as DataValidation
+  component [JSON快速输入] as JsonQuickInput
+  component [模板推荐] as TemplateRecommendation
+  component [智能渲染] as IntelligentRender
+  component [数据结构解析] as DataStructureParse
   
   component [协作能力] as CollaborationCapability
   component [多人实时编辑] as MultiUserEdit
@@ -78,6 +82,10 @@ package "业务能力 (Business Capabilities)" {
   DataBindingCapability --> DataMapping
   DataBindingCapability --> RealTimeDataUpdate
   DataBindingCapability --> DataValidation
+  DataBindingCapability --> JsonQuickInput
+  DataBindingCapability --> TemplateRecommendation
+  DataBindingCapability --> IntelligentRender
+  DataBindingCapability --> DataStructureParse
   
   CollaborationCapability --> MultiUserEdit
   CollaborationCapability --> OperationSync
@@ -170,6 +178,14 @@ package "核心业务流程 (Core Business Processes)" {
   component [实时数据更新] as RealTimeUpdate
   component [监控数据状态] as MonitorDataStatus
   
+  component [JSON快速输入流程] as JsonInputProcess
+  component [选择组件类型] as SelectComponentType
+  component [选择JSON模板] as SelectJsonTemplate
+  component [输入或编辑JSON数据] as InputJsonData
+  component [验证JSON格式] as ValidateJsonFormat
+  component [创建临时数据源] as CreateTempDataSource
+  component [自动渲染到组件] as AutoRenderToComponent
+  
   PageDesignProcess --> DesignerLogin
   PageDesignProcess --> BrowseOrCreate
   PageDesignProcess --> EnterEditor
@@ -225,6 +241,13 @@ package "核心业务流程 (Core Business Processes)" {
   DataMgmtProcess --> BindToComponent
   DataMgmtProcess --> RealTimeUpdate
   DataMgmtProcess --> MonitorDataStatus
+  
+  JsonInputProcess --> SelectComponentType
+  JsonInputProcess --> SelectJsonTemplate
+  JsonInputProcess --> InputJsonData
+  JsonInputProcess --> ValidateJsonFormat
+  JsonInputProcess --> CreateTempDataSource
+  JsonInputProcess --> AutoRenderToComponent
 }
 
 ' ============================================
@@ -287,5 +310,6 @@ SchemaExportProcess --> SchemaMgmtCapability : 依赖
 SchemaImportProcess --> SchemaMgmtCapability : 依赖
 
 DataMgmtProcess --> DataBindingCapability : 依赖
+JsonInputProcess --> DataBindingCapability : 依赖
 
 @enduml

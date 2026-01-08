@@ -25,10 +25,7 @@ import {
 
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 import { useDataBinding } from "@/presentation/hooks/use-data-binding";
-import {
-  DataSourceSelector,
-  DataMappingList,
-} from "@/presentation/components/data-binding";
+import { DataSourceSelector } from "@/presentation/components/data-binding";
 
 export function PropertiesPanel() {
   // 从 store 获取状态
@@ -39,9 +36,9 @@ export function PropertiesPanel() {
   const {
     dataSources,
     currentDataSource,
-    currentMappings,
     bindDataSource,
-    updateMappings,
+    createDataSourceFromJson,
+    renderDataToComponent,
   } = useDataBinding({
     componentId: selectedComponent?.id || null,
   });
@@ -199,7 +196,7 @@ export function PropertiesPanel() {
 
   if (!selectedComponent) {
     return (
-      <div className="w-64 border-l">
+      <div className="w-80 border-l">
         <div className="p-4">
           <h2 className="text-lg font-semibold">属性面板</h2>
           <p className="mt-4 text-sm text-muted-foreground">
@@ -211,7 +208,7 @@ export function PropertiesPanel() {
   }
 
   return (
-    <div className="w-64 border-l">
+    <div className="w-80 border-l">
       <div className="p-4">
         <h2 className="text-lg font-semibold">属性面板</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -924,28 +921,55 @@ export function PropertiesPanel() {
         <TabsContent value="data">
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="p-4">
-              <div className="grid gap-6">
+              <div className="space-y-3">
                 {/* 数据源选择器 */}
                 <DataSourceSelector
                   dataSources={dataSources}
                   selectedDataSourceId={currentDataSource?.id || null}
-                  onDataSourceChange={bindDataSource}
+                  componentType={selectedComponent?.type}
+                  onDataSourceChange={(dataSourceId) => {
+                    bindDataSource(dataSourceId);
+                    // 如果选择的是已有数据源，也直接渲染数据
+                    if (dataSourceId && selectedComponent) {
+                      const dataSource = dataSources.find(
+                        (ds) => ds.id === dataSourceId
+                      );
+                      if (dataSource?.data) {
+                        renderDataToComponent(dataSource.data);
+                      }
+                    }
+                  }}
+                  onCreateDataSourceFromJson={createDataSourceFromJson}
                 />
 
-                {/* 数据映射列表 */}
+                {/* 提示信息 */}
                 {currentDataSource && (
-                  <DataMappingList
-                    mappings={currentMappings}
-                    dataSource={currentDataSource}
-                    componentType={selectedComponent?.type}
-                    onChange={updateMappings}
-                  />
-                )}
-
-                {/* 无数据源提示 */}
-                {!currentDataSource && (
-                  <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-                    <p>请先选择数据源以配置数据映射</p>
+                  <div className="rounded-lg border border-green-200/60 bg-gradient-to-r from-green-50/80 to-emerald-50/60 dark:from-green-950/30 dark:to-emerald-950/20 shadow-sm p-3.5">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-full bg-green-100 dark:bg-green-900/40 p-1 flex-shrink-0 mt-0.5">
+                        <svg
+                          className="h-3.5 w-3.5 text-green-600 dark:text-green-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-green-900 dark:text-green-100 mb-0.5">
+                          数据绑定成功
+                        </p>
+                        <p className="text-xs text-green-700/90 dark:text-green-300/80 leading-relaxed">
+                          数据已自动应用到组件，可在"属性"tab中查看详情
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
