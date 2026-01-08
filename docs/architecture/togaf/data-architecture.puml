@@ -50,6 +50,15 @@ package "核心数据实体 (Core Data Entities)" {
   component [DataSource_data: Object] as DataSourceData
   component [DataSource_status: DataSourceStatus] as DataSourceStatus
   component [DataSource_errorMessage: String] as DataSourceErrorMessage
+  component [DataSource_lastUpdated: DateTime] as DataSourceLastUpdated
+  
+  component [JsonDataTemplate\nJSON数据模板] as JsonDataTemplate
+  component [JsonTemplate_id: String] as JsonTemplateId
+  component [JsonTemplate_name: String] as JsonTemplateName
+  component [JsonTemplate_description: String] as JsonTemplateDescription
+  component [JsonTemplate_data: Object] as JsonTemplateData
+  component [JsonTemplate_componentTypes: List<String>] as JsonTemplateComponentTypes
+  component [JsonTemplate_preview: String] as JsonTemplatePreview
   
   component [DataMapping\n数据映射实体] as DataMapping
   component [DataMapping_id: String] as DataMappingId
@@ -59,6 +68,7 @@ package "核心数据实体 (Core Data Entities)" {
   component [DataMapping_sourcePath: String] as DataMappingSourcePath
   component [DataMapping_targetPath: String] as DataMappingTargetPath
   component [DataMapping_transform: TransformType] as DataMappingTransform
+  component [DataMapping_defaultValue: Any] as DataMappingDefaultValue
   
   component [User\n用户实体] as User
   component [User_id: String] as UserId
@@ -104,6 +114,8 @@ Project "1" *-- "1" ThemeConfig : 主题配置
 Template "1" *-- "1" Component : 根组件
 DataSource "1" *-- "0..*" DataMapping : 数据映射
 Component "1" *-- "0..*" DataMapping : 数据绑定
+Component "1" *-- "0..1" DataSource : 直接绑定
+Component "1" *-- "0..1" DataSource : 直接绑定
 Project "1" *-- "1" User : 所有者
 Project "1" *-- "0..*" User : 协作者
 HistoryRecord "1" *-- "1" Project : 历史记录
@@ -141,6 +153,7 @@ package "数据存储层 (Data Storage Layer)" {
   PostgreSQL --> ProjectsTable
   PostgreSQL --> TemplatesTable
   PostgreSQL --> DataSourcesTable
+  PostgreSQL --> DataMappingsTable
   PostgreSQL --> UsersTable
   PostgreSQL --> HistoryRecordsTable
   
@@ -177,6 +190,15 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   component [绑定到Component] as BindToComponentEntity
   component [实时数据获取] as RealTimeDataFetch
   component [组件渲染更新] as ComponentRenderUpdate
+  
+  component [JSON快速输入数据流] as JsonQuickInputFlow
+  component [用户选择组件] as UserSelectComponent
+  component [系统推荐JSON模板] as SystemRecommendTemplate
+  component [用户选择或输入JSON] as UserInputJson
+  component [验证JSON格式] as ValidateJsonFormat
+  component [解析数据结构] as ParseDataStructure
+  component [创建静态数据源] as CreateStaticDataSource
+  component [自动渲染到组件属性] as AutoRenderToProperties
   
   component [协作同步数据流] as CollaborationFlow
   component [用户操作] as UserOperation
@@ -230,6 +252,14 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   DataBindingFlow --> RealTimeDataFetch
   DataBindingFlow --> ComponentRenderUpdate
   
+  JsonQuickInputFlow --> UserSelectComponent
+  JsonQuickInputFlow --> SystemRecommendTemplate
+  JsonQuickInputFlow --> UserInputJson
+  JsonQuickInputFlow --> ValidateJsonFormat
+  JsonQuickInputFlow --> ParseDataStructure
+  JsonQuickInputFlow --> CreateStaticDataSource
+  JsonQuickInputFlow --> AutoRenderToProperties
+  
   CollaborationFlow --> UserOperation
   CollaborationFlow --> GenerateOperationEvent
   CollaborationFlow --> CollaborationReceive
@@ -271,9 +301,11 @@ Component ..> PostgreSQL : 持久化
 Template ..> PostgreSQL : 持久化
 Project ..> PostgreSQL : 持久化
 DataSource ..> PostgreSQL : 持久化
+DataMapping ..> PostgreSQL : 持久化
 User ..> PostgreSQL : 持久化
 HistoryRecord ..> PostgreSQL : 持久化
 PageSchema ..> ObjectStorage : 文件存储
+JsonDataTemplate ..> PostgreSQL : 持久化（可选）
 
 Component ..> Redis : 缓存
 Project ..> Redis : 缓存
@@ -286,6 +318,10 @@ ComponentEditFlow --> Redis : 缓存更新
 DataBindingFlow --> DataSource : 使用
 DataBindingFlow --> DataMapping : 使用
 DataBindingFlow --> Component : 绑定
+
+JsonQuickInputFlow --> JsonDataTemplate : 使用
+JsonQuickInputFlow --> DataSource : 创建
+JsonQuickInputFlow --> Component : 更新属性
 
 CollaborationFlow --> Redis : 消息队列
 CollaborationFlow --> PostgreSQL : 状态持久化
@@ -307,6 +343,10 @@ SchemaImportFlow --> Component : 创建
 SchemaImportFlow --> DataSource : 创建
 SchemaImportFlow --> ThemeConfig : 创建
 SchemaImportFlow --> Redis : 状态更新
+
+JsonQuickInputFlow --> JsonDataTemplate : 使用
+JsonQuickInputFlow --> DataSource : 创建
+JsonQuickInputFlow --> Component : 更新属性
 
 note right of PostgreSQL
   **数据访问模式：**

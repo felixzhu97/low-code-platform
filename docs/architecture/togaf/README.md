@@ -32,13 +32,14 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 代码导出流程
   - Schema 导出流程（生成 Schema JSON、验证格式、下载文件）
   - Schema 导入流程（上传文件、验证版本、迁移旧版本、渲染到画布）
-  - 数据管理流程
+  - 数据管理流程（创建数据源、配置数据连接、测试连接、创建映射、绑定组件、实时更新、监控状态）
+  - JSON 快速输入流程（选择组件类型、系统推荐模板、输入或编辑 JSON、验证格式、创建临时数据源、自动渲染到组件）
 
 - **业务能力**：
 
   - 可视化编辑能力
   - 组件管理能力
-  - 数据绑定能力
+  - 数据绑定能力（数据源管理、数据映射、实时数据更新、数据验证、JSON快速输入、模板推荐、智能渲染、数据结构解析）
   - 协作能力
   - 代码生成能力
   - 模板管理能力
@@ -58,12 +59,17 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 属性面板（Property Panel）
   - 模板库（Template Library）
   - 数据面板（Data Panel）
+  - 数据源选择器（DataSource Selector）
+  - JSON 数据输入组件（JSON Data Input）
 
 - **应用层（Application Layer）**：
 
   - 组件管理服务（Component Management Service）
   - 模板管理服务（Template Management Service）
   - 数据绑定服务（Data Binding Service）
+  - 数据源服务（DataSource Service）
+  - 数据源结构服务（DataSource Structure Service）
+  - JSON 工具服务（JSON Helper Service）
   - 画布管理服务（Canvas Management Service）
   - 历史记录服务（History Service）
   - Schema 管理服务（Schema Management Service）
@@ -93,11 +99,12 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
 
 - **核心数据实体**：
 
-  - Component（组件）
+  - Component（组件，包含 dataSource 和 dataMapping 属性）
   - Template（模板）
   - Project（项目）
-  - DataSource（数据源）
-  - DataMapping（数据映射）
+  - DataSource（数据源，包含 id、name、type、config、data、status、errorMessage、lastUpdated）
+  - DataMapping（数据映射，包含 id、componentId、dataSourceId、field、sourcePath、targetPath、transform、defaultValue）
+  - JsonDataTemplate（JSON 数据模板，包含 id、name、description、data、componentTypes、preview）
   - User（用户）
   - ThemeConfig（主题配置）
   - HistoryRecord（历史记录）
@@ -110,7 +117,8 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - components 表：组件数据
     - projects 表：项目数据
     - templates 表：模板数据
-    - data_sources 表：数据源配置
+    - data_sources 表：数据源配置（包含静态数据、API配置、数据库连接等）
+    - data_mappings 表：数据映射关系（可选，现版本已简化为直接绑定）
     - users 表：用户信息
     - history_records 表：操作历史
 
@@ -128,7 +136,8 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
 
 - **关键数据流场景**：
   - 组件编辑数据流
-  - 数据绑定数据流
+  - 数据绑定数据流（用户配置数据源 → 创建 DataSource 实体 → 测试连接 → 创建映射 → 绑定组件 → 实时获取 → 渲染更新）
+  - JSON 快速输入数据流（选择组件 → 系统推荐模板 → 用户输入 JSON → 验证格式 → 解析结构 → 创建静态数据源 → 自动渲染到组件属性）
   - 协作同步数据流
   - 代码生成数据流
   - Schema 导出数据流（读取项目数据 → 转换为 PageSchema → 验证格式 → 序列化为 JSON → 下载/存储）
@@ -254,6 +263,22 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 
 - C4 模型更适合开发团队理解系统结构和代码组织
 - TOGAF 框架更适合企业架构师和业务人员理解整体架构和业务价值
+
+## 最新更新
+
+### 2026-01-08：数据绑定功能增强
+
+- **新增功能**：
+  - JSON 快速输入：支持根据组件类型自动推荐模板，快速输入 JSON 数据
+  - 智能数据渲染：输入 JSON 后自动解析并渲染到组件属性
+  - 数据结构解析：自动解析数据源结构，提供路径选择建议
+  - JSON 工具服务：提供 JSON 验证、格式化、分析等功能
+
+- **更新的架构组件**：
+  - 应用层新增：数据源服务、数据源结构服务、JSON 工具服务
+  - 表现层新增：数据源选择器、JSON 数据输入组件
+  - 数据实体扩展：DataSource 添加 lastUpdated 字段，DataMapping 添加 defaultValue 字段
+  - 新增数据实体：JsonDataTemplate（JSON 数据模板）
 
 ## 维护说明
 

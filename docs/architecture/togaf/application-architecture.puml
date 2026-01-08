@@ -47,6 +47,8 @@ package "Felix 低代码平台应用系统" {
     PropertyPanel --> PropertyPanelInterface
     TemplateLibrary --> TemplateLibraryInterface
     DataPanel --> DataPanelInterface
+    DataSourceSelector --> DataSourceSelectorInterface
+    JsonDataInput --> JsonDataInputInterface
     SchemaExport --> SchemaExportUIInterface
     SchemaImport --> SchemaImportUIInterface
   }
@@ -176,6 +178,11 @@ PropertyPanel --> ComponentService : 调用
 PropertyPanel --> DataBindingService : 调用
 TemplateLibrary --> TemplateService : 调用
 DataPanel --> DataBindingService : 调用
+DataPanel --> DataSourceService : 调用
+DataSourceSelector --> DataSourceService : 调用
+DataSourceSelector --> DataBindingService : 调用
+JsonDataInput --> JsonHelperService : 调用
+JsonDataInput --> DataSourceStructureService : 调用
 SchemaExport --> SchemaExportService : 调用
 SchemaImport --> SchemaImportService : 调用
 
@@ -185,6 +192,10 @@ TemplateService --> TemplateEntity : 使用
 TemplateService --> TemplateRepo : 使用
 DataBindingService --> DataSourceEntity : 使用
 DataBindingService --> DataSourceRepo : 使用
+DataSourceService --> DataSourceEntity : 使用
+DataSourceService --> DataSourceRepo : 使用
+DataSourceStructureService --> DataSourceEntity : 使用
+JsonHelperService --> DataSourceEntity : 处理
 CanvasService --> ComponentFactory : 使用
 SchemaExportService --> SchemaEntity : 使用
 SchemaExportService --> PersistenceManager : 使用
@@ -220,9 +231,11 @@ note right of VisualEditor
   **主要数据流：**
   1. 组件操作 → 应用服务 → 领域实体
   2. 数据变更 → 状态管理 → 协作服务
-  3. Schema导出 → Schema导出服务 → 持久化管理器 → 文件存储
-  4. Schema导入 → Schema导入服务 → 持久化管理器 → 状态管理
-  5. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
+  3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染
+  4. 数据源选择 → 数据源服务 → 数据结构解析 → 自动渲染
+  5. Schema导出 → Schema导出服务 → 持久化管理器 → 文件存储
+  6. Schema导入 → Schema导入服务 → 持久化管理器 → 状态管理
+  7. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
 end note
 
 @enduml
