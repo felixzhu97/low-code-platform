@@ -1,7 +1,21 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type { Component } from "@/domain/component";
-import { ComponentManagementService } from "@/application/services/component-management.service";
+
+/**
+ * 递归获取所有子组件ID
+ */
+function getAllChildIds(parentId: string, components: Component[]): string[] {
+  const childIds: string[] = [];
+  const children = components.filter((comp) => comp.parentId === parentId);
+
+  for (const child of children) {
+    childIds.push(child.id);
+    childIds.push(...getAllChildIds(child.id, components));
+  }
+
+  return childIds;
+}
 
 interface ComponentState {
   // 状态
@@ -98,21 +112,21 @@ export const useComponentStore = create<ComponentState>()(
         // 删除组件及其子组件
         deleteComponentAndChildren: (id: string) => {
           const { components } = get();
-          const newComponents =
-            ComponentManagementService.deleteComponentAndChildren(
-              id,
-              components
-            );
+          // 找出所有需要删除的组件ID（包括子组件）
+          const idsToDelete = getAllChildIds(id, components);
+          idsToDelete.push(id);
 
           set(
             (state) => ({
-              components: newComponents,
+              components: state.components.filter(
+                (comp) => !idsToDelete.includes(comp.id)
+              ),
               selectedComponent:
-                state.selectedComponent?.id === id
+                idsToDelete.includes(state.selectedComponent?.id || "")
                   ? null
                   : state.selectedComponent,
               selectedComponentId:
-                state.selectedComponentId === id
+                idsToDelete.includes(state.selectedComponentId || "")
                   ? null
                   : state.selectedComponentId,
             }),
@@ -126,18 +140,12 @@ export const useComponentStore = create<ComponentState>()(
           id: string,
           position: { x: number; y: number }
         ) => {
-          const { components } = get();
-          const updatedComponents =
-            ComponentManagementService.updateComponentPosition(
-              id,
-              position,
-              components
-            );
-
           set(
-            {
-              components: updatedComponents,
-            },
+            (state) => ({
+              components: state.components.map((component) =>
+                component.id === id ? { ...component, position } : component
+              ),
+            }),
             false,
             "updateComponentPosition"
           );
@@ -203,16 +211,13 @@ export const useComponentStore = create<ComponentState>()(
         // 获取根级组件
         getRootComponents: () => {
           const { components } = get();
-          return ComponentManagementService.getRootComponents(components);
+          return components.filter((comp) => !comp.parentId);
         },
 
         // 获取子组件
         getChildComponents: (parentId: string) => {
           const { components } = get();
-          return ComponentManagementService.getChildComponents(
-            parentId,
-            components
-          );
+          return components.filter((comp) => comp.parentId === parentId);
         },
       }),
       {

@@ -1,0 +1,33 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@/infrastructure/state-management/stores",
+            "message": "请不要直接导入 infrastructure/stores，请使用 presentation/hooks 中的 hooks（如 useAllStores）来访问状态。这符合整洁架构原则。"
+          },
+          {
+            "name": "@/application/services",
+            "message": "请不要直接导入 application/services，请使用适配器（Adapters）来访问应用层服务。这符合整洁架构原则。"
+          }
+        ],
+        "patterns": [
+          {
+            "group": [
+              "@/domain/*",
+              "@/application/*"
+            ],
+            "importNames": ["*"],
+            "message": "Presentation层不应直接导入Domain层类型，请通过适配器返回类型。",
+            "from": {
+              "path": "^.*/presentation/.*|^.*/app/.*"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

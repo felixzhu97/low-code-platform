@@ -21,25 +21,19 @@ import { ThemeEditor } from "@/presentation/components/ui";
 import { FormBuilder } from "@/presentation/components/forms";
 import { AnimationEditor } from "@/presentation/components/ui";
 import { Collaboration } from "@/presentation/components/ui";
-import type { Component } from "@/domain/component";
-import type { ThemeConfig } from "@/domain/theme";
-import { TemplateApplicationError } from "@/domain/shared/errors";
-import { TemplateService } from "@/application/services/template-command.service";
 import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
 import { ComponentLibraryManager } from "@/presentation/components/ui";
 import { ComponentGrouping } from "@/presentation/components/ui";
 import { ComponentTree } from "@/presentation/components/canvas";
 import { toast } from "@/presentation/hooks/use-toast";
-import { useAllStores } from "@/presentation/hooks";
-import { useSimplifiedActions } from "@/shared/hooks/use-simplified-actions";
+import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { DataPanel } from "@/presentation/components/data";
 
 export default function LowCodePlatform() {
   // 从 stores 获取状态
   const {
     // 组件状态
-    components,
     selectedComponent,
     selectComponent,
     // 画布状态
@@ -47,7 +41,6 @@ export default function LowCodePlatform() {
     setPreviewMode,
     // UI状态
     activeTab,
-    projectName,
     setActiveTab,
     // 历史记录状态
     undo,
@@ -56,11 +49,10 @@ export default function LowCodePlatform() {
     canRedo,
   } = useAllStores();
 
-  // 使用简化的操作hooks
-  const { addComponentsWithHistory } = useSimplifiedActions();
+  // 获取适配器
+  const { templateAdapter } = useAdapters();
 
-  // 简化的处理函数
-
+  // 处理预览模式切换
   const togglePreviewMode = () => {
     setPreviewMode(!isPreviewMode);
     if (!isPreviewMode) {
@@ -68,17 +60,13 @@ export default function LowCodePlatform() {
     }
   };
 
-  // 移除不必要的处理函数，组件直接使用store actions
-
   // 处理模板选择
   const handleSelectTemplate = useCallback(
-    (templateComponents: Component[]) => {
+    async (templateComponents: any[]) => {
       try {
+        // 通过适配器应用模板
         const processedComponents =
-          TemplateService.applyTemplate(templateComponents);
-
-        // 添加组件到store
-        addComponentsWithHistory(processedComponents);
+          await templateAdapter.applyTemplateFromComponents(templateComponents);
 
         toast({
           title: "模板应用成功",
@@ -87,22 +75,17 @@ export default function LowCodePlatform() {
       } catch (error) {
         console.error("应用模板时出错:", error);
 
-        if (error instanceof TemplateApplicationError) {
-          toast({
-            title: "模板应用失败",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "应用模板失败",
-            description: "处理模板时发生未知错误",
-            variant: "destructive",
-          });
-        }
+        const errorMessage =
+          error instanceof Error ? error.message : "处理模板时发生未知错误";
+
+        toast({
+          title: "模板应用失败",
+          description: errorMessage,
+          variant: "destructive",
+        });
       }
     },
-    [addComponentsWithHistory]
+    [templateAdapter]
   );
 
   // 移除不必要的处理函数，组件直接使用store actions

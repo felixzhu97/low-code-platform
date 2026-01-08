@@ -19,7 +19,7 @@ import { Checkbox } from "./checkbox";
 
 import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
-import { useSimplifiedActions } from "@/shared/hooks/use-simplified-actions";
+import { useSimplifiedActions } from "@/presentation/hooks";
 
 interface ComponentGroupingProps {
   // 移除 props，现在从 store 获取状态

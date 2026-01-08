@@ -12,5 +12,5 @@ export {
   useStores,
 } from "@/infrastructure/state-management/stores";
 
-// 导出简化的操作hooks
-export { useSimplifiedActions } from "../hooks/use-simplified-actions";
+// 导出简化的操作hooks - 已移动到 presentation/hooks
+export { useSimplifiedActions } from "@/presentation/hooks";
