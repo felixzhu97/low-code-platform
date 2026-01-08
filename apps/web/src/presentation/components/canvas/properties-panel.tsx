@@ -25,7 +25,10 @@ import {
 
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 import { useDataBinding } from "@/presentation/hooks/use-data-binding";
-import { DataSourceSelector } from "@/presentation/components/data-binding";
+import {
+  DataSourceSelector,
+  BoundDataEditor,
+} from "@/presentation/components/data-binding";
 
 export function PropertiesPanel() {
   // 从 store 获取状态
@@ -36,9 +39,11 @@ export function PropertiesPanel() {
   const {
     dataSources,
     currentDataSource,
+    currentBoundData,
     bindDataSource,
     createDataSourceFromJson,
     renderDataToComponent,
+    updateComponentBoundData,
   } = useDataBinding({
     componentId: selectedComponent?.id || null,
   });
@@ -941,6 +946,17 @@ export function PropertiesPanel() {
                   }}
                   onCreateDataSourceFromJson={createDataSourceFromJson}
                 />
+
+                {/* 编辑已绑定数据 */}
+                {currentDataSource && currentBoundData !== null && (
+                  <BoundDataEditor
+                    data={currentBoundData}
+                    onUpdate={(updatedData) => {
+                      updateComponentBoundData(updatedData);
+                    }}
+                    minHeight="200px"
+                  />
+                )}
 
                 {/* 提示信息 */}
                 {currentDataSource && (

@@ -27,6 +27,7 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
     null
   );
   const [currentMappings, setCurrentMappings] = useState<DataMapping[]>([]);
+  const [currentBoundData, setCurrentBoundData] = useState<any>(null);
 
   // 获取当前组件
   const currentComponent = componentId
@@ -38,6 +39,7 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
     if (!currentComponent) {
       setCurrentDataSource(null);
       setCurrentMappings([]);
+      setCurrentBoundData(null);
       return;
     }
 
@@ -57,6 +59,35 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
       [];
     setCurrentMappings(mappings);
   }, [currentComponent, dataSources, dataBindings, componentId]);
+
+  // 获取组件已绑定的数据
+  const getComponentBoundData = useCallback(async () => {
+    if (!currentComponent || !currentDataSource) {
+      setCurrentBoundData(null);
+      return null;
+    }
+
+    try {
+      const data = await DataBindingService.getComponentData(currentComponent, [
+        currentDataSource,
+      ]);
+      setCurrentBoundData(data);
+      return data;
+    } catch (error) {
+      console.error("获取已绑定数据失败:", error);
+      setCurrentBoundData(null);
+      return null;
+    }
+  }, [currentComponent, currentDataSource]);
+
+  // 同步已绑定数据
+  useEffect(() => {
+    if (currentComponent && currentDataSource) {
+      getComponentBoundData();
+    } else {
+      setCurrentBoundData(null);
+    }
+  }, [currentComponent, currentDataSource, getComponentBoundData]);
 
   // 绑定数据源
   const bindDataSource = useCallback(
@@ -308,6 +339,19 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
     [componentId, currentComponent, updateComponent]
   );
 
+  // 更新组件已绑定的数据
+  const updateComponentBoundData = useCallback(
+    (data: any) => {
+      if (!componentId || !currentComponent) return;
+
+      // 直接使用 renderDataToComponent 将数据应用到组件属性
+      renderDataToComponent(data);
+      // 更新已绑定数据状态
+      setCurrentBoundData(data);
+    },
+    [componentId, currentComponent, renderDataToComponent]
+  );
+
   // 从JSON创建数据源并直接渲染到组件
   const createDataSourceFromJson = useCallback(
     (jsonData: any, dataSourceName?: string) => {
@@ -354,6 +398,7 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
     currentDataSource,
     currentMappings,
     currentComponent,
+    currentBoundData,
 
     // 操作
     bindDataSource,
@@ -361,5 +406,7 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
     getPreviewData,
     createDataSourceFromJson,
     renderDataToComponent,
+    getComponentBoundData,
+    updateComponentBoundData,
   };
 }
