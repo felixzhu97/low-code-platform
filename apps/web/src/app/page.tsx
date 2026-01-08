@@ -1,34 +1,106 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, Suspense, lazy } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  Canvas,
-  ComponentPanel,
-  PropertiesPanel,
-} from "@/presentation/components/canvas";
+import { Canvas, PropertiesPanel } from "@/presentation/components/canvas";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/presentation/components/ui/tabs";
-import { CodeExport, Header, SchemaImport } from "@/presentation/components/ui";
-import { TemplateGallery } from "@/presentation/components/templates";
-import { ResponsiveControls } from "@/presentation/components/ui";
-import { ThemeEditor } from "@/presentation/components/ui";
-import { FormBuilder } from "@/presentation/components/forms";
-import { AnimationEditor } from "@/presentation/components/ui";
-import { Collaboration } from "@/presentation/components/ui";
+import { Header } from "@/presentation/components/ui";
 import { Button } from "@/presentation/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager } from "@/presentation/components/ui";
-import { ComponentGrouping } from "@/presentation/components/ui";
-import { ComponentTree } from "@/presentation/components/canvas";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
-import { DataPanel } from "@/presentation/components/data";
+import { Skeleton } from "@/presentation/components/ui/skeleton";
+
+// 动态导入 Header 中的功能组件
+const ResponsiveControls = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.ResponsiveControls,
+  }))
+);
+const TemplateGallery = lazy(() =>
+  import("@/presentation/components/templates").then((mod) => ({
+    default: mod.TemplateGallery,
+  }))
+);
+const FormBuilder = lazy(() =>
+  import("@/presentation/components/forms").then((mod) => ({
+    default: mod.FormBuilder,
+  }))
+);
+const ComponentGrouping = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.ComponentGrouping,
+  }))
+);
+const AnimationEditor = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.AnimationEditor,
+  }))
+);
+const ThemeEditor = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.ThemeEditor,
+  }))
+);
+const Collaboration = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.Collaboration,
+  }))
+);
+const ComponentLibraryManager = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.ComponentLibraryManager,
+  }))
+);
+const SchemaImport = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.SchemaImport,
+  }))
+);
+const CodeExport = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.CodeExport,
+  }))
+);
+
+// 动态导入 Tab 内容组件
+const ComponentPanel = lazy(() =>
+  import("@/presentation/components/canvas").then((mod) => ({
+    default: mod.ComponentPanel,
+  }))
+);
+const ComponentTree = lazy(() =>
+  import("@/presentation/components/canvas").then((mod) => ({
+    default: mod.ComponentTree,
+  }))
+);
+const DataPanel = lazy(() =>
+  import("@/presentation/components/data").then((mod) => ({
+    default: mod.DataPanel,
+  }))
+);
+
+// 加载占位符组件
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center p-2">
+    <Skeleton className="h-8 w-20" />
+  </div>
+);
+
+// Tab 内容加载占位符
+const TabContentLoader = () => (
+  <div className="flex flex-col gap-2 p-4">
+    <Skeleton className="h-8 w-full" />
+    <Skeleton className="h-8 w-full" />
+    <Skeleton className="h-8 w-3/4" />
+  </div>
+);
 
 export default function LowCodePlatform() {
   // 从 stores 获取状态
@@ -88,8 +160,6 @@ export default function LowCodePlatform() {
     [templateAdapter]
   );
 
-  // 移除不必要的处理函数，组件直接使用store actions
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex h-screen flex-col">
@@ -117,16 +187,36 @@ export default function LowCodePlatform() {
               <Eye className="mr-2 h-4 w-4" />
               {isPreviewMode ? "退出预览" : "预览"}
             </Button>
-            <ResponsiveControls />
-            <TemplateGallery />
-            <FormBuilder />
-            <ComponentGrouping />
-            <AnimationEditor />
-            <ThemeEditor />
-            <Collaboration />
-            <ComponentLibraryManager />
-            <SchemaImport />
-            <CodeExport />
+            <Suspense fallback={<ComponentLoader />}>
+              <ResponsiveControls />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <TemplateGallery />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <FormBuilder />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <ComponentGrouping />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <AnimationEditor />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <ThemeEditor />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <Collaboration />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <ComponentLibraryManager />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <SchemaImport />
+            </Suspense>
+            <Suspense fallback={<ComponentLoader />}>
+              <CodeExport />
+            </Suspense>
           </div>
         </Header>
         <div className="flex flex-1 overflow-hidden">
@@ -145,19 +235,25 @@ export default function LowCodePlatform() {
                 value="components"
                 className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
               >
-                <ComponentPanel />
+                <Suspense fallback={<TabContentLoader />}>
+                  <ComponentPanel />
+                </Suspense>
               </TabsContent>
               <TabsContent
                 value="tree"
                 className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
               >
-                <ComponentTree />
+                <Suspense fallback={<TabContentLoader />}>
+                  <ComponentTree />
+                </Suspense>
               </TabsContent>
               <TabsContent
                 value="data"
                 className="flex-1 p-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden"
               >
-                <DataPanel />
+                <Suspense fallback={<TabContentLoader />}>
+                  <DataPanel />
+                </Suspense>
               </TabsContent>
             </Tabs>
           )}
