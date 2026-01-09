@@ -44,6 +44,19 @@ export function BoundDataEditor({
     }
   };
 
+  // 深度比较两个数据是否相等
+  const isDataEqual = (data1: any, data2: any): boolean => {
+    if (data1 === data2) return true;
+    if (data1 === null || data2 === null) return data1 === data2;
+    if (data1 === undefined || data2 === undefined) return data1 === data2;
+    
+    try {
+      return JSON.stringify(data1) === JSON.stringify(data2);
+    } catch {
+      return false;
+    }
+  };
+
   const [jsonString, setJsonString] = useState(dataToJsonString(data));
   const [validationResult, setValidationResult] = useState<{
     valid: boolean;
@@ -59,14 +72,24 @@ export function BoundDataEditor({
   useEffect(() => {
     const newJsonString = dataToJsonString(data);
     
-    // 如果用户刚刚应用了更改，且新数据与用户编辑的内容一致，则不重置
+    // 如果用户刚刚应用了更改，检查新数据是否与用户编辑的内容一致
     if (justAppliedRef.current) {
-      // 比较新数据是否与用户刚刚应用的数据一致
-      if (newJsonString === lastAppliedDataRef.current) {
-        // 数据一致，说明是用户应用更改后的更新，不重置输入框
-        justAppliedRef.current = false;
-        lastAppliedDataRef.current = "";
-        return;
+      // 解析用户编辑的数据和外部传入的数据进行比较
+      try {
+        const appliedData = JSON.parse(lastAppliedDataRef.current);
+        if (isDataEqual(appliedData, data)) {
+          // 数据一致，说明是用户应用更改后的更新，不重置输入框
+          justAppliedRef.current = false;
+          lastAppliedDataRef.current = "";
+          return;
+        }
+      } catch {
+        // 如果解析失败，使用字符串比较
+        if (newJsonString === lastAppliedDataRef.current) {
+          justAppliedRef.current = false;
+          lastAppliedDataRef.current = "";
+          return;
+        }
       }
       // 如果不一致，说明是外部数据源变化，需要重置
       justAppliedRef.current = false;
@@ -74,11 +97,24 @@ export function BoundDataEditor({
     }
     
     // 只有当新数据与当前输入框内容不同时才更新
-    if (newJsonString !== jsonString) {
-      setJsonString(newJsonString);
-      // 重新验证
-      validateJson(newJsonString);
+    // 使用深度比较，避免因为 JSON 格式化差异导致不必要的更新
+    try {
+      const currentData = JSON.parse(jsonString);
+      if (isDataEqual(currentData, data)) {
+        // 数据内容相同，只是格式可能不同，不更新输入框
+        return;
+      }
+    } catch {
+      // 如果当前输入框内容不是有效 JSON，则比较字符串
+      if (newJsonString === jsonString) {
+        return;
+      }
     }
+    
+    // 数据不同，更新输入框
+    setJsonString(newJsonString);
+    // 重新验证
+    validateJson(newJsonString);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 

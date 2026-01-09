@@ -25,11 +25,16 @@ export function ChartComponentRenderer({
   componentData,
   animationStyle,
 }: ChartComponentRendererProps) {
+  // 优先使用 componentData，如果没有则使用 props.data（用户直接编辑的数据）
+  const data = componentData !== null && componentData !== undefined 
+    ? componentData 
+    : props.data;
+
   const commonProps = {
     width: props.width || 500,
     height: props.height || 300,
     title: props.title,
-    data: componentData || [],
+    data: data || [],
   };
 
   switch (component.type) {

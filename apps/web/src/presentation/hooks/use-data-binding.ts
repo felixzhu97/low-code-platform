@@ -62,7 +62,19 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
 
   // 获取组件已绑定的数据
   const getComponentBoundData = useCallback(async () => {
-    if (!currentComponent || !currentDataSource) {
+    if (!currentComponent) {
+      setCurrentBoundData(null);
+      return null;
+    }
+
+    // 优先使用组件属性中直接存储的数据（用户通过"应用更改"编辑的数据）
+    if (currentComponent.properties?.data !== undefined) {
+      setCurrentBoundData(currentComponent.properties.data);
+      return currentComponent.properties.data;
+    }
+
+    // 如果没有直接数据，且组件绑定了数据源，则从数据源获取
+    if (!currentDataSource) {
       setCurrentBoundData(null);
       return null;
     }
@@ -82,7 +94,7 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
 
   // 同步已绑定数据
   useEffect(() => {
-    if (currentComponent && currentDataSource) {
+    if (currentComponent) {
       getComponentBoundData();
     } else {
       setCurrentBoundData(null);
@@ -167,10 +179,14 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
   // 直接将数据渲染到组件属性（简化流程，无需映射）
   const renderDataToComponent = useCallback(
     (data: any) => {
-      if (!componentId || !currentComponent) return;
+      if (!componentId) return;
 
-      const componentType = currentComponent.type;
-      const currentProperties = currentComponent.properties || {};
+      // 从 store 中获取最新的组件，而不是使用闭包中的 currentComponent
+      const latestComponent = components.find((c) => c.id === componentId);
+      if (!latestComponent) return;
+
+      const componentType = latestComponent.type;
+      const currentProperties = latestComponent.properties || {};
       let updatedProperties = { ...currentProperties };
 
       // 根据组件类型智能应用数据
@@ -336,20 +352,24 @@ export function useDataBinding({ componentId }: UseDataBindingOptions) {
       // 更新组件属性
       updateComponent(componentId, { properties: updatedProperties });
     },
-    [componentId, currentComponent, updateComponent]
+    [componentId, components, updateComponent]
   );
 
   // 更新组件已绑定的数据
   const updateComponentBoundData = useCallback(
     (data: any) => {
-      if (!componentId || !currentComponent) return;
+      if (!componentId) return;
 
       // 直接使用 renderDataToComponent 将数据应用到组件属性
+      // renderDataToComponent 会从 store 中获取最新的组件，确保使用最新状态
       renderDataToComponent(data);
-      // 更新已绑定数据状态
-      setCurrentBoundData(data);
+      // 更新 currentBoundData 为用户编辑的数据，确保输入框显示的数据与组件实际使用的数据一致
+      // 使用 setTimeout 确保在组件更新后再更新 currentBoundData，避免触发 BoundDataEditor 的 useEffect 重置输入框
+      setTimeout(() => {
+        setCurrentBoundData(data);
+      }, 0);
     },
-    [componentId, currentComponent, renderDataToComponent]
+    [componentId, renderDataToComponent]
   );
 
   // 从JSON创建数据源并直接渲染到组件

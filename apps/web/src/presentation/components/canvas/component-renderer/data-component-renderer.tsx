@@ -51,6 +51,11 @@ export function DataComponentRenderer({
   componentData,
   animationStyle,
 }: DataComponentRendererProps) {
+  // 优先使用 componentData，如果没有则使用 props.data（用户直接编辑的数据）
+  const data = componentData !== null && componentData !== undefined 
+    ? componentData 
+    : props.data;
+
   switch (component.type) {
     case "data-table":
       return (
@@ -65,7 +70,7 @@ export function DataComponentRenderer({
           )}
           <div className="overflow-x-auto">
             <Table>
-              {componentData ? (
+              {data ? (
                 <>
                   <TableHeader>
                     <TableRow>
@@ -88,9 +93,9 @@ export function DataComponentRenderer({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {Array.isArray(componentData) &&
-                    componentData.length > 0 ? (
-                      componentData
+                    {Array.isArray(data) &&
+                    data.length > 0 ? (
+                      data
                         .slice(0, props.pageSize || 10)
                         .map((row: any, rowIndex: number) => (
                           <TableRow
@@ -157,8 +162,8 @@ export function DataComponentRenderer({
             <div className="flex items-center justify-between border-t bg-muted/50 px-4 py-2">
               <div className="text-sm text-muted-foreground">
                 共{" "}
-                {componentData && Array.isArray(componentData)
-                  ? componentData.length
+                {data && Array.isArray(data)
+                  ? data.length
                   : 0}{" "}
                 条
               </div>
@@ -190,10 +195,10 @@ export function DataComponentRenderer({
             </div>
           )}
           <div className="divide-y">
-            {componentData &&
-            Array.isArray(componentData) &&
-            componentData.length > 0 ? (
-              componentData
+            {data &&
+            Array.isArray(data) &&
+            data.length > 0 ? (
+              data
                 .slice(0, props.pageSize || 5)
                 .map((item: any, index: number) => (
                   <div
@@ -249,7 +254,7 @@ export function DataComponentRenderer({
             ) : (
               <div className="flex h-24 items-center justify-center">
                 <p className="text-muted-foreground">
-                  {componentData ? "无数据" : "请绑定数据源"}
+                  {data ? "无数据" : "请绑定数据源"}
                 </p>
               </div>
             )}
@@ -269,7 +274,7 @@ export function DataComponentRenderer({
                   </CardTitle>
                   {props.cardType !== "stats" && (
                     <CardDescription>
-                      {componentData?.description || "数据卡片描述"}
+                      {data?.description || "数据卡片描述"}
                     </CardDescription>
                   )}
                 </div>
@@ -280,12 +285,12 @@ export function DataComponentRenderer({
             {props.cardType === "stats" ? (
               <div>
                 <div className="text-3xl font-bold">
-                  {componentData?.value || componentData?.count || 0}
+                  {data?.value || data?.count || 0}
                 </div>
                 {props.showTrend && (
                   <div className="mt-1 flex items-center gap-1">
                     <Badge variant="outline" className="text-emerald-500">
-                      +{componentData?.increase || "12.5"}%
+                      +{data?.increase || "12.5"}%
                     </Badge>
                     <span className="text-xs text-muted-foreground">
                       vs 上期
@@ -295,9 +300,9 @@ export function DataComponentRenderer({
               </div>
             ) : (
               <div>
-                {componentData ? (
+                {data ? (
                   <div className="space-y-2">
-                    {Object.entries(componentData).map(([key, value]) => (
+                    {Object.entries(data).map(([key, value]) => (
                       <div key={key} className="flex justify-between">
                         <span className="text-sm font-medium">{key}:</span>
                         <span className="text-sm">{String(value)}</span>
@@ -314,7 +319,7 @@ export function DataComponentRenderer({
           </CardContent>
           <CardFooter className="border-t bg-muted/50 px-6 py-3">
             <div className="text-xs text-muted-foreground">
-              最后更新: {componentData?.updateTime || "2023-01-01 12:00:00"}
+              最后更新: {data?.updateTime || "2023-01-01 12:00:00"}
             </div>
           </CardFooter>
         </Card>
@@ -543,7 +548,7 @@ export function DataComponentRenderer({
         },
       ];
 
-      const treeData = componentData || defaultTreeData;
+      const treeData = data || defaultTreeData;
 
       return (
         <div

@@ -11,8 +11,15 @@ export class ComponentManagementService {
   /**
    * 获取组件绑定的数据源
    * @deprecated 使用 DataBindingService.getComponentData 替代
+   * 优先使用 component.properties.data（用户直接编辑的数据），如果没有再尝试从数据源获取
    */
   static getComponentData(component: Component, dataSources: DataSource[]) {
+    // 优先使用组件属性中直接存储的数据（用户通过"应用更改"编辑的数据）
+    if (component.properties?.data !== undefined) {
+      return component.properties.data;
+    }
+
+    // 如果没有直接数据，尝试从数据源获取
     if (!component.dataSource) return null;
 
     const dataSource = dataSources.find((ds) => ds.id === component.dataSource);
