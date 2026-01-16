@@ -3,9 +3,6 @@
 **/*.rs.bk
 *.pdb
 
-# wasm-pack build output
-/pkg
-
 # IDE files
 .idea/
 .vscode/

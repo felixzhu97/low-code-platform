@@ -26,15 +26,51 @@ cargo install wasm-pack
 
 ## 构建
 
+### 本地构建（推荐）
+
+**重要**: WASM 文件需要在本地构建并提交到 Git，Vercel 部署时使用预构建的文件。
+
+#### 方式一：使用脚本（推荐）
+
+```bash
+# 从项目根目录运行
+./scripts/build-wasm.sh
+```
+
+#### 方式二：使用 pnpm 命令
+
+```bash
+# 从项目根目录运行
+pnpm build:wasm
+```
+
+#### 方式三：在 rust-wasm 目录中构建
+
+```bash
+cd packages/rust-wasm
+pnpm build:release
+```
+
+### 构建后提交
+
+构建完成后，**必须**将 `pkg/` 目录提交到 Git：
+
+```bash
+git add packages/rust-wasm/pkg/
+git commit -m "build: update WASM files"
+```
+
 ### 开发构建
 
 ```bash
+cd packages/rust-wasm
 pnpm build
 ```
 
 ### 生产构建（优化）
 
 ```bash
+cd packages/rust-wasm
 pnpm build:release
 ```
 
@@ -71,8 +107,23 @@ console.log(minified); // {"key":"value"}
 pnpm test
 ```
 
+## 部署说明
+
+### Vercel 部署
+
+- Vercel 部署时**不会**构建 WASM 文件
+- 部署使用 Git 仓库中已构建的 `pkg/` 目录
+- 如果 `pkg/` 目录不存在或为空，应用会使用 JavaScript 降级方案
+
+### 工作流程
+
+1. **本地开发**：修改 Rust 代码后，运行 `pnpm build:wasm` 构建
+2. **提交代码**：将构建好的 `pkg/` 目录提交到 Git
+3. **Vercel 部署**：自动使用已构建的 WASM 文件
+
 ## 注意事项
 
 - WASM 模块需要在浏览器环境中使用
 - 首次加载时可能需要初始化时间
-- 建议在生产环境中使用优化后的构建版本
+- 建议在生产环境中使用优化后的构建版本（`build:release`）
+- **重要**：修改 Rust 代码后必须重新构建并提交 `pkg/` 目录
