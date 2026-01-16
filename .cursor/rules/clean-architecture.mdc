@@ -1,0 +1,115 @@
+---
+description: 整洁架构（Clean Architecture）规范和约束
+globs: 
+alwaysApply: true
+---
+# 整洁架构规范
+
+本项目采用**整洁架构（Clean Architecture）**和**领域驱动设计（DDD）**的分层架构设计。
+
+## 架构层次与依赖规则
+
+```
+表现层 (Presentation) → 应用层 (Application) → 领域层 (Domain)
+基础设施层 (Infrastructure) → 实现领域层和应用层的接口
+```
+
+**核心原则**：依赖方向只能从外到内，内层不依赖外层。
+
+**允许的依赖**：
+- 表现层 → 应用层、共享层
+- 应用层 → 领域层、共享层
+- 领域层 → 共享层（仅类型和工具函数）
+- 基础设施层 → 领域层、应用层（实现接口）、共享层
+
+**禁止的依赖**：
+- ❌ 领域层依赖应用层、基础设施层、表现层
+- ❌ 应用层依赖基础设施层、表现层
+- ❌ 基础设施层依赖表现层
+
+## 各层职责
+
+### 领域层（Domain Layer）
+**路径**：`src/domain/`
+
+- **实体（Entities）**：核心业务对象，纯 TypeScript 类型/类
+- **值对象（Value Objects）**：不可变的值对象
+- **仓储接口（Repository Interfaces）**：数据持久化抽象接口
+- **领域服务（Domain Services）**：跨实体的业务逻辑
+
+**禁止**：不能导入 React、框架代码、其他层代码、UI 代码、基础设施代码
+
+### 应用层（Application Layer）
+**路径**：`src/application/`
+
+- **用例（Use Cases）**：业务操作，命名格式 `[Action][Entity]UseCase`
+- **端口（Ports）**：接口定义，使用 `Port` 后缀
+- **应用服务（Application Services）**：协调多个用例
+- **DTO/Mapper**：数据传输和转换
+
+**禁止**：不能导入 UI 框架、基础设施实现、表现层代码
+
+### 基础设施层（Infrastructure Layer）
+**路径**：`src/infrastructure/`
+
+- **持久化实现**：实现仓储接口（LocalStorage、API 等）
+- **状态管理**：实现状态管理端口（Zustand 等）
+- **外部服务集成**：API 调用、文件系统等
+
+**禁止**：不能导入表现层代码、不能包含 UI 组件
+
+### 表现层（Presentation Layer）
+**路径**：`src/presentation/`
+
+- **React 组件**：UI 组件，通过适配器调用应用层
+- **适配器（Adapters）**：将用例适配为组件可用接口
+- **Hooks**：封装组件逻辑
+
+**禁止**：不能直接导入基础设施层、不能直接操作领域实体、不能包含业务逻辑
+
+### 共享层（Shared Layer）
+**路径**：`src/shared/`
+
+- **工具函数**：纯函数，无副作用
+- **类型定义**：共享类型
+- **常量**：配置和枚举
+
+**禁止**：不能包含业务逻辑、不能依赖其他层
+
+## 命名规范
+
+- **实体**：PascalCase，如 `Component.ts`
+- **接口**：`I` 前缀或 `Repository` 后缀
+- **用例**：PascalCase + `UseCase`，如 `CreateComponentUseCase.ts`
+- **服务**：PascalCase + `Service`
+- **适配器**：PascalCase + `Adapter`
+- **组件**：PascalCase，如 `Canvas.tsx`
+- **Hooks**：camelCase + `use` 前缀
+
+## 依赖注入
+
+使用依赖注入，通过构造函数传递依赖：
+
+```typescript
+// ✅ 正确
+class CreateComponentUseCase {
+  constructor(
+    private componentRepository: IComponentRepository,
+    private componentFactory: ComponentFactoryService
+  ) {}
+}
+
+// ❌ 错误
+class CreateComponentUseCase {
+  private componentRepository = new ComponentRepositoryImpl();
+}
+```
+
+## 检查清单
+
+- [ ] 依赖方向正确（从外到内）
+- [ ] 领域层无其他层依赖
+- [ ] 应用层只依赖领域层
+- [ ] 表现层只依赖应用层
+- [ ] 遵循命名规范
+- [ ] 使用依赖注入
