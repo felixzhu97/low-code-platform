@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   Label,
@@ -10,8 +10,14 @@ import {
   CardHeader,
   CardContent,
 } from "@/presentation/components/ui";
-import { Edit, CheckCircle2, AlertCircle, RotateCcw, Copy } from "lucide-react";
-import { JsonHelperWasmService } from "@/application/services/json-helper-wasm.service";
+import {
+  Edit,
+  CheckCircle2,
+  AlertCircle,
+  RotateCcw,
+  Copy,
+} from "lucide-react";
+import { JsonHelperService } from "@/application/services/json-helper.service";
 
 interface BoundDataEditorProps {
   data: any;
@@ -43,7 +49,7 @@ export function BoundDataEditor({
     if (data1 === data2) return true;
     if (data1 === null || data2 === null) return data1 === data2;
     if (data1 === undefined || data2 === undefined) return data1 === data2;
-
+    
     try {
       return JSON.stringify(data1) === JSON.stringify(data2);
     } catch {
@@ -57,45 +63,15 @@ export function BoundDataEditor({
     error?: string;
     data?: any;
   }>({ valid: true });
-
+  
   // 用于跟踪是否是用户刚刚应用了更改
   const justAppliedRef = useRef(false);
   const lastAppliedDataRef = useRef<string>("");
 
-  // 验证JSON（异步）
-  const validateJson = useCallback(async (json: string) => {
-    if (!json.trim()) {
-      setValidationResult({
-        valid: false,
-        error: "JSON字符串不能为空",
-      });
-      return false;
-    }
-
-    try {
-      const result = await JsonHelperWasmService.validateJson(json);
-      setValidationResult(result);
-      return result.valid;
-    } catch (error) {
-      console.error("验证失败:", error);
-      // 使用同步降级方案
-      const fallbackResult = JsonHelperWasmService.validateJsonSync(json);
-      setValidationResult(fallbackResult);
-      return fallbackResult.valid;
-    }
-  }, []);
-
-  // 预加载 WASM 模块
-  useEffect(() => {
-    JsonHelperWasmService.preload().catch((error) => {
-      console.warn("WASM 预加载失败，将使用降级方案:", error);
-    });
-  }, []);
-
   // 当外部数据变化时，更新编辑器内容
   useEffect(() => {
     const newJsonString = dataToJsonString(data);
-
+    
     // 如果用户刚刚应用了更改，检查新数据是否与用户编辑的内容一致
     if (justAppliedRef.current) {
       // 解析用户编辑的数据和外部传入的数据进行比较
@@ -119,7 +95,7 @@ export function BoundDataEditor({
       justAppliedRef.current = false;
       lastAppliedDataRef.current = "";
     }
-
+    
     // 只有当新数据与当前输入框内容不同时才更新
     // 使用深度比较，避免因为 JSON 格式化差异导致不必要的更新
     try {
@@ -134,63 +110,54 @@ export function BoundDataEditor({
         return;
       }
     }
-
+    
     // 数据不同，更新输入框
     setJsonString(newJsonString);
-    // 重新验证（异步）
+    // 重新验证
     validateJson(newJsonString);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, validateJson]);
+  }, [data]);
+
+  // 验证JSON
+  const validateJson = (json: string) => {
+    if (!json.trim()) {
+      setValidationResult({
+        valid: false,
+        error: "JSON字符串不能为空",
+      });
+      return false;
+    }
+
+    const result = JsonHelperService.validateJson(json);
+    setValidationResult(result);
+    return result.valid;
+  };
 
   // 处理输入变化
-  const handleInputChange = useCallback(
-    (newValue: string) => {
-      setJsonString(newValue);
-      // 异步验证
-      validateJson(newValue);
-    },
-    [validateJson]
-  );
+  const handleInputChange = (newValue: string) => {
+    setJsonString(newValue);
+    validateJson(newValue);
+  };
 
-  // 格式化JSON（异步）
-  const handleFormat = useCallback(async () => {
-    try {
-      const formatted = await JsonHelperWasmService.formatJson(jsonString, 2);
-      if (formatted !== jsonString) {
-        handleInputChange(formatted);
-      }
-    } catch (error) {
-      console.error("格式化失败:", error);
-      // 使用同步降级方案
-      const formatted = JsonHelperWasmService.formatJsonSync(jsonString, 2);
-      if (formatted !== jsonString) {
-        handleInputChange(formatted);
-      }
+  // 格式化JSON
+  const handleFormat = () => {
+    const formatted = JsonHelperService.formatJson(jsonString);
+    if (formatted !== jsonString) {
+      handleInputChange(formatted);
     }
-  }, [jsonString, handleInputChange]);
+  };
 
-  // 应用更改（异步）
-  const handleApply = useCallback(async () => {
-    try {
-      const result = await JsonHelperWasmService.validateJson(jsonString);
-      
-      if (result.valid && onUpdate) {
-        justAppliedRef.current = true;
-        lastAppliedDataRef.current = jsonString;
-        const dataToUpdate = result.data !== undefined ? result.data : null;
-        onUpdate(dataToUpdate);
-      }
-    } catch (error) {
-      // 使用同步降级方案
-      const result = JsonHelperWasmService.validateJsonSync(jsonString);
-      if (result.valid && onUpdate) {
-        justAppliedRef.current = true;
-        lastAppliedDataRef.current = jsonString;
-        const dataToUpdate = result.data !== undefined ? result.data : null;
-        onUpdate(dataToUpdate);
-      }
+  // 应用更改
+  const handleApply = () => {
+    const result = JsonHelperService.validateJson(jsonString);
+    if (result.valid && result.data && onUpdate) {
+      // 标记刚刚应用了更改
+      justAppliedRef.current = true;
+      lastAppliedDataRef.current = jsonString;
+      // 调用更新回调
+      onUpdate(result.data);
     }
-  }, [jsonString, onUpdate]);
+  };
 
   // 重置为原始数据
   const handleReset = () => {
@@ -208,8 +175,16 @@ export function BoundDataEditor({
     <div className="space-y-3">
       <Card className="border shadow-sm">
         <CardHeader className="pb-3 px-4 pt-4">
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <div className="flex gap-1.5 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="rounded-md bg-primary/10 p-1.5">
+                <Edit className="h-4 w-4 text-primary" />
+              </div>
+              <Label htmlFor="bound-data-editor" className="text-sm font-semibold">
+                编辑已绑定数据
+              </Label>
+            </div>
+            <div className="flex gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
@@ -218,8 +193,8 @@ export function BoundDataEditor({
                 className="h-7 gap-1.5 text-xs"
                 title="格式化JSON"
               >
-                <Copy className="h-3 w-3 flex-shrink-0" />
-                <span className="hidden sm:inline">格式化</span>
+                <Copy className="h-3 w-3" />
+                格式化
               </Button>
               {hasChanges && (
                 <Button
@@ -229,8 +204,8 @@ export function BoundDataEditor({
                   className="h-7 gap-1.5 text-xs"
                   title="重置为原始数据"
                 >
-                  <RotateCcw className="h-3 w-3 flex-shrink-0" />
-                  <span className="hidden sm:inline">重置</span>
+                  <RotateCcw className="h-3 w-3" />
+                  重置
                 </Button>
               )}
             </div>
@@ -252,15 +227,36 @@ export function BoundDataEditor({
         </CardContent>
       </Card>
 
-      {/* 错误提示 - 只在有错误时显示 */}
-      {jsonString.trim() && !validationResult.valid && (
-        <Alert
-          variant="destructive"
-          className="animate-in fade-in-0 slide-in-from-top-2 duration-200"
-        >
-          <AlertCircle className="h-4 w-4" />
-          <div className="text-sm">{validationResult.error}</div>
-        </Alert>
+      {/* 验证结果 */}
+      {jsonString.trim() && (
+        <div className="animate-in fade-in-0 slide-in-from-top-2 duration-200">
+          {validationResult.valid ? (
+            <Alert className="border-green-500/50 bg-green-50/50 text-green-900 dark:bg-green-950/50 dark:text-green-100">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <div className="flex items-center justify-between w-full">
+                <span className="text-sm font-medium">JSON格式正确</span>
+                {validationResult.data && (
+                  <span className="text-xs text-muted-foreground bg-background/50 px-2 py-0.5 rounded">
+                    {(() => {
+                      if (Array.isArray(validationResult.data)) {
+                        return `数组，${validationResult.data.length}项`;
+                      }
+                      if (typeof validationResult.data === "object") {
+                        return "对象";
+                      }
+                      return "数据";
+                    })()}
+                  </span>
+                )}
+              </div>
+            </Alert>
+          ) : (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <div className="text-sm">{validationResult.error}</div>
+            </Alert>
+          )}
+        </div>
       )}
 
       {/* 应用更改按钮 */}
@@ -275,17 +271,15 @@ export function BoundDataEditor({
         </Button>
       )}
 
-      {/* 状态提示 - 简洁的单行提示 */}
-      {!hasChanges && jsonString.trim() && validationResult.valid && (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
-          <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-          <span>
-            {validationResult.data && Array.isArray(validationResult.data)
-              ? `数据已同步 (${validationResult.data.length}项)`
-              : "数据已同步"}
-          </span>
-        </div>
+      {/* 提示信息 */}
+      {!hasChanges && jsonString.trim() && (
+        <Alert className="border-blue-500/50 bg-blue-50/50 text-blue-900 dark:bg-blue-950/50 dark:text-blue-100">
+          <div className="text-xs">
+            当前数据与组件已绑定数据一致，无需更新
+          </div>
+        </Alert>
       )}
     </div>
   );
 }
+

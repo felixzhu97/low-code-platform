@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "pnpm build:wasm && pnpm --filter @lowcode-platform/web build",
-  "installCommand": "corepack enable && corepack prepare pnpm@10.27.0 --activate && pnpm install && if ! command -v rustc >/dev/null 2>&1; then curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; fi && export PATH=\"$HOME/.cargo/bin:$PATH\" && if ! command -v wasm-pack >/dev/null 2>&1; then cargo install wasm-pack; fi",
+  "buildCommand": "pnpm --filter @lowcode-platform/web build",
+  "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install",
   "outputDirectory": "apps/web/.next"
 }

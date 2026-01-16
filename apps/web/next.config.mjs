@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import path from "path";
 
 const nextConfig = {
   eslint: {
@@ -30,21 +31,6 @@ const nextConfig = {
   },
   // Webpack 优化配置
   webpack: (config, { isServer }) => {
-    // 支持 WebAssembly
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-      layers: true,
-    };
-
-    // 服务端不加载 WASM
-    if (isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-
     // 优化 chunk 分割
     if (!isServer) {
       config.optimization = {
