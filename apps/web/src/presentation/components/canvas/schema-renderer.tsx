@@ -5,7 +5,6 @@ import type { Component } from "@/domain/component";
 import type { ThemeConfig } from "@/domain/theme";
 import { ComponentRenderer } from "./component-renderer";
 import { ComponentManagementService } from "@/application/services/component-management.service";
-import { JsonHelperService } from "@/application/services/json-helper.service";
 import {
   PageSchema,
   validateSchema,
@@ -37,17 +36,9 @@ export function SchemaRenderer({
   // 解析和验证 Schema
   const parsedSchema = useMemo(() => {
     try {
-      // 如果是字符串，使用 JsonHelperService 解析（支持 Rust WASM 优化）
+      // 如果是字符串，先解析为对象
       const schemaObj =
-        typeof schema === "string"
-          ? (() => {
-              const validation = JsonHelperService.validateJson(schema);
-              if (!validation.valid || !validation.data) {
-                throw new Error(validation.error || "Schema JSON 格式错误");
-              }
-              return validation.data;
-            })()
-          : schema;
+        typeof schema === "string" ? JSON.parse(schema) : schema;
 
       // 迁移旧版本 Schema
       const migratedSchema = migrateSchema(schemaObj);

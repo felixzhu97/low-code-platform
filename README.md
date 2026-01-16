@@ -53,11 +53,6 @@
 - **语言**: TypeScript
 - **架构**: 整洁架构 (Clean Architecture)
 
-### 性能优化
-- **Rust + WebAssembly**: JSON 处理性能优化
-- **WASM 模块**: 通过 `wasm-pack` 构建的 Rust 模块
-- **渐进式增强**: WASM 加载失败时自动降级到 TypeScript 实现
-
 ### Monorepo
 - **包管理**: pnpm workspaces
 - **项目结构**: Monorepo 架构
@@ -83,16 +78,7 @@ low-code-platform/
 │       ├── src/
 │       │   └── main.ts         # 应用入口
 │       └── package.json
-├── packages/                   # 共享包
-│   └── rust-json-core/         # Rust WASM JSON 处理模块
-│       ├── src/                # Rust 源代码
-│       │   ├── lib.rs          # WASM 入口
-│       │   ├── json_validator.rs
-│       │   ├── json_formatter.rs
-│       │   └── json_analyzer.rs
-│       └── Cargo.toml          # Rust 项目配置
-├── scripts/                    # 构建脚本
-│   └── build-rust.sh           # Rust WASM 构建脚本
+├── packages/                   # 共享包（预留）
 ├── src/                        # 共享代码（当前保留在根目录）
 │   ├── domain/                 # 领域层
 │   ├── application/            # 应用层
@@ -110,8 +96,6 @@ low-code-platform/
 
 - Node.js >= 18.0.0
 - pnpm >= 8.0.0
-- Rust >= 1.70.0 (用于构建 WASM 模块，可选)
-- wasm-pack (如果需要构建 Rust WASM 模块)
 
 ### 安装依赖
 
@@ -119,23 +103,6 @@ low-code-platform/
 # 安装所有依赖（包括前端和后端）
 pnpm install
 ```
-
-### 构建 Rust WASM 模块（可选）
-
-如果需要使用 Rust 优化版本（推荐用于生产环境）：
-
-```bash
-# 安装 Rust（如果尚未安装）
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# 安装 wasm-pack
-curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
-# 构建 Rust WASM 模块
-pnpm build:rust
-```
-
-注意：如果不构建 Rust 模块，应用会自动使用 TypeScript 实现（功能完全一致，性能略低）。
 
 ### 启动开发服务器
 
@@ -151,12 +118,11 @@ pnpm dev:server   # 仅启动后端 (http://localhost:8000)
 ### 构建生产版本
 
 ```bash
-# 构建所有应用（包括 Rust WASM 模块）
+# 构建所有应用
 pnpm build
 
 # 或分别构建
-pnpm build:rust    # 构建 Rust WASM 模块
-pnpm build:web     # 构建前端（会自动包含 Rust 模块）
+pnpm build:web     # 构建前端
 pnpm build:server  # 构建后端
 ```
 
@@ -231,38 +197,6 @@ pnpm test:server   # 后端测试
 ### 自定义主题
 
 主题配置在 `apps/web/src/domain/entities/types.ts` 的 `ThemeConfig` 接口中定义，可以通过主题编辑器进行可视化配置。
-
-### Rust WASM 集成
-
-项目集成了 Rust 编写的 WASM 模块来优化 JSON 处理性能：
-
-- **位置**: `packages/rust-json-core/`
-- **功能**: JSON 验证、格式化、压缩、结构分析
-- **集成方式**: 通过 `apps/web/src/infrastructure/wasm/` 中的适配器集成
-- **自动降级**: WASM 不可用时自动使用 TypeScript 实现
-
-#### 开发 Rust 模块
-
-```bash
-# 进入 Rust 项目目录
-cd packages/rust-json-core
-
-# 运行 Rust 测试
-cargo test
-
-# 构建 WASM 模块（使用 wasm-pack）
-wasm-pack build --target bundler --out-dir pkg --release
-```
-
-#### 修改 Rust 代码后的构建
-
-```bash
-# 使用构建脚本（推荐）
-pnpm build:rust
-
-# 或使用 watch 模式（自动重新构建）
-pnpm build:rust:watch
-```
 
 ### 扩展功能
 

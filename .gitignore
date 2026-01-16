@@ -72,11 +72,3 @@ Desktop.ini
 
 # turbo (if using turbo)
 .turbo/
-
-# Rust
-**/target/
-**/*.rs.bk
-**/Cargo.lock
-packages/rust-json-core/pkg/
-*.wasm
-*.wasm.map

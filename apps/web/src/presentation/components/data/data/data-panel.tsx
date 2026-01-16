@@ -48,13 +48,11 @@ import {
 } from "lucide-react";
 import type { DataSource, DataSourceConfig } from "@/domain/datasource";
 import { DataSourceService } from "@/application/services/data-source.service";
-import { JsonHelperService } from "@/application/services/json-helper.service";
 import { useDataStore } from "@/infrastructure/state-management/stores";
 
 export function DataPanel() {
   // 使用全局store管理数据源
-  const { dataSources, addDataSource, updateDataSource, deleteDataSource } =
-    useDataStore();
+  const { dataSources, addDataSource, updateDataSource, deleteDataSource } = useDataStore();
 
   // 初始化默认数据源（如果store为空）
   useEffect(() => {
@@ -156,16 +154,9 @@ export function DataPanel() {
 
     try {
       switch (newDataSource.type) {
-        case "static": {
-          // 使用 JsonHelperService 验证和解析 JSON（支持 Rust WASM 优化）
-          const validation = JsonHelperService.validateJson(newDataSource.data);
-          if (!validation.valid) {
-            alert(`JSON格式错误: ${validation.error || "未知错误"}`);
-            return;
-          }
-          parsedData = validation.data;
+        case "static":
+          parsedData = JSON.parse(newDataSource.data);
           break;
-        }
         case "api":
           parsedData = null;
           config = {
@@ -776,7 +767,7 @@ export function DataPanel() {
           </DialogHeader>
           <ScrollArea className="max-h-[60vh]">
             <pre className="text-sm bg-muted p-4 rounded overflow-auto">
-              {JsonHelperService.formatJson(JSON.stringify(previewData), 2)}
+              {JSON.stringify(previewData, null, 2)}
             </pre>
           </ScrollArea>
           <DialogFooter>

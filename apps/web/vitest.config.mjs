@@ -19,10 +19,4 @@ export default defineConfig({
       "@/presentation": resolve(process.cwd(), "../../src/presentation"),
     },
   },
-  optimizeDeps: {
-    exclude: [
-      "../../../../packages/rust-json-core/pkg/rust_json_core.js",
-      "./rust_json_core.js",
-    ],
-  },
 });
