@@ -1,0 +1,18 @@
+# Rust build artifacts
+/target
+**/*.rs.bk
+*.pdb
+
+# wasm-pack build output
+/pkg
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

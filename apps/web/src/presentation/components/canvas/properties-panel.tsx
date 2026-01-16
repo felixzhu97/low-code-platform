@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Input,
   Label,
@@ -34,6 +34,8 @@ export function PropertiesPanel() {
   // 从 store 获取状态
   const { selectedComponent, updateComponent } = useComponentStore();
   const [properties, setProperties] = useState<any>({});
+  const [showBindingSuccess, setShowBindingSuccess] = useState(false);
+  const bindingSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 数据绑定相关
   const {
@@ -47,6 +49,33 @@ export function PropertiesPanel() {
   } = useDataBinding({
     componentId: selectedComponent?.id || null,
   });
+
+  // 监听数据源变化，显示绑定成功提示并自动隐藏
+  useEffect(() => {
+    if (currentDataSource) {
+      // 显示提示
+      setShowBindingSuccess(true);
+      
+      // 清除之前的定时器
+      if (bindingSuccessTimeoutRef.current) {
+        clearTimeout(bindingSuccessTimeoutRef.current);
+      }
+      
+      // 3秒后自动隐藏
+      bindingSuccessTimeoutRef.current = setTimeout(() => {
+        setShowBindingSuccess(false);
+      }, 3000);
+    } else {
+      setShowBindingSuccess(false);
+    }
+
+    // 清理函数
+    return () => {
+      if (bindingSuccessTimeoutRef.current) {
+        clearTimeout(bindingSuccessTimeoutRef.current);
+      }
+    };
+  }, [currentDataSource?.id]);
 
   useEffect(() => {
     if (selectedComponent?.properties) {
@@ -958,10 +987,10 @@ export function PropertiesPanel() {
                   />
                 )}
 
-                {/* 提示信息 */}
-                {currentDataSource && (
-                  <div className="rounded-lg border border-green-200/60 bg-gradient-to-r from-green-50/80 to-emerald-50/60 dark:from-green-950/30 dark:to-emerald-950/20 shadow-sm p-3.5">
-                    <div className="flex items-start gap-3">
+                {/* 提示信息 - 自动隐藏 */}
+                {currentDataSource && showBindingSuccess && (
+                  <div className="animate-in fade-in-0 slide-in-from-top-2 duration-200 rounded-lg border border-green-200/60 bg-gradient-to-r from-green-50/80 to-emerald-50/60 dark:from-green-950/30 dark:to-emerald-950/20 shadow-sm p-3">
+                    <div className="flex items-start gap-2.5">
                       <div className="rounded-full bg-green-100 dark:bg-green-900/40 p-1 flex-shrink-0 mt-0.5">
                         <svg
                           className="h-3.5 w-3.5 text-green-600 dark:text-green-400"
@@ -978,11 +1007,8 @@ export function PropertiesPanel() {
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-green-900 dark:text-green-100 mb-0.5">
+                        <p className="text-xs font-medium text-green-900 dark:text-green-100">
                           数据绑定成功
-                        </p>
-                        <p className="text-xs text-green-700/90 dark:text-green-300/80 leading-relaxed">
-                          数据已自动应用到组件，可在"属性"tab中查看详情
                         </p>
                       </div>
                     </div>

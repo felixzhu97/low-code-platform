@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Label,
@@ -29,7 +29,7 @@ import {
   getDefaultTemplateJson,
   getTemplatesByComponentType,
 } from "@/presentation/data/json-data-templates";
-import { JsonHelperService } from "@/application/services/json-helper.service";
+import { JsonHelperWasmService } from "@/application/services/json-helper-wasm.service";
 
 interface JsonDataInputProps {
   value?: string;
@@ -67,27 +67,45 @@ export function JsonDataInput({
     availableTemplates.length > 0 ? availableTemplates[0].id : ""
   );
 
+  // 预加载 WASM 模块
+  useEffect(() => {
+    JsonHelperWasmService.preload().catch((error) => {
+      console.warn("WASM 预加载失败，将使用降级方案:", error);
+    });
+  }, []);
+
   useEffect(() => {
     if (value !== jsonString) {
       setJsonString(value || "");
     }
   }, [value]);
 
-  // 验证JSON
-  const validateJson = (json: string) => {
-    const result = JsonHelperService.validateJson(json);
-    setValidationResult(result);
-    return result;
-  };
+  // 验证JSON（异步）
+  const validateJson = useCallback(async (json: string) => {
+    try {
+      const result = await JsonHelperWasmService.validateJson(json);
+      setValidationResult(result);
+      return result;
+    } catch (error) {
+      console.error("验证失败:", error);
+      // 使用同步降级方案
+      const fallbackResult = JsonHelperWasmService.validateJsonSync(json);
+      setValidationResult(fallbackResult);
+      return fallbackResult;
+    }
+  }, []);
 
   // 处理输入变化
-  const handleInputChange = (newValue: string) => {
-    setJsonString(newValue);
-    const result = validateJson(newValue);
-    if (onChange) {
-      onChange(newValue, result.valid, result.data);
-    }
-  };
+  const handleInputChange = useCallback(
+    async (newValue: string) => {
+      setJsonString(newValue);
+      const result = await validateJson(newValue);
+      if (onChange) {
+        onChange(newValue, result.valid, result.data);
+      }
+    },
+    [validateJson, onChange]
+  );
 
   // 处理模板选择
   const handleTemplateSelect = (templateId: string) => {
@@ -96,21 +114,30 @@ export function JsonDataInput({
     handleInputChange(templateJson);
   };
 
-  // 格式化JSON
-  const handleFormat = () => {
-    const formatted = JsonHelperService.formatJson(jsonString);
-    if (formatted !== jsonString) {
-      handleInputChange(formatted);
+  // 格式化JSON（异步）
+  const handleFormat = useCallback(async () => {
+    try {
+      const formatted = await JsonHelperWasmService.formatJson(jsonString, 2);
+      if (formatted !== jsonString) {
+        await handleInputChange(formatted);
+      }
+    } catch (error) {
+      console.error("格式化失败:", error);
+      // 使用同步降级方案
+      const formatted = JsonHelperWasmService.formatJsonSync(jsonString, 2);
+      if (formatted !== jsonString) {
+        await handleInputChange(formatted);
+      }
     }
-  };
+  }, [jsonString, handleInputChange]);
 
-  // 确认输入
-  const handleConfirm = () => {
-    const result = validateJson(jsonString);
+  // 确认输入（异步）
+  const handleConfirm = useCallback(async () => {
+    const result = await validateJson(jsonString);
     if (result.valid && result.data && onConfirm) {
       onConfirm(result.data);
     }
-  };
+  }, [jsonString, validateJson, onConfirm]);
 
   // 清空输入
   const handleClear = () => {
@@ -199,7 +226,9 @@ export function JsonDataInput({
           <Textarea
             id="json-input"
             value={jsonString}
-            onChange={(e) => handleInputChange(e.target.value)}
+            onChange={(e) => {
+              handleInputChange(e.target.value);
+            }}
             placeholder={placeholder}
             className={`font-mono text-sm transition-colors ${
               validationResult.valid
