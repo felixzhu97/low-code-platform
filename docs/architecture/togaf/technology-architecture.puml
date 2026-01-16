@@ -20,6 +20,11 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [Recharts\n图表库] as Recharts
   component [Zustand\n状态管理] as Zustand
   
+  component [WebAssembly\nWASM运行时] as WASM
+  component [Rust\n系统编程语言] as Rust
+  component [wasm-bindgen\nRust-JS互操作] as WasmBindgen
+  component [wasm-pack\nWASM打包工具] as WasmPack
+  
   Browser --> React
   Browser --> NextJS
   Browser --> TypeScript
@@ -28,6 +33,11 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Browser --> ReactDnD
   Browser --> Recharts
   Browser --> Zustand
+  Browser --> WASM
+  
+  Rust --> WasmBindgen
+  WasmBindgen --> WasmPack
+  WasmPack --> WASM
 }
 
 package "后端技术栈 (Backend Technology Stack)" {
@@ -212,6 +222,8 @@ note right of Browser
   - TypeScript: 类型安全
   - Tailwind CSS: 原子化CSS
   - Zustand: 轻量级状态管理
+  - Rust/WASM: 性能关键路径优化
+  - wasm-bindgen: Rust-JS互操作
 end note
 
 note right of AppServer

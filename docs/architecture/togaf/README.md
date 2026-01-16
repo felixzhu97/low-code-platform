@@ -92,6 +92,11 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - Schema 导入服务（Schema Import Service）
   - Schema 渲染器（Schema Renderer）
   - 持久化管理器（Persistence Manager）
+  - **WASM 适配器（WASM Adapter）**：
+    - 数据解析适配器（Data Parser Adapter）：CSV/XML 解析、JSON 验证
+    - Schema 处理适配器（Schema Processor Adapter）：序列化/反序列化、验证、迁移
+    - 数据映射适配器（Data Mapper Adapter）：映射生成、应用、数据转换
+    - 布局计算适配器（Layout Calculator Adapter）：布局计算、网格对齐、碰撞检测
 
 ### 3. data-architecture.puml - 数据架构图
 
@@ -140,8 +145,11 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - JSON 快速输入数据流（选择组件 → 系统推荐模板 → 用户输入 JSON → 验证格式 → 解析结构 → 创建静态数据源 → 自动渲染到组件属性）
   - 协作同步数据流
   - 代码生成数据流
-  - Schema 导出数据流（读取项目数据 → 转换为 PageSchema → 验证格式 → 序列化为 JSON → 下载/存储）
-  - Schema 导入数据流（上传文件 → 解析 JSON → 验证版本 → 迁移旧版本 → 转换为 Project 数据 → 导入到状态管理 → 渲染到画布）
+  - Schema 导出数据流（读取项目数据 → 转换为 PageSchema → WASM 验证格式 → WASM 序列化为 JSON → 下载/存储）
+  - Schema 导入数据流（上传文件 → 解析 JSON → WASM 验证版本 → WASM 迁移旧版本 → WASM 转换为 Project 数据 → 导入到状态管理 → 渲染到画布）
+  - WASM 数据解析数据流（CSV/XML 文件 → WASM 解析 → 数据源服务 → 数据绑定）
+  - WASM 数据映射数据流（源数据 → WASM 映射生成 → WASM 映射应用 → 组件渲染）
+  - WASM 布局计算数据流（组件数据 → WASM 布局计算 → WASM 网格对齐 → 组件位置更新）
 
 ### 4. technology-architecture.puml - 技术架构图
 
@@ -157,6 +165,13 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - React DnD：拖拽库
   - Recharts：图表库
   - Zustand：状态管理
+  - **Rust/WASM**：性能优化
+    - Rust：系统编程语言
+    - WebAssembly：高性能运行时
+    - wasm-bindgen：Rust-JavaScript 互操作
+    - wasm-pack：WASM 打包工具
+    - serde-wasm-bindgen：数据序列化
+    - js-sys：JavaScript 系统调用
 
 - **后端技术栈**：
 
@@ -265,6 +280,43 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 - TOGAF 框架更适合企业架构师和业务人员理解整体架构和业务价值
 
 ## 最新更新
+
+### 2026-01-XX：Rust/WASM 性能优化
+
+- **新增技术栈**：
+  - Rust/WASM：使用 Rust 编译为 WebAssembly，优化性能关键路径
+  - wasm-bindgen：Rust 与 JavaScript 互操作
+  - serde-wasm-bindgen：数据序列化/反序列化
+  - js-sys：JavaScript 系统调用
+
+- **性能优化模块**：
+  - **数据解析模块**（WASM）：
+    - CSV 解析：高性能 CSV 文件解析
+    - XML 解析：快速 XML 数据处理
+    - JSON 验证：高效的 JSON 格式验证
+  - **Schema 处理模块**（WASM）：
+    - Schema 序列化/反序列化：优化的 Schema 转换
+    - Schema 验证：快速格式验证
+    - Schema 迁移：版本迁移处理
+  - **数据映射模块**（WASM）：
+    - 映射生成：智能数据映射规则生成
+    - 映射应用：高效数据转换
+    - 数据转换：复杂数据变换
+  - **布局计算模块**（WASM）：
+    - 布局计算：响应式布局计算
+    - 网格对齐：网格对齐计算
+    - 碰撞检测：组件碰撞检测
+
+- **架构设计**：
+  - 采用 Port-Adapter 模式：WASM 作为基础设施层实现
+  - 整洁架构：WASM 模块遵循 DDD + 分层架构原则
+  - 优雅降级：WASM 失败时自动降级到 JavaScript 实现
+  - 异步集成：所有 WASM 调用均为异步，不阻塞 UI
+
+- **更新的架构组件**：
+  - 基础设施层新增：WASM 适配器（WasmAdapter）
+  - 应用层新增：WASM 端口接口（IWasmPort）
+  - 技术栈新增：Rust、WebAssembly、wasm-pack
 
 ### 2026-01-08：数据绑定功能增强
 

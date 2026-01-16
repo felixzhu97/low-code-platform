@@ -230,11 +230,26 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   component [Schema导入数据流] as SchemaImportFlow
   component [用户上传Schema文件] as UserUploadSchemaFile
   component [解析JSON数据] as ParseJSONData
-  component [验证Schema版本] as ValidateSchemaVersion
-  component [迁移旧版本Schema] as MigrateOldSchema
-  component [转换为Project数据] as ConvertToProjectData
+  component [WASM验证Schema版本] as WasmValidateSchemaVersion
+  component [WASM迁移旧版本Schema] as WasmMigrateOldSchema
+  component [WASM转换为Project数据] as WasmConvertToProjectData
   component [导入到状态管理] as ImportToStateManagement
   component [渲染到画布] as RenderToCanvas
+  
+  component [WASM数据解析数据流] as WasmDataParseFlow
+  component [WASM CSV解析] as WasmCsvParse
+  component [WASM XML解析] as WasmXmlParse
+  component [WASM JSON验证] as WasmJsonValidate
+  
+  component [WASM数据映射数据流] as WasmDataMappingFlow
+  component [WASM映射生成] as WasmMappingGenerate
+  component [WASM映射应用] as WasmMappingApply
+  component [WASM数据转换] as WasmDataTransform
+  
+  component [WASM布局计算数据流] as WasmLayoutFlow
+  component [WASM布局计算] as WasmLayoutCalculate
+  component [WASM网格对齐] as WasmGridSnap
+  component [WASM碰撞检测] as WasmCollisionDetect
   
   ComponentEditFlow --> UserDragComponent
   ComponentEditFlow --> EditorCreateComponent
@@ -286,11 +301,23 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   
   SchemaImportFlow --> UserUploadSchemaFile
   SchemaImportFlow --> ParseJSONData
-  SchemaImportFlow --> ValidateSchemaVersion
-  SchemaImportFlow --> MigrateOldSchema
-  SchemaImportFlow --> ConvertToProjectData
+  SchemaImportFlow --> WasmValidateSchemaVersion
+  SchemaImportFlow --> WasmMigrateOldSchema
+  SchemaImportFlow --> WasmConvertToProjectData
   SchemaImportFlow --> ImportToStateManagement
   SchemaImportFlow --> RenderToCanvas
+  
+  WasmDataParseFlow --> WasmCsvParse
+  WasmDataParseFlow --> WasmXmlParse
+  WasmDataParseFlow --> WasmJsonValidate
+  
+  WasmDataMappingFlow --> WasmMappingGenerate
+  WasmDataMappingFlow --> WasmMappingApply
+  WasmDataMappingFlow --> WasmDataTransform
+  
+  WasmLayoutFlow --> WasmLayoutCalculate
+  WasmLayoutFlow --> WasmGridSnap
+  WasmLayoutFlow --> WasmCollisionDetect
 }
 
 ' ============================================
@@ -338,11 +365,18 @@ SchemaExportFlow --> PageSchema : 创建
 SchemaExportFlow --> ObjectStorage : 存储
 
 SchemaImportFlow --> PageSchema : 读取
+SchemaImportFlow --> WasmValidateSchemaVersion : 使用
+SchemaImportFlow --> WasmMigrateOldSchema : 使用
+SchemaImportFlow --> WasmConvertToProjectData : 使用
 SchemaImportFlow --> Project : 创建
 SchemaImportFlow --> Component : 创建
 SchemaImportFlow --> DataSource : 创建
 SchemaImportFlow --> ThemeConfig : 创建
 SchemaImportFlow --> Redis : 状态更新
+
+WasmDataParseFlow --> DataSource : 创建/更新
+WasmDataMappingFlow --> DataMapping : 创建/使用
+WasmLayoutFlow --> Component : 更新位置
 
 JsonQuickInputFlow --> JsonDataTemplate : 使用
 JsonQuickInputFlow --> DataSource : 创建

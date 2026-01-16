@@ -141,6 +141,13 @@ package "Felix 低代码平台应用系统" {
     component [持久化管理器\nPersistence Manager] as PersistenceManager
     interface "持久化接口" as PersistenceManagerInterface
     
+    component [WASM适配器\nWASM Adapter] as WasmAdapter
+    interface "WASM端口接口" as WasmPortInterface
+    component [数据解析适配器\nData Parser Adapter] as DataParserAdapter
+    component [Schema处理适配器\nSchema Processor Adapter] as SchemaProcessorAdapter
+    component [数据映射适配器\nData Mapper Adapter] as DataMapperAdapter
+    component [布局计算适配器\nLayout Calculator Adapter] as LayoutCalculatorAdapter
+    
     ComponentRepo --> ComponentRepoInterface
     TemplateRepo --> TemplateRepoInterface
     DataSourceRepo --> DataSourceRepoInterface
@@ -150,6 +157,12 @@ package "Felix 低代码平台应用系统" {
     SchemaImportService --> SchemaImportInterface
     SchemaRenderer --> SchemaRendererInterface
     PersistenceManager --> PersistenceManagerInterface
+    
+    WasmAdapter --> WasmPortInterface
+    WasmAdapter --> DataParserAdapter
+    WasmAdapter --> SchemaProcessorAdapter
+    WasmAdapter --> DataMapperAdapter
+    WasmAdapter --> LayoutCalculatorAdapter
   }
 }
 
@@ -164,6 +177,8 @@ package "外部系统 (External Systems)" {
   component [对象存储\nObject Storage] as ObjectStorage
   component [Git仓库\nGit Repository] as GitRepo
   component [CDN服务\nCDN Service] as CDNService
+  component [WASM模块\nWASM Module] as WasmModule
+  component [Rust编译\nRust Compiler] as RustCompiler
 }
 
 ' ============================================
@@ -204,6 +219,15 @@ SchemaImportService --> PersistenceManager : 使用
 SchemaRenderer --> SchemaEntity : 使用
 SchemaRenderer --> ComponentService : 使用
 
+DataSourceService --> WasmAdapter : 使用（CSV/XML解析、JSON验证）
+SchemaExportService --> WasmAdapter : 使用（Schema序列化）
+SchemaImportService --> WasmAdapter : 使用（Schema反序列化、验证、迁移）
+DataBindingService --> WasmAdapter : 使用（数据映射生成和应用）
+CanvasService --> WasmAdapter : 使用（布局计算、网格对齐、碰撞检测）
+
+WasmAdapter --> WasmModule : 调用
+WasmModule --> RustCompiler : 编译
+
 ComponentRepo --> Database : 读写
 TemplateRepo --> Database : 读写
 DataSourceRepo --> Database : 读写
@@ -233,9 +257,12 @@ note right of VisualEditor
   2. 数据变更 → 状态管理 → 协作服务
   3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染
   4. 数据源选择 → 数据源服务 → 数据结构解析 → 自动渲染
-  5. Schema导出 → Schema导出服务 → 持久化管理器 → 文件存储
-  6. Schema导入 → Schema导入服务 → 持久化管理器 → 状态管理
+  5. Schema导出 → Schema导出服务 → WASM适配器（序列化） → 持久化管理器 → 文件存储
+  6. Schema导入 → Schema导入服务 → WASM适配器（反序列化/验证/迁移） → 持久化管理器 → 状态管理
   7. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
+  8. CSV/XML解析 → 数据源服务 → WASM适配器（高性能解析） → 数据绑定服务
+  9. 数据映射 → 数据绑定服务 → WASM适配器（映射生成/应用） → 组件渲染
+  10. 布局计算 → 画布服务 → WASM适配器（布局计算/网格对齐） → 组件位置更新
 end note
 
 @enduml
