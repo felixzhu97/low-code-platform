@@ -36,20 +36,35 @@ export function ComponentTree({}: ComponentTreeProps) {
     {}
   );
 
+  // 扩展的组件类型，包含 children 属性
+  interface ComponentWithChildren extends Component {
+    children?: ComponentWithChildren[];
+  }
+
   // 构建组件树结构
   const buildComponentTree = (
     comps: Component[],
     parentId: string | null = null
-  ): Component[] => {
+  ): ComponentWithChildren[] => {
+    if (!comps || comps.length === 0) {
+      return [];
+    }
+    
     return comps
-      .filter((comp) => comp.parentId === parentId)
+      .filter((comp) => {
+        // 处理 parentId 可能是 null、undefined 或字符串的情况
+        const compParentId = comp.parentId ?? null;
+        return compParentId === parentId;
+      })
       .map((comp) => ({
         ...comp,
         children: buildComponentTree(comps, comp.id),
       }));
   };
 
-  const componentTree = buildComponentTree(components);
+  // 确保 components 是数组
+  const componentsArray = Array.isArray(components) ? components : [];
+  const componentTree = buildComponentTree(componentsArray);
 
   const toggleExpand = (id: string) => {
     setExpandedNodes((prev) => ({
@@ -135,7 +150,7 @@ export function ComponentTree({}: ComponentTreeProps) {
   };
 
   // 递归渲染组件树节点
-  const renderTreeNode = (component: Component, level = 0) => {
+  const renderTreeNode = (component: ComponentWithChildren, level = 0) => {
     const hasChildren = component.children && component.children.length > 0;
     const isExpanded = expandedNodes[component.id] || false;
     const isSelected = component.id === selectedComponentId;
@@ -231,11 +246,7 @@ export function ComponentTree({}: ComponentTreeProps) {
 
         {hasChildren && isExpanded && (
           <div>
-            {component
-              .children!.filter(
-                (child): child is Component => typeof child === "object"
-              )
-              .map((child) => renderTreeNode(child, level + 1))}
+            {component.children!.map((child) => renderTreeNode(child, level + 1))}
           </div>
         )}
       </div>
