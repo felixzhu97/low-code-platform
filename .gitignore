@@ -72,3 +72,7 @@ Desktop.ini
 
 # turbo (if using turbo)
 .turbo/
+
+# WASM build artifacts
+apps/web/wasm/pkg/
+apps/web/wasm/target/
