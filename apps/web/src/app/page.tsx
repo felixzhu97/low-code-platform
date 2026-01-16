@@ -12,15 +12,7 @@ import {
 } from "@/presentation/components/ui/tabs";
 import { Header } from "@/presentation/components/ui";
 import { Button } from "@/presentation/components/ui/button";
-import { Badge } from "@/presentation/components/ui/badge";
-import {
-  Eye,
-  Undo2,
-  Redo2,
-  Loader2,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { Eye, Undo2, Redo2 } from "lucide-react";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
@@ -111,46 +103,25 @@ const TabContentLoader = () => (
   </div>
 );
 
-// WASM 状态徽章组件
-function WasmStatusBadge({
+// WASM 状态文字组件
+function WasmStatusText({
   status,
   error,
 }: Readonly<{
   status: "loading" | "success" | "error";
   error: string | null;
 }>) {
-  let badgeVariant: "default" | "secondary" | "destructive";
-  let badgeTitle: string;
-  let icon: React.ReactNode;
   let text: string;
 
   if (status === "success") {
-    badgeVariant = "default";
-    badgeTitle = "WASM 模块已加载";
-    icon = <CheckCircle2 className="h-3 w-3" />;
     text = "WASM 就绪";
   } else if (status === "error") {
-    badgeVariant = "destructive";
-    badgeTitle = error || "WASM 模块加载失败";
-    icon = <XCircle className="h-3 w-3" />;
-    text = "WASM 错误";
+    text = `WASM 错误: ${error || "加载失败"}`;
   } else {
-    badgeVariant = "secondary";
-    badgeTitle = "正在加载 WASM 模块...";
-    icon = <Loader2 className="h-3 w-3 animate-spin" />;
-    text = "WASM 加载中";
+    text = "WASM 加载中...";
   }
 
-  return (
-    <Badge
-      variant={badgeVariant}
-      className="flex items-center gap-1.5"
-      title={badgeTitle}
-    >
-      {icon}
-      <span className="text-xs">{text}</span>
-    </Badge>
-  );
+  return <span className="text-xs text-muted-foreground">{text}</span>;
 }
 
 export default function LowCodePlatform() {
@@ -266,61 +237,72 @@ export default function LowCodePlatform() {
     <DndProvider backend={HTML5Backend}>
       <div className="flex h-screen flex-col">
         <Header>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={undo}
-              disabled={!canUndo()}
-            >
-              <Undo2 className="mr-2 h-4 w-4" />
-              撤销
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={redo}
-              disabled={!canRedo()}
-            >
-              <Redo2 className="mr-2 h-4 w-4" />
-              重做
-            </Button>
-            <Button variant="outline" size="sm" onClick={togglePreviewMode}>
-              <Eye className="mr-2 h-4 w-4" />
-              {isPreviewMode ? "退出预览" : "预览"}
-            </Button>
-            {/* WASM 加载状态指示器 */}
-            <WasmStatusBadge status={wasmStatus} error={wasmError} />
-            <Suspense fallback={<ComponentLoader />}>
-              <ResponsiveControls />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <TemplateGallery />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <FormBuilder />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <ComponentGrouping />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <AnimationEditor />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <ThemeEditor />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <Collaboration />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <ComponentLibraryManager />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <SchemaImport />
-            </Suspense>
-            <Suspense fallback={<ComponentLoader />}>
-              <CodeExport />
-            </Suspense>
+          <div className="flex items-center justify-between w-full gap-4">
+            {/* 左侧：基础操作按钮 */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={undo}
+                disabled={!canUndo()}
+              >
+                <Undo2 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={redo}
+                disabled={!canRedo()}
+              >
+                <Redo2 className="h-4 w-4" />
+              </Button>
+              <div className="h-4 w-px bg-border" />
+              <Button variant="outline" size="sm" onClick={togglePreviewMode}>
+                <Eye className="h-4 w-4" />
+                <span className="ml-2">
+                  {isPreviewMode ? "退出预览" : "预览"}
+                </span>
+              </Button>
+            </div>
+
+            {/* 中间：功能组件 */}
+            <div className="flex items-center gap-2 flex-1 justify-center">
+              <Suspense fallback={<ComponentLoader />}>
+                <ResponsiveControls />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <TemplateGallery />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <FormBuilder />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <ComponentGrouping />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <AnimationEditor />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <ThemeEditor />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <Collaboration />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <ComponentLibraryManager />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <SchemaImport />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <CodeExport />
+              </Suspense>
+            </div>
+
+            {/* 右侧：状态信息 */}
+            <div className="flex items-center gap-2">
+              <WasmStatusText status={wasmStatus} error={wasmError} />
+            </div>
           </div>
         </Header>
         <div className="flex flex-1 overflow-hidden">

@@ -10,20 +10,14 @@ import {
   CardHeader,
   CardContent,
 } from "@/presentation/components/ui";
-import {
-  Edit,
-  CheckCircle2,
-  AlertCircle,
-  RotateCcw,
-  Copy,
-} from "lucide-react";
+import { Edit, CheckCircle2, AlertCircle, RotateCcw, Copy } from "lucide-react";
 import { JsonHelperService } from "@/application/services/json-helper.service";
 
 interface BoundDataEditorProps {
-  data: any;
-  onUpdate?: (data: any) => void;
-  onReset?: () => void;
-  minHeight?: string;
+  readonly data: any;
+  readonly onUpdate?: (data: any) => void;
+  readonly onReset?: () => void;
+  readonly minHeight?: string;
 }
 
 export function BoundDataEditor({
@@ -40,6 +34,8 @@ export function BoundDataEditor({
     try {
       return JSON.stringify(data, null, 2);
     } catch (error) {
+      // 如果 JSON 序列化失败，返回字符串表示
+      console.debug("JSON stringify error:", error);
       return String(data);
     }
   };
@@ -49,10 +45,12 @@ export function BoundDataEditor({
     if (data1 === data2) return true;
     if (data1 === null || data2 === null) return data1 === data2;
     if (data1 === undefined || data2 === undefined) return data1 === data2;
-    
+
     try {
       return JSON.stringify(data1) === JSON.stringify(data2);
-    } catch {
+    } catch (error) {
+      // 深度比较失败，返回 false
+      console.debug("Data comparison error:", error);
       return false;
     }
   };
@@ -63,7 +61,7 @@ export function BoundDataEditor({
     error?: string;
     data?: any;
   }>({ valid: true });
-  
+
   // 用于跟踪是否是用户刚刚应用了更改
   const justAppliedRef = useRef(false);
   const lastAppliedDataRef = useRef<string>("");
@@ -71,7 +69,7 @@ export function BoundDataEditor({
   // 当外部数据变化时，更新编辑器内容
   useEffect(() => {
     const newJsonString = dataToJsonString(data);
-    
+
     // 如果用户刚刚应用了更改，检查新数据是否与用户编辑的内容一致
     if (justAppliedRef.current) {
       // 解析用户编辑的数据和外部传入的数据进行比较
@@ -95,7 +93,7 @@ export function BoundDataEditor({
       justAppliedRef.current = false;
       lastAppliedDataRef.current = "";
     }
-    
+
     // 只有当新数据与当前输入框内容不同时才更新
     // 使用深度比较，避免因为 JSON 格式化差异导致不必要的更新
     try {
@@ -110,7 +108,7 @@ export function BoundDataEditor({
         return;
       }
     }
-    
+
     // 数据不同，更新输入框
     setJsonString(newJsonString);
     // 重新验证
@@ -180,7 +178,10 @@ export function BoundDataEditor({
               <div className="rounded-md bg-primary/10 p-1.5">
                 <Edit className="h-4 w-4 text-primary" />
               </div>
-              <Label htmlFor="bound-data-editor" className="text-sm font-semibold">
+              <Label
+                htmlFor="bound-data-editor"
+                className="text-sm font-semibold"
+              >
                 编辑已绑定数据
               </Label>
             </div>
@@ -227,59 +228,37 @@ export function BoundDataEditor({
         </CardContent>
       </Card>
 
-      {/* 验证结果 */}
+      {/* 状态信息：合并验证结果和应用按钮 */}
       {jsonString.trim() && (
-        <div className="animate-in fade-in-0 slide-in-from-top-2 duration-200">
-          {validationResult.valid ? (
-            <Alert className="border-green-500/50 bg-green-50/50 text-green-900 dark:bg-green-950/50 dark:text-green-100">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <div className="flex items-center justify-between w-full">
-                <span className="text-sm font-medium">JSON格式正确</span>
-                {validationResult.data && (
-                  <span className="text-xs text-muted-foreground bg-background/50 px-2 py-0.5 rounded">
-                    {(() => {
-                      if (Array.isArray(validationResult.data)) {
-                        return `数组，${validationResult.data.length}项`;
-                      }
-                      if (typeof validationResult.data === "object") {
-                        return "对象";
-                      }
-                      return "数据";
-                    })()}
-                  </span>
-                )}
-              </div>
-            </Alert>
-          ) : (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <div className="text-sm">{validationResult.error}</div>
+        <div className="space-y-2">
+          {/* 验证结果 - 仅在错误时显示 */}
+          {!validationResult.valid && (
+            <Alert variant="destructive" className="py-2">
+              <AlertCircle className="h-3.5 w-3.5" />
+              <div className="text-xs">{validationResult.error}</div>
             </Alert>
           )}
+
+          {/* 应用更改按钮 - 仅在有效且有更改时显示 */}
+          {hasChanges && validationResult.valid && validationResult.data && (
+            <Button
+              onClick={handleApply}
+              className="w-full h-9 gap-2 text-sm"
+              size="sm"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              应用更改
+            </Button>
+          )}
+
+          {/* 状态提示 - 仅在无更改且有效时显示 */}
+          {!hasChanges && validationResult.valid && (
+            <div className="text-xs text-muted-foreground text-center py-1">
+              数据已同步
+            </div>
+          )}
         </div>
-      )}
-
-      {/* 应用更改按钮 */}
-      {hasChanges && validationResult.valid && validationResult.data && (
-        <Button
-          onClick={handleApply}
-          className="w-full h-10 gap-2 font-medium shadow-sm"
-          size="lg"
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          应用更改
-        </Button>
-      )}
-
-      {/* 提示信息 */}
-      {!hasChanges && jsonString.trim() && (
-        <Alert className="border-blue-500/50 bg-blue-50/50 text-blue-900 dark:bg-blue-950/50 dark:text-blue-100">
-          <div className="text-xs">
-            当前数据与组件已绑定数据一致，无需更新
-          </div>
-        </Alert>
       )}
     </div>
   );
 }
-

@@ -25,8 +25,6 @@ import {
   Badge,
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
   Textarea,
@@ -52,7 +50,8 @@ import { useDataStore } from "@/infrastructure/state-management/stores";
 
 export function DataPanel() {
   // 使用全局store管理数据源
-  const { dataSources, addDataSource, updateDataSource, deleteDataSource } = useDataStore();
+  const { dataSources, addDataSource, updateDataSource, deleteDataSource } =
+    useDataStore();
 
   // 初始化默认数据源（如果store为空）
   useEffect(() => {
@@ -218,8 +217,10 @@ export function DataPanel() {
         data: "",
         config: {},
       });
-    } catch (e) {
-      alert("数据格式不正确，请检查配置");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "数据格式不正确，请检查配置";
+      alert(errorMessage);
     }
   };
 
@@ -287,37 +288,72 @@ export function DataPanel() {
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="grid gap-3 p-4">
               {dataSources.map((source) => (
-                <Card key={source.id} className="overflow-hidden">
-                  <CardHeader className="p-3 pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {getDataSourceIcon(source.type)}
-                        <CardTitle className="text-sm">{source.name}</CardTitle>
-                        {getStatusIcon(source.status)}
+                <Card key={source.id} className="border shadow-sm">
+                  <CardHeader className="p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          {getDataSourceIcon(source.type)}
+                          <CardTitle className="text-sm truncate">
+                            {source.name}
+                          </CardTitle>
+                          {getStatusIcon(source.status)}
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs text-muted-foreground">
+                            {source.type === "static" && "静态数据"}
+                            {source.type === "api" && "API接口"}
+                            {source.type === "database" && "数据库"}
+                            {source.type === "file" && "文件数据"}
+                            {source.type === "websocket" && "WebSocket"}
+                          </span>
+                          {source.type === "static" && (
+                            <span className="text-xs text-muted-foreground">
+                              {Array.isArray(source.data)
+                                ? `· ${source.data.length} 条记录`
+                                : "· 对象数据"}
+                            </span>
+                          )}
+                          {source.config?.cacheEnabled && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs h-4 px-1.5"
+                            >
+                              缓存
+                            </Badge>
+                          )}
+                        </div>
+                        {source.error && (
+                          <div className="text-xs text-destructive mt-1">
+                            {source.error}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={() => handlePreviewDataSource(source)}
                           disabled={loading[source.id]}
+                          title="预览"
                         >
                           {loading[source.id] ? (
-                            <RefreshCw className="h-3 w-3 animate-spin" />
+                            <RefreshCw className="h-3.5 w-3.5 animate-spin" />
                           ) : (
-                            <Eye className="h-3 w-3" />
+                            <Eye className="h-3.5 w-3.5" />
                           )}
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={() => handleRefreshDataSource(source)}
                           disabled={loading[source.id]}
+                          title="刷新"
                         >
                           <RefreshCw
-                            className={`h-3 w-3 ${
+                            className={`h-3.5 w-3.5 ${
                               loading[source.id] ? "animate-spin" : ""
                             }`}
                           />
@@ -325,87 +361,46 @@ export function DataPanel() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0"
+                          className="h-7 w-7 p-0"
                           onClick={() => setEditingDataSource(source)}
+                          title="编辑"
                         >
-                          <Edit className="h-3 w-3" />
+                          <Edit className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
                           onClick={() => handleDeleteDataSource(source.id)}
+                          title="删除"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </div>
-                    <CardDescription className="text-xs">
-                      {source.type === "static" && "静态数据"}
-                      {source.type === "api" && "API接口"}
-                      {source.type === "database" && "数据库"}
-                      {source.type === "file" && "文件数据"}
-                      {source.type === "websocket" && "WebSocket"}
-                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-3 pt-0">
-                    <div className="space-y-2">
-                      {source.type === "static" && (
-                        <div className="text-xs text-muted-foreground">
-                          {Array.isArray(source.data)
-                            ? `${source.data.length} 条记录`
-                            : "对象数据"}
-                        </div>
-                      )}
-                      {source.type === "api" && (
-                        <div className="text-xs text-muted-foreground">
-                          {source.config?.url}
-                        </div>
-                      )}
-                      {source.type === "database" && (
-                        <div className="text-xs text-muted-foreground">
-                          {source.config?.connectionString}
-                        </div>
-                      )}
-                      {source.type === "file" && (
-                        <div className="text-xs text-muted-foreground">
-                          {source.config?.filePath}
-                        </div>
-                      )}
-                      {source.type === "websocket" && (
-                        <div className="text-xs text-muted-foreground">
-                          {source.config?.wsUrl}
-                        </div>
-                      )}
-
-                      {source.error && (
-                        <div className="text-xs text-red-500">
-                          错误: {source.error}
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>
-                          更新:{" "}
-                          {new Date(source.lastUpdated || "").toLocaleString()}
-                        </span>
-                        {source.config?.cacheEnabled && (
-                          <Badge variant="outline" className="text-xs">
-                            缓存
-                          </Badge>
+                  <CardContent className="px-3 pb-3 pt-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(source.lastUpdated || "").toLocaleString(
+                          "zh-CN",
+                          {
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
                         )}
-                      </div>
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                      >
+                        绑定到组件
+                      </Button>
                     </div>
                   </CardContent>
-                  <CardFooter className="border-t bg-muted/50 p-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-full text-xs"
-                    >
-                      绑定到组件
-                    </Button>
-                  </CardFooter>
                 </Card>
               ))}
 
@@ -561,7 +556,7 @@ export function DataPanel() {
                               ...newDataSource,
                               config: {
                                 ...newDataSource.config,
-                                timeout: parseInt(e.target.value),
+                                timeout: Number.parseInt(e.target.value, 10),
                               },
                             })
                           }
@@ -875,7 +870,7 @@ export function DataPanel() {
                             ...editingDataSource,
                             config: {
                               ...editingDataSource.config,
-                              timeout: parseInt(e.target.value),
+                              timeout: Number.parseInt(e.target.value, 10),
                             },
                           })
                         }

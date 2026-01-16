@@ -958,34 +958,11 @@ export function PropertiesPanel() {
                   />
                 )}
 
-                {/* 提示信息 */}
-                {currentDataSource && (
-                  <div className="rounded-lg border border-green-200/60 bg-gradient-to-r from-green-50/80 to-emerald-50/60 dark:from-green-950/30 dark:to-emerald-950/20 shadow-sm p-3.5">
-                    <div className="flex items-start gap-3">
-                      <div className="rounded-full bg-green-100 dark:bg-green-900/40 p-1 flex-shrink-0 mt-0.5">
-                        <svg
-                          className="h-3.5 w-3.5 text-green-600 dark:text-green-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2.5}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-green-900 dark:text-green-100 mb-0.5">
-                          数据绑定成功
-                        </p>
-                        <p className="text-xs text-green-700/90 dark:text-green-300/80 leading-relaxed">
-                          数据已自动应用到组件，可在"属性"tab中查看详情
-                        </p>
-                      </div>
-                    </div>
+                {/* 绑定状态提示 - 简化显示 */}
+                {currentDataSource && currentBoundData !== null && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                    <span>数据已绑定</span>
                   </div>
                 )}
               </div>
