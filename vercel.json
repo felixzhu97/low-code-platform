@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
   "buildCommand": "./scripts/build-vercel.sh",
-  "installCommand": "corepack enable && corepack prepare pnpm@10.27.0 --activate && pnpm install",
+  "installCommand": "./scripts/pre-install.sh && corepack enable && corepack prepare pnpm@10.27.0 --activate && pnpm install --no-frozen-lockfile --network-timeout=300000",
   "outputDirectory": "apps/web/.next"
 }
