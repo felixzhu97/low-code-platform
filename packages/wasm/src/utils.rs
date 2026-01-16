@@ -47,10 +47,10 @@ pub fn log_function_end(function_name: &str) {
 
 /// 打印函数调用（带参数）
 pub fn log_function_call(function_name: &str, args: &str) {
-    log(&format!("[WASM] → {}({})", function_name, args));
+    warn(&format!("[WASM] → {}({})", function_name, args));
 }
 
 /// 打印函数返回结果
 pub fn log_function_result(function_name: &str, result: &str) {
-    log(&format!("[WASM] ← {}() = {}", function_name, result));
+    warn(&format!("[WASM] ← {}() = {}", function_name, result));
 }
