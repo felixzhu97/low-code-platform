@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-import path from "path";
+import path from "node:path";
 
 const nextConfig = {
   eslint: {
@@ -31,6 +31,24 @@ const nextConfig = {
   },
   // Webpack 优化配置
   webpack: (config, { isServer }) => {
+    // WASM 支持配置
+    if (!isServer) {
+      // 确保 WASM 文件作为资源文件处理
+      config.experiments = {
+        ...config.experiments,
+        asyncWebAssembly: true,
+      };
+      
+      // 配置 WASM 文件的加载
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "@lowcode-platform/wasm": path.resolve(
+          __dirname,
+          "../../packages/wasm/pkg"
+        ),
+      };
+    }
+    
     // 优化 chunk 分割
     if (!isServer) {
       config.optimization = {
@@ -73,6 +91,7 @@ const nextConfig = {
         },
       };
     }
+    
     return config;
   },
 };

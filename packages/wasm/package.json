@@ -1,0 +1,19 @@
+{
+  "name": "@lowcode-platform/wasm",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "WebAssembly utilities for low-code platform",
+  "license": "MIT",
+  "main": "./pkg/lowcode_platform_wasm.js",
+  "types": "./pkg/lowcode_platform_wasm.d.ts",
+  "files": [
+    "pkg/**/*"
+  ],
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir pkg",
+    "build:dev": "wasm-pack build --target web --out-dir pkg --dev",
+    "clean": "rm -rf pkg target"
+  },
+  "devDependencies": {},
+  "peerDependencies": {}
+}
