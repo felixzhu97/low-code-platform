@@ -31,6 +31,16 @@ const nextConfig = {
   },
   // Webpack 优化配置
   webpack: (config, { isServer }) => {
+    // 支持 WASM 模块
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
+    // 添加 .wasm 文件扩展名支持
+    config.resolve.extensions.push('.wasm');
+
     // 优化 chunk 分割
     if (!isServer) {
       config.optimization = {
