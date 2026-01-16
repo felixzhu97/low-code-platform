@@ -10,4 +10,13 @@ export type {
   UIState,
   HistoryState,
 } from "./state-management.port";
+export type {
+  IWasmPort,
+  IWasmDataParserPort,
+  IWasmSchemaProcessorPort,
+  IWasmDataMapperPort,
+  IWasmLayoutCalculatorPort,
+  SchemaValidationResult,
+  Position,
+} from "./wasm.port";
 

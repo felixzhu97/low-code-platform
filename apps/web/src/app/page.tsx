@@ -163,6 +163,11 @@ export default function LowCodePlatform() {
         await initWasm();
         setWasmStatus("success");
 
+        // 测试日志功能
+        const { testLogging } = await import("@/shared/wasm");
+        await testLogging();
+        console.log("WASM 日志测试完成，请查看控制台输出");
+
         // 调用 WASM print 函数
         const result = await print("Hello from Rust WASM!");
         console.log("WASM Print Result:", result);

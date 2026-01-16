@@ -7,8 +7,11 @@ import type { Component } from "@/domain/component";
 import {
   PageSchema,
   validateSchema,
+  validateSchemaAsync,
   migrateSchema,
+  migrateSchemaAsync,
   schemaToProjectData,
+  schemaJsonToProjectData,
 } from "@/domain/entities/schema.types";
 
 export interface ProjectData {
@@ -140,25 +143,40 @@ class PersistenceManager {
       }
 
       // 导入组件数据
-      useComponentStore.getState().updateComponents(data.components);
+      if (data.components && Array.isArray(data.components)) {
+        useComponentStore.getState().updateComponents(data.components);
+      } else {
+        useComponentStore.getState().updateComponents([]);
+      }
 
       // 导入画布设置
       const canvasStore = useCanvasStore.getState();
-      if (data.canvas.showGrid !== undefined) {
-        canvasStore.showGrid = data.canvas.showGrid;
-      }
-      if (data.canvas.snapToGrid !== undefined) {
-        canvasStore.snapToGrid = data.canvas.snapToGrid;
-      }
-      if (data.canvas.viewportWidth !== undefined) {
-        canvasStore.viewportWidth = data.canvas.viewportWidth;
-      }
-      if (data.canvas.activeDevice !== undefined) {
-        canvasStore.activeDevice = data.canvas.activeDevice;
+      if (data.canvas) {
+        if (data.canvas.showGrid !== undefined) {
+          canvasStore.showGrid = data.canvas.showGrid;
+        }
+        if (data.canvas.snapToGrid !== undefined) {
+          canvasStore.snapToGrid = data.canvas.snapToGrid;
+        }
+        if (data.canvas.viewportWidth !== undefined) {
+          canvasStore.viewportWidth = data.canvas.viewportWidth;
+        }
+        if (data.canvas.activeDevice !== undefined) {
+          canvasStore.activeDevice = data.canvas.activeDevice;
+        }
+      } else {
+        // 如果没有 canvas 数据，使用默认值
+        console.warn("[PersistenceManager] Canvas data is missing, using defaults");
+        canvasStore.showGrid = false;
+        canvasStore.snapToGrid = false;
+        canvasStore.viewportWidth = 1920;
+        canvasStore.activeDevice = "desktop";
       }
 
       // 导入主题
-      useThemeStore.getState().setTheme(data.theme);
+      if (data.theme) {
+        useThemeStore.getState().setTheme(data.theme);
+      }
 
       // 导入数据源
       const dataStore = useDataStore.getState();
@@ -168,9 +186,11 @@ class PersistenceManager {
         dataStore.deleteDataSource(id);
       });
       // 然后添加新的数据源
-      data.dataSources.forEach((ds) => {
-        dataStore.addDataSource(ds);
-      });
+      if (data.dataSources && Array.isArray(data.dataSources)) {
+        data.dataSources.forEach((ds) => {
+          dataStore.addDataSource(ds);
+        });
+      }
 
       // 导入UI设置
       const uiStore = useUIStore.getState();
@@ -278,23 +298,51 @@ class PersistenceManager {
    * 支持 ProjectData 和 PageSchema 两种格式
    */
   static async importFromFile(file: File): Promise<ProjectData> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
-          const data = JSON.parse(e.target?.result as string);
+          const jsonText = e.target?.result as string;
+          const data = JSON.parse(jsonText);
 
           // 检查是否是 Schema 格式
           if (this.isSchemaFormat(data)) {
-            // 迁移和验证 Schema
-            const migratedSchema = migrateSchema(data);
-            if (!validateSchema(migratedSchema)) {
-              throw new Error("无效的 Schema 格式");
+            // 使用 WASM 异步版本验证和迁移 Schema
+            try {
+              // 先验证 Schema
+              const validation = await validateSchemaAsync(jsonText);
+              if (!validation.valid) {
+                throw new Error(`Schema 验证失败: ${validation.errors.join(", ")}`);
+              }
+
+              // 迁移 Schema（如果需要）
+              const schemaVersion = data.version || "1.0.0";
+              const migratedJson = await migrateSchemaAsync(
+                jsonText,
+                schemaVersion,
+                "1.0.0"
+              );
+              
+              // 使用 WASM 反序列化
+              const projectData = await schemaJsonToProjectData(migratedJson);
+              console.log("[PersistenceManager] WASM deserialized projectData:", {
+                hasCanvas: !!projectData.canvas,
+                canvas: projectData.canvas,
+                hasComponents: Array.isArray(projectData.components),
+                componentsCount: projectData.components?.length || 0,
+              });
+              resolve(projectData);
+            } catch (error) {
+              console.warn("WASM schema processing failed, using fallback:", error);
+              // 降级到同步版本
+              const migratedSchema = migrateSchema(data);
+              if (!validateSchema(migratedSchema)) {
+                throw new Error("无效的 Schema 格式");
+              }
+              const projectData = schemaToProjectData(migratedSchema);
+              resolve(projectData);
             }
-            // 转换为 ProjectData
-            const projectData = schemaToProjectData(migratedSchema);
-            resolve(projectData);
           } else {
             // 验证项目数据格式
             if (!this.validateProjectData(data)) {

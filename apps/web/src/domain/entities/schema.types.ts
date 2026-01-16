@@ -1,5 +1,6 @@
 import type { Component } from "./types";
 import type { ProjectData } from "@/infrastructure/state-management/stores/persistence.manager";
+import { getWasmAdapter } from "@/infrastructure/wasm";
 
 /**
  * Schema 版本号
@@ -42,7 +43,7 @@ export interface PageSchema {
 }
 
 /**
- * 验证 Schema 格式
+ * 验证 Schema 格式（同步版本，用于类型守卫）
  */
 export function validateSchema(data: any): data is PageSchema {
   if (!data || typeof data !== "object") {
@@ -101,7 +102,35 @@ export function validateSchema(data: any): data is PageSchema {
 }
 
 /**
- * 从 ProjectData 转换为 PageSchema
+ * 验证 Schema 格式（异步版本，使用 WASM）
+ */
+export async function validateSchemaAsync(
+  schemaJson: string
+): Promise<{ valid: boolean; errors: string[] }> {
+  try {
+    const wasm = getWasmAdapter();
+    return await wasm.schemaProcessor.validateSchema(schemaJson);
+  } catch (error) {
+    console.warn("WASM schema validation failed, using fallback:", error);
+    // 降级到同步验证
+    try {
+      const data = JSON.parse(schemaJson);
+      const valid = validateSchema(data);
+      return {
+        valid,
+        errors: valid ? [] : ["Schema validation failed"],
+      };
+    } catch (e) {
+      return {
+        valid: false,
+        errors: [`Invalid JSON: ${e}`],
+      };
+    }
+  }
+}
+
+/**
+ * 从 ProjectData 转换为 PageSchema（同步版本）
  */
 export function projectDataToSchema(
   projectData: ProjectData,
@@ -125,26 +154,72 @@ export function projectDataToSchema(
 }
 
 /**
- * 从 PageSchema 转换为 ProjectData
+ * 从 ProjectData 转换为 Schema JSON（异步版本，使用 WASM）
+ */
+export async function projectDataToSchemaJson(
+  projectData: ProjectData
+): Promise<string> {
+  try {
+    const wasm = getWasmAdapter();
+    return await wasm.schemaProcessor.serializeSchema(projectData);
+  } catch (error) {
+    console.warn("WASM schema serialization failed, using fallback:", error);
+    // 降级到同步版本
+    const schema = projectDataToSchema(projectData);
+    return JSON.stringify(schema, null, 2);
+  }
+}
+
+/**
+ * 从 PageSchema 转换为 ProjectData（同步版本）
  */
 export function schemaToProjectData(schema: PageSchema): ProjectData {
   return {
-    id: schema.metadata.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now(),
+    id:
+      schema.metadata.name.toLowerCase().replace(/\s+/g, "-") +
+      "-" +
+      Date.now(),
     name: schema.metadata.name,
     description: schema.metadata.description,
     createdAt: schema.metadata.createdAt,
     updatedAt: schema.metadata.updatedAt,
-    components: schema.components,
-    canvas: schema.canvas,
-    theme: schema.theme,
-    dataSources: schema.dataSources,
-    settings: schema.settings || {},
+    components: schema.components || [],
+    canvas: schema.canvas || {
+      showGrid: false,
+      snapToGrid: false,
+      viewportWidth: 1920,
+      activeDevice: "desktop",
+    },
+    theme: schema.theme || {},
+    dataSources: schema.dataSources || [],
+    settings: schema.settings || {
+      activeTab: "components",
+      sidebarCollapsed: false,
+      rightPanelCollapsed: false,
+      leftPanelCollapsed: false,
+    },
   };
 }
 
 /**
- * 迁移旧版本 Schema 到新版本
- * 目前版本为 1.0.0，未来可以添加迁移逻辑
+ * 从 Schema JSON 转换为 ProjectData（异步版本，使用 WASM）
+ */
+export async function schemaJsonToProjectData(
+  schemaJson: string
+): Promise<ProjectData> {
+  try {
+    const wasm = getWasmAdapter();
+    return await wasm.schemaProcessor.deserializeSchema(schemaJson);
+  } catch (error) {
+    console.warn("WASM schema deserialization failed, using fallback:", error);
+    // 降级到同步版本
+    const schema = JSON.parse(schemaJson) as PageSchema;
+    return schemaToProjectData(schema);
+  }
+}
+
+/**
+ * 迁移旧版本 Schema 到新版本（同步版本）
  */
 export function migrateSchema(schema: any): PageSchema {
   // 如果已经是 PageSchema 格式，直接返回
@@ -161,6 +236,30 @@ export function migrateSchema(schema: any): PageSchema {
 }
 
 /**
+ * 迁移 Schema 版本（异步版本，使用 WASM）
+ */
+export async function migrateSchemaAsync(
+  schemaJson: string,
+  fromVersion: string,
+  toVersion: string
+): Promise<string> {
+  try {
+    const wasm = getWasmAdapter();
+    return await wasm.schemaProcessor.migrateSchema(
+      schemaJson,
+      fromVersion,
+      toVersion
+    );
+  } catch (error) {
+    console.warn("WASM schema migration failed, using fallback:", error);
+    // 降级到同步版本
+    const schema = JSON.parse(schemaJson);
+    const migrated = migrateSchema(schema);
+    return JSON.stringify(migrated, null, 2);
+  }
+}
+
+/**
  * Schema 验证错误
  */
 export class SchemaValidationError extends Error {
@@ -169,4 +268,3 @@ export class SchemaValidationError extends Error {
     this.name = "SchemaValidationError";
   }
 }
-

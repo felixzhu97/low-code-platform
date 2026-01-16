@@ -208,7 +208,84 @@ export class DataBindingService {
   }
 
   /**
-   * 自动生成数据映射
+   * 自动生成数据映射（异步版本，使用 WASM）
+   */
+  static async generateDataMappingAsync(
+    sourceData: any,
+    targetStructure: any
+  ): Promise<DataMapping[]> {
+    try {
+      const { getWasmAdapter } = await import("@/infrastructure/wasm");
+      const wasm = getWasmAdapter();
+      const mappings = await wasm.dataMapper.generateMapping(
+        sourceData,
+        targetStructure
+      );
+      return mappings as DataMapping[];
+    } catch (error) {
+      console.warn("WASM mapping generation failed, using fallback:", error);
+      // 降级到同步版本
+      return this.generateDataMapping(sourceData, targetStructure);
+    }
+  }
+
+  /**
+   * 应用映射规则（异步版本，使用 WASM）
+   */
+  static async applyMappingAsync(
+    data: any,
+    mappings: DataMapping[]
+  ): Promise<any> {
+    try {
+      const { getWasmAdapter } = await import("@/infrastructure/wasm");
+      const wasm = getWasmAdapter();
+      return await wasm.dataMapper.applyMapping(data, mappings);
+    } catch (error) {
+      console.warn("WASM mapping application failed, using fallback:", error);
+      // 降级到同步版本
+      return this.applyMapping(data, mappings);
+    }
+  }
+
+  /**
+   * 应用映射规则（同步版本，降级使用）
+   */
+  static applyMapping(data: any, mappings: DataMapping[]): any {
+    const result: any = {};
+
+    for (const mapping of mappings) {
+      const sourceValue = this.getNestedValue(data, mapping.sourcePath);
+      const transformedValue = this.transformValue(
+        sourceValue,
+        mapping.transform,
+        mapping.defaultValue
+      );
+      this.setNestedValue(result, mapping.targetPath, transformedValue);
+    }
+
+    return result;
+  }
+
+  /**
+   * 转换数据（异步版本，使用 WASM）
+   */
+  static async transformDataAsync(
+    data: any,
+    transformRules: any
+  ): Promise<any> {
+    try {
+      const { getWasmAdapter } = await import("@/infrastructure/wasm");
+      const wasm = getWasmAdapter();
+      return await wasm.dataMapper.transformData(data, transformRules);
+    } catch (error) {
+      console.warn("WASM data transformation failed, using fallback:", error);
+      // 降级到同步版本
+      return this.transformValue(data, transformRules?.type);
+    }
+  }
+
+  /**
+   * 自动生成数据映射（同步版本，降级使用）
    */
   static generateDataMapping(
     sourceData: any,
@@ -371,7 +448,11 @@ export class DataBindingService {
     try {
       const sourceData = await DataSourceService.getDataSourceData(dataSource);
       const value = this.getNestedValue(sourceData, mapping.sourcePath);
-      return this.transformValue(value, mapping.transform, mapping.defaultValue);
+      return this.transformValue(
+        value,
+        mapping.transform,
+        mapping.defaultValue
+      );
     } catch (error) {
       console.error(`预览映射结果失败:`, error);
       return mapping.defaultValue;

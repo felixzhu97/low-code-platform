@@ -1,5 +1,17 @@
 use wasm_bindgen::prelude::*;
 
+mod data_parser;
+mod schema_processor;
+mod data_mapper;
+mod layout_calculator;
+mod utils;
+
+// 重新导出模块
+pub use data_parser::*;
+pub use schema_processor::*;
+pub use data_mapper::*;
+pub use layout_calculator::*;
+
 /// 打印函数：接收消息并返回格式化后的字符串
 /// 
 /// # Arguments
@@ -26,4 +38,19 @@ pub fn print_with_timestamp(message: &str) -> String {
     // 使用 JavaScript 的 Date 对象获取时间戳
     // 这里返回一个格式化的字符串，实际时间戳由 JavaScript 端提供
     format!("[WASM] {}", message)
+}
+
+/// 测试日志功能
+/// 用于验证日志打印是否正常工作
+#[wasm_bindgen]
+pub fn test_logging() {
+    use crate::utils::*;
+    log_debug("This is a debug message");
+    log_info("This is an info message");
+    log_warn("This is a warning message");
+    log_error("This is an error message");
+    log_function_start("test_function");
+    log_function_call("test_function", "arg1, arg2");
+    log_function_result("test_function", "result_value");
+    log_function_end("test_function");
 }
