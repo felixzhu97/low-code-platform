@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use serde_json::Value;
 use std::collections::HashMap;
-use crate::utils::{log_function_start, log_function_end, log_info, log_error, log_function_call, log_function_result};
+use crate::utils::{log_error, log_function_start, log_function_end};
 
 /// CSV 解析结果
 #[derive(Debug, Clone)]
@@ -20,11 +20,10 @@ pub struct CsvParseResult {
 #[wasm_bindgen]
 pub fn parse_csv(csv_text: &str) -> Result<JsValue, JsValue> {
     log_function_start("parse_csv");
-    log_info(&format!("Parsing CSV text, length: {} bytes", csv_text.len()));
-    
-    use std::io::Cursor;
-    
-    let mut reader = csv::ReaderBuilder::new()
+    let result = {
+        use std::io::Cursor;
+        
+        let mut reader = csv::ReaderBuilder::new()
         .has_headers(true)
         .flexible(true)
         .from_reader(Cursor::new(csv_text.as_bytes()));
@@ -50,15 +49,14 @@ pub fn parse_csv(csv_text: &str) -> Result<JsValue, JsValue> {
         result.push(row);
     }
     
-    let json_result = serde_wasm_bindgen::to_value(&result)
+    serde_wasm_bindgen::to_value(&result)
         .map_err(|e| {
             log_error(&format!("Failed to serialize CSV result: {}", e));
             JsValue::from_str(&format!("Failed to serialize CSV result: {}", e))
-        })?;
-    
-    log_info(&format!("CSV parsed successfully, {} rows", result.len()));
+        })
+    };
     log_function_end("parse_csv");
-    Ok(json_result)
+    result
 }
 
 /// 解析 XML 文本
@@ -71,9 +69,8 @@ pub fn parse_csv(csv_text: &str) -> Result<JsValue, JsValue> {
 #[wasm_bindgen]
 pub fn parse_xml(xml_text: &str) -> Result<JsValue, JsValue> {
     log_function_start("parse_xml");
-    log_info(&format!("Parsing XML text, length: {} bytes", xml_text.len()));
-    
-    use quick_xml::events::Event;
+    let result = {
+        use quick_xml::events::Event;
     use quick_xml::Reader;
     
     let mut reader = Reader::from_str(xml_text);
@@ -154,15 +151,14 @@ pub fn parse_xml(xml_text: &str) -> Result<JsValue, JsValue> {
         }
     }
     
-    let json_result = serde_wasm_bindgen::to_value(&result)
+    serde_wasm_bindgen::to_value(&result)
         .map_err(|e| {
             log_error(&format!("Failed to serialize XML result: {}", e));
             JsValue::from_str(&format!("Failed to serialize XML result: {}", e))
-        })?;
-    
-    log_info("XML parsed successfully");
+        })
+    };
     log_function_end("parse_xml");
-    Ok(json_result)
+    result
 }
 
 /// 验证 JSON 文本
@@ -174,8 +170,8 @@ pub fn parse_xml(xml_text: &str) -> Result<JsValue, JsValue> {
 /// 如果 JSON 有效返回 true，否则返回 false
 #[wasm_bindgen]
 pub fn validate_json(json_text: &str) -> bool {
-    log_function_call("validate_json", &format!("length: {} bytes", json_text.len()));
-    let is_valid = serde_json::from_str::<Value>(json_text).is_ok();
-    log_function_result("validate_json", &format!("{}", is_valid));
-    is_valid
+    log_function_start("validate_json");
+    let result = serde_json::from_str::<Value>(json_text).is_ok();
+    log_function_end("validate_json");
+    result
 }

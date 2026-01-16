@@ -40,17 +40,3 @@ pub fn print_with_timestamp(message: &str) -> String {
     format!("[WASM] {}", message)
 }
 
-/// 测试日志功能
-/// 用于验证日志打印是否正常工作
-#[wasm_bindgen]
-pub fn test_logging() {
-    use crate::utils::*;
-    log_debug("This is a debug message");
-    log_info("This is an info message");
-    log_warn("This is a warning message");
-    log_error("This is an error message");
-    log_function_start("test_function");
-    log_function_call("test_function", "arg1, arg2");
-    log_function_result("test_function", "result_value");
-    log_function_end("test_function");
-}

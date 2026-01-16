@@ -26,8 +26,6 @@ async function ensureWasmInitialized(): Promise<void> {
   }
 
   await initWasm();
-
-  // 动态导入 WASM 模块
   wasmModule = await import("@lowcode-platform/wasm");
   isInitialized = true;
 }
@@ -37,15 +35,9 @@ async function ensureWasmInitialized(): Promise<void> {
  */
 class WasmDataParserAdapter implements IWasmDataParserPort {
   async parseCsv(csvText: string): Promise<any[]> {
-    console.log("[WASM Adapter] parseCsv called, text length:", csvText.length);
     await ensureWasmInitialized();
     try {
-      const result = wasmModule.parse_csv(csvText);
-      console.log(
-        "[WASM Adapter] parseCsv success, result rows:",
-        Array.isArray(result) ? result.length : "N/A"
-      );
-      return result;
+      return wasmModule.parse_csv(csvText);
     } catch (error) {
       console.error("WASM CSV parsing failed, falling back to JS:", error);
       throw error;
@@ -85,15 +77,9 @@ class WasmDataParserAdapter implements IWasmDataParserPort {
  */
 class WasmSchemaProcessorAdapter implements IWasmSchemaProcessorPort {
   async serializeSchema(projectData: any): Promise<string> {
-    console.log("[WASM Adapter] serializeSchema called");
     await ensureWasmInitialized();
     try {
-      const result = wasmModule.serialize_schema(projectData);
-      console.log(
-        "[WASM Adapter] serializeSchema success, result length:",
-        result.length
-      );
-      return result;
+      return wasmModule.serialize_schema(projectData);
     } catch (error) {
       console.error(
         "WASM schema serialization failed, falling back to JS:",
@@ -104,31 +90,9 @@ class WasmSchemaProcessorAdapter implements IWasmSchemaProcessorPort {
   }
 
   async deserializeSchema(schemaJson: string): Promise<any> {
-    console.log(
-      "[WASM Adapter] deserializeSchema called, json length:",
-      schemaJson.length
-    );
     await ensureWasmInitialized();
     try {
-      const result = wasmModule.deserialize_schema(schemaJson);
-      console.log("[WASM Adapter] deserializeSchema success");
-      console.log("[WASM Adapter] result type:", typeof result);
-      console.log(
-        "[WASM Adapter] result keys:",
-        result ? Object.keys(result) : "null"
-      );
-      console.log("[WASM Adapter] result.canvas:", result?.canvas);
-      console.log("[WASM Adapter] result.canvas type:", typeof result?.canvas);
-      if (result && !result.canvas) {
-        console.warn(
-          "[WASM Adapter] WARNING: result does not have canvas field!"
-        );
-        console.log(
-          "[WASM Adapter] Full result:",
-          JSON.stringify(result, null, 2)
-        );
-      }
-      return result;
+      return wasmModule.deserialize_schema(schemaJson);
     } catch (error) {
       console.error(
         "WASM schema deserialization failed, falling back to JS:",
@@ -139,19 +103,9 @@ class WasmSchemaProcessorAdapter implements IWasmSchemaProcessorPort {
   }
 
   async validateSchema(schemaJson: string): Promise<SchemaValidationResult> {
-    console.log(
-      "[WASM Adapter] validateSchema called, json length:",
-      schemaJson.length
-    );
     await ensureWasmInitialized();
     try {
       const result = wasmModule.validate_schema(schemaJson);
-      console.log(
-        "[WASM Adapter] validateSchema result:",
-        result.valid,
-        "errors:",
-        result.errors?.length || 0
-      );
       return {
         valid: result.valid,
         errors: result.errors || [],
@@ -185,15 +139,9 @@ class WasmSchemaProcessorAdapter implements IWasmSchemaProcessorPort {
  */
 class WasmDataMapperAdapter implements IWasmDataMapperPort {
   async generateMapping(sourceData: any, targetStructure: any): Promise<any[]> {
-    console.log("[WASM Adapter] generateMapping called");
     await ensureWasmInitialized();
     try {
-      const result = wasmModule.generate_mapping(sourceData, targetStructure);
-      console.log(
-        "[WASM Adapter] generateMapping success, mappings:",
-        Array.isArray(result) ? result.length : "N/A"
-      );
-      return result;
+      return wasmModule.generate_mapping(sourceData, targetStructure);
     } catch (error) {
       console.error(
         "WASM mapping generation failed, falling back to JS:",

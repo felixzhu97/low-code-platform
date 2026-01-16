@@ -85,17 +85,3 @@ export async function printWithTimestamp(message: string): Promise<string> {
 export function isWasmInitialized(): boolean {
   return isInitialized;
 }
-
-/**
- * 测试日志功能
- * 用于验证 WASM 日志打印是否正常工作
- */
-export async function testLogging(): Promise<void> {
-  await initWasm();
-
-  if (!wasmModule) {
-    throw new TypeError("WASM module is not initialized");
-  }
-
-  wasmModule.test_logging();
-}

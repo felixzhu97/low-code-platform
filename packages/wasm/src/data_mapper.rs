@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 use serde_json::{Value, Map};
-use crate::utils::{log_function_start, log_function_end, log_info, log_error};
+use crate::utils::{log_error, log_function_start, log_function_end};
 
 /// 生成数据映射
 /// 
@@ -13,8 +13,8 @@ use crate::utils::{log_function_start, log_function_end, log_info, log_error};
 #[wasm_bindgen]
 pub fn generate_mapping(source_data: &JsValue, target_structure: &JsValue) -> Result<JsValue, JsValue> {
     log_function_start("generate_mapping");
-    
-    let source: Value = serde_wasm_bindgen::from_value(source_data.clone())
+    let result = {
+        let source: Value = serde_wasm_bindgen::from_value(source_data.clone())
         .map_err(|e| JsValue::from_str(&format!("Failed to deserialize source data: {}", e)))?;
     
     let target: Value = serde_wasm_bindgen::from_value(target_structure.clone())
@@ -25,6 +25,9 @@ pub fn generate_mapping(source_data: &JsValue, target_structure: &JsValue) -> Re
     
     serde_wasm_bindgen::to_value(&mappings)
         .map_err(|e| JsValue::from_str(&format!("Failed to serialize mappings: {}", e)))
+    };
+    log_function_end("generate_mapping");
+    result
 }
 
 /// 应用映射规则
@@ -38,25 +41,24 @@ pub fn generate_mapping(source_data: &JsValue, target_structure: &JsValue) -> Re
 #[wasm_bindgen]
 pub fn apply_mapping(data: &JsValue, mappings: &JsValue) -> Result<JsValue, JsValue> {
     log_function_start("apply_mapping");
-    
-    let source: Value = serde_wasm_bindgen::from_value(data.clone())
-        .map_err(|e| JsValue::from_str(&format!("Failed to deserialize data: {}", e)))?;
-    
-    let mappings: Vec<Value> = serde_wasm_bindgen::from_value(mappings.clone())
-        .map_err(|e| JsValue::from_str(&format!("Failed to deserialize mappings: {}", e)))?;
-    
-    let result = apply_mapping_internal(&source, &mappings)
-        .map_err(|e| JsValue::from_str(&format!("Failed to apply mapping: {}", e)))?;
-    
-    let json_result = serde_wasm_bindgen::to_value(&result)
-        .map_err(|e| {
-            log_error(&format!("Failed to serialize result: {}", e));
-            JsValue::from_str(&format!("Failed to serialize result: {}", e))
-        })?;
-    
-    log_info("Mapping applied successfully");
+    let result = {
+        let source: Value = serde_wasm_bindgen::from_value(data.clone())
+            .map_err(|e| JsValue::from_str(&format!("Failed to deserialize data: {}", e)))?;
+        
+        let mappings: Vec<Value> = serde_wasm_bindgen::from_value(mappings.clone())
+            .map_err(|e| JsValue::from_str(&format!("Failed to deserialize mappings: {}", e)))?;
+        
+        let result = apply_mapping_internal(&source, &mappings)
+            .map_err(|e| JsValue::from_str(&format!("Failed to apply mapping: {}", e)))?;
+        
+        serde_wasm_bindgen::to_value(&result)
+            .map_err(|e| {
+                log_error(&format!("Failed to serialize result: {}", e));
+                JsValue::from_str(&format!("Failed to serialize result: {}", e))
+            })
+    };
     log_function_end("apply_mapping");
-    Ok(json_result)
+    result
 }
 
 /// 转换数据
@@ -70,8 +72,8 @@ pub fn apply_mapping(data: &JsValue, mappings: &JsValue) -> Result<JsValue, JsVa
 #[wasm_bindgen]
 pub fn transform_data(data: &JsValue, transform_rules: &JsValue) -> Result<JsValue, JsValue> {
     log_function_start("transform_data");
-    
-    let source: Value = serde_wasm_bindgen::from_value(data.clone())
+    let result = {
+        let source: Value = serde_wasm_bindgen::from_value(data.clone())
         .map_err(|e| JsValue::from_str(&format!("Failed to deserialize data: {}", e)))?;
     
     let rules: Value = serde_wasm_bindgen::from_value(transform_rules.clone())
@@ -80,15 +82,14 @@ pub fn transform_data(data: &JsValue, transform_rules: &JsValue) -> Result<JsVal
     let result = transform_data_internal(&source, &rules)
         .map_err(|e| JsValue::from_str(&format!("Failed to transform data: {}", e)))?;
     
-    let json_result = serde_wasm_bindgen::to_value(&result)
+    serde_wasm_bindgen::to_value(&result)
         .map_err(|e| {
             log_error(&format!("Failed to serialize result: {}", e));
             JsValue::from_str(&format!("Failed to serialize result: {}", e))
-        })?;
-    
-    log_info("Data transformed successfully");
+        })
+    };
     log_function_end("transform_data");
-    Ok(json_result)
+    result
 }
 
 // 内部函数：生成映射

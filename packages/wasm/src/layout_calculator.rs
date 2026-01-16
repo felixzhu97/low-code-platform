@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 use serde_json::Value;
-use crate::utils::{log_function_start, log_function_end, log_info, log_function_call, log_function_result};
+use crate::utils::{log_error, log_function_start, log_function_end};
 
 /// 位置结构
 #[wasm_bindgen]
@@ -38,9 +38,9 @@ impl Position {
 /// 计算后的组件布局数组
 #[wasm_bindgen]
 pub fn calculate_layout(components: &JsValue, viewport_width: f64) -> Result<JsValue, JsValue> {
-    log_function_call("calculate_layout", &format!("viewport_width: {}", viewport_width));
-    
-    let components: Vec<Value> = serde_wasm_bindgen::from_value(components.clone())
+    log_function_start("calculate_layout");
+    let result = {
+        let components: Vec<Value> = serde_wasm_bindgen::from_value(components.clone())
         .map_err(|e| JsValue::from_str(&format!("Failed to deserialize components: {}", e)))?;
     
     let mut result = Vec::new();
@@ -89,15 +89,14 @@ pub fn calculate_layout(components: &JsValue, viewport_width: f64) -> Result<JsV
         }
     }
     
-    let json_result = serde_wasm_bindgen::to_value(&result)
+    serde_wasm_bindgen::to_value(&result)
         .map_err(|e| {
-            crate::utils::log_error(&format!("Failed to serialize layout result: {}", e));
+            log_error(&format!("Failed to serialize layout result: {}", e));
             JsValue::from_str(&format!("Failed to serialize layout result: {}", e))
-        })?;
-    
-    log_info(&format!("Layout calculated for {} components", result.len()));
+        })
+    };
     log_function_end("calculate_layout");
-    Ok(json_result)
+    result
 }
 
 /// 网格对齐
@@ -111,11 +110,11 @@ pub fn calculate_layout(components: &JsValue, viewport_width: f64) -> Result<JsV
 /// 对齐后的位置
 #[wasm_bindgen]
 pub fn snap_to_grid(x: f64, y: f64, grid_size: f64) -> Position {
-    log_function_call("snap_to_grid", &format!("x: {}, y: {}, grid_size: {}", x, y, grid_size));
+    log_function_start("snap_to_grid");
     let snapped_x = (x / grid_size).round() * grid_size;
     let snapped_y = (y / grid_size).round() * grid_size;
     let result = Position::new(snapped_x, snapped_y);
-    log_function_result("snap_to_grid", &format!("x: {}, y: {}", snapped_x, snapped_y));
+    log_function_end("snap_to_grid");
     result
 }
 
@@ -130,8 +129,8 @@ pub fn snap_to_grid(x: f64, y: f64, grid_size: f64) -> Position {
 #[wasm_bindgen]
 pub fn detect_collision(component1: &JsValue, component2: &JsValue) -> bool {
     log_function_start("detect_collision");
-    
-    let comp1: Value = match serde_wasm_bindgen::from_value(component1.clone()) {
+    let result = {
+        let comp1: Value = match serde_wasm_bindgen::from_value(component1.clone()) {
         Ok(v) => v,
         Err(_) => return false,
     };
@@ -146,6 +145,9 @@ pub fn detect_collision(component1: &JsValue, component2: &JsValue) -> bool {
     
     // AABB 碰撞检测
     pos1.0 < pos2.2 && pos1.2 > pos2.0 && pos1.1 < pos2.3 && pos1.3 > pos2.1
+    };
+    log_function_end("detect_collision");
+    result
 }
 
 // 辅助函数：获取组件边界

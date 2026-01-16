@@ -129,9 +129,7 @@ class PersistenceManager {
    * 导入项目数据到stores
    * 支持 ProjectData 和 PageSchema 两种格式
    */
-  static importProjectData(
-    projectData: ProjectData | PageSchema
-  ): void {
+  static importProjectData(projectData: ProjectData | PageSchema): void {
     try {
       // 如果是 Schema 格式，转换为 ProjectData
       let data: ProjectData;
@@ -166,7 +164,9 @@ class PersistenceManager {
         }
       } else {
         // 如果没有 canvas 数据，使用默认值
-        console.warn("[PersistenceManager] Canvas data is missing, using defaults");
+        console.warn(
+          "[PersistenceManager] Canvas data is missing, using defaults"
+        );
         canvasStore.showGrid = false;
         canvasStore.snapToGrid = false;
         canvasStore.viewportWidth = 1920;
@@ -181,7 +181,9 @@ class PersistenceManager {
       // 导入数据源
       const dataStore = useDataStore.getState();
       // 先删除所有现有数据源
-      const existingDataSourceIds = [...dataStore.dataSources.map((ds) => ds.id)];
+      const existingDataSourceIds = [
+        ...dataStore.dataSources.map((ds) => ds.id),
+      ];
       existingDataSourceIds.forEach((id) => {
         dataStore.deleteDataSource(id);
       });
@@ -313,7 +315,9 @@ class PersistenceManager {
               // 先验证 Schema
               const validation = await validateSchemaAsync(jsonText);
               if (!validation.valid) {
-                throw new Error(`Schema 验证失败: ${validation.errors.join(", ")}`);
+                throw new Error(
+                  `Schema 验证失败: ${validation.errors.join(", ")}`
+                );
               }
 
               // 迁移 Schema（如果需要）
@@ -323,18 +327,15 @@ class PersistenceManager {
                 schemaVersion,
                 "1.0.0"
               );
-              
+
               // 使用 WASM 反序列化
               const projectData = await schemaJsonToProjectData(migratedJson);
-              console.log("[PersistenceManager] WASM deserialized projectData:", {
-                hasCanvas: !!projectData.canvas,
-                canvas: projectData.canvas,
-                hasComponents: Array.isArray(projectData.components),
-                componentsCount: projectData.components?.length || 0,
-              });
               resolve(projectData);
             } catch (error) {
-              console.warn("WASM schema processing failed, using fallback:", error);
+              console.warn(
+                "WASM schema processing failed, using fallback:",
+                error
+              );
               // 降级到同步版本
               const migratedSchema = migrateSchema(data);
               if (!validateSchema(migratedSchema)) {

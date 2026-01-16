@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use serde_json::{Value, Map};
 use js_sys::JSON;
-use crate::utils::{log_function_start, log_function_end, log_info, log_error, log_warn};
+use crate::utils::{log_error, log_function_start, log_function_end};
 
 /// Schema 验证结果
 #[wasm_bindgen]
@@ -34,15 +34,18 @@ impl ValidationResult {
 #[wasm_bindgen]
 pub fn serialize_schema(project_data: &JsValue) -> Result<String, JsValue> {
     log_function_start("serialize_schema");
-    
-    let project: Value = serde_wasm_bindgen::from_value(project_data.clone())
-        .map_err(|e| JsValue::from_str(&format!("Failed to deserialize project data: {}", e)))?;
-    
-    let schema = project_data_to_schema(&project)
-        .map_err(|e| JsValue::from_str(&format!("Failed to convert to schema: {}", e)))?;
-    
-    serde_json::to_string_pretty(&schema)
-        .map_err(|e| JsValue::from_str(&format!("Failed to serialize schema: {}", e)))
+    let result = {
+        let project: Value = serde_wasm_bindgen::from_value(project_data.clone())
+            .map_err(|e| JsValue::from_str(&format!("Failed to deserialize project data: {}", e)))?;
+        
+        let schema = project_data_to_schema(&project)
+            .map_err(|e| JsValue::from_str(&format!("Failed to convert to schema: {}", e)))?;
+        
+        serde_json::to_string_pretty(&schema)
+            .map_err(|e| JsValue::from_str(&format!("Failed to serialize schema: {}", e)))
+    };
+    log_function_end("serialize_schema");
+    result
 }
 
 /// 反序列化 Schema JSON 为项目数据
@@ -55,48 +58,33 @@ pub fn serialize_schema(project_data: &JsValue) -> Result<String, JsValue> {
 #[wasm_bindgen]
 pub fn deserialize_schema(schema_json: &str) -> Result<JsValue, JsValue> {
     log_function_start("deserialize_schema");
-    log_info(&format!("Deserializing schema, length: {} bytes", schema_json.len()));
-    
-    let schema: Value = serde_json::from_str(schema_json)
-        .map_err(|e| JsValue::from_str(&format!("Failed to parse schema JSON: {}", e)))?;
-    
-    let project = schema_to_project_data(&schema)
-        .map_err(|e| {
-            log_error(&format!("Failed to convert from schema: {}", e));
-            JsValue::from_str(&format!("Failed to convert from schema: {}", e))
-        })?;
-    
-    // 检查 project 是否包含 canvas
-    if let Some(project_obj) = project.as_object() {
-        let keys: Vec<String> = project_obj.keys().cloned().collect();
-        log_info(&format!("Project keys: {:?}", keys));
-        if let Some(canvas) = project_obj.get("canvas") {
-            log_info(&format!("Project has canvas: {:?}", canvas));
-        } else {
-            log_warn("Project does NOT have canvas field!");
-        }
-    }
-    
-    // 将 serde_json::Value 先序列化为 JSON 字符串，然后解析为 JsValue
-    // 这是因为 serde_wasm_bindgen::to_value 无法正确处理 serde_json::Value
-    let json_str = serde_json::to_string(&project)
-        .map_err(|e| {
-            log_error(&format!("Failed to serialize project to JSON: {}", e));
-            JsValue::from_str(&format!("Failed to serialize project to JSON: {}", e))
-        })?;
-    
-    log_info(&format!("Project serialized to JSON, length: {} bytes", json_str.len()));
-    
-    // 使用 js_sys::JSON::parse 将 JSON 字符串解析为 JavaScript 对象
-    let result = js_sys::JSON::parse(&json_str)
-        .map_err(|e| {
-            log_error(&format!("Failed to parse JSON string: {:?}", e));
-            JsValue::from_str(&format!("Failed to parse JSON string"))
-        })?;
-    
-    log_info("Schema deserialized successfully");
+    let result = {
+        let schema: Value = serde_json::from_str(schema_json)
+            .map_err(|e| JsValue::from_str(&format!("Failed to parse schema JSON: {}", e)))?;
+        
+        let project = schema_to_project_data(&schema)
+            .map_err(|e| {
+                log_error(&format!("Failed to convert from schema: {}", e));
+                JsValue::from_str(&format!("Failed to convert from schema: {}", e))
+            })?;
+        
+        // 将 serde_json::Value 先序列化为 JSON 字符串，然后解析为 JsValue
+        // 这是因为 serde_wasm_bindgen::to_value 无法正确处理 serde_json::Value
+        let json_str = serde_json::to_string(&project)
+            .map_err(|e| {
+                log_error(&format!("Failed to serialize project to JSON: {}", e));
+                JsValue::from_str(&format!("Failed to serialize project to JSON: {}", e))
+            })?;
+        
+        // 使用 js_sys::JSON::parse 将 JSON 字符串解析为 JavaScript 对象
+        js_sys::JSON::parse(&json_str)
+            .map_err(|e| {
+                log_error(&format!("Failed to parse JSON string: {:?}", e));
+                JsValue::from_str("Failed to parse JSON string")
+            })
+    };
     log_function_end("deserialize_schema");
-    Ok(result)
+    result
 }
 
 /// 验证 Schema 格式
@@ -109,9 +97,8 @@ pub fn deserialize_schema(schema_json: &str) -> Result<JsValue, JsValue> {
 #[wasm_bindgen]
 pub fn validate_schema(schema_json: &str) -> Result<ValidationResult, JsValue> {
     log_function_start("validate_schema");
-    log_info(&format!("Validating schema, length: {} bytes", schema_json.len()));
-    
-    let schema: Value = match serde_json::from_str(schema_json) {
+    let result = {
+        let schema: Value = match serde_json::from_str(schema_json) {
         Ok(v) => v,
         Err(e) => {
             return Ok(ValidationResult {
@@ -167,14 +154,13 @@ pub fn validate_schema(schema_json: &str) -> Result<ValidationResult, JsValue> {
         errors.push("Missing or invalid 'dataSources' field (must be an array)".to_string());
     }
     
-    let result = ValidationResult {
+    Ok(ValidationResult {
         valid: errors.is_empty(),
-        errors: errors.clone(),
+        errors,
+    })
     };
-    
-    log_info(&format!("Schema validation: valid={}, errors={}", result.valid, errors.len()));
     log_function_end("validate_schema");
-    Ok(result)
+    result
 }
 
 /// 迁移 Schema 版本
@@ -189,33 +175,31 @@ pub fn validate_schema(schema_json: &str) -> Result<ValidationResult, JsValue> {
 #[wasm_bindgen]
 pub fn migrate_schema(schema_json: &str, from_version: &str, to_version: &str) -> Result<String, JsValue> {
     log_function_start("migrate_schema");
-    log_info(&format!("Migrating schema from {} to {}", from_version, to_version));
-    
-    let mut schema: Value = serde_json::from_str(schema_json)
-        .map_err(|e| JsValue::from_str(&format!("Failed to parse schema JSON: {}", e)))?;
-    
-    // 当前版本为 1.0.0，未来可以添加迁移逻辑
-    if from_version != to_version {
-        // 更新版本号
-        if let Some(metadata) = schema.get_mut("metadata") {
-            if let Some(metadata_obj) = metadata.as_object_mut() {
-                metadata_obj.insert("version".to_string(), Value::String(to_version.to_string()));
+    let result = {
+        let mut schema: Value = serde_json::from_str(schema_json)
+            .map_err(|e| JsValue::from_str(&format!("Failed to parse schema JSON: {}", e)))?;
+        
+        // 当前版本为 1.0.0，未来可以添加迁移逻辑
+        if from_version != to_version {
+            // 更新版本号
+            if let Some(metadata) = schema.get_mut("metadata") {
+                if let Some(metadata_obj) = metadata.as_object_mut() {
+                    metadata_obj.insert("version".to_string(), Value::String(to_version.to_string()));
+                }
             }
+            schema.as_object_mut()
+                .and_then(|obj| obj.get_mut("version"))
+                .map(|v| *v = Value::String(to_version.to_string()));
         }
-        schema.as_object_mut()
-            .and_then(|obj| obj.get_mut("version"))
-            .map(|v| *v = Value::String(to_version.to_string()));
-    }
-    
-    let result = serde_json::to_string_pretty(&schema)
-        .map_err(|e| {
-            log_error(&format!("Failed to serialize migrated schema: {}", e));
-            JsValue::from_str(&format!("Failed to serialize migrated schema: {}", e))
-        })?;
-    
-    log_info("Schema migrated successfully");
+        
+        serde_json::to_string_pretty(&schema)
+            .map_err(|e| {
+                log_error(&format!("Failed to serialize migrated schema: {}", e));
+                JsValue::from_str(&format!("Failed to serialize migrated schema: {}", e))
+            })
+    };
     log_function_end("migrate_schema");
-    Ok(result)
+    result
 }
 
 // 辅助函数：将项目数据转换为 Schema
