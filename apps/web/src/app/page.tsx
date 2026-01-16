@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, Suspense, lazy } from "react";
+import { useCallback, Suspense, lazy, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Canvas, PropertiesPanel } from "@/presentation/components/canvas";
@@ -16,6 +16,7 @@ import { Eye, Undo2, Redo2 } from "lucide-react";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
+import { print, printWithTimestamp } from "@/shared/wasm";
 
 // 动态导入 Header 中的功能组件
 const ResponsiveControls = lazy(() =>
@@ -123,6 +124,27 @@ export default function LowCodePlatform() {
 
   // 获取适配器
   const { templateAdapter } = useAdapters();
+
+  // 初始化并使用 WASM 打印功能
+  useEffect(() => {
+    const initWasmPrint = async () => {
+      try {
+        // 调用 WASM print 函数
+        const result = await print("Hello from Rust WASM!");
+        console.log("WASM Print Result:", result);
+
+        // 调用带时间戳的打印函数
+        const timestampResult = await printWithTimestamp(
+          "WASM 模块已成功加载并运行"
+        );
+        console.log("WASM Print with Timestamp:", timestampResult);
+      } catch (error) {
+        console.error("WASM 初始化或调用失败:", error);
+      }
+    };
+
+    initWasmPrint();
+  }, []);
 
   // 处理预览模式切换
   const togglePreviewMode = () => {
