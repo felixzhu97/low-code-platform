@@ -30,8 +30,7 @@ export async function initWasm(): Promise<void> {
   initPromise = (async () => {
     try {
       // 动态导入 WASM 模块
-      // 使用相对路径导入，避免类型检查错误（WASM 构建后会自动生成类型）
-      // @ts-expect-error - WASM 模块类型会在构建后生成
+      // 使用包名导入（通过 webpack alias 解析）
       const wasm = await import("@lowcode-platform/wasm");
 
       // 初始化 WASM

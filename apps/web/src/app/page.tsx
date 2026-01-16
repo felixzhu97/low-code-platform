@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, Suspense, lazy, useEffect } from "react";
+import { useCallback, Suspense, lazy, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Canvas, PropertiesPanel } from "@/presentation/components/canvas";
@@ -12,11 +12,19 @@ import {
 } from "@/presentation/components/ui/tabs";
 import { Header } from "@/presentation/components/ui";
 import { Button } from "@/presentation/components/ui/button";
-import { Eye, Undo2, Redo2 } from "lucide-react";
+import { Badge } from "@/presentation/components/ui/badge";
+import {
+  Eye,
+  Undo2,
+  Redo2,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
-import { print, printWithTimestamp } from "@/shared/wasm";
+import { print, printWithTimestamp, initWasm } from "@/shared/wasm";
 
 // 动态导入 Header 中的功能组件
 const ResponsiveControls = lazy(() =>
@@ -103,7 +111,55 @@ const TabContentLoader = () => (
   </div>
 );
 
+// WASM 状态徽章组件
+function WasmStatusBadge({
+  status,
+  error,
+}: Readonly<{
+  status: "loading" | "success" | "error";
+  error: string | null;
+}>) {
+  let badgeVariant: "default" | "secondary" | "destructive";
+  let badgeTitle: string;
+  let icon: React.ReactNode;
+  let text: string;
+
+  if (status === "success") {
+    badgeVariant = "default";
+    badgeTitle = "WASM 模块已加载";
+    icon = <CheckCircle2 className="h-3 w-3" />;
+    text = "WASM 就绪";
+  } else if (status === "error") {
+    badgeVariant = "destructive";
+    badgeTitle = error || "WASM 模块加载失败";
+    icon = <XCircle className="h-3 w-3" />;
+    text = "WASM 错误";
+  } else {
+    badgeVariant = "secondary";
+    badgeTitle = "正在加载 WASM 模块...";
+    icon = <Loader2 className="h-3 w-3 animate-spin" />;
+    text = "WASM 加载中";
+  }
+
+  return (
+    <Badge
+      variant={badgeVariant}
+      className="flex items-center gap-1.5"
+      title={badgeTitle}
+    >
+      {icon}
+      <span className="text-xs">{text}</span>
+    </Badge>
+  );
+}
+
 export default function LowCodePlatform() {
+  // WASM 加载状态
+  const [wasmStatus, setWasmStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
+  const [wasmError, setWasmError] = useState<string | null>(null);
+
   // 从 stores 获取状态
   const {
     // 组件状态
@@ -129,6 +185,13 @@ export default function LowCodePlatform() {
   useEffect(() => {
     const initWasmPrint = async () => {
       try {
+        setWasmStatus("loading");
+        setWasmError(null);
+
+        // 初始化 WASM 模块
+        await initWasm();
+        setWasmStatus("success");
+
         // 调用 WASM print 函数
         const result = await print("Hello from Rust WASM!");
         console.log("WASM Print Result:", result);
@@ -138,8 +201,25 @@ export default function LowCodePlatform() {
           "WASM 模块已成功加载并运行"
         );
         console.log("WASM Print with Timestamp:", timestampResult);
+
+        // 显示成功提示
+        toast({
+          title: "WASM 模块加载成功",
+          description: "Rust WebAssembly 模块已成功初始化",
+        });
       } catch (error) {
         console.error("WASM 初始化或调用失败:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "WASM 模块加载失败";
+        setWasmStatus("error");
+        setWasmError(errorMessage);
+
+        // 显示错误提示
+        toast({
+          title: "WASM 模块加载失败",
+          description: errorMessage,
+          variant: "destructive",
+        });
       }
     };
 
@@ -209,6 +289,8 @@ export default function LowCodePlatform() {
               <Eye className="mr-2 h-4 w-4" />
               {isPreviewMode ? "退出预览" : "预览"}
             </Button>
+            {/* WASM 加载状态指示器 */}
+            <WasmStatusBadge status={wasmStatus} error={wasmError} />
             <Suspense fallback={<ComponentLoader />}>
               <ResponsiveControls />
             </Suspense>
