@@ -16,7 +16,6 @@ import { Eye, Undo2, Redo2 } from "lucide-react";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
-import { useWasm } from "@/shared/wasm";
 
 // 动态导入 Header 中的功能组件
 const ResponsiveControls = lazy(() =>
@@ -125,30 +124,6 @@ export default function LowCodePlatform() {
   // 获取适配器
   const { templateAdapter } = useAdapters();
 
-  // WASM 集成（最小化）
-  const { wasm, loading: wasmLoading } = useWasm();
-
-  // 测试 WASM 功能
-  const testWasm = () => {
-    if (!wasm) {
-      toast({
-        title: "WASM 未加载",
-        description: wasmLoading ? "正在加载中..." : "加载失败，请检查控制台",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const addResult = wasm.add(10, 20);
-    const greetResult = wasm.greet("Low-Code Platform");
-    const fibResult = wasm.fibonacci(10);
-
-    toast({
-      title: "WASM 测试成功",
-      description: `加法: 10+20=${addResult} | 问候: ${greetResult} | 斐波那契(10)=${fibResult}`,
-    });
-  };
-
   // 处理预览模式切换
   const togglePreviewMode = () => {
     setPreviewMode(!isPreviewMode);
@@ -211,15 +186,6 @@ export default function LowCodePlatform() {
             <Button variant="outline" size="sm" onClick={togglePreviewMode}>
               <Eye className="mr-2 h-4 w-4" />
               {isPreviewMode ? "退出预览" : "预览"}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={testWasm}
-              disabled={wasmLoading}
-              title="测试 WASM 功能"
-            >
-              {wasmLoading ? "加载中..." : "WASM"}
             </Button>
             <Suspense fallback={<ComponentLoader />}>
               <ResponsiveControls />

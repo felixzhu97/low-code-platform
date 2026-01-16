@@ -4,15 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm wasm:build:release && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "wasm:build": "cd wasm && wasm-pack build --target web --dev",
-    "wasm:build:release": "cd wasm && wasm-pack build --target web --release",
-    "wasm:watch": "cd wasm && wasm-pack build --target web --dev --watch"
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
