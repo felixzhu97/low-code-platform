@@ -10,18 +10,15 @@
     "build": "pnpm build:wasm && pnpm --filter @lowcode-platform/web build && pnpm --filter @lowcode-platform/server build",
     "build:web": "pnpm build:wasm && pnpm --filter @lowcode-platform/web build",
     "build:server": "pnpm --filter @lowcode-platform/server build",
-    "build:vercel": "pnpm --filter @lowcode-platform/web build",
     "start": "pnpm --filter @lowcode-platform/web start & pnpm --filter @lowcode-platform/server start:prod",
     "start:web": "pnpm --filter @lowcode-platform/web start",
     "start:server": "pnpm --filter @lowcode-platform/server start:prod",
     "lint": "pnpm --filter @lowcode-platform/web lint && pnpm --filter @lowcode-platform/server lint",
     "test": "pnpm --filter @lowcode-platform/web test",
     "test:server": "pnpm --filter @lowcode-platform/server test",
-    "build:wasm": "pnpm --filter @lowcode-platform/rust-wasm build:release",
-    "prepare": "husky"
+    "build:wasm": "pnpm --filter @lowcode-platform/rust-wasm build:release"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
     "typescript": "^5"
   }
 }
