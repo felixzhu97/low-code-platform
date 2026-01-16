@@ -7,7 +7,7 @@
     "dev": "pnpm --filter @lowcode-platform/web dev & pnpm --filter @lowcode-platform/server start:dev",
     "dev:web": "pnpm --filter @lowcode-platform/web dev",
     "dev:server": "pnpm --filter @lowcode-platform/server start:dev",
-    "build:wasm": "pnpm --filter @lowcode-platform/wasm build",
+    "build:wasm": "bash scripts/build-wasm.sh",
     "build": "pnpm build:wasm && pnpm --filter @lowcode-platform/web build && pnpm --filter @lowcode-platform/server build",
     "build:web": "pnpm build:wasm && pnpm --filter @lowcode-platform/web build",
     "build:server": "pnpm --filter @lowcode-platform/server build",
