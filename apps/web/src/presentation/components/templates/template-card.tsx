@@ -4,11 +4,11 @@ import { Star } from "lucide-react";
 import type { Template } from "@/presentation/data/templates";
 
 interface TemplateCardProps {
-  template: Template;
-  isFavorite: boolean;
-  onSelect: (template: Template) => void;
-  onToggleFavorite: (templateId: string) => void;
-  onPreview: (templateId: string) => void;
+  readonly template: Template;
+  readonly isFavorite: boolean;
+  readonly onSelect: (template: Template) => void;
+  readonly onToggleFavorite: (templateId: string) => void;
+  readonly onPreview: (templateId: string) => void;
 }
 
 export function TemplateCard({
@@ -19,47 +19,64 @@ export function TemplateCard({
   onPreview,
 }: TemplateCardProps) {
   return (
-    <Card className="overflow-hidden h-64">
-      <div
-        className="relative h-40 cursor-pointer"
+    <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow">
+      <button
+        type="button"
+        className="relative h-32 w-full cursor-pointer group border-0 p-0 bg-transparent"
         onClick={() => onSelect(template)}
       >
         <img
           src={template.thumbnail || "/placeholder.svg"}
           alt={template.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
         />
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 bg-background/80 hover:bg-background"
+          className="absolute top-1.5 right-1.5 h-7 w-7 bg-background/90 hover:bg-background backdrop-blur-sm"
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite(template.id);
           }}
+          title={isFavorite ? "取消收藏" : "收藏"}
         >
           <Star
-            className={`h-4 w-4 ${
+            className={`h-3.5 w-3.5 ${
               isFavorite ? "fill-yellow-400 text-yellow-400" : ""
             }`}
           />
         </Button>
-      </div>
-      <CardContent className="p-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-medium truncate">{template.name}</h3>
-            <p className="text-sm text-muted-foreground truncate">
-              {template.description}
-            </p>
+      </button>
+      <CardContent className="p-2.5">
+        <div className="space-y-1">
+          <h3 className="font-medium text-sm truncate">{template.name}</h3>
+          <p className="text-xs text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+            {template.description}
+          </p>
+          <div className="flex items-center justify-between pt-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs px-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPreview(template.id);
+              }}
+            >
+              预览
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="h-7 text-xs px-3"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(template);
+              }}
+            >
+              使用
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPreview(template.id)}
-          >
-            预览
-          </Button>
         </div>
       </CardContent>
     </Card>

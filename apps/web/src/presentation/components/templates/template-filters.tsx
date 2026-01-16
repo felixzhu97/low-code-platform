@@ -2,15 +2,15 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
 interface TemplateFiltersProps {
-  showFilters: boolean;
-  categories: string[];
-  allTags: string[];
-  activeCategory: string;
-  selectedTags: string[];
-  onToggleFilters: () => void;
-  onCategoryChange: (category: string) => void;
-  onTagSelect: (tag: string) => void;
-  onResetFilters: () => void;
+  readonly showFilters: boolean;
+  readonly categories: string[];
+  readonly allTags: string[];
+  readonly activeCategory: string;
+  readonly selectedTags: string[];
+  readonly onToggleFilters: () => void;
+  readonly onCategoryChange: (category: string) => void;
+  readonly onTagSelect: (tag: string) => void;
+  readonly onResetFilters: () => void;
 }
 
 export function TemplateFilters({
@@ -45,13 +45,15 @@ export function TemplateFilters({
   }
 
   return (
-    <div className="mb-4 p-4 border rounded-md bg-muted/50">
-      <div className="mb-3">
-        <h4 className="text-sm font-medium mb-2">类别</h4>
-        <div className="flex flex-wrap gap-2">
+    <div className="p-3 border rounded-md bg-muted/30 space-y-3">
+      <div>
+        <h4 className="text-xs font-medium mb-1.5 text-muted-foreground">
+          类别
+        </h4>
+        <div className="flex flex-wrap gap-1.5">
           <Badge
             variant={activeCategory === "all" ? "default" : "outline"}
-            className="cursor-pointer"
+            className="cursor-pointer text-xs h-5 px-2"
             onClick={() => onCategoryChange("all")}
           >
             全部
@@ -60,7 +62,7 @@ export function TemplateFilters({
             <Badge
               key={category}
               variant={activeCategory === category ? "default" : "outline"}
-              className="cursor-pointer"
+              className="cursor-pointer text-xs h-5 px-2"
               onClick={() => onCategoryChange(category)}
             >
               {category}
@@ -69,28 +71,42 @@ export function TemplateFilters({
         </div>
       </div>
 
-      <div>
-        <h4 className="text-sm font-medium mb-2">标签</h4>
-        <div className="flex flex-wrap gap-2">
-          {allTags.map((tag) => (
-            <Badge
-              key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => onTagSelect(tag)}
-            >
-              {tag}
-            </Badge>
-          ))}
+      {allTags.length > 0 && (
+        <div>
+          <h4 className="text-xs font-medium mb-1.5 text-muted-foreground">
+            标签
+          </h4>
+          <div className="flex flex-wrap gap-1.5">
+            {allTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant={selectedTags.includes(tag) ? "default" : "outline"}
+                className="cursor-pointer text-xs h-5 px-2"
+                onClick={() => onTagSelect(tag)}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-3 flex justify-end gap-2">
-        <Button variant="ghost" size="sm" onClick={onToggleFilters}>
+      <div className="flex justify-end gap-1.5 pt-1 border-t">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+          onClick={onToggleFilters}
+        >
           收起
         </Button>
-        <Button variant="ghost" size="sm" onClick={onResetFilters}>
-          重置过滤器
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+          onClick={onResetFilters}
+        >
+          重置
         </Button>
       </div>
     </div>

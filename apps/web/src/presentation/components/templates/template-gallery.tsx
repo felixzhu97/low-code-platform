@@ -21,15 +21,17 @@ import { TemplateCard } from "./template-card";
 import { TemplateFilters } from "./template-filters";
 import { useTemplateGallery } from "../../hooks/use-template-gallery";
 import type { Component } from "@/domain/component";
-import type { ThemeConfig } from "@/domain/theme";
 import type { Template } from "@/presentation/data/templates";
-import { useComponentStore, useThemeStore } from "@/infrastructure/state-management/stores";
+import {
+  useComponentStore,
+  useThemeStore,
+} from "@/infrastructure/state-management/stores";
 
 interface TemplateGalleryProps {
   // 移除 props，现在从 store 获取状态
 }
 
-export function TemplateGallery({}: TemplateGalleryProps) {
+export function TemplateGallery(_props: TemplateGalleryProps) {
   // 从 store 获取状态
   const { addComponent } = useComponentStore();
   const { theme } = useThemeStore();
@@ -103,37 +105,39 @@ export function TemplateGallery({}: TemplateGalleryProps) {
           <DialogTitle>模板库</DialogTitle>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="搜索模板..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+        <div className="space-y-3 mb-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="搜索模板..."
+                className="pl-8 h-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-9 w-9"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
+            <TemplateFilters
+              showFilters={showFilters}
+              categories={categories}
+              allTags={allTags}
+              activeCategory={activeCategory}
+              selectedTags={selectedTags}
+              onToggleFilters={() => setShowFilters(!showFilters)}
+              onCategoryChange={setActiveCategory}
+              onTagSelect={handleTagSelect}
+              onResetFilters={resetFilters}
             />
-            {searchQuery && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0 h-9 w-9"
-                onClick={() => setSearchQuery("")}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
           </div>
-          <TemplateFilters
-            showFilters={showFilters}
-            categories={categories}
-            allTags={allTags}
-            activeCategory={activeCategory}
-            selectedTags={selectedTags}
-            onToggleFilters={() => setShowFilters(!showFilters)}
-            onCategoryChange={setActiveCategory}
-            onTagSelect={handleTagSelect}
-            onResetFilters={resetFilters}
-          />
         </div>
 
         <Tabs defaultValue="all">
@@ -147,31 +151,21 @@ export function TemplateGallery({}: TemplateGalleryProps) {
             className="overflow-auto"
             style={{ maxHeight: "60vh" }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {paginatedTemplates.map((template) => (
-                <div key={template.id} className="p-2">
-                  <TemplateCard
-                    template={template}
-                    isFavorite={favorites.includes(template.id)}
-                    onSelect={handleSelectTemplate}
-                    onToggleFavorite={handleToggleFavorite}
-                    onPreview={handleEnhancedPreview}
-                  />
-                </div>
+                <TemplateCard
+                  key={template.id}
+                  template={template}
+                  isFavorite={favorites.includes(template.id)}
+                  onSelect={handleSelectTemplate}
+                  onToggleFavorite={handleToggleFavorite}
+                  onPreview={handleEnhancedPreview}
+                />
               ))}
             </div>
 
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-muted-foreground">
-                显示 {filteredTemplates.length} 个模板中的{" "}
-                {Math.min(
-                  currentPage * itemsPerPage,
-                  filteredTemplates.length
-                ) -
-                  (currentPage - 1) * itemsPerPage}{" "}
-                个
-              </div>
-              <div className="flex items-center gap-2">
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
                   size="sm"
@@ -182,8 +176,8 @@ export function TemplateGallery({}: TemplateGalleryProps) {
                 >
                   上一页
                 </Button>
-                <span className="text-sm">
-                  {currentPage} / {Math.max(1, totalPages)}
+                <span className="text-xs text-muted-foreground px-2">
+                  {currentPage} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
@@ -196,7 +190,7 @@ export function TemplateGallery({}: TemplateGalleryProps) {
                   下一页
                 </Button>
               </div>
-            </div>
+            )}
           </TabsContent>
 
           <TabsContent
@@ -209,17 +203,16 @@ export function TemplateGallery({}: TemplateGalleryProps) {
                 <p>您还没有收藏任何模板</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {favoriteTemplates.map((template) => (
-                  <div key={template.id} className="p-2">
-                    <TemplateCard
-                      template={template}
-                      isFavorite={true}
-                      onSelect={handleSelectTemplate}
-                      onToggleFavorite={handleToggleFavorite}
-                      onPreview={handleEnhancedPreview}
-                    />
-                  </div>
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    isFavorite={true}
+                    onSelect={handleSelectTemplate}
+                    onToggleFavorite={handleToggleFavorite}
+                    onPreview={handleEnhancedPreview}
+                  />
                 ))}
               </div>
             )}
