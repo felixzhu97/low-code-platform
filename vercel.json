@@ -2,10 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "bash scripts/build-wasm.sh && pnpm --filter @lowcode-platform/web build",
   "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@8.15.0 --activate && pnpm install",
-  "outputDirectory": "apps/web/.next",
-  "functions": {
-    "apps/web/**": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "outputDirectory": "apps/web/.next"
 }
