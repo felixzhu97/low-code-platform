@@ -37,12 +37,12 @@ pub fn log_error(message: &str) {
 
 /// 打印函数调用开始
 pub fn log_function_start(function_name: &str) {
-    log(&format!("[WASM] → {}()", function_name));
+    warn(&format!("[WASM] → {}()", function_name));
 }
 
 /// 打印函数调用结束
 pub fn log_function_end(function_name: &str) {
-    log(&format!("[WASM] ← {}()", function_name));
+    warn(&format!("[WASM] ← {}()", function_name));
 }
 
 /// 打印函数调用（带参数）
