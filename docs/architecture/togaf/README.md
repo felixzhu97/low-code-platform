@@ -34,16 +34,21 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - Schema 导入流程（上传文件、验证版本、迁移旧版本、渲染到画布）
   - 数据管理流程（创建数据源、配置数据连接、测试连接、创建映射、绑定组件、实时更新、监控状态）
   - JSON 快速输入流程（选择组件类型、系统推荐模板、输入或编辑 JSON、验证格式、创建临时数据源、自动渲染到组件）
+  - 国际化配置流程（检测浏览器语言、选择界面语言、加载语言资源、应用语言设置、保存语言偏好）
+  - 用户认证流程（用户登录、验证身份凭证、生成访问令牌、建立会话、授权访问、用户登出）
 
 - **业务能力**：
 
   - 可视化编辑能力
   - 组件管理能力
-  - 数据绑定能力（数据源管理、数据映射、实时数据更新、数据验证、JSON快速输入、模板推荐、智能渲染、数据结构解析）
+  - 数据绑定能力（数据源管理、数据映射、实时数据更新、数据验证、JSON 快速输入、模板推荐、智能渲染、数据结构解析）
   - 协作能力
   - 代码生成能力
   - 模板管理能力
   - Schema 管理能力（Schema 导出、导入、渲染、验证、版本管理）
+  - 国际化能力（多语言支持、语言切换、本地化内容管理、日期数字格式化）
+  - 认证能力（用户认证、权限管理、会话管理、单点登录）
+  - 图表可视化能力（多种图表类型支持、数据可视化、图表配置、实时数据更新）
 
 - **价值流**：
   从需求识别到部署交付的完整价值流，包括需求分析、页面设计、数据绑定、效果验证、团队协作、代码导出和部署上线等环节
@@ -61,6 +66,15 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 数据面板（Data Panel）
   - 数据源选择器（DataSource Selector）
   - JSON 数据输入组件（JSON Data Input）
+  - **组件渲染器（Component Renderers）**：
+    - 基础组件渲染器（Basic Component Renderer）
+    - 图表组件渲染器（Chart Component Renderer）
+    - 数据组件渲染器（Data Component Renderer）
+    - 表单组件渲染器（Form Component Renderer）
+    - 布局组件渲染器（Layout Component Renderer）
+  - 认证组件（Auth Components）
+  - 项目组件（Projects Components）
+  - 表单构建器（Form Builder）
 
 - **应用层（Application Layer）**：
 
@@ -73,6 +87,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 画布管理服务（Canvas Management Service）
   - 历史记录服务（History Service）
   - Schema 管理服务（Schema Management Service）
+  - 模板命令服务（Template Command Service）
 
 - **领域层（Domain Layer）**：
 
@@ -86,7 +101,16 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 组件仓储（Component Repository）
   - 模板仓储（Template Repository）
   - 数据源仓储（DataSource Repository）
-  - 状态管理（State Management）
+  - **状态管理（State Management）**：
+    - 画布状态（Canvas Store）
+    - 组件状态（Component Store）
+    - 数据状态（Data Store）
+    - 历史状态（History Store）
+    - 主题状态（Theme Store）
+    - UI 状态（UI Store）
+  - **持久化层（Persistence Layer）**：
+    - 本地存储适配器（Local Storage Adapter）：浏览器本地存储
+    - 数据库适配器（Database Adapter）：数据库持久化
   - 协作服务（Collaboration Service）
   - Schema 导出服务（Schema Export Service）
   - Schema 导入服务（Schema Import Service）
@@ -114,6 +138,10 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - ThemeConfig（主题配置）
   - HistoryRecord（历史记录）
   - PageSchema（页面 Schema，包含版本、元数据、组件、画布配置、主题、数据源等）
+  - **ChartConfig（图表配置实体）**：包含 type、xField、yField、seriesField、colorField、annotations
+  - **TableColumn（表格列实体）**：包含 key、title、dataIndex、width、render
+  - **PaginationConfig（分页配置实体）**：包含 current、pageSize、total、showTotal
+  - **TreeNode（树节点实体）**：包含 id、title、children、icon、expanded、selected、disabled
 
 - **数据存储**：
 
@@ -122,7 +150,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - components 表：组件数据
     - projects 表：项目数据
     - templates 表：模板数据
-    - data_sources 表：数据源配置（包含静态数据、API配置、数据库连接等）
+    - data_sources 表：数据源配置（包含静态数据、API 配置、数据库连接等）
     - data_mappings 表：数据映射关系（可选，现版本已简化为直接绑定）
     - users 表：用户信息
     - history_records 表：操作历史
@@ -138,6 +166,11 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - exported_code：导出的代码包
     - template_previews：模板预览图
     - schema_files：Schema JSON 文件
+  - **Local Storage（浏览器本地存储）**：用于临时数据和用户偏好
+    - 临时数据缓存（自动清理）
+    - 用户偏好设置（持久化）
+    - 组件状态缓存（会话级）
+    - 表单草稿数据（定时清理）
 
 - **关键数据流场景**：
   - 组件编辑数据流
@@ -150,6 +183,8 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - WASM 数据解析数据流（CSV/XML 文件 → WASM 解析 → 数据源服务 → 数据绑定）
   - WASM 数据映射数据流（源数据 → WASM 映射生成 → WASM 映射应用 → 组件渲染）
   - WASM 布局计算数据流（组件数据 → WASM 布局计算 → WASM 网格对齐 → 组件位置更新）
+  - 本地存储数据流（读取/写入本地数据 → 清理过期数据 → 同步到服务器）
+  - 状态管理数据流（状态初始化 → 状态更新 → 状态持久化 → 状态恢复）
 
 ### 4. technology-architecture.puml - 技术架构图
 
@@ -165,6 +200,17 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - React DnD：拖拽库
   - Recharts：图表库
   - Zustand：状态管理
+  - **i18n（国际化）**：
+    - react-i18next：国际化库
+    - 语言切换功能
+  - **工具包（Utils Packages）**：
+    - Component Utils：组件工具
+    - Data Binding Utils：数据绑定工具
+    - Layout Utils：布局工具
+    - Performance Utils：性能工具
+    - Schema Utils：Schema 工具
+    - Utils：通用工具
+  - **Local Storage（浏览器本地存储）**：临时数据和用户偏好
   - **Rust/WASM**：性能优化
     - Rust：系统编程语言
     - WebAssembly：高性能运行时
@@ -186,6 +232,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - PostgreSQL：主从数据库集群
   - Redis：缓存和消息队列
   - 对象存储（S3/OSS 兼容）：文件存储
+  - Local Storage（浏览器本地存储）：临时数据和用户偏好
 
 - **基础设施层**：
 
@@ -194,6 +241,17 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - API 服务器集群
   - WebSocket 服务器
   - 任务队列
+  - **AWS 集成（@lowcode-platform/aws）**：
+    - S3 操作：对象存储服务
+    - CloudFormation：基础设施即代码
+    - Lambda：无服务器函数
+    - API Gateway：API 管理
+    - CloudFront：CDN 分发
+    - IAM：身份和访问管理
+  - **协作工具包（@lowcode-platform/collaboration）**：
+    - WebSocket 管理：实时连接管理
+    - 实时同步：多人协作同步
+    - 冲突解决：操作冲突处理
 
 - **网络与安全**：
 
@@ -284,12 +342,14 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 ### 2026-01-XX：Rust/WASM 性能优化
 
 - **新增技术栈**：
+
   - Rust/WASM：使用 Rust 编译为 WebAssembly，优化性能关键路径
   - wasm-bindgen：Rust 与 JavaScript 互操作
   - serde-wasm-bindgen：数据序列化/反序列化
   - js-sys：JavaScript 系统调用
 
 - **性能优化模块**：
+
   - **数据解析模块**（WASM）：
     - CSV 解析：高性能 CSV 文件解析
     - XML 解析：快速 XML 数据处理
@@ -308,6 +368,7 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
     - 碰撞检测：组件碰撞检测
 
 - **架构设计**：
+
   - 采用 Port-Adapter 模式：WASM 作为基础设施层实现
   - 整洁架构：WASM 模块遵循 DDD + 分层架构原则
   - 优雅降级：WASM 失败时自动降级到 JavaScript 实现
@@ -321,6 +382,7 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 ### 2026-01-08：数据绑定功能增强
 
 - **新增功能**：
+
   - JSON 快速输入：支持根据组件类型自动推荐模板，快速输入 JSON 数据
   - 智能数据渲染：输入 JSON 后自动解析并渲染到组件属性
   - 数据结构解析：自动解析数据源结构，提供路径选择建议
@@ -331,6 +393,36 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
   - 表现层新增：数据源选择器、JSON 数据输入组件
   - 数据实体扩展：DataSource 添加 lastUpdated 字段，DataMapping 添加 defaultValue 字段
   - 新增数据实体：JsonDataTemplate（JSON 数据模板）
+
+### 2026-01-XX：架构同步更新
+
+- **业务架构增强**：
+
+  - 新增国际化能力（多语言支持、语言切换、本地化内容管理）
+  - 新增认证能力（用户认证、权限管理、会话管理、单点登录）
+  - 新增图表可视化能力（多种图表类型支持、数据可视化、图表配置）
+  - 新增国际化配置流程和用户认证流程
+
+- **应用架构细化**：
+
+  - 表现层新增组件渲染器（基础/图表/数据/表单/布局组件渲染器）
+  - 表现层新增认证组件、项目组件、表单构建器
+  - 应用层新增模板命令服务
+  - 基础设施层细化状态管理（Canvas/Component/Data/History/Theme/UI Store）
+  - 基础设施层新增持久化层（本地存储适配器、数据库适配器）
+
+- **数据架构扩展**：
+
+  - 新增 Chart 实体（ChartConfig、TableColumn、PaginationConfig、TreeNode）
+  - 新增 Local Storage 存储层（临时数据缓存、用户偏好设置、组件状态缓存、表单草稿数据）
+  - 新增本地存储数据流和状态管理数据流
+
+- **技术架构更新**：
+  - 前端新增 i18n 支持（react-i18next、语言切换功能）
+  - 前端新增工具包（Component Utils、Data Binding Utils、Layout Utils、Performance Utils、Schema Utils、Utils）
+  - 基础设施层新增 AWS 集成（S3、CloudFormation、Lambda、API Gateway、CloudFront、IAM）
+  - 基础设施层新增协作工具包（WebSocket 管理、实时同步、冲突解决）
+  - 数据存储层新增 Local Storage（浏览器本地存储）
 
 ## 维护说明
 

@@ -68,6 +68,24 @@ package "业务能力 (Business Capabilities)" {
   component [模板定制] as TemplateCustomization
   component [模板分享] as TemplateSharing
   
+  component [国际化能力] as InternationalizationCapability
+  component [多语言支持] as MultiLanguageSupport
+  component [语言切换] as LanguageSwitch
+  component [本地化内容管理] as LocalizationContentMgmt
+  component [日期数字格式化] as DateNumberFormat
+  
+  component [认证能力] as AuthenticationCapability
+  component [用户认证] as UserAuthentication
+  component [权限管理] as PermissionManagement
+  component [会话管理] as SessionManagement
+  component [单点登录] as SingleSignOn
+  
+  component [图表可视化能力] as ChartVisualizationCapability
+  component [多种图表类型支持] as MultipleChartTypes
+  component [数据可视化] as DataVisualization
+  component [图表配置] as ChartConfiguration
+  component [实时数据更新] as ChartRealTimeUpdate
+  
   VisualEditCapability --> ComponentDrag
   VisualEditCapability --> RealTimePreview
   VisualEditCapability --> PropertyConfig
@@ -107,6 +125,21 @@ package "业务能力 (Business Capabilities)" {
   TemplateMgmtCapability --> TemplateApply
   TemplateMgmtCapability --> TemplateCustomization
   TemplateMgmtCapability --> TemplateSharing
+  
+  InternationalizationCapability --> MultiLanguageSupport
+  InternationalizationCapability --> LanguageSwitch
+  InternationalizationCapability --> LocalizationContentMgmt
+  InternationalizationCapability --> DateNumberFormat
+  
+  AuthenticationCapability --> UserAuthentication
+  AuthenticationCapability --> PermissionManagement
+  AuthenticationCapability --> SessionManagement
+  AuthenticationCapability --> SingleSignOn
+  
+  ChartVisualizationCapability --> MultipleChartTypes
+  ChartVisualizationCapability --> DataVisualization
+  ChartVisualizationCapability --> ChartConfiguration
+  ChartVisualizationCapability --> ChartRealTimeUpdate
 }
 
 ' ============================================
@@ -248,6 +281,19 @@ package "核心业务流程 (Core Business Processes)" {
   JsonInputProcess --> ValidateJsonFormat
   JsonInputProcess --> CreateTempDataSource
   JsonInputProcess --> AutoRenderToComponent
+  
+  I18nConfigProcess --> DetectBrowserLanguage
+  I18nConfigProcess --> SelectInterfaceLanguage
+  I18nConfigProcess --> LoadLanguageResources
+  I18nConfigProcess --> ApplyLanguageSettings
+  I18nConfigProcess --> SaveLanguagePreference
+  
+  UserAuthProcess --> UserLogin
+  UserAuthProcess --> VerifyCredentials
+  UserAuthProcess --> GenerateAccessToken
+  UserAuthProcess --> EstablishSession
+  UserAuthProcess --> AuthorizeAccess
+  UserAuthProcess --> UserLogout
 }
 
 ' ============================================
@@ -284,14 +330,19 @@ Designer --> DataBindingCapability : 使用
 Designer --> CollaborationCapability : 使用
 Designer --> TemplateMgmtCapability : 使用
 Designer --> SchemaMgmtCapability : 使用
+Designer --> InternationalizationCapability : 使用
+Designer --> ChartVisualizationCapability : 使用
 
 Developer --> CodeGenCapability : 使用
 Developer --> VisualEditCapability : 使用
 Developer --> SchemaMgmtCapability : 使用
+Developer --> ChartVisualizationCapability : 使用
 
 Admin --> ComponentMgmtCapability : 管理
 Admin --> TemplateMgmtCapability : 管理
 Admin --> CollaborationCapability : 配置
+Admin --> AuthenticationCapability : 管理
+Admin --> InternationalizationCapability : 配置
 
 EndUser --> Step8 : 访问
 
@@ -311,5 +362,11 @@ SchemaImportProcess --> SchemaMgmtCapability : 依赖
 
 DataMgmtProcess --> DataBindingCapability : 依赖
 JsonInputProcess --> DataBindingCapability : 依赖
+
+I18nConfigProcess --> InternationalizationCapability : 依赖
+UserAuthProcess --> AuthenticationCapability : 依赖
+
+PageDesignProcess --> ChartVisualizationCapability : 依赖
+DataMgmtProcess --> ChartVisualizationCapability : 依赖
 
 @enduml

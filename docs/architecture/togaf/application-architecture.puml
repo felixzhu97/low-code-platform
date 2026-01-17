@@ -42,6 +42,20 @@ package "Felix 低代码平台应用系统" {
     component [Schema导入组件\nSchema Import] as SchemaImport
     interface "Schema导入接口" as SchemaImportUIInterface
     
+    component [组件渲染器\nComponent Renderers] as ComponentRenderers
+    component [基础组件渲染器\nBasic Component Renderer] as BasicRenderer
+    component [图表组件渲染器\nChart Component Renderer] as ChartRenderer
+    component [数据组件渲染器\nData Component Renderer] as DataRenderer
+    component [表单组件渲染器\nForm Component Renderer] as FormRenderer
+    component [布局组件渲染器\nLayout Component Renderer] as LayoutRenderer
+    
+    component [认证组件\nAuth Components] as AuthComponents
+    
+    component [项目组件\nProjects Components] as ProjectsComponents
+    
+    component [表单构建器\nForm Builder] as FormBuilder
+    interface "表单构建接口" as FormBuilderInterface
+    
     VisualEditor --> VisualEditorInterface
     ComponentPanel --> ComponentPanelInterface
     PropertyPanel --> PropertyPanelInterface
@@ -51,6 +65,13 @@ package "Felix 低代码平台应用系统" {
     JsonDataInput --> JsonDataInputInterface
     SchemaExport --> SchemaExportUIInterface
     SchemaImport --> SchemaImportUIInterface
+    FormBuilder --> FormBuilderInterface
+    
+    ComponentRenderers --> BasicRenderer
+    ComponentRenderers --> ChartRenderer
+    ComponentRenderers --> DataRenderer
+    ComponentRenderers --> FormRenderer
+    ComponentRenderers --> LayoutRenderer
   }
   
   ' ============================================
@@ -85,6 +106,9 @@ package "Felix 低代码平台应用系统" {
     component [Schema管理服务\nSchema Management Service] as SchemaService
     interface "Schema操作接口" as SchemaServiceInterface
     
+    component [模板命令服务\nTemplate Command Service] as TemplateCommandService
+    interface "模板命令接口" as TemplateCommandServiceInterface
+    
     ComponentService --> ComponentServiceInterface
     TemplateService --> TemplateServiceInterface
     DataBindingService --> DataBindingServiceInterface
@@ -94,6 +118,7 @@ package "Felix 低代码平台应用系统" {
     CanvasService --> CanvasServiceInterface
     HistoryService --> HistoryServiceInterface
     SchemaService --> SchemaServiceInterface
+    TemplateCommandService --> TemplateCommandServiceInterface
   }
   
   ' ============================================
@@ -125,6 +150,16 @@ package "Felix 低代码平台应用系统" {
     
     component [状态管理\nState Management] as StateManagement
     interface "状态接口" as StateManagementInterface
+    component [画布状态\nCanvas Store] as CanvasStore
+    component [组件状态\nComponent Store] as ComponentStore
+    component [数据状态\nData Store] as DataStore
+    component [历史状态\nHistory Store] as HistoryStore
+    component [主题状态\nTheme Store] as ThemeStore
+    component [UI状态\nUI Store] as UIStore
+    
+    component [持久化层\nPersistence Layer] as PersistenceLayer
+    component [本地存储适配器\nLocal Storage Adapter] as LocalStorageAdapter
+    component [数据库适配器\nDatabase Adapter] as DatabaseAdapter
     
     component [协作服务\nCollaboration Service] as CollaborationService
     interface "协作接口" as CollaborationServiceInterface
@@ -152,6 +187,17 @@ package "Felix 低代码平台应用系统" {
     TemplateRepo --> TemplateRepoInterface
     DataSourceRepo --> DataSourceRepoInterface
     StateManagement --> StateManagementInterface
+    StateManagement --> CanvasStore
+    StateManagement --> ComponentStore
+    StateManagement --> DataStore
+    StateManagement --> HistoryStore
+    StateManagement --> ThemeStore
+    StateManagement --> UIStore
+    
+    PersistenceLayer --> LocalStorageAdapter
+    PersistenceLayer --> DatabaseAdapter
+    PersistenceManager --> PersistenceLayer : 使用
+    
     CollaborationService --> CollaborationServiceInterface
     SchemaExportService --> SchemaExportInterface
     SchemaImportService --> SchemaImportInterface
@@ -200,11 +246,16 @@ JsonDataInput --> JsonHelperService : 调用
 JsonDataInput --> DataSourceStructureService : 调用
 SchemaExport --> SchemaExportService : 调用
 SchemaImport --> SchemaImportService : 调用
+FormBuilder --> TemplateCommandService : 调用
+ComponentRenderers --> ComponentService : 调用
+VisualEditor --> ComponentRenderers : 使用
 
 ComponentService --> ComponentEntity : 使用
 ComponentService --> ComponentRepo : 使用
 TemplateService --> TemplateEntity : 使用
 TemplateService --> TemplateRepo : 使用
+TemplateCommandService --> TemplateEntity : 使用
+TemplateCommandService --> TemplateRepo : 使用
 DataBindingService --> DataSourceEntity : 使用
 DataBindingService --> DataSourceRepo : 使用
 DataSourceService --> DataSourceEntity : 使用
@@ -232,7 +283,11 @@ ComponentRepo --> Database : 读写
 TemplateRepo --> Database : 读写
 DataSourceRepo --> Database : 读写
 StateManagement --> CacheService : 读写
-PersistenceManager --> Database : 读写
+PersistenceManager --> PersistenceLayer : 使用
+PersistenceLayer --> DatabaseAdapter : 使用
+PersistenceLayer --> LocalStorageAdapter : 使用
+DatabaseAdapter --> Database : 读写
+LocalStorageAdapter --> CacheService : 本地存储
 
 CollaborationService --> StateManagement : 同步状态
 CollaborationService --> CacheService : 消息队列
@@ -253,16 +308,18 @@ SchemaRenderer --> CDNService : 加载静态资源
 
 note right of VisualEditor
   **主要数据流：**
-  1. 组件操作 → 应用服务 → 领域实体
+  1. 组件操作 → 应用服务 → 领域实体 → 状态管理stores → 本地存储/数据库
   2. 数据变更 → 状态管理 → 协作服务
-  3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染
+  3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染器 → 组件渲染
   4. 数据源选择 → 数据源服务 → 数据结构解析 → 自动渲染
   5. Schema导出 → Schema导出服务 → WASM适配器（序列化） → 持久化管理器 → 文件存储
   6. Schema导入 → Schema导入服务 → WASM适配器（反序列化/验证/迁移） → 持久化管理器 → 状态管理
-  7. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
+  7. Schema渲染 → Schema渲染器 → 组件服务 → 组件渲染器 → 画布渲染
   8. CSV/XML解析 → 数据源服务 → WASM适配器（高性能解析） → 数据绑定服务
-  9. 数据映射 → 数据绑定服务 → WASM适配器（映射生成/应用） → 组件渲染
+  9. 数据映射 → 数据绑定服务 → WASM适配器（映射生成/应用） → 组件渲染器 → 组件渲染
   10. 布局计算 → 画布服务 → WASM适配器（布局计算/网格对齐） → 组件位置更新
+  11. 表单构建 → 模板命令服务 → 模板服务 → 组件渲染器 → 表单渲染
+  12. 状态持久化 → 持久化管理器 → 本地存储适配器/数据库适配器 → 本地存储/数据库
 end note
 
 @enduml

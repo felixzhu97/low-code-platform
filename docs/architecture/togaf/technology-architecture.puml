@@ -20,6 +20,20 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [Recharts\n图表库] as Recharts
   component [Zustand\n状态管理] as Zustand
   
+  component [i18n\n国际化] as I18n
+  component [react-i18next\n国际化库] as ReactI18Next
+  component [语言切换功能] as LanguageSwitch
+  
+  component [工具包\nUtils Packages] as UtilsPackages
+  component [Component Utils\n组件工具] as ComponentUtils
+  component [Data Binding Utils\n数据绑定工具] as DataBindingUtils
+  component [Layout Utils\n布局工具] as LayoutUtils
+  component [Performance Utils\n性能工具] as PerformanceUtils
+  component [Schema Utils\nSchema工具] as SchemaUtils
+  component [Utils\n通用工具] as Utils
+  
+  component [Local Storage\n本地存储] as LocalStorageBrowser
+  
   component [WebAssembly\nWASM运行时] as WASM
   component [Rust\n系统编程语言] as Rust
   component [wasm-bindgen\nRust-JS互操作] as WasmBindgen
@@ -33,7 +47,19 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Browser --> ReactDnD
   Browser --> Recharts
   Browser --> Zustand
+  Browser --> I18n
+  Browser --> LocalStorageBrowser
   Browser --> WASM
+  
+  I18n --> ReactI18Next
+  ReactI18Next --> LanguageSwitch
+  
+  UtilsPackages --> ComponentUtils
+  UtilsPackages --> DataBindingUtils
+  UtilsPackages --> LayoutUtils
+  UtilsPackages --> PerformanceUtils
+  UtilsPackages --> SchemaUtils
+  UtilsPackages --> Utils
   
   Rust --> WasmBindgen
   WasmBindgen --> WasmPack
@@ -70,12 +96,15 @@ package "数据存储层 (Data Storage Layer)" {
   component [对象存储\nObject Storage] as ObjectStorage
   component [S3/OSS兼容\n文件存储] as FileStorage
   
+  component [Local Storage\n浏览器本地存储] as LocalStorageTech
+  
   PostgreSQL --> PrimaryDB
   PostgreSQL --> ReplicaDB
   Redis --> CacheCluster
   Redis --> SessionStore
   Redis --> MessageQueue
   ObjectStorage --> FileStorage
+  LocalStorageTech --> Browser
 }
 
 package "基础设施层 (Infrastructure Layer)" {
@@ -99,6 +128,19 @@ package "基础设施层 (Infrastructure Layer)" {
   component [代码生成任务\nCode Generation] as CodeGenTask
   component [数据同步任务\nData Sync] as DataSyncTask
   
+  component [AWS集成\nAWS Integration] as AWSIntegration
+  component [S3操作\nS3 Operations] as S3Ops
+  component [CloudFormation\n云编排] as CloudFormation
+  component [Lambda\n函数服务] as Lambda
+  component [API Gateway\nAPI网关] as APIGatewayAWS
+  component [CloudFront\nCDN服务] as CloudFront
+  component [IAM\n身份管理] as IAM
+  
+  component [协作工具包\nCollaboration Package] as CollaborationPackage
+  component [WebSocket管理\nWebSocket Mgmt] as WebSocketMgmt
+  component [实时同步\nReal-time Sync] as RealTimeSync
+  component [冲突解决\nConflict Resolution] as ConflictResolution
+  
   CloudPlatform --> LoadBalancer
   CloudPlatform --> WebCluster
   CloudPlatform --> APICluster
@@ -116,6 +158,17 @@ package "基础设施层 (Infrastructure Layer)" {
   
   TaskQueue --> CodeGenTask
   TaskQueue --> DataSyncTask
+  
+  AWSIntegration --> S3Ops
+  AWSIntegration --> CloudFormation
+  AWSIntegration --> Lambda
+  AWSIntegration --> APIGatewayAWS
+  AWSIntegration --> CloudFront
+  AWSIntegration --> IAM
+  
+  CollaborationPackage --> WebSocketMgmt
+  CollaborationPackage --> RealTimeSync
+  CollaborationPackage --> ConflictResolution
 }
 
 package "网络与安全 (Network & Security)" {
@@ -162,13 +215,20 @@ APICluster --> PostgreSQL : SQL连接
 APICluster --> Redis : 缓存访问
 APICluster --> ObjectStorage : 文件操作
 APICluster --> TaskQueue : 异步任务
+APICluster --> AWSIntegration : AWS服务调用
 
 Browser <--> WSServer : WebSocket连接
+Browser --> LocalStorageTech : 本地存储
 WSServer --> Redis : 消息队列
 WSServer --> PostgreSQL : 状态持久化
+WSServer --> CollaborationPackage : 协作服务
 
 TaskQueue --> ObjectStorage : 结果存储
 TaskQueue --> GitRepo : 代码推送
+AWSIntegration --> ObjectStorage : S3存储
+AWSIntegration --> CDN : CloudFront分发
+Browser --> UtilsPackages : 工具包使用
+Browser --> I18n : 国际化支持
 
 ' ============================================
 ' 部署架构
@@ -222,6 +282,9 @@ note right of Browser
   - TypeScript: 类型安全
   - Tailwind CSS: 原子化CSS
   - Zustand: 轻量级状态管理
+  - react-i18next: 国际化支持
+  - 工具包: 组件/数据绑定/布局/性能/Schema工具
+  - Local Storage: 浏览器本地存储
   - Rust/WASM: 性能关键路径优化
   - wasm-bindgen: Rust-JS互操作
 end note
@@ -238,7 +301,25 @@ note right of PostgreSQL
   **数据存储选型：**
   - PostgreSQL: 关系型数据
   - Redis: 缓存和会话
-  - 对象存储: 文件和媒体
+  - 对象存储: 文件和媒体（S3/OSS兼容）
+  - Local Storage: 浏览器本地存储（临时数据和用户偏好）
+end note
+
+note right of AWSIntegration
+  **AWS集成：**
+  - S3: 对象存储服务
+  - CloudFormation: 基础设施即代码
+  - Lambda: 无服务器函数
+  - API Gateway: API管理
+  - CloudFront: CDN分发
+  - IAM: 身份和访问管理
+end note
+
+note right of CollaborationPackage
+  **协作工具包：**
+  - WebSocket管理: 实时连接管理
+  - 实时同步: 多人协作同步
+  - 冲突解决: 操作冲突处理
 end note
 
 note right of CloudPlatform

@@ -101,6 +101,36 @@ package "核心数据实体 (Core Data Entities)" {
   component [PageSchema_theme: ThemeConfig] as PageSchemaTheme
   component [PageSchema_dataSources: List<DataSource>] as PageSchemaDataSources
   component [PageSchema_settings: ProjectSettings] as PageSchemaSettings
+  
+  component [ChartConfig\n图表配置实体] as ChartConfig
+  component [ChartConfig_type: ChartType] as ChartConfigType
+  component [ChartConfig_xField: String] as ChartConfigXField
+  component [ChartConfig_yField: String] as ChartConfigYField
+  component [ChartConfig_seriesField: String] as ChartConfigSeriesField
+  component [ChartConfig_colorField: String] as ChartConfigColorField
+  component [ChartConfig_annotations: List] as ChartConfigAnnotations
+  
+  component [TableColumn\n表格列实体] as TableColumn
+  component [TableColumn_key: String] as TableColumnKey
+  component [TableColumn_title: String] as TableColumnTitle
+  component [TableColumn_dataIndex: String] as TableColumnDataIndex
+  component [TableColumn_width: Number] as TableColumnWidth
+  component [TableColumn_render: String] as TableColumnRender
+  
+  component [PaginationConfig\n分页配置实体] as PaginationConfig
+  component [PaginationConfig_current: Number] as PaginationConfigCurrent
+  component [PaginationConfig_pageSize: Number] as PaginationConfigPageSize
+  component [PaginationConfig_total: Number] as PaginationConfigTotal
+  component [PaginationConfig_showTotal: Boolean] as PaginationConfigShowTotal
+  
+  component [TreeNode\n树节点实体] as TreeNode
+  component [TreeNode_id: String] as TreeNodeId
+  component [TreeNode_title: String] as TreeNodeTitle
+  component [TreeNode_children: List<TreeNode>] as TreeNodeChildren
+  component [TreeNode_icon: String] as TreeNodeIcon
+  component [TreeNode_expanded: Boolean] as TreeNodeExpanded
+  component [TreeNode_selected: Boolean] as TreeNodeSelected
+  component [TreeNode_disabled: Boolean] as TreeNodeDisabled
 }
 
 ' ============================================
@@ -123,6 +153,10 @@ PageSchema "1" *-- "1" Project : 基于项目
 PageSchema "1" *-- "0..*" Component : 包含组件
 PageSchema "1" *-- "0..*" DataSource : 包含数据源
 PageSchema "1" *-- "1" ThemeConfig : 包含主题
+Component "1" *-- "0..1" ChartConfig : 图表配置
+Component "1" *-- "0..*" TableColumn : 表格列配置
+Component "1" *-- "0..1" PaginationConfig : 分页配置
+Component "1" *-- "0..*" TreeNode : 树节点配置
 
 ' ============================================
 ' 数据存储组件
@@ -149,6 +183,12 @@ package "数据存储层 (Data Storage Layer)" {
   component [template_previews桶] as TemplatePreviewsBucket
   component [schema_files桶] as SchemaFilesBucket
   
+  component [Local Storage\n本地存储] as LocalStorage
+  component [临时数据缓存] as TempDataCache
+  component [用户偏好设置] as UserPreferencesStorage
+  component [组件状态缓存] as ComponentStateCache
+  component [表单草稿数据] as FormDraftStorage
+  
   PostgreSQL --> ComponentsTable
   PostgreSQL --> ProjectsTable
   PostgreSQL --> TemplatesTable
@@ -165,6 +205,11 @@ package "数据存储层 (Data Storage Layer)" {
   ObjectStorage --> ExportedCodeBucket
   ObjectStorage --> TemplatePreviewsBucket
   ObjectStorage --> SchemaFilesBucket
+  
+  LocalStorage --> TempDataCache
+  LocalStorage --> UserPreferencesStorage
+  LocalStorage --> ComponentStateCache
+  LocalStorage --> FormDraftStorage
 }
 
 ' ============================================
@@ -251,6 +296,18 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   component [WASM网格对齐] as WasmGridSnap
   component [WASM碰撞检测] as WasmCollisionDetect
   
+  component [本地存储数据流] as LocalStorageFlow
+  component [读取本地数据] as ReadLocalData
+  component [写入本地数据] as WriteLocalData
+  component [清理过期数据] as CleanExpiredData
+  component [同步到服务器] as SyncToServer
+  
+  component [状态管理数据流] as StateManagementFlow
+  component [状态初始化] as StateInit
+  component [状态更新] as StateUpdate
+  component [状态持久化] as StatePersist
+  component [状态恢复] as StateRestore
+  
   ComponentEditFlow --> UserDragComponent
   ComponentEditFlow --> EditorCreateComponent
   ComponentEditFlow --> ServiceValidateData
@@ -318,6 +375,16 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   WasmLayoutFlow --> WasmLayoutCalculate
   WasmLayoutFlow --> WasmGridSnap
   WasmLayoutFlow --> WasmCollisionDetect
+  
+  LocalStorageFlow --> ReadLocalData
+  LocalStorageFlow --> WriteLocalData
+  LocalStorageFlow --> CleanExpiredData
+  LocalStorageFlow --> SyncToServer
+  
+  StateManagementFlow --> StateInit
+  StateManagementFlow --> StateUpdate
+  StateManagementFlow --> StatePersist
+  StateManagementFlow --> StateRestore
 }
 
 ' ============================================
@@ -333,11 +400,19 @@ User ..> PostgreSQL : 持久化
 HistoryRecord ..> PostgreSQL : 持久化
 PageSchema ..> ObjectStorage : 文件存储
 JsonDataTemplate ..> PostgreSQL : 持久化（可选）
+ChartConfig ..> PostgreSQL : 持久化（可选）
+TableColumn ..> PostgreSQL : 持久化（可选）
+PaginationConfig ..> PostgreSQL : 持久化（可选）
+TreeNode ..> PostgreSQL : 持久化（可选）
 
 Component ..> Redis : 缓存
 Project ..> Redis : 缓存
 Project ..> ObjectStorage : 文件存储
 PageSchema ..> Redis : 缓存
+
+Component ..> LocalStorage : 临时缓存
+Project ..> LocalStorage : 临时缓存
+User ..> LocalStorage : 偏好设置
 
 ComponentEditFlow --> PostgreSQL : 数据持久化
 ComponentEditFlow --> Redis : 缓存更新
@@ -382,6 +457,18 @@ JsonQuickInputFlow --> JsonDataTemplate : 使用
 JsonQuickInputFlow --> DataSource : 创建
 JsonQuickInputFlow --> Component : 更新属性
 
+LocalStorageFlow --> LocalStorage : 读写
+LocalStorageFlow --> TempDataCache : 临时数据
+LocalStorageFlow --> UserPreferencesStorage : 用户偏好
+LocalStorageFlow --> ComponentStateCache : 组件状态
+LocalStorageFlow --> FormDraftStorage : 表单草稿
+LocalStorageFlow --> PostgreSQL : 同步到服务器
+
+StateManagementFlow --> LocalStorage : 状态缓存
+StateManagementFlow --> Redis : 状态同步
+StateManagementFlow --> PostgreSQL : 状态持久化
+StateManagementFlow --> Component : 状态绑定
+
 note right of PostgreSQL
   **数据访问模式：**
   - 读写分离
@@ -396,6 +483,15 @@ note right of Redis
   - 会话数据存储
   - 协作状态同步
   - TTL过期策略
+end note
+
+note right of LocalStorage
+  **本地存储策略：**
+  - 临时数据缓存（自动清理）
+  - 用户偏好设置（持久化）
+  - 组件状态缓存（会话级）
+  - 表单草稿数据（定时清理）
+  - 同步策略：增量同步到服务器
 end note
 
 @enduml
