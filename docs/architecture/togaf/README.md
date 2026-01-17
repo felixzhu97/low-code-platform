@@ -61,18 +61,24 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 数据面板（Data Panel）
   - 数据源选择器（DataSource Selector）
   - JSON 数据输入组件（JSON Data Input）
+  - Schema 导出组件（Schema Export）
+  - Schema 导入组件（Schema Import）
+  - Schema 渲染器（Schema Renderer）
 
 - **应用层（Application Layer）**：
 
   - 组件管理服务（Component Management Service）
   - 模板管理服务（Template Management Service）
+  - 模板命令服务（Template Command Service）：命令模式实现
   - 数据绑定服务（Data Binding Service）
   - 数据源服务（DataSource Service）
   - 数据源结构服务（DataSource Structure Service）
   - JSON 工具服务（JSON Helper Service）
-  - 画布管理服务（Canvas Management Service）
-  - 历史记录服务（History Service）
-  - Schema 管理服务（Schema Management Service）
+  - 用例层（Use Cases Layer）：
+    - 画布用例（Canvas Use Cases）：画布状态管理
+    - 组件用例（Component Use Cases）：组件操作
+    - 模板用例（Template Use Cases）：模板应用
+  - 历史记录工具（History Utils）：函数式实现，提供 undo/redo 等功能
 
 - **领域层（Domain Layer）**：
 
@@ -88,10 +94,8 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 数据源仓储（DataSource Repository）
   - 状态管理（State Management）
   - 协作服务（Collaboration Service）
-  - Schema 导出服务（Schema Export Service）
-  - Schema 导入服务（Schema Import Service）
-  - Schema 渲染器（Schema Renderer）
-  - 持久化管理器（Persistence Manager）
+  - 持久化管理器（Persistence Manager）：负责项目数据持久化、Schema 导出/导入、localStorage 存储管理
+  - **Schema 包（@lowcode-platform/schema）**：Schema 验证、序列化/反序列化、迁移工具包，支持 WASM 和 JavaScript 降级
   - **WASM 适配器（WASM Adapter）**：
     - 数据解析适配器（Data Parser Adapter）：CSV/XML 解析、JSON 验证
     - Schema 处理适配器（Schema Processor Adapter）：序列化/反序列化、验证、迁移
@@ -133,7 +137,12 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - 项目缓存（project_cache）
     - 协作状态（collaboration_state）
 
-  - **对象存储**：用于文件存储
+  - **LocalStorage**：浏览器本地存储（当前开发环境实现）
+    - 项目数据存储（Project Data Store）
+    - 当前项目 ID（Current Project ID）
+    - Schema 文件存储（可选）
+
+  - **对象存储**：用于文件存储（生产环境可选）
     - user_files：用户上传的文件
     - exported_code：导出的代码包
     - template_previews：模板预览图
@@ -145,8 +154,8 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - JSON 快速输入数据流（选择组件 → 系统推荐模板 → 用户输入 JSON → 验证格式 → 解析结构 → 创建静态数据源 → 自动渲染到组件属性）
   - 协作同步数据流
   - 代码生成数据流
-  - Schema 导出数据流（读取项目数据 → 转换为 PageSchema → WASM 验证格式 → WASM 序列化为 JSON → 下载/存储）
-  - Schema 导入数据流（上传文件 → 解析 JSON → WASM 验证版本 → WASM 迁移旧版本 → WASM 转换为 Project 数据 → 导入到状态管理 → 渲染到画布）
+  - Schema 导出数据流（PersistenceManager 导出项目数据 → @lowcode-platform/schema → WASM 序列化为 JSON → 文件下载/存储到 localStorage，降级路径：JavaScript 序列化）
+  - Schema 导入数据流（上传文件 → PersistenceManager 读取文件 → 解析 JSON → @lowcode-platform/schema → WASM 验证版本/迁移/转换为 Project 数据 → PersistenceManager 导入数据 → 状态管理 → 画布渲染，降级路径：JavaScript 验证/迁移/转换）
   - WASM 数据解析数据流（CSV/XML 文件 → WASM 解析 → 数据源服务 → 数据绑定）
   - WASM 数据映射数据流（源数据 → WASM 映射生成 → WASM 映射应用 → 组件渲染）
   - WASM 布局计算数据流（组件数据 → WASM 布局计算 → WASM 网格对齐 → 组件位置更新）
@@ -158,13 +167,13 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
 - **前端技术栈**：
 
   - React 19：UI 框架
-  - Next.js 15：全栈框架
-  - TypeScript：类型系统
+  - Next.js 15.2.8：全栈框架
+  - TypeScript 5：类型系统
   - Tailwind CSS：样式框架
   - Radix UI：组件库
   - React DnD：拖拽库
   - Recharts：图表库
-  - Zustand：状态管理
+  - Zustand 5.0.8：状态管理
   - **Rust/WASM**：性能优化
     - Rust：系统编程语言
     - WebAssembly：高性能运行时
@@ -172,14 +181,23 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - wasm-pack：WASM 打包工具
     - serde-wasm-bindgen：数据序列化
     - js-sys：JavaScript 系统调用
+  - **测试框架**：
+    - Vitest 3.2.4：前端测试框架
+    - Testing Library：React 组件测试
 
 - **后端技术栈**：
 
-  - NestJS 11：后端框架
-  - TypeScript：类型系统
+  - NestJS 11.0.1：后端框架
+  - TypeScript 5：类型系统
   - Express：HTTP 服务器
   - Socket.IO：WebSocket 实时通信
   - TypeORM：ORM 框架
+  - **测试框架**：
+    - Jest 30.0.0：后端测试框架
+
+- **核心包**：
+
+  - **@lowcode-platform/schema**：Schema 验证、序列化/反序列化、迁移工具包，支持 WASM 和 JavaScript 降级
 
 - **数据存储层**：
 
@@ -280,6 +298,25 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 - TOGAF 框架更适合企业架构师和业务人员理解整体架构和业务价值
 
 ## 最新更新
+
+### 2026-01-XX：架构文档同步更新
+
+- **应用架构修正**：
+  - History Service：更新为函数式实现（`history.ts`），而非类服务
+  - Template Management：更新为命令模式实现（`TemplateCommandService` + `TemplateService`）
+  - Canvas Management：更新为用例（Use Cases）实现，位于 `application/use-cases/canvas/`
+  - Schema 管理：实际由 `PersistenceManager` 实现，而非独立的 Schema 服务
+  - 表现层新增：Schema 渲染器组件（Schema Renderer）
+
+- **数据架构修正**：
+  - Schema 导出/导入流程：通过 `PersistenceManager` 实现，使用 `@lowcode-platform/schema` 包进行 Schema 操作
+  - 数据存储：`PersistenceManager` 使用 localStorage 进行项目持久化（当前开发环境实现）
+  - 数据流：添加 WASM 降级路径说明
+
+- **技术架构更新**：
+  - 技术栈版本：Next.js 15.2.8、NestJS 11.0.1、Zustand 5.0.8、TypeScript 5
+  - 测试框架：Vitest 3.2.4（前端）、Jest 30.0.0（后端）
+  - 核心包：添加 `@lowcode-platform/schema` 包说明
 
 ### 2026-01-XX：Rust/WASM 性能优化
 

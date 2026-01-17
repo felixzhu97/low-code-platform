@@ -42,6 +42,9 @@ package "Felix 低代码平台应用系统" {
     component [Schema导入组件\nSchema Import] as SchemaImport
     interface "Schema导入接口" as SchemaImportUIInterface
     
+    component [Schema渲染器\nSchema Renderer] as SchemaRendererComponent
+    interface "Schema渲染接口" as SchemaRendererUIInterface
+    
     VisualEditor --> VisualEditorInterface
     ComponentPanel --> ComponentPanelInterface
     PropertyPanel --> PropertyPanelInterface
@@ -51,6 +54,7 @@ package "Felix 低代码平台应用系统" {
     JsonDataInput --> JsonDataInputInterface
     SchemaExport --> SchemaExportUIInterface
     SchemaImport --> SchemaImportUIInterface
+    SchemaRendererComponent --> SchemaRendererUIInterface
   }
   
   ' ============================================
@@ -76,24 +80,28 @@ package "Felix 低代码平台应用系统" {
     component [JSON工具服务\nJSON Helper Service] as JsonHelperService
     interface "JSON操作接口" as JsonHelperServiceInterface
     
-    component [画布管理服务\nCanvas Management Service] as CanvasService
-    interface "画布操作接口" as CanvasServiceInterface
+    component [模板命令服务\nTemplate Command Service] as TemplateCommandService
+    interface "模板命令接口" as TemplateCommandInterface
     
-    component [历史记录服务\nHistory Service] as HistoryService
-    interface "历史操作接口" as HistoryServiceInterface
+    component [用例层\nUse Cases Layer] as UseCasesLayer
+    component [画布用例\nCanvas Use Cases] as CanvasUseCases
+    component [组件用例\nComponent Use Cases] as ComponentUseCases
+    component [模板用例\nTemplate Use Cases] as TemplateUseCases
     
-    component [Schema管理服务\nSchema Management Service] as SchemaService
-    interface "Schema操作接口" as SchemaServiceInterface
+    component [历史记录工具\nHistory Utils] as HistoryUtils
+    note right of HistoryUtils : 函数式实现\n提供 undo/redo/addToHistory 等函数
     
     ComponentService --> ComponentServiceInterface
     TemplateService --> TemplateServiceInterface
+    TemplateCommandService --> TemplateCommandInterface
     DataBindingService --> DataBindingServiceInterface
     DataSourceService --> DataSourceServiceInterface
     DataSourceStructureService --> DataSourceStructureServiceInterface
     JsonHelperService --> JsonHelperServiceInterface
-    CanvasService --> CanvasServiceInterface
-    HistoryService --> HistoryServiceInterface
-    SchemaService --> SchemaServiceInterface
+    
+    UseCasesLayer --> CanvasUseCases
+    UseCasesLayer --> ComponentUseCases
+    UseCasesLayer --> TemplateUseCases
   }
   
   ' ============================================
@@ -129,17 +137,9 @@ package "Felix 低代码平台应用系统" {
     component [协作服务\nCollaboration Service] as CollaborationService
     interface "协作接口" as CollaborationServiceInterface
     
-    component [Schema导出服务\nSchema Export Service] as SchemaExportService
-    interface "Schema导出接口" as SchemaExportInterface
-    
-    component [Schema导入服务\nSchema Import Service] as SchemaImportService
-    interface "Schema导入接口" as SchemaImportInterface
-    
-    component [Schema渲染器\nSchema Renderer] as SchemaRenderer
-    interface "Schema渲染接口" as SchemaRendererInterface
-    
     component [持久化管理器\nPersistence Manager] as PersistenceManager
     interface "持久化接口" as PersistenceManagerInterface
+    note right of PersistenceManager : 负责 Schema 导出/导入\n项目数据持久化\nlocalStorage 存储管理
     
     component [WASM适配器\nWASM Adapter] as WasmAdapter
     interface "WASM端口接口" as WasmPortInterface
@@ -153,9 +153,6 @@ package "Felix 低代码平台应用系统" {
     DataSourceRepo --> DataSourceRepoInterface
     StateManagement --> StateManagementInterface
     CollaborationService --> CollaborationServiceInterface
-    SchemaExportService --> SchemaExportInterface
-    SchemaImportService --> SchemaImportInterface
-    SchemaRenderer --> SchemaRendererInterface
     PersistenceManager --> PersistenceManagerInterface
     
     WasmAdapter --> WasmPortInterface
@@ -179,6 +176,8 @@ package "外部系统 (External Systems)" {
   component [CDN服务\nCDN Service] as CDNService
   component [WASM模块\nWASM Module] as WasmModule
   component [Rust编译\nRust Compiler] as RustCompiler
+  component [Schema包\n@lowcode-platform/schema] as SchemaPackage
+  note right of SchemaPackage : Schema 验证、序列化/反序列化\n迁移工具包\n支持 WASM 和 JS 降级
 }
 
 ' ============================================
@@ -186,20 +185,22 @@ package "外部系统 (External Systems)" {
 ' ============================================
 
 VisualEditor --> ComponentService : 调用
-VisualEditor --> CanvasService : 调用
-VisualEditor --> HistoryService : 调用
+VisualEditor --> CanvasUseCases : 调用
+VisualEditor --> HistoryUtils : 调用
 ComponentPanel --> ComponentService : 调用
 PropertyPanel --> ComponentService : 调用
 PropertyPanel --> DataBindingService : 调用
 TemplateLibrary --> TemplateService : 调用
+TemplateLibrary --> TemplateUseCases : 调用
 DataPanel --> DataBindingService : 调用
 DataPanel --> DataSourceService : 调用
 DataSourceSelector --> DataSourceService : 调用
 DataSourceSelector --> DataBindingService : 调用
 JsonDataInput --> JsonHelperService : 调用
 JsonDataInput --> DataSourceStructureService : 调用
-SchemaExport --> SchemaExportService : 调用
-SchemaImport --> SchemaImportService : 调用
+SchemaExport --> PersistenceManager : 调用
+SchemaImport --> PersistenceManager : 调用
+SchemaRendererComponent --> ComponentService : 调用
 
 ComponentService --> ComponentEntity : 使用
 ComponentService --> ComponentRepo : 使用
@@ -211,19 +212,20 @@ DataSourceService --> DataSourceEntity : 使用
 DataSourceService --> DataSourceRepo : 使用
 DataSourceStructureService --> DataSourceEntity : 使用
 JsonHelperService --> DataSourceEntity : 处理
-CanvasService --> ComponentFactory : 使用
-SchemaExportService --> SchemaEntity : 使用
-SchemaExportService --> PersistenceManager : 使用
-SchemaImportService --> SchemaEntity : 使用
-SchemaImportService --> PersistenceManager : 使用
-SchemaRenderer --> SchemaEntity : 使用
-SchemaRenderer --> ComponentService : 使用
+CanvasUseCases --> ComponentFactory : 使用
+ComponentUseCases --> ComponentEntity : 使用
+TemplateUseCases --> TemplateEntity : 使用
+TemplateCommandService --> TemplateEntity : 使用
+PersistenceManager --> SchemaEntity : 使用
+PersistenceManager --> StateManagement : 使用
+SchemaRendererComponent --> SchemaEntity : 使用
 
 DataSourceService --> WasmAdapter : 使用（CSV/XML解析、JSON验证）
-SchemaExportService --> WasmAdapter : 使用（Schema序列化）
-SchemaImportService --> WasmAdapter : 使用（Schema反序列化、验证、迁移）
+PersistenceManager --> SchemaPackage : 使用（Schema操作）
+SchemaPackage --> WasmAdapter : 调用（WASM优化）
+WasmAdapter --> WasmModule : 调用
 DataBindingService --> WasmAdapter : 使用（数据映射生成和应用）
-CanvasService --> WasmAdapter : 使用（布局计算、网格对齐、碰撞检测）
+CanvasUseCases --> WasmAdapter : 使用（布局计算、网格对齐、碰撞检测）
 
 WasmAdapter --> WasmModule : 调用
 WasmModule --> RustCompiler : 编译
@@ -232,20 +234,18 @@ ComponentRepo --> Database : 读写
 TemplateRepo --> Database : 读写
 DataSourceRepo --> Database : 读写
 StateManagement --> CacheService : 读写
-PersistenceManager --> Database : 读写
+PersistenceManager --> CacheService : 读写（localStorage）
 
 CollaborationService --> StateManagement : 同步状态
 CollaborationService --> CacheService : 消息队列
 
 ComponentService ..> AuthService : 验证权限
 TemplateService ..> AuthService : 验证权限
-SchemaExportService ..> AuthService : 验证权限
-SchemaImportService ..> AuthService : 验证权限
+PersistenceManager ..> AuthService : 验证权限
 
-SchemaExportService --> ObjectStorage : 存储Schema文件
-SchemaImportService --> ObjectStorage : 读取Schema文件
+PersistenceManager --> ObjectStorage : 存储Schema文件（可选）
 VisualEditor --> CDNService : 加载静态资源
-SchemaRenderer --> CDNService : 加载静态资源
+SchemaRendererComponent --> CDNService : 加载静态资源
 
 ' ============================================
 ' 数据流
@@ -253,16 +253,17 @@ SchemaRenderer --> CDNService : 加载静态资源
 
 note right of VisualEditor
   **主要数据流：**
-  1. 组件操作 → 应用服务 → 领域实体
-  2. 数据变更 → 状态管理 → 协作服务
+  1. 组件操作 → 应用服务/用例 → 领域实体 → 状态管理
+  2. 数据变更 → 状态管理 → 协作服务 → 历史记录工具
   3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染
   4. 数据源选择 → 数据源服务 → 数据结构解析 → 自动渲染
-  5. Schema导出 → Schema导出服务 → WASM适配器（序列化） → 持久化管理器 → 文件存储
-  6. Schema导入 → Schema导入服务 → WASM适配器（反序列化/验证/迁移） → 持久化管理器 → 状态管理
-  7. Schema渲染 → Schema渲染器 → 组件服务 → 画布渲染
+  5. Schema导出 → PersistenceManager → @lowcode-platform/schema → WASM适配器（序列化） → 文件下载
+  6. Schema导入 → PersistenceManager → @lowcode-platform/schema → WASM适配器（验证/迁移/反序列化） → 状态管理 → 画布渲染
+  7. Schema渲染 → Schema渲染器组件 → 组件服务 → 画布渲染
   8. CSV/XML解析 → 数据源服务 → WASM适配器（高性能解析） → 数据绑定服务
   9. 数据映射 → 数据绑定服务 → WASM适配器（映射生成/应用） → 组件渲染
-  10. 布局计算 → 画布服务 → WASM适配器（布局计算/网格对齐） → 组件位置更新
+  10. 布局计算 → 画布用例 → WASM适配器（布局计算/网格对齐） → 组件位置更新
+  11. 模板应用 → 模板服务/命令 → 模板用例 → 组件服务 → 状态管理
 end note
 
 @enduml

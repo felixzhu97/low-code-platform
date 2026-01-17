@@ -12,13 +12,13 @@ package "前端技术栈 (Frontend Technology Stack)" {
   
   component [Web浏览器\nWeb Browser] as Browser
   component [React 19\nUI框架] as React
-  component [Next.js 15\n全栈框架] as NextJS
-  component [TypeScript\n类型系统] as TypeScript
+  component [Next.js 15.2.8\n全栈框架] as NextJS
+  component [TypeScript 5\n类型系统] as TypeScript
   component [Tailwind CSS\n样式框架] as Tailwind
   component [Radix UI\n组件库] as RadixUI
   component [React DnD\n拖拽库] as ReactDnD
   component [Recharts\n图表库] as Recharts
-  component [Zustand\n状态管理] as Zustand
+  component [Zustand 5.0.8\n状态管理] as Zustand
   
   component [WebAssembly\nWASM运行时] as WASM
   component [Rust\n系统编程语言] as Rust
@@ -43,8 +43,8 @@ package "前端技术栈 (Frontend Technology Stack)" {
 package "后端技术栈 (Backend Technology Stack)" {
   
   component [应用服务器\nApplication Server] as AppServer
-  component [NestJS 11\n后端框架] as NestJS
-  component [TypeScript\n类型系统] as TSBackend
+  component [NestJS 11.0.1\n后端框架] as NestJS
+  component [TypeScript 5\n类型系统] as TSBackend
   component [Express\nHTTP服务器] as Express
   component [Socket.IO\nWebSocket] as SocketIO
   component [TypeORM\nORM框架] as TypeORM
@@ -136,6 +136,28 @@ package "监控与运维 (Monitoring & Operations)" {
   component [健康检查\nHealth Check] as HealthCheck
 }
 
+package "测试框架 (Testing Frameworks)" {
+  
+  component [Vitest 3.2.4\n前端测试框架] as Vitest
+  component [Jest 30.0.0\n后端测试框架] as Jest
+  component [Testing Library\nReact组件测试] as TestingLibrary
+  component [Coverage\n代码覆盖率] as Coverage
+}
+
+package "核心包 (Core Packages)" {
+  
+  component [Schema包\n@lowcode-platform/schema] as SchemaPackage
+  component [Schema验证\nSchema Validation] as SchemaValidation
+  component [Schema序列化\nSchema Serialization] as SchemaSerialization
+  component [Schema迁移\nSchema Migration] as SchemaMigration
+  component [WASM支持\nWASM Support] as SchemaWasmSupport
+  
+  SchemaPackage --> SchemaValidation
+  SchemaPackage --> SchemaSerialization
+  SchemaPackage --> SchemaMigration
+  SchemaPackage --> SchemaWasmSupport
+}
+
 package "CI/CD与部署 (CI/CD & Deployment)" {
   
   component [Git仓库\nGit Repository] as GitRepo
@@ -217,21 +239,32 @@ WSServer --> HealthCheck : 健康检查
 
 note right of Browser
   **前端技术选型：**
-  - Next.js: SSR/SSG支持
+  - Next.js 15.2.8: SSR/SSG支持
   - React 19: 最新UI框架
-  - TypeScript: 类型安全
+  - TypeScript 5: 类型安全
   - Tailwind CSS: 原子化CSS
-  - Zustand: 轻量级状态管理
+  - Zustand 5.0.8: 轻量级状态管理
   - Rust/WASM: 性能关键路径优化
   - wasm-bindgen: Rust-JS互操作
+  - Vitest 3.2.4: 前端测试框架
 end note
 
 note right of AppServer
   **后端技术选型：**
-  - NestJS: 模块化架构
+  - NestJS 11.0.1: 模块化架构
   - TypeORM: 数据库ORM
   - Socket.IO: 实时通信
   - Express: HTTP服务器
+  - Jest 30.0.0: 后端测试框架
+end note
+
+note right of SchemaPackage
+  **Schema包特性：**
+  - @lowcode-platform/schema
+  - Schema验证和序列化
+  - Schema版本迁移
+  - WASM性能优化
+  - JavaScript降级支持
 end note
 
 note right of PostgreSQL
