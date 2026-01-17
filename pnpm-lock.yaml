@@ -308,6 +308,105 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.15.33)(jiti@1.21.7)(jsdom@26.1.0)(terser@5.44.1)(yaml@2.8.0)
 
+  packages/component-utils:
+    dependencies:
+      '@lowcode-platform/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.33)(jiti@1.21.7)(jsdom@26.1.0)(terser@5.44.1)(yaml@2.8.0)
+
+  packages/data-binding:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/layout-utils:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/performance:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/schema:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.33)(jiti@1.21.7)(jsdom@26.1.0)(terser@5.44.1)(yaml@2.8.0)
+
+  packages/test-utils:
+    dependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.6.3
+        version: 6.6.3
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      jest:
+        specifier: ^30.0.0
+        version: 30.2.0(@types/node@22.15.33)(ts-node@10.9.2(@types/node@22.15.33)(typescript@5.8.3))
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.33)(jiti@1.21.7)(jsdom@26.1.0)(terser@5.44.1)(yaml@2.8.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      '@types/react':
+        specifier: ^19
+        version: 19.1.8
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/utils:
+    dependencies:
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      tailwind-merge:
+        specifier: ^2.5.4
+        version: 2.6.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.15.33
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.33)(jiti@1.21.7)(jsdom@26.1.0)(terser@5.44.1)(yaml@2.8.0)
+
   packages/wasm: {}
 
 packages:

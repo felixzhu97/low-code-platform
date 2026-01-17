@@ -1,0 +1,33 @@
+{
+  "name": "@lowcode-platform/component-utils",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Component tree manipulation utilities for low-code platform",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./tree": "./src/tree.ts",
+    "./find": "./src/find.ts",
+    "./children": "./src/children.ts",
+    "./validator": "./src/validator.ts"
+  },
+  "files": [
+    "src/**/*"
+  ],
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@lowcode-platform/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
