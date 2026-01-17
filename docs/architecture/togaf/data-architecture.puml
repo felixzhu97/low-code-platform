@@ -143,10 +143,6 @@ package "数据存储层 (Data Storage Layer)" {
   component [project_cache] as ProjectCache
   component [collaboration_state] as CollaborationState
   
-  component [LocalStorage\n浏览器本地存储] as LocalStorage
-  component [项目数据存储\nProject Data Store] as ProjectDataStore
-  component [当前项目ID\nCurrent Project ID] as CurrentProjectId
-  
   component [对象存储\nObject Storage] as ObjectStorage
   component [user_files桶] as UserFilesBucket
   component [exported_code桶] as ExportedCodeBucket
@@ -164,9 +160,6 @@ package "数据存储层 (Data Storage Layer)" {
   Redis --> SessionCache
   Redis --> ProjectCache
   Redis --> CollaborationState
-  
-  LocalStorage --> ProjectDataStore
-  LocalStorage --> CurrentProjectId
   
   ObjectStorage --> UserFilesBucket
   ObjectStorage --> ExportedCodeBucket
@@ -227,24 +220,19 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   
   component [Schema导出数据流] as SchemaExportFlow
   component [用户触发Schema导出] as UserTriggerSchemaExport
-  component [PersistenceManager导出项目数据] as PersistenceExportProjectData
-  component [@lowcode-platform/schema包] as SchemaPackage
-  component [WASM序列化Schema] as WasmSerializeSchema
-  component [降级JS序列化] as FallbackSerializeSchema
+  component [读取Project完整数据] as ReadFullProjectData
+  component [转换为PageSchema实体] as ConvertToPageSchema
+  component [验证Schema格式] as ValidateSchemaFormat
+  component [序列化为JSON] as SerializeToJSON
   component [下载Schema文件] as DownloadSchemaFile
-  component [存储到localStorage] as StoreToLocalStorage
+  component [存储到对象存储] as StoreToObjectStorage
   
   component [Schema导入数据流] as SchemaImportFlow
   component [用户上传Schema文件] as UserUploadSchemaFile
-  component [PersistenceManager读取文件] as PersistenceReadFile
   component [解析JSON数据] as ParseJSONData
   component [WASM验证Schema版本] as WasmValidateSchemaVersion
-  component [降级JS验证] as FallbackValidateSchema
   component [WASM迁移旧版本Schema] as WasmMigrateOldSchema
-  component [降级JS迁移] as FallbackMigrateSchema
   component [WASM转换为Project数据] as WasmConvertToProjectData
-  component [降级JS转换] as FallbackConvertToProjectData
-  component [PersistenceManager导入数据] as PersistenceImportData
   component [导入到状态管理] as ImportToStateManagement
   component [渲染到画布] as RenderToCanvas
   
@@ -304,28 +292,20 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
   CodeGenFlow --> PushToGit
   
   SchemaExportFlow --> UserTriggerSchemaExport
-  SchemaExportFlow --> PersistenceExportProjectData
-  PersistenceExportProjectData --> SchemaPackage
-  SchemaPackage --> WasmSerializeSchema
-  WasmSerializeSchema --> DownloadSchemaFile
-  SchemaPackage ..> FallbackSerializeSchema : 降级路径
-  FallbackSerializeSchema --> DownloadSchemaFile
-  DownloadSchemaFile --> StoreToLocalStorage
+  SchemaExportFlow --> ReadFullProjectData
+  SchemaExportFlow --> ConvertToPageSchema
+  SchemaExportFlow --> ValidateSchemaFormat
+  SchemaExportFlow --> SerializeToJSON
+  SchemaExportFlow --> DownloadSchemaFile
+  SchemaExportFlow --> StoreToObjectStorage
   
   SchemaImportFlow --> UserUploadSchemaFile
-  SchemaImportFlow --> PersistenceReadFile
-  PersistenceReadFile --> ParseJSONData
-  ParseJSONData --> SchemaPackage
-  SchemaPackage --> WasmValidateSchemaVersion
-  WasmValidateSchemaVersion --> WasmMigrateOldSchema
-  WasmMigrateOldSchema --> WasmConvertToProjectData
-  SchemaPackage ..> FallbackValidateSchema : 降级路径
-  FallbackValidateSchema ..> FallbackMigrateSchema : 降级路径
-  FallbackMigrateSchema ..> FallbackConvertToProjectData : 降级路径
-  WasmConvertToProjectData --> PersistenceImportData
-  FallbackConvertToProjectData --> PersistenceImportData
-  PersistenceImportData --> ImportToStateManagement
-  ImportToStateManagement --> RenderToCanvas
+  SchemaImportFlow --> ParseJSONData
+  SchemaImportFlow --> WasmValidateSchemaVersion
+  SchemaImportFlow --> WasmMigrateOldSchema
+  SchemaImportFlow --> WasmConvertToProjectData
+  SchemaImportFlow --> ImportToStateManagement
+  SchemaImportFlow --> RenderToCanvas
   
   WasmDataParseFlow --> WasmCsvParse
   WasmDataParseFlow --> WasmXmlParse
@@ -344,21 +324,20 @@ package "关键数据流场景 (Key Data Flow Scenarios)" {
 ' 数据访问关系
 ' ============================================
 
-Component ..> PostgreSQL : 持久化（生产环境）
-Template ..> PostgreSQL : 持久化（生产环境）
-Project ..> PostgreSQL : 持久化（生产环境）
-DataSource ..> PostgreSQL : 持久化（生产环境）
-DataMapping ..> PostgreSQL : 持久化（生产环境）
+Component ..> PostgreSQL : 持久化
+Template ..> PostgreSQL : 持久化
+Project ..> PostgreSQL : 持久化
+DataSource ..> PostgreSQL : 持久化
+DataMapping ..> PostgreSQL : 持久化
 User ..> PostgreSQL : 持久化
 HistoryRecord ..> PostgreSQL : 持久化
-PageSchema ..> ObjectStorage : 文件存储（生产环境可选）
+PageSchema ..> ObjectStorage : 文件存储
 JsonDataTemplate ..> PostgreSQL : 持久化（可选）
 
-Component ..> Redis : 缓存（生产环境）
-Project ..> Redis : 缓存（生产环境）
-Project ..> LocalStorage : 本地存储（当前实现）
-PageSchema ..> LocalStorage : 本地存储（当前实现）
-Component ..> LocalStorage : 本地存储（当前实现）
+Component ..> Redis : 缓存
+Project ..> Redis : 缓存
+Project ..> ObjectStorage : 文件存储
+PageSchema ..> Redis : 缓存
 
 ComponentEditFlow --> PostgreSQL : 数据持久化
 ComponentEditFlow --> Redis : 缓存更新
@@ -383,18 +362,17 @@ SchemaExportFlow --> Component : 读取
 SchemaExportFlow --> DataSource : 读取
 SchemaExportFlow --> ThemeConfig : 读取
 SchemaExportFlow --> PageSchema : 创建
-SchemaExportFlow --> StoreToLocalStorage : 存储
+SchemaExportFlow --> ObjectStorage : 存储
 
 SchemaImportFlow --> PageSchema : 读取
-SchemaImportFlow --> SchemaPackage : 使用（验证/迁移/转换）
-SchemaImportFlow --> WasmValidateSchemaVersion : WASM优化
-SchemaImportFlow --> WasmMigrateOldSchema : WASM优化
-SchemaImportFlow --> WasmConvertToProjectData : WASM优化
+SchemaImportFlow --> WasmValidateSchemaVersion : 使用
+SchemaImportFlow --> WasmMigrateOldSchema : 使用
+SchemaImportFlow --> WasmConvertToProjectData : 使用
 SchemaImportFlow --> Project : 创建
 SchemaImportFlow --> Component : 创建
 SchemaImportFlow --> DataSource : 创建
 SchemaImportFlow --> ThemeConfig : 创建
-SchemaImportFlow --> StateManagement : 状态更新
+SchemaImportFlow --> Redis : 状态更新
 
 WasmDataParseFlow --> DataSource : 创建/更新
 WasmDataMappingFlow --> DataMapping : 创建/使用
@@ -406,27 +384,18 @@ JsonQuickInputFlow --> Component : 更新属性
 
 note right of PostgreSQL
   **数据访问模式：**
-  - 读写分离（生产环境）
-  - 主从复制（生产环境）
+  - 读写分离
+  - 主从复制
   - 分片策略（按项目ID）
   - 索引优化
 end note
 
 note right of Redis
   **缓存策略：**
-  - 热点数据缓存（生产环境）
+  - 热点数据缓存
   - 会话数据存储
   - 协作状态同步
   - TTL过期策略
-end note
-
-note right of LocalStorage
-  **本地存储策略：**
-  - PersistenceManager 使用
-  - 项目数据持久化
-  - Schema 文件存储
-  - 浏览器本地存储
-  - 当前开发环境实现
 end note
 
 @enduml

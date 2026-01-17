@@ -33,6 +33,21 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 // Mock scrollTo
 window.scrollTo = vi.fn();
 
+// Suppress SVG element warnings from jsdom (these are expected in tests)
+const originalError = console.error;
+console.error = (...args: unknown[]) => {
+  const message = String(args[0] || "");
+  // Filter out jsdom SVG warnings
+  if (
+    message.includes("The tag <") ||
+    message.includes("is unrecognized in this browser") ||
+    message.includes("is using incorrect casing")
+  ) {
+    return;
+  }
+  originalError(...args);
+};
+
 // Mock lucide-react icons
 vi.mock("lucide-react", () => {
   const MockIcon = (props: any) => {
