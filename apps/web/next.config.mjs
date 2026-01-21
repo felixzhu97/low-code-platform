@@ -36,51 +36,40 @@ const nextConfig = {
   },
   // Webpack 优化配置
   webpack: (config, { isServer }) => {
+    // WASM 支持配置（客户端和服务端都需要）
+    if (!isServer) {
+      // 确保 WASM 文件作为资源文件处理
+      config.experiments = {
+        ...config.experiments,
+        asyncWebAssembly: true,
+      };
+    }
+    
+    // 配置 WASM 文件的加载（服务端和客户端都需要）
+    const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
+    const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
+    
     // 配置 AI Generator 包的路径（服务端和客户端都需要）
     const aiGeneratorPath = path.resolve(__dirname, "../../packages/ai-generator/src/index.ts");
+    
+    // 检查文件是否存在（构建时）
+    if (!existsSync(wasmPkgPath)) {
+      console.warn(`WARNING: WASM package not found at ${wasmPkgPath}. Make sure to run build:wasm first.`);
+    }
     
     if (!existsSync(aiGeneratorPath)) {
       console.warn(`WARNING: AI Generator package not found at ${aiGeneratorPath}.`);
     }
     
-    // WASM 支持配置
-    const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
-    const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
-    const serverStubPath = path.resolve(__dirname, "src/shared/wasm/server-stub.js");
-    
-    if (isServer) {
-      // 服务端构建时，使用存根文件避免加载 WASM
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        "@lowcode-platform/wasm": serverStubPath,
-        "@lowcode-platform/ai-generator": aiGeneratorPath,
-      };
-    } else {
-      // 客户端构建时，配置 WASM 支持
-      config.experiments = {
-        ...config.experiments,
-        asyncWebAssembly: true,
-      };
-      
-      // 检查文件是否存在（构建时）
-      if (!existsSync(wasmPkgPath) || !existsSync(wasmMainPath)) {
-        console.warn(`WARNING: WASM package not found at ${wasmPkgPath}. Make sure to run build:wasm first.`);
-        // 如果文件不存在，使用存根文件避免构建失败
-        config.resolve.alias = {
-          ...config.resolve.alias,
-          "@lowcode-platform/wasm": serverStubPath,
-          "@lowcode-platform/ai-generator": aiGeneratorPath,
-        };
-      } else {
-        // 文件存在，使用实际的 WASM 文件
-        config.resolve.alias = {
-          ...config.resolve.alias,
-          "@lowcode-platform/wasm": wasmMainPath,
-          "@lowcode-platform/wasm/pkg": wasmPkgPath,
-          "@lowcode-platform/ai-generator": aiGeneratorPath,
-        };
-      }
-    }
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      // 指向主文件，而不是目录
+      "@lowcode-platform/wasm": wasmMainPath,
+      // 也支持目录解析（用于查找其他文件）
+      "@lowcode-platform/wasm/pkg": wasmPkgPath,
+      // AI Generator 包路径
+      "@lowcode-platform/ai-generator": aiGeneratorPath,
+    };
     
     // 确保 WASM 文件被正确处理
     config.resolve.fallback = {
