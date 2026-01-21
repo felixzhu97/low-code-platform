@@ -25,19 +25,6 @@ const nextConfig = {
           }
         : false,
   },
-  // 配置需要转译的 workspace 包
-  transpilePackages: [
-    "@lowcode-platform/ai-generator",
-    "@lowcode-platform/wasm",
-    "@lowcode-platform/component-utils",
-    "@lowcode-platform/schema",
-    "@lowcode-platform/utils",
-    "@lowcode-platform/data-binding",
-    "@lowcode-platform/layout-utils",
-    "@lowcode-platform/collaboration",
-    "@lowcode-platform/i18n",
-    "@lowcode-platform/performance",
-  ],
   // 优化打包配置
   experimental: {
     optimizePackageImports: [
@@ -62,9 +49,16 @@ const nextConfig = {
     const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
     const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
     
+    // 配置 AI Generator 包的路径（服务端和客户端都需要）
+    const aiGeneratorPath = path.resolve(__dirname, "../../packages/ai-generator/src/index.ts");
+    
     // 检查文件是否存在（构建时）
     if (!existsSync(wasmPkgPath)) {
       console.warn(`WARNING: WASM package not found at ${wasmPkgPath}. Make sure to run build:wasm first.`);
+    }
+    
+    if (!existsSync(aiGeneratorPath)) {
+      console.warn(`WARNING: AI Generator package not found at ${aiGeneratorPath}.`);
     }
     
     config.resolve.alias = {
@@ -73,6 +67,8 @@ const nextConfig = {
       "@lowcode-platform/wasm": wasmMainPath,
       // 也支持目录解析（用于查找其他文件）
       "@lowcode-platform/wasm/pkg": wasmPkgPath,
+      // AI Generator 包路径
+      "@lowcode-platform/ai-generator": aiGeneratorPath,
     };
     
     // 确保 WASM 文件被正确处理
