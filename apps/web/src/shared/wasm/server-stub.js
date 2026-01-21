@@ -5,10 +5,8 @@
  * 因为代码中已经有 globalThis.window 检查
  */
 
-export default function () {
-  return Promise.reject(
-    new Error("WASM module cannot be used on the server side")
-  );
+export default function() {
+  return Promise.reject(new Error("WASM module cannot be used on the server side"));
 }
 
 // 导出所有可能的函数，避免运行时错误
