@@ -2,6 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "bash scripts/build-wasm.sh && yarn workspace @lowcode-platform/web build",
   "installCommand": "yarn install --frozen-lockfile",
-  "outputDirectory": "apps/web/.next",
-  "nodeVersion": "20.x"
+  "outputDirectory": "apps/web/.next"
 }
