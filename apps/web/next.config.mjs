@@ -78,26 +78,6 @@ const nextConfig = {
       __dirname,
       "../../packages/component-utils/src/index.ts"
     );
-    const componentUtilsValidatorPath = path.resolve(
-      __dirname,
-      "../../packages/component-utils/src/validator.ts"
-    );
-    const componentUtilsTypesPath = path.resolve(
-      __dirname,
-      "../../packages/component-utils/src/types.ts"
-    );
-    const componentUtilsTreePath = path.resolve(
-      __dirname,
-      "../../packages/component-utils/src/tree.ts"
-    );
-    const componentUtilsFindPath = path.resolve(
-      __dirname,
-      "../../packages/component-utils/src/find.ts"
-    );
-    const componentUtilsChildrenPath = path.resolve(
-      __dirname,
-      "../../packages/component-utils/src/children.ts"
-    );
     const utilsPath = path.resolve(
       __dirname,
       "../../packages/utils/src/index.ts"
@@ -191,12 +171,6 @@ const nextConfig = {
       "@lowcode-platform/schema/validator": schemaValidatorPath,
       "@lowcode-platform/schema/serializer": schemaSerializerPath,
       "@lowcode-platform/schema/migrator": schemaMigratorPath,
-      // Component Utils 子路径导出（必须在基础路径之前）
-      "@lowcode-platform/component-utils/validator": componentUtilsValidatorPath,
-      "@lowcode-platform/component-utils/types": componentUtilsTypesPath,
-      "@lowcode-platform/component-utils/tree": componentUtilsTreePath,
-      "@lowcode-platform/component-utils/find": componentUtilsFindPath,
-      "@lowcode-platform/component-utils/children": componentUtilsChildrenPath,
       // 基础包路径
       "@lowcode-platform/ai-generator": aiGeneratorPath,
       "@lowcode-platform/schema": schemaPath,
@@ -243,16 +217,7 @@ const nextConfig = {
 
     // 配置 webpack 以正确处理 package.json exports 字段
     config.resolve.conditionNames = ["import", "require", "default"];
-    // 优先使用 main/module，然后才是 exports
-    // 这样可以绕过某些第三方包的有问题的 exports 字段配置
-    config.resolve.exportsFields = ["main", "module", "exports"];
-    
-    // 对于有问题的第三方包（exports 字段格式错误），使用 webpack 5 的忽略选项
-    // 这些包的 exports 字段使用了无效的相对路径（缺少 ./ 前缀）
-    // 通过设置 fullySpecified: false 可以让 webpack 更宽松地处理这些包
-    if (!config.resolve.fullySpecified) {
-      config.resolve.fullySpecified = false;
-    }
+    config.resolve.exportsFields = ["exports", "main"];
 
     // 确保正确解析 TypeScript 文件
     if (!config.resolve.extensions) {
