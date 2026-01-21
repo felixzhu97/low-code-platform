@@ -25,6 +25,19 @@ const nextConfig = {
           }
         : false,
   },
+  // 转译 workspace 包（关键：确保 Next.js 能处理 TypeScript 文件）
+  transpilePackages: [
+    "@lowcode-platform/ai-generator",
+    "@lowcode-platform/schema",
+    "@lowcode-platform/component-utils",
+    "@lowcode-platform/utils",
+    "@lowcode-platform/data-binding",
+    "@lowcode-platform/layout-utils",
+    "@lowcode-platform/collaboration",
+    "@lowcode-platform/i18n",
+    "@lowcode-platform/performance",
+    "@lowcode-platform/test-utils",
+  ],
   // 优化打包配置
   experimental: {
     optimizePackageImports: [
@@ -151,13 +164,16 @@ const nextConfig = {
     );
 
     // 基础别名配置（服务端和客户端都需要）
+    // 注意：子路径导出必须在基础路径之前，以确保正确匹配
     const baseAliases = {
-      "@lowcode-platform/ai-generator": aiGeneratorPath,
-      "@lowcode-platform/schema": schemaPath,
+      // Schema 子路径导出（必须在基础路径之前）
       "@lowcode-platform/schema/types": schemaTypesPath,
       "@lowcode-platform/schema/validator": schemaValidatorPath,
       "@lowcode-platform/schema/serializer": schemaSerializerPath,
       "@lowcode-platform/schema/migrator": schemaMigratorPath,
+      // 基础包路径
+      "@lowcode-platform/ai-generator": aiGeneratorPath,
+      "@lowcode-platform/schema": schemaPath,
       "@lowcode-platform/component-utils": componentUtilsPath,
       "@lowcode-platform/utils": utilsPath,
       "@lowcode-platform/data-binding": dataBindingPath,
@@ -168,12 +184,17 @@ const nextConfig = {
       "@lowcode-platform/test-utils": testUtilsPath,
     };
 
+    // 合并别名配置（确保子路径导出优先）
+    const allAliases = {
+      ...baseAliases,
+      "@lowcode-platform/wasm": serverStubPath,
+    };
+
     if (isServer) {
       // 服务端构建时，使用存根文件避免加载 WASM
       config.resolve.alias = {
         ...config.resolve.alias,
-        ...baseAliases,
-        "@lowcode-platform/wasm": serverStubPath,
+        ...allAliases,
       };
     } else {
       // 客户端构建时，临时跳过 WASM，使用存根文件
@@ -183,8 +204,7 @@ const nextConfig = {
       // 始终使用存根文件，跳过 WASM 功能
       config.resolve.alias = {
         ...config.resolve.alias,
-        ...baseAliases,
-        "@lowcode-platform/wasm": serverStubPath,
+        ...allAliases,
       };
     }
 
@@ -195,24 +215,21 @@ const nextConfig = {
       path: false,
     };
 
-    // 确保正确解析 TypeScript 文件
-    config.resolve.extensions = [
-      ".js",
-      ".jsx",
-      ".ts",
-      ".tsx",
-      ".json",
-      ...(config.resolve.extensions || []),
-    ];
+    // 配置 webpack 以正确处理 package.json exports 字段
+    config.resolve.conditionNames = ["import", "require", "default"];
+    config.resolve.exportsFields = ["exports", "main"];
 
-    // 确保模块解析包含项目根目录
-    if (!config.resolve.modules) {
-      config.resolve.modules = ["node_modules"];
+    // 确保正确解析 TypeScript 文件
+    if (!config.resolve.extensions) {
+      config.resolve.extensions = [];
     }
-    config.resolve.modules = [
-      ...config.resolve.modules,
-      path.resolve(__dirname, "../../packages"),
-    ];
+    // 确保 .ts 和 .tsx 在扩展名列表中
+    const requiredExtensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
+    requiredExtensions.forEach((ext) => {
+      if (!config.resolve.extensions.includes(ext)) {
+        config.resolve.extensions.push(ext);
+      }
+    });
 
     // 优化 chunk 分割
     if (!isServer) {
