@@ -220,21 +220,6 @@ const nextConfig = {
         __dirname,
         "../../node_modules/zustand/middleware.js"
       ),
-      // class-variance-authority 的 exports 字段格式错误
-      "class-variance-authority": path.resolve(
-        __dirname,
-        "../../node_modules/class-variance-authority/dist/index.js"
-      ),
-      // react-day-picker 的 exports 字段格式错误
-      "react-day-picker": path.resolve(
-        __dirname,
-        "../../node_modules/react-day-picker/dist/index.js"
-      ),
-      // date-fns/locale - 路径没有被导出
-      "date-fns/locale": path.resolve(
-        __dirname,
-        "../../node_modules/date-fns/locale/index.js"
-      ),
     };
 
     // 添加有问题的包的别名（仅在文件存在时）
@@ -266,40 +251,19 @@ const nextConfig = {
               break;
             }
           }
-        } else if (alias === "date-fns/locale") {
-          // date-fns/locale 特殊处理
-          const dateFnsPaths = [
-            path.resolve(__dirname, "../../node_modules/date-fns/locale/index.js"),
-            path.resolve(__dirname, "../../node_modules/date-fns/locale/index.mjs"),
-            path.resolve(__dirname, "../../node_modules/date-fns/locale/index.d.ts"),
-            path.resolve(__dirname, "../../node_modules/date-fns/locale"),
-          ];
-          
-          for (const possiblePath of dateFnsPaths) {
-            if (existsSync(possiblePath)) {
-              thirdPartyAliases[alias] = possiblePath;
-              console.log(`[Webpack] Aliased ${alias} to ${possiblePath}`);
-              break;
-            }
-          }
         } else {
-          // 对于其他包（如 clsx, class-variance-authority, react-day-picker），尝试多个可能的路径
+          // 对于其他包（如 clsx），尝试多个可能的路径
           const possiblePaths = [
             targetPath,
             targetPath.replace(/\.mjs$/, ".js"),
             targetPath.replace(/\.mjs$/, ".cjs"),
-            targetPath.replace(/dist\/index\.js$/, "index.js"),
-            targetPath.replace(/dist\/index\.js$/, "index.mjs"),
             path.resolve(__dirname, `../../node_modules/${alias}/index.js`),
             path.resolve(__dirname, `../../node_modules/${alias}/index.mjs`),
-            path.resolve(__dirname, `../../node_modules/${alias}/dist/index.js`),
-            path.resolve(__dirname, `../../node_modules/${alias}/dist/index.mjs`),
           ];
 
           for (const possiblePath of possiblePaths) {
             if (existsSync(possiblePath)) {
               thirdPartyAliases[alias] = possiblePath;
-              console.log(`[Webpack] Aliased ${alias} to ${possiblePath}`);
               break;
             }
           }
@@ -345,6 +309,7 @@ const nextConfig = {
     // 这样可以绕过某些第三方包的有问题的 exports 字段配置
     // 注意：对于我们的 workspace 包，我们使用别名，所以不受影响
     config.resolve.exportsFields = ["main", "module"];
+
 
     // 通过设置 fullySpecified: false 可以让 webpack 更宽松地处理这些包
     if (!config.resolve.fullySpecified) {
