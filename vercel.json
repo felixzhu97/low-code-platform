@@ -1,6 +1,7 @@
 {
   "framework": "nextjs",
-  "buildCommand": "bash scripts/build-wasm.sh && pnpm --filter @lowcode-platform/web build",
-  "installCommand": "corepack enable && corepack prepare pnpm@10.27.0 --activate && pnpm install --no-frozen-lockfile",
-  "outputDirectory": "apps/web/.next"
+  "buildCommand": "bash scripts/build-wasm.sh && yarn workspace @lowcode-platform/web build",
+  "installCommand": "yarn install --frozen-lockfile",
+  "outputDirectory": "apps/web/.next",
+  "nodeVersion": "20.x"
 }
