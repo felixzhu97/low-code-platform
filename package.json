@@ -8,8 +8,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=10.27.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "dev": "pnpm --filter @lowcode-platform/web dev & pnpm --filter @lowcode-platform/server start:dev",
