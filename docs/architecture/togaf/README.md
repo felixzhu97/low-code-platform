@@ -36,8 +36,9 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - JSON 快速输入流程（选择组件类型、系统推荐模板、输入或编辑 JSON、验证格式、创建临时数据源、自动渲染到组件）
   - 国际化配置流程（检测浏览器语言、选择界面语言、加载语言资源、应用语言设置、保存语言偏好）
   - 用户认证流程（用户登录、验证身份凭证、生成访问令牌、建立会话、授权访问、用户登出）
+  - AI 生成流程（用户输入自然语言描述、选择 AI 提供商、配置 API Key、选择生成类型、AI 生成组件或页面、验证生成结果、应用到画布、预览和调整）
 
-- **业务能力**：
+  - **业务能力**：
 
   - 可视化编辑能力
   - 组件管理能力
@@ -49,6 +50,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 国际化能力（多语言支持、语言切换、本地化内容管理、日期数字格式化）
   - 认证能力（用户认证、权限管理、会话管理、单点登录）
   - 图表可视化能力（多种图表类型支持、数据可视化、图表配置、实时数据更新）
+  - AI 生成能力（自然语言生成、组件 AI 生成、页面 AI 生成、多 AI 提供商支持、生成结果验证、流式生成）
 
 - **价值流**：
   从需求识别到部署交付的完整价值流，包括需求分析、页面设计、数据绑定、效果验证、团队协作、代码导出和部署上线等环节
@@ -75,6 +77,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 认证组件（Auth Components）
   - 项目组件（Projects Components）
   - 表单构建器（Form Builder）
+  - AI 生成器组件（AI Generator）
 
 - **应用层（Application Layer）**：
 
@@ -88,6 +91,7 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
   - 历史记录服务（History Service）
   - Schema 管理服务（Schema Management Service）
   - 模板命令服务（Template Command Service）
+  - AI 生成器适配器（AI Generator Adapter）
 
 - **领域层（Domain Layer）**：
 
@@ -121,6 +125,14 @@ TOGAF 是一个企业架构框架，提供了完整的架构开发方法。本�
     - Schema 处理适配器（Schema Processor Adapter）：序列化/反序列化、验证、迁移
     - 数据映射适配器（Data Mapper Adapter）：映射生成、应用、数据转换
     - 布局计算适配器（Layout Calculator Adapter）：布局计算、网格对齐、碰撞检测
+  - **AI 生成器包（AI Generator Package）**：
+    - AI 客户端（AI Clients）：OpenAI Client、Claude Client、DeepSeek Client
+    - 组件生成器（Component Generator）：将 AI 响应转换为 Component 实体
+    - 页面生成器（Page Generator）：将 AI 响应转换为 PageSchema
+    - 组件验证器（Component Validator）：验证生成的组件结构
+    - 页面验证器（Page Validator）：验证生成的页面结构
+    - 提示构建器（Prompt Builders）：构建 AI 提示词
+    - JSON 解析器（JSON Parser）：解析 AI 返回的 JSON 响应
 
 ### 3. data-architecture.puml - 数据架构图
 
@@ -339,6 +351,41 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 
 ## 最新更新
 
+### 2026-01-XX：AI 生成器集成
+
+- **新增功能**：
+  - AI 驱动的组件和页面生成：支持通过自然语言描述生成组件和页面
+  - 多 AI 提供商支持：支持 OpenAI、Claude 和 DeepSeek 三种 AI 服务
+  - 组件生成：通过自然语言描述生成符合规范的组件
+  - 页面生成：一键生成完整的页面结构，包含布局、组件和样式
+  - 自动验证：生成的组件和页面自动通过结构验证
+  - 流式响应：支持实时流式生成，提供更好的用户体验
+
+- **业务架构增强**：
+  - 新增 AI 生成能力（自然语言生成、组件 AI 生成、页面 AI 生成、多 AI 提供商支持、生成结果验证、流式生成）
+  - 新增 AI 生成流程（用户输入自然语言描述、选择 AI 提供商、配置 API Key、选择生成类型、AI 生成组件或页面、验证生成结果、应用到画布、预览和调整）
+
+- **应用架构扩展**：
+  - 表现层新增：AI 生成器组件（AI Generator UI Component）
+  - 应用层新增：AI 生成器适配器（AIGeneratorAdapter）
+  - 基础设施层新增：AI 生成器包（@lowcode-platform/ai-generator）
+    - AI 客户端（OpenAI Client、Claude Client、DeepSeek Client）
+    - 组件生成器（ComponentGenerator）
+    - 页面生成器（PageGenerator）
+    - 组件验证器（ComponentValidator）
+    - 页面验证器（PageValidator）
+    - 提示构建器（ComponentPromptBuilder、PagePromptBuilder）
+    - JSON 解析器（JSONParser）
+
+- **技术架构更新**：
+  - 前端新增 AI 生成器包（@lowcode-platform/ai-generator）
+  - 外部系统新增：OpenAI API、Claude API、DeepSeek API
+  - 支持通过 API Gateway 调用外部 AI 服务
+
+- **数据流新增**：
+  - AI 生成组件数据流：AI 生成器组件 → AI 生成器适配器 → AI 生成器包 → AI 客户端 → AI API → 组件生成器 → 组件验证器 → 模板服务 → 组件渲染器 → 画布渲染
+  - AI 生成页面数据流：AI 生成器组件 → AI 生成器适配器 → AI 生成器包 → AI 客户端 → AI API → 页面生成器 → 页面验证器 → 模板服务 → 组件渲染器 → 画布渲染
+
 ### 2026-01-XX：Rust/WASM 性能优化
 
 - **新增技术栈**：
@@ -406,10 +453,11 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 - **应用架构细化**：
 
   - 表现层新增组件渲染器（基础/图表/数据/表单/布局组件渲染器）
-  - 表现层新增认证组件、项目组件、表单构建器
-  - 应用层新增模板命令服务
+  - 表现层新增认证组件、项目组件、表单构建器、AI 生成器组件
+  - 应用层新增模板命令服务、AI 生成器适配器
   - 基础设施层细化状态管理（Canvas/Component/Data/History/Theme/UI Store）
   - 基础设施层新增持久化层（本地存储适配器、数据库适配器）
+  - 基础设施层新增 AI 生成器包（AI 客户端、生成器、验证器、提示构建器、JSON 解析器）
 
 - **数据架构扩展**：
 
@@ -420,9 +468,11 @@ TOGAF 的四个架构视图相互关联，形成了一个完整的架构视图�
 - **技术架构更新**：
   - 前端新增 i18n 支持（react-i18next、语言切换功能）
   - 前端新增工具包（Component Utils、Data Binding Utils、Layout Utils、Performance Utils、Schema Utils、Utils）
+  - 前端新增 AI 生成器包（OpenAI/Claude/DeepSeek 客户端支持）
   - 基础设施层新增 AWS 集成（S3、CloudFormation、Lambda、API Gateway、CloudFront、IAM）
   - 基础设施层新增协作工具包（WebSocket 管理、实时同步、冲突解决）
   - 数据存储层新增 Local Storage（浏览器本地存储）
+  - 外部系统新增 AI API 服务（OpenAI API、Claude API、DeepSeek API）
 
 ## 维护说明
 

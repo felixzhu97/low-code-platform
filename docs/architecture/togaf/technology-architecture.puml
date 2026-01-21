@@ -39,6 +39,11 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [wasm-bindgen\nRust-JS互操作] as WasmBindgen
   component [wasm-pack\nWASM打包工具] as WasmPack
   
+  component [AI生成器包\nAI Generator Package] as AIGeneratorPackage
+  component [OpenAI客户端\nOpenAI Client] as OpenAIClientTech
+  component [Claude客户端\nClaude Client] as ClaudeClientTech
+  component [DeepSeek客户端\nDeepSeek Client] as DeepSeekClientTech
+  
   Browser --> React
   Browser --> NextJS
   Browser --> TypeScript
@@ -64,6 +69,10 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Rust --> WasmBindgen
   WasmBindgen --> WasmPack
   WasmPack --> WASM
+  
+  AIGeneratorPackage --> OpenAIClientTech
+  AIGeneratorPackage --> ClaudeClientTech
+  AIGeneratorPackage --> DeepSeekClientTech
 }
 
 package "后端技术栈 (Backend Technology Stack)" {
@@ -229,6 +238,14 @@ AWSIntegration --> ObjectStorage : S3存储
 AWSIntegration --> CDN : CloudFront分发
 Browser --> UtilsPackages : 工具包使用
 Browser --> I18n : 国际化支持
+Browser --> AIGeneratorPackage : AI生成器使用
+AIGeneratorPackage --> OpenAIClientTech : 调用
+AIGeneratorPackage --> ClaudeClientTech : 调用
+AIGeneratorPackage --> DeepSeekClientTech : 调用
+
+OpenAIClientTech --> APIGateway : HTTPS API调用
+ClaudeClientTech --> APIGateway : HTTPS API调用
+DeepSeekClientTech --> APIGateway : HTTPS API调用
 
 ' ============================================
 ' 部署架构
@@ -287,6 +304,7 @@ note right of Browser
   - Local Storage: 浏览器本地存储
   - Rust/WASM: 性能关键路径优化
   - wasm-bindgen: Rust-JS互操作
+  - AI生成器包: OpenAI/Claude/DeepSeek多提供商支持
 end note
 
 note right of AppServer
