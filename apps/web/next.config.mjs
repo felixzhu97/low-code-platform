@@ -67,8 +67,6 @@ const nextConfig = {
       existsSync(path.resolve(__dirname, "../../packages/ai-generator"));
     
     // 设置别名：如果包不存在，使用占位符
-    const webpack = config.webpack || require("webpack");
-    
     config.resolve.alias = {
       ...config.resolve.alias,
       // WASM 别名 - 如果不存在则使用占位符
