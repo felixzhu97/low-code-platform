@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "bash scripts/build-wasm.sh && pnpm --filter @lowcode-platform/web build",
+  "buildCommand": "pnpm --filter @lowcode-platform/web build",
   "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@10.27.0 --activate && pnpm install",
   "outputDirectory": "apps/web/.next"
 }
