@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npx pnpm@8.15.0 --filter @lowcode-platform/web build",
-  "installCommand": "npx pnpm@8.15.0 install --frozen-lockfile --prefer-offline",
+  "installCommand": "npx pnpm@8.15.0 install",
   "outputDirectory": "apps/web/.next"
 }
