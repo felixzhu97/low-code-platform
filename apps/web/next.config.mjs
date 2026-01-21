@@ -192,8 +192,7 @@ const nextConfig = {
       "@lowcode-platform/schema/serializer": schemaSerializerPath,
       "@lowcode-platform/schema/migrator": schemaMigratorPath,
       // Component Utils 子路径导出（必须在基础路径之前）
-      "@lowcode-platform/component-utils/validator":
-        componentUtilsValidatorPath,
+      "@lowcode-platform/component-utils/validator": componentUtilsValidatorPath,
       "@lowcode-platform/component-utils/types": componentUtilsTypesPath,
       "@lowcode-platform/component-utils/tree": componentUtilsTreePath,
       "@lowcode-platform/component-utils/find": componentUtilsFindPath,
@@ -244,43 +243,12 @@ const nextConfig = {
 
     // 配置 webpack 以正确处理 package.json exports 字段
     config.resolve.conditionNames = ["import", "require", "default"];
-    // 完全禁用 exports 字段检查，只使用 main/module
+    // 优先使用 main/module，然后才是 exports
     // 这样可以绕过某些第三方包的有问题的 exports 字段配置
-    // 注意：对于我们的 workspace 包，我们使用别名，所以不受影响
-    config.resolve.exportsFields = ["main", "module"];
-
-    // 对于有问题的第三方包（exports 字段格式错误），添加别名来绕过问题
+    config.resolve.exportsFields = ["main", "module", "exports"];
+    
+    // 对于有问题的第三方包（exports 字段格式错误），使用 webpack 5 的忽略选项
     // 这些包的 exports 字段使用了无效的相对路径（缺少 ./ 前缀）
-    // 注意：由于我们已经禁用了 exports 字段检查，这些别名主要用于确保正确解析
-    const problematicExportsPackages = {
-      // clsx 的 exports 字段格式错误，直接指向实际文件
-      clsx: path.resolve(__dirname, "../../node_modules/clsx/dist/clsx.mjs"),
-    };
-
-    // 添加有问题的包的别名（仅在文件存在时）
-    Object.entries(problematicExportsPackages).forEach(
-      ([alias, targetPath]) => {
-        // 尝试多个可能的路径
-        const possiblePaths = [
-          targetPath,
-          targetPath.replace(/\.mjs$/, ".js"),
-          targetPath.replace(/\.mjs$/, ".cjs"),
-          path.resolve(__dirname, `../../node_modules/${alias}/index.js`),
-          path.resolve(__dirname, `../../node_modules/${alias}/index.mjs`),
-        ];
-
-        for (const possiblePath of possiblePaths) {
-          if (existsSync(possiblePath)) {
-            config.resolve.alias = {
-              ...config.resolve.alias,
-              [alias]: possiblePath,
-            };
-            break;
-          }
-        }
-      }
-    );
-
     // 通过设置 fullySpecified: false 可以让 webpack 更宽松地处理这些包
     if (!config.resolve.fullySpecified) {
       config.resolve.fullySpecified = false;
