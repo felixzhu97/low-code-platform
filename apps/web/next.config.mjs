@@ -57,18 +57,16 @@ const nextConfig = {
         asyncWebAssembly: true,
       };
     }
-
+    
     // 配置 WASM 文件的加载（服务端和客户端都需要）
     const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
     const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
-
+    
     // 检查文件是否存在（构建时）
     if (!existsSync(wasmPkgPath)) {
-      console.warn(
-        `WARNING: WASM package not found at ${wasmPkgPath}. Make sure to run build:wasm first.`
-      );
+      console.warn(`WARNING: WASM package not found at ${wasmPkgPath}. Make sure to run build:wasm first.`);
     }
-
+    
     config.resolve.alias = {
       ...config.resolve.alias,
       // 指向主文件，而不是目录
@@ -76,14 +74,14 @@ const nextConfig = {
       // 也支持目录解析（用于查找其他文件）
       "@lowcode-platform/wasm/pkg": wasmPkgPath,
     };
-
+    
     // 确保 WASM 文件被正确处理
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
       path: false,
     };
-
+    
     // 优化 chunk 分割
     if (!isServer) {
       config.optimization = {
@@ -126,7 +124,7 @@ const nextConfig = {
         },
       };
     }
-
+    
     return config;
   },
 };
