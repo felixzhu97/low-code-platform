@@ -69,6 +69,11 @@ const CodeExport = lazy(() =>
     default: mod.CodeExport,
   }))
 );
+const AIGenerator = lazy(() =>
+  import("@/presentation/components/ui").then((mod) => ({
+    default: mod.AIGenerator,
+  }))
+);
 
 // 动态导入 Tab 内容组件
 const ComponentPanel = lazy(() =>
@@ -272,6 +277,9 @@ export default function LowCodePlatform() {
               </Suspense>
               <Suspense fallback={<ComponentLoader />}>
                 <TemplateGallery />
+              </Suspense>
+              <Suspense fallback={<ComponentLoader />}>
+                <AIGenerator />
               </Suspense>
               <Suspense fallback={<ComponentLoader />}>
                 <FormBuilder />

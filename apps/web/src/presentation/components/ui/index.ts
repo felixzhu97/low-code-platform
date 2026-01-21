@@ -48,6 +48,7 @@ export * from "./toggle";
 export * from "./tooltip";
 
 // 工具组件
+export * from "./ai-generator";
 export * from "./animation-editor";
 export * from "./code-export";
 export * from "./collaboration";

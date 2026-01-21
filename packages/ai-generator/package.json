@@ -20,12 +20,12 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "@lowcode-platform/component-utils": "^0.1.0",
-    "@lowcode-platform/schema": "^0.1.0",
-    "@lowcode-platform/utils": "^0.1.0"
+    "@lowcode-platform/component-utils": "workspace:*",
+    "@lowcode-platform/schema": "workspace:*",
+    "@lowcode-platform/utils": "workspace:*"
   },
   "devDependencies": {
-    "@lowcode-platform/test-utils": "^0.1.0",
+    "@lowcode-platform/test-utils": "workspace:*",
     "@types/node": "^22",
     "typescript": "^5",
     "vitest": "^3.2.4"
