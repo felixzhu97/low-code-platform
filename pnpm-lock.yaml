@@ -193,7 +193,7 @@ importers:
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@types/hoist-non-react-statics':
-        specifier: latest
+        specifier: ^3.3.7
         version: 3.3.7(@types/react@19.1.8)
       '@vercel/analytics':
         specifier: ^1.5.0
@@ -235,10 +235,10 @@ importers:
         specifier: 8.10.1
         version: 8.10.1(date-fns@4.1.0)(react@19.1.0)
       react-dnd:
-        specifier: latest
+        specifier: ^16.0.1
         version: 16.0.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.1.8))(@types/node@22.15.33)(@types/react@19.1.8)(react@19.1.0)
       react-dnd-html5-backend:
-        specifier: latest
+        specifier: ^16.0.1
         version: 16.0.1
       react-dom:
         specifier: ^19
@@ -250,7 +250,7 @@ importers:
         specifier: ^2.1.7
         version: 2.1.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       recharts:
-        specifier: latest
+        specifier: ^3.3.0
         version: 3.6.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react-is@18.3.1)(react@19.1.0)(redux@5.0.1)
       sonner:
         specifier: ^1.7.1
