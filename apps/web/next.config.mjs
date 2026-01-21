@@ -46,26 +46,38 @@ const nextConfig = {
         asyncWebAssembly: true,
       };
     }
-    
+
     // 配置 WASM 文件的加载（服务端和客户端都需要）
     const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
     const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
-    const wasmStubPath = path.resolve(__dirname, "./src/shared/stubs/wasm-stub.ts");
-    
+    const wasmStubPath = path.resolve(
+      __dirname,
+      "./src/shared/stubs/wasm-stub.ts"
+    );
+
     // 检查文件是否存在（构建时）
     const wasmExists = existsSync(wasmPkgPath) && existsSync(wasmMainPath);
-    
+
     // 配置 AI Generator 包 - 检查多个可能的位置
-    const aiGeneratorSrcPath = path.resolve(__dirname, "../../packages/ai-generator/src/index.ts");
-    const aiGeneratorNodeModulesPath = path.resolve(__dirname, "../../node_modules/@lowcode-platform/ai-generator");
-    const aiGeneratorStubPath = path.resolve(__dirname, "./src/shared/stubs/ai-generator-stub.ts");
-    
+    const aiGeneratorSrcPath = path.resolve(
+      __dirname,
+      "../../packages/ai-generator/src/index.ts"
+    );
+    const aiGeneratorNodeModulesPath = path.resolve(
+      __dirname,
+      "../../node_modules/@lowcode-platform/ai-generator"
+    );
+    const aiGeneratorStubPath = path.resolve(
+      __dirname,
+      "./src/shared/stubs/ai-generator-stub.ts"
+    );
+
     // 检查包是否存在（可能在 workspace 或 node_modules 中）
-    const aiGeneratorExists = 
-      existsSync(aiGeneratorSrcPath) || 
+    const aiGeneratorExists =
+      existsSync(aiGeneratorSrcPath) ||
       existsSync(aiGeneratorNodeModulesPath) ||
       existsSync(path.resolve(__dirname, "../../packages/ai-generator"));
-    
+
     // 设置别名：如果包不存在，使用占位符
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -73,25 +85,30 @@ const nextConfig = {
       "@lowcode-platform/wasm": wasmExists ? wasmMainPath : wasmStubPath,
       "@lowcode-platform/wasm/pkg": wasmExists ? wasmPkgPath : wasmStubPath,
     };
-    
+
     // 如果 AI Generator 不存在，使用占位符
     if (!aiGeneratorExists) {
-      console.warn(`WARNING: AI Generator package not found. Using stub implementation.`);
-      config.resolve.alias["@lowcode-platform/ai-generator"] = aiGeneratorStubPath;
+      console.warn(
+        `WARNING: AI Generator package not found. Using stub implementation.`
+      );
+      config.resolve.alias["@lowcode-platform/ai-generator"] =
+        aiGeneratorStubPath;
     }
-    
+
     // 如果 WASM 不存在，使用占位符
     if (!wasmExists) {
-      console.warn(`WARNING: WASM package not found at ${wasmPkgPath}. Using stub implementation.`);
+      console.warn(
+        `WARNING: WASM package not found at ${wasmPkgPath}. Using stub implementation.`
+      );
     }
-    
+
     // 确保 WASM 文件被正确处理
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
       path: false,
     };
-    
+
     // 添加模块解析路径，确保能找到 workspace 包
     if (!config.resolve.modules) {
       config.resolve.modules = [];
@@ -102,7 +119,7 @@ const nextConfig = {
         path.resolve(__dirname, "../../node_modules")
       );
     }
-    
+
     // 优化 chunk 分割
     if (!isServer) {
       config.optimization = {
@@ -145,7 +162,7 @@ const nextConfig = {
         },
       };
     }
-    
+
     return config;
   },
 };
