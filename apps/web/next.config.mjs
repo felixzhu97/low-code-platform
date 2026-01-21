@@ -211,60 +211,8 @@ const nextConfig = {
       "@lowcode-platform/test-utils": testUtilsPath,
     };
 
-    // 对于有问题的第三方包，先添加别名（必须在 allAliases 之前）
-    const problematicExportsPackages = {
-      // clsx 的 exports 字段格式错误，直接指向实际文件
-      clsx: path.resolve(__dirname, "../../node_modules/clsx/dist/clsx.mjs"),
-      // zustand/middleware - Next.js 仍然检查 exports 字段，需要别名绕过
-      "zustand/middleware": path.resolve(
-        __dirname,
-        "../../node_modules/zustand/middleware.js"
-      ),
-    };
-
-    // 添加有问题的包的别名（仅在文件存在时）
-    const thirdPartyAliases = {};
-    Object.entries(problematicExportsPackages).forEach(
-      ([alias, targetPath]) => {
-        // 对于 zustand/middleware，尝试多个可能的路径
-        if (alias === "zustand/middleware") {
-          const zustandPaths = [
-            path.resolve(__dirname, "../../node_modules/zustand/middleware.js"),
-            path.resolve(__dirname, "../../node_modules/zustand/esm/middleware.mjs"),
-            path.resolve(__dirname, "../../node_modules/zustand/middleware/index.js"),
-            path.resolve(__dirname, "../../node_modules/zustand/middleware/index.mjs"),
-          ];
-          
-          for (const possiblePath of zustandPaths) {
-            if (existsSync(possiblePath)) {
-              thirdPartyAliases[alias] = possiblePath;
-              console.log(`[Webpack] Aliased ${alias} to ${possiblePath}`);
-              break;
-            }
-          }
-        } else {
-          // 对于其他包（如 clsx），尝试多个可能的路径
-          const possiblePaths = [
-            targetPath,
-            targetPath.replace(/\.mjs$/, ".js"),
-            targetPath.replace(/\.mjs$/, ".cjs"),
-            path.resolve(__dirname, `../../node_modules/${alias}/index.js`),
-            path.resolve(__dirname, `../../node_modules/${alias}/index.mjs`),
-          ];
-
-          for (const possiblePath of possiblePaths) {
-            if (existsSync(possiblePath)) {
-              thirdPartyAliases[alias] = possiblePath;
-              break;
-            }
-          }
-        }
-      }
-    );
-
-    // 合并别名配置（确保子路径导出优先，第三方包别名在最前面）
+    // 合并别名配置（确保子路径导出优先）
     const allAliases = {
-      ...thirdPartyAliases, // 第三方包别名在最前面
       ...baseAliases,
       "@lowcode-platform/wasm": serverStubPath,
     };
@@ -303,66 +251,31 @@ const nextConfig = {
 
     // 对于有问题的第三方包（exports 字段格式错误），添加别名来绕过问题
     // 这些包的 exports 字段使用了无效的相对路径（缺少 ./ 前缀）
-    // 注意：Next.js 仍然会检查 exports 字段，所以我们需要为这些包添加别名
+    // 注意：由于我们已经禁用了 exports 字段检查，这些别名主要用于确保正确解析
     const problematicExportsPackages = {
       // clsx 的 exports 字段格式错误，直接指向实际文件
       clsx: path.resolve(__dirname, "../../node_modules/clsx/dist/clsx.mjs"),
-      // zustand/middleware - Next.js 仍然检查 exports 字段，需要别名绕过
-      "zustand/middleware": path.resolve(
-        __dirname,
-        "../../node_modules/zustand/middleware.js"
-      ),
     };
 
     // 添加有问题的包的别名（仅在文件存在时）
     Object.entries(problematicExportsPackages).forEach(
       ([alias, targetPath]) => {
-        // 对于 zustand/middleware，尝试多个可能的路径
-        if (alias === "zustand/middleware") {
-          const zustandPaths = [
-            path.resolve(__dirname, "../../node_modules/zustand/middleware.js"),
-            path.resolve(
-              __dirname,
-              "../../node_modules/zustand/esm/middleware.mjs"
-            ),
-            path.resolve(
-              __dirname,
-              "../../node_modules/zustand/middleware/index.js"
-            ),
-            path.resolve(
-              __dirname,
-              "../../node_modules/zustand/middleware/index.mjs"
-            ),
-          ];
+        // 尝试多个可能的路径
+        const possiblePaths = [
+          targetPath,
+          targetPath.replace(/\.mjs$/, ".js"),
+          targetPath.replace(/\.mjs$/, ".cjs"),
+          path.resolve(__dirname, `../../node_modules/${alias}/index.js`),
+          path.resolve(__dirname, `../../node_modules/${alias}/index.mjs`),
+        ];
 
-          for (const possiblePath of zustandPaths) {
-            if (existsSync(possiblePath)) {
-              config.resolve.alias = {
-                ...config.resolve.alias,
-                [alias]: possiblePath,
-              };
-              console.log(`Aliased ${alias} to ${possiblePath}`);
-              break;
-            }
-          }
-        } else {
-          // 对于其他包（如 clsx），尝试多个可能的路径
-          const possiblePaths = [
-            targetPath,
-            targetPath.replace(/\.mjs$/, ".js"),
-            targetPath.replace(/\.mjs$/, ".cjs"),
-            path.resolve(__dirname, `../../node_modules/${alias}/index.js`),
-            path.resolve(__dirname, `../../node_modules/${alias}/index.mjs`),
-          ];
-
-          for (const possiblePath of possiblePaths) {
-            if (existsSync(possiblePath)) {
-              config.resolve.alias = {
-                ...config.resolve.alias,
-                [alias]: possiblePath,
-              };
-              break;
-            }
+        for (const possiblePath of possiblePaths) {
+          if (existsSync(possiblePath)) {
+            config.resolve.alias = {
+              ...config.resolve.alias,
+              [alias]: possiblePath,
+            };
+            break;
           }
         }
       }
