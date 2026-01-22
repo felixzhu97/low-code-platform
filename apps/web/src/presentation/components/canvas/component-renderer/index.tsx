@@ -38,8 +38,8 @@ export function ComponentRenderer({
   const isDropTarget = component.id === dropTargetId && !isPreviewMode;
   const props = component.properties || {};
 
-  // 如果组件被设置为不可见，在预览模式下不渲染
-  if (props.visible === false && isPreviewMode) {
+  // 如果组件被设置为不可见，则不渲染（编辑态与预览态均生效）
+  if (props.visible === false) {
     return null;
   }
 

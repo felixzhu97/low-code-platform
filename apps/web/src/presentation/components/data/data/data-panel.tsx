@@ -53,46 +53,67 @@ export function DataPanel() {
   const { dataSources, addDataSource, updateDataSource, deleteDataSource } =
     useDataStore();
 
+  // 更新缓存条目
+  useEffect(() => {
+    const updateCacheEntries = () => {
+      const status = DataSourceService.getCacheStatus();
+      setCacheEntries(status.entries);
+    };
+
+    updateCacheEntries();
+    // 定期更新缓存状态（每 2 秒）
+    const interval = setInterval(updateCacheEntries, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   // 初始化默认数据源（如果store为空）
   useEffect(() => {
-    if (dataSources.length === 0) {
-      // 添加示例数据源
-      const exampleDataSource1: DataSource = {
-        id: "static-1",
-        name: "用户列表",
-        type: "static",
-        data: [
-          { id: 1, name: "张三", age: 28, role: "管理员" },
-          { id: 2, name: "李四", age: 32, role: "编辑" },
-          { id: 3, name: "王五", age: 24, role: "用户" },
-        ],
-        lastUpdated: new Date().toISOString(),
-        status: "active",
-      };
+    // 检查是否已存在示例数据源，避免重复添加
+    const hasStatic1 = dataSources.some((ds) => ds.id === "static-1");
+    const hasApi1 = dataSources.some((ds) => ds.id === "api-1");
 
-      const exampleDataSource2: DataSource = {
-        id: "api-1",
-        name: "产品数据",
-        type: "api",
-        data: null,
-        config: {
-          url: "https://api.example.com/products",
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          timeout: 10000,
-          retryCount: 3,
-          cacheEnabled: true,
-          cacheTTL: 300,
-        },
-        lastUpdated: new Date().toISOString(),
-        status: "active",
-      };
+    if (dataSources.length === 0 || (!hasStatic1 && !hasApi1)) {
+      // 添加示例数据源（只在不存在时添加）
+      if (!hasStatic1) {
+        const exampleDataSource1: DataSource = {
+          id: "static-1",
+          name: "用户列表",
+          type: "static",
+          data: [
+            { id: 1, name: "张三", age: 28, role: "管理员" },
+            { id: 2, name: "李四", age: 32, role: "编辑" },
+            { id: 3, name: "王五", age: 24, role: "用户" },
+          ],
+          lastUpdated: new Date().toISOString(),
+          status: "active",
+        };
+        addDataSource(exampleDataSource1);
+      }
 
-      // 只在初始化时添加一次
-      addDataSource(exampleDataSource1);
-      addDataSource(exampleDataSource2);
+      if (!hasApi1) {
+        const exampleDataSource2: DataSource = {
+          id: "api-1",
+          name: "产品数据",
+          type: "api",
+          data: null,
+          config: {
+            url: "https://api.example.com/products",
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            timeout: 10000,
+            retryCount: 3,
+            cacheEnabled: true,
+            cacheTTL: 300,
+          },
+          lastUpdated: new Date().toISOString(),
+          status: "active",
+        };
+        addDataSource(exampleDataSource2);
+      }
     }
-  }, [dataSources.length, addDataSource]);
+    // 只依赖 dataSources，不依赖 addDataSource（它是稳定的）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSources.length]);
 
   const [newDataSource, setNewDataSource] = useState<{
     name: string;
@@ -111,6 +132,9 @@ export function DataPanel() {
   );
   const [previewData, setPreviewData] = useState<any>(null);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const [cacheEntries, setCacheEntries] = useState<
+    Array<{ id: string; age: number; ttl: number }>
+  >([]);
 
   // 获取数据源图标
   const getDataSourceIcon = (type: DataSource["type"]) => {
@@ -720,14 +744,19 @@ export function DataPanel() {
 
                 <div className="space-y-2">
                   <div className="text-sm text-muted-foreground">
-                    缓存状态: {DataSourceService.getCacheStatus().size} 个条目
+                    缓存状态: {cacheEntries.length} 个条目
                   </div>
 
-                  {DataSourceService.getCacheStatus().entries.map((entry) => (
-                    <div
-                      key={entry.id}
-                      className="flex items-center justify-between p-2 border rounded"
-                    >
+                  {cacheEntries.length === 0 ? (
+                    <div className="text-center py-4 text-muted-foreground text-sm">
+                      暂无缓存条目
+                    </div>
+                  ) : (
+                    cacheEntries.map((entry, index) => (
+                      <div
+                        key={`cache-${entry.id}-${index}`}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
                       <div className="text-sm">
                         <div className="font-medium">{entry.id}</div>
                         <div className="text-xs text-muted-foreground">
@@ -745,7 +774,8 @@ export function DataPanel() {
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>

@@ -44,9 +44,19 @@ export const useDataStore = create<DataState>()(
         // 添加数据源
         addDataSource: (dataSource: DataSource) => {
           set(
-            (state) => ({
-              dataSources: [...state.dataSources, dataSource],
-            }),
+            (state) => {
+              // 检查是否已存在相同 id 的数据源
+              const exists = state.dataSources.some((ds) => ds.id === dataSource.id);
+              if (exists) {
+                console.warn(
+                  `数据源 ID "${dataSource.id}" 已存在，跳过添加以避免重复`
+                );
+                return state;
+              }
+              return {
+                dataSources: [...state.dataSources, dataSource],
+              };
+            },
             false,
             "addDataSource"
           );
