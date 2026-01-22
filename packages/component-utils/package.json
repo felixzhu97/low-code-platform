@@ -19,7 +19,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@lowcode-platform/utils": "^0.1.0"
+    "@lowcode-platform/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22",

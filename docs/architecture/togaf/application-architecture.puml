@@ -56,6 +56,9 @@ package "Felix 低代码平台应用系统" {
     component [表单构建器\nForm Builder] as FormBuilder
     interface "表单构建接口" as FormBuilderInterface
     
+    component [AI生成器组件\nAI Generator] as AIGeneratorUI
+    interface "AI生成接口" as AIGeneratorUIInterface
+    
     VisualEditor --> VisualEditorInterface
     ComponentPanel --> ComponentPanelInterface
     PropertyPanel --> PropertyPanelInterface
@@ -66,6 +69,7 @@ package "Felix 低代码平台应用系统" {
     SchemaExport --> SchemaExportUIInterface
     SchemaImport --> SchemaImportUIInterface
     FormBuilder --> FormBuilderInterface
+    AIGeneratorUI --> AIGeneratorUIInterface
     
     ComponentRenderers --> BasicRenderer
     ComponentRenderers --> ChartRenderer
@@ -109,6 +113,9 @@ package "Felix 低代码平台应用系统" {
     component [模板命令服务\nTemplate Command Service] as TemplateCommandService
     interface "模板命令接口" as TemplateCommandServiceInterface
     
+    component [AI生成器适配器\nAI Generator Adapter] as AIGeneratorAdapter
+    interface "AI生成适配接口" as AIGeneratorAdapterInterface
+    
     ComponentService --> ComponentServiceInterface
     TemplateService --> TemplateServiceInterface
     DataBindingService --> DataBindingServiceInterface
@@ -119,6 +126,7 @@ package "Felix 低代码平台应用系统" {
     HistoryService --> HistoryServiceInterface
     SchemaService --> SchemaServiceInterface
     TemplateCommandService --> TemplateCommandServiceInterface
+    AIGeneratorAdapter --> AIGeneratorAdapterInterface
   }
   
   ' ============================================
@@ -183,6 +191,19 @@ package "Felix 低代码平台应用系统" {
     component [数据映射适配器\nData Mapper Adapter] as DataMapperAdapter
     component [布局计算适配器\nLayout Calculator Adapter] as LayoutCalculatorAdapter
     
+    component [AI生成器包\nAI Generator Package] as AIGeneratorPackage
+    interface "AI生成器接口" as AIGeneratorPackageInterface
+    component [AI客户端\nAI Clients] as AIClients
+    component [OpenAI客户端\nOpenAI Client] as OpenAIClient
+    component [Claude客户端\nClaude Client] as ClaudeClient
+    component [DeepSeek客户端\nDeepSeek Client] as DeepSeekClient
+    component [组件生成器\nComponent Generator] as ComponentGenerator
+    component [页面生成器\nPage Generator] as PageGenerator
+    component [组件验证器\nComponent Validator] as ComponentValidator
+    component [页面验证器\nPage Validator] as PageValidator
+    component [提示构建器\nPrompt Builders] as PromptBuilders
+    component [JSON解析器\nJSON Parser] as JsonParser
+    
     ComponentRepo --> ComponentRepoInterface
     TemplateRepo --> TemplateRepoInterface
     DataSourceRepo --> DataSourceRepoInterface
@@ -209,6 +230,18 @@ package "Felix 低代码平台应用系统" {
     WasmAdapter --> SchemaProcessorAdapter
     WasmAdapter --> DataMapperAdapter
     WasmAdapter --> LayoutCalculatorAdapter
+    
+    AIGeneratorPackage --> AIGeneratorPackageInterface
+    AIGeneratorPackage --> AIClients
+    AIClients --> OpenAIClient
+    AIClients --> ClaudeClient
+    AIClients --> DeepSeekClient
+    AIGeneratorPackage --> ComponentGenerator
+    AIGeneratorPackage --> PageGenerator
+    AIGeneratorPackage --> ComponentValidator
+    AIGeneratorPackage --> PageValidator
+    AIGeneratorPackage --> PromptBuilders
+    AIGeneratorPackage --> JsonParser
   }
 }
 
@@ -225,6 +258,9 @@ package "外部系统 (External Systems)" {
   component [CDN服务\nCDN Service] as CDNService
   component [WASM模块\nWASM Module] as WasmModule
   component [Rust编译\nRust Compiler] as RustCompiler
+  component [OpenAI API\nOpenAI API] as OpenAIService
+  component [Claude API\nClaude API] as ClaudeService
+  component [DeepSeek API\nDeepSeek API] as DeepSeekService
 }
 
 ' ============================================
@@ -247,6 +283,7 @@ JsonDataInput --> DataSourceStructureService : 调用
 SchemaExport --> SchemaExportService : 调用
 SchemaImport --> SchemaImportService : 调用
 FormBuilder --> TemplateCommandService : 调用
+AIGeneratorUI --> AIGeneratorAdapter : 调用
 ComponentRenderers --> ComponentService : 调用
 VisualEditor --> ComponentRenderers : 使用
 
@@ -270,6 +307,21 @@ SchemaImportService --> PersistenceManager : 使用
 SchemaRenderer --> SchemaEntity : 使用
 SchemaRenderer --> ComponentService : 使用
 
+AIGeneratorAdapter --> AIGeneratorPackage : 使用
+AIGeneratorAdapter --> TemplateService : 使用（应用生成的组件）
+
+AIGeneratorPackage --> ComponentGenerator : 使用
+AIGeneratorPackage --> PageGenerator : 使用
+AIGeneratorPackage --> ComponentValidator : 使用
+AIGeneratorPackage --> PageValidator : 使用
+AIGeneratorPackage --> PromptBuilders : 使用
+AIGeneratorPackage --> JsonParser : 使用
+ComponentGenerator --> AIClients : 调用
+PageGenerator --> AIClients : 调用
+AIClients --> OpenAIClient : 使用
+AIClients --> ClaudeClient : 使用
+AIClients --> DeepSeekClient : 使用
+
 DataSourceService --> WasmAdapter : 使用（CSV/XML解析、JSON验证）
 SchemaExportService --> WasmAdapter : 使用（Schema序列化）
 SchemaImportService --> WasmAdapter : 使用（Schema反序列化、验证、迁移）
@@ -278,6 +330,10 @@ CanvasService --> WasmAdapter : 使用（布局计算、网格对齐、碰撞检
 
 WasmAdapter --> WasmModule : 调用
 WasmModule --> RustCompiler : 编译
+
+OpenAIClient --> OpenAIService : API调用
+ClaudeClient --> ClaudeService : API调用
+DeepSeekClient --> DeepSeekService : API调用
 
 ComponentRepo --> Database : 读写
 TemplateRepo --> Database : 读写
@@ -320,6 +376,8 @@ note right of VisualEditor
   10. 布局计算 → 画布服务 → WASM适配器（布局计算/网格对齐） → 组件位置更新
   11. 表单构建 → 模板命令服务 → 模板服务 → 组件渲染器 → 表单渲染
   12. 状态持久化 → 持久化管理器 → 本地存储适配器/数据库适配器 → 本地存储/数据库
+  13. AI生成组件 → AI生成器组件 → AI生成器适配器 → AI生成器包 → AI客户端 → AI API → 组件生成器 → 组件验证器 → 模板服务 → 组件渲染器 → 画布渲染
+  14. AI生成页面 → AI生成器组件 → AI生成器适配器 → AI生成器包 → AI客户端 → AI API → 页面生成器 → 页面验证器 → 模板服务 → 组件渲染器 → 画布渲染
 end note
 
 @enduml

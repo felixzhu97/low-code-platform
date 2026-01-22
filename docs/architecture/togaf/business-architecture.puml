@@ -86,6 +86,14 @@ package "业务能力 (Business Capabilities)" {
   component [图表配置] as ChartConfiguration
   component [实时数据更新] as ChartRealTimeUpdate
   
+  component [AI生成能力] as AIGenerationCapability
+  component [自然语言生成] as NaturalLanguageGeneration
+  component [组件AI生成] as ComponentAIGeneration
+  component [页面AI生成] as PageAIGeneration
+  component [多AI提供商支持] as MultiAIProviderSupport
+  component [生成结果验证] as GenerationValidation
+  component [流式生成] as StreamingGeneration
+  
   VisualEditCapability --> ComponentDrag
   VisualEditCapability --> RealTimePreview
   VisualEditCapability --> PropertyConfig
@@ -140,6 +148,13 @@ package "业务能力 (Business Capabilities)" {
   ChartVisualizationCapability --> DataVisualization
   ChartVisualizationCapability --> ChartConfiguration
   ChartVisualizationCapability --> ChartRealTimeUpdate
+  
+  AIGenerationCapability --> NaturalLanguageGeneration
+  AIGenerationCapability --> ComponentAIGeneration
+  AIGenerationCapability --> PageAIGeneration
+  AIGenerationCapability --> MultiAIProviderSupport
+  AIGenerationCapability --> GenerationValidation
+  AIGenerationCapability --> StreamingGeneration
 }
 
 ' ============================================
@@ -294,6 +309,25 @@ package "核心业务流程 (Core Business Processes)" {
   UserAuthProcess --> EstablishSession
   UserAuthProcess --> AuthorizeAccess
   UserAuthProcess --> UserLogout
+  
+  component [AI生成流程] as AIGenerationProcess
+  component [用户输入自然语言描述] as InputNaturalLanguage
+  component [选择AI提供商] as SelectAIProvider
+  component [配置API Key] as ConfigAPIKey
+  component [选择生成类型] as SelectGenerationType
+  component [AI生成组件或页面] as AIGenerateComponentOrPage
+  component [验证生成结果] as ValidateGenerationResult
+  component [应用到画布] as ApplyToCanvas
+  component [预览和调整] as PreviewAndAdjust
+  
+  AIGenerationProcess --> InputNaturalLanguage
+  AIGenerationProcess --> SelectAIProvider
+  AIGenerationProcess --> ConfigAPIKey
+  AIGenerationProcess --> SelectGenerationType
+  AIGenerationProcess --> AIGenerateComponentOrPage
+  AIGenerationProcess --> ValidateGenerationResult
+  AIGenerationProcess --> ApplyToCanvas
+  AIGenerationProcess --> PreviewAndAdjust
 }
 
 ' ============================================
@@ -332,6 +366,7 @@ Designer --> TemplateMgmtCapability : 使用
 Designer --> SchemaMgmtCapability : 使用
 Designer --> InternationalizationCapability : 使用
 Designer --> ChartVisualizationCapability : 使用
+Designer --> AIGenerationCapability : 使用
 
 Developer --> CodeGenCapability : 使用
 Developer --> VisualEditCapability : 使用
@@ -368,5 +403,9 @@ UserAuthProcess --> AuthenticationCapability : 依赖
 
 PageDesignProcess --> ChartVisualizationCapability : 依赖
 DataMgmtProcess --> ChartVisualizationCapability : 依赖
+
+AIGenerationProcess --> AIGenerationCapability : 依赖
+AIGenerationProcess --> ComponentMgmtCapability : 依赖
+AIGenerationProcess --> VisualEditCapability : 依赖
 
 @enduml
