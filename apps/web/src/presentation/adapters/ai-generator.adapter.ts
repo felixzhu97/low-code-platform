@@ -2,16 +2,15 @@ import type { Component } from "@/domain/component";
 import type { PageSchema } from "@/domain/entities/schema.types";
 import {
   AIGenerator,
-  OpenAIClient,
-  ClaudeClient,
-  DeepSeekClient,
+  AIClientFactory,
   type AIClientError,
   type ParseError,
   type ValidationError,
+  type AIProviderType,
 } from "@lowcode-platform/ai-generator";
 import { TemplateAdapter } from "./template.adapter";
 
-export type AIProvider = "openai" | "claude" | "deepseek";
+export type AIProvider = AIProviderType;
 
 export interface AIGeneratorConfig {
   provider: AIProvider;
@@ -19,6 +18,12 @@ export interface AIGeneratorConfig {
   model?: string;
   temperature?: number;
   maxTokens?: number;
+  // Azure OpenAI 特殊配置
+  resourceName?: string;
+  deploymentName?: string;
+  apiVersion?: string;
+  // Ollama 特殊配置
+  baseURL?: string;
 }
 
 /**
@@ -37,38 +42,53 @@ export class AIGeneratorAdapter {
    * 初始化 AI 生成器
    */
   initialize(config: AIGeneratorConfig): void {
-    let client;
+    // 构建客户端配置
+    const clientConfig = this.buildClientConfig(config);
 
-    switch (config.provider) {
-      case "openai":
-        client = new OpenAIClient({
-          apiKey: config.apiKey,
-          model: config.model || "gpt-4",
-          temperature: config.temperature ?? 0.7,
-          maxTokens: config.maxTokens ?? 2000,
-        });
-        break;
-      case "claude":
-        client = new ClaudeClient({
-          apiKey: config.apiKey,
-          model: config.model || "claude-3-opus-20240229",
-          temperature: config.temperature ?? 0.7,
-          maxTokens: config.maxTokens ?? 2000,
-        });
-        break;
-      case "deepseek":
-        client = new DeepSeekClient({
-          apiKey: config.apiKey,
-          model: config.model || "deepseek-chat",
-          temperature: config.temperature ?? 0.7,
-          maxTokens: config.maxTokens ?? 2000,
-        });
-        break;
-      default:
-        throw new Error(`Unsupported AI provider: ${config.provider}`);
-    }
+    // 使用工厂创建客户端
+    const client = AIClientFactory.createClient(
+      config.provider,
+      clientConfig as any
+    );
 
     this.generator = new AIGenerator({ client });
+  }
+
+  /**
+   * 构建客户端配置
+   */
+  private buildClientConfig(config: AIGeneratorConfig) {
+    const baseConfig = {
+      apiKey: config.apiKey,
+      model: config.model || AIClientFactory.getDefaultModel(config.provider),
+      temperature: config.temperature ?? 0.7,
+      maxTokens: config.maxTokens ?? 2000,
+    };
+
+    switch (config.provider) {
+      case "azure-openai":
+        if (!config.resourceName || !config.deploymentName) {
+          throw new Error(
+            "Azure OpenAI requires resourceName and deploymentName"
+          );
+        }
+        return {
+          ...baseConfig,
+          resourceName: config.resourceName,
+          deploymentName: config.deploymentName,
+          apiVersion: config.apiVersion || "2023-12-01-preview",
+        };
+      case "ollama":
+        return {
+          ...baseConfig,
+          apiKey: config.apiKey || "", // Ollama 可选
+          baseURL: config.baseURL || "http://localhost:11434",
+          // Ollama 不使用 maxTokens
+          maxTokens: undefined,
+        };
+      default:
+        return baseConfig;
+    }
   }
 
   /**
