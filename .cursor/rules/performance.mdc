@@ -1,0 +1,380 @@
+# 性能优化规则
+
+## 核心原则
+
+1. **性能优先**：在开发过程中始终考虑性能影响，避免性能问题后再优化
+2. **可测量性**：使用性能监控工具测量和验证优化效果
+3. **渐进式优化**：优先优化关键路径和用户感知明显的场景
+4. **工具统一**：使用 `@lowcode-platform/performance` 提供的性能优化工具
+5. **架构一致性**：性能优化不违反整洁架构的依赖规则
+
+## 性能优化策略
+
+### 1. 函数执行优化
+
+#### 防抖（Debounce）
+- **适用场景**：搜索输入、窗口调整、滚动事件
+- **默认延迟**：300ms
+- **使用方式**：
+
+```typescript
+import { debounce, debounceWithCancel } from "@lowcode-platform/performance";
+
+// 基础防抖
+const debouncedSearch = debounce((query: string) => {
+  // 搜索逻辑
+}, 300);
+
+// 可取消的防抖
+const debouncedFn = debounceWithCancel((value: string) => {
+  // 处理逻辑
+}, 300);
+debouncedFn.cancel(); // 需要时取消
+```
+
+#### 节流（Throttle）
+- **适用场景**：滚动事件、鼠标移动、频繁触发的回调
+- **默认延迟**：300ms
+- **使用方式**：
+
+```typescript
+import { throttle, throttleWithCancel } from "@lowcode-platform/performance";
+
+// 基础节流
+const throttledScroll = throttle(() => {
+  // 滚动处理
+}, 300);
+
+// 可取消的节流
+const throttledFn = throttleWithCancel(() => {
+  // 处理逻辑
+}, 300);
+throttledFn.cancel(); // 需要时取消
+```
+
+### 2. 缓存策略
+
+#### 内存缓存（MemoryCache）
+- **适用场景**：API 响应、计算结果、临时数据
+- **TTL 设置**：根据数据特性设置合理的过期时间
+- **使用方式**：
+
+```typescript
+import { MemoryCache } from "@lowcode-platform/performance";
+
+const cache = new MemoryCache<string, ApiResponse>();
+cache.set("user:123", userData, 5000); // 5秒过期
+const user = cache.get("user:123");
+```
+
+#### LRU 缓存（LRUCache）
+- **适用场景**：固定大小的缓存池、最近使用的数据
+- **容量设置**：根据内存限制设置最大容量
+- **使用方式**：
+
+```typescript
+import { LRUCache } from "@lowcode-platform/performance";
+
+const lruCache = new LRUCache<string, Component>(100); // 最多100项
+lruCache.set("component:123", componentData);
+const component = lruCache.get("component:123");
+```
+
+#### 函数缓存
+- **适用场景**：纯函数、计算密集型操作
+- **使用方式**：
+
+```typescript
+import { cached, MemoryCache } from "@lowcode-platform/performance";
+
+// 自动缓存
+const expensiveFunction = cached((n: number) => {
+  // 复杂计算
+  return computeResult(n);
+});
+
+// 自定义缓存
+const customCache = new MemoryCache<number, string>();
+const cachedFn = cached((n: number) => compute(n), customCache);
+```
+
+### 3. 列表渲染优化
+
+#### 虚拟滚动
+- **适用场景**：长列表（>100 项）、大数据表格
+- **使用方式**：
+
+```typescript
+import {
+  calculateVisibleRange,
+  getVisibleItems,
+} from "@lowcode-platform/performance";
+
+// 计算可见范围
+const { start, end } = calculateVisibleRange(
+  scrollTop,
+  containerHeight,
+  itemHeight,
+  totalItems,
+  3 // overscan: 预渲染3个额外项目
+);
+
+// 获取可见项目
+const { visibleItems, offsetY } = getVisibleItems(
+  allItems,
+  scrollTop,
+  containerHeight,
+  itemHeight,
+  3 // overscan
+);
+```
+
+#### React 组件优化
+- **使用 `React.memo`**：避免不必要的重渲染
+- **使用 `useMemo`**：缓存计算结果
+- **使用 `useCallback`**：缓存函数引用
+- **代码分割**：使用动态导入
+
+```typescript
+// 组件记忆化
+export const Component = React.memo(({ data }: Props) => {
+  // 组件逻辑
+});
+
+// 计算结果缓存
+const expensiveValue = useMemo(() => {
+  return computeExpensive(data);
+}, [data]);
+
+// 函数引用缓存
+const handleClick = useCallback(() => {
+  // 处理逻辑
+}, [dependencies]);
+
+// 代码分割
+const LazyComponent = lazy(() => import("./LazyComponent"));
+```
+
+### 4. 资源加载优化
+
+#### 图片懒加载
+- **适用场景**：列表中的图片、非首屏图片
+- **使用方式**：
+
+```typescript
+import {
+  lazyLoadImage,
+  createLazyLoader,
+} from "@lowcode-platform/performance";
+
+// 直接加载
+await lazyLoadImage("/path/to/image.jpg");
+
+// Intersection Observer 懒加载
+const loader = createLazyLoader((entry) => {
+  const img = entry.target as HTMLImageElement;
+  img.src = img.dataset.src || "";
+});
+loader.observe(imageElement);
+```
+
+#### 模块懒加载
+- **适用场景**：路由组件、大型功能模块
+- **使用方式**：
+
+```typescript
+import { lazyLoadModule, createLazyComponent } from "@lowcode-platform/performance";
+
+// 动态导入模块
+const module = await lazyLoadModule("./my-module");
+
+// React 懒加载组件
+const LazyComponent = createLazyComponent(() => import("./Component"));
+```
+
+### 5. 批量操作优化
+
+#### 批量处理
+- **适用场景**：批量 API 调用、批量数据更新
+- **使用方式**：
+
+```typescript
+import {
+  batchProcess,
+  batchProcessWithConcurrency,
+  debounceBatch,
+} from "@lowcode-platform/performance";
+
+// 顺序批量处理
+await batchProcess(items, 10, async (batch) => {
+  await processBatch(batch);
+});
+
+// 并发批量处理
+await batchProcessWithConcurrency(
+  items,
+  10, // 批次大小
+  async (batch) => {
+    await processBatch(batch);
+  },
+  3 // 并发数
+);
+
+// 防抖批量处理
+const batchProcessor = debounceBatch(async (items) => {
+  await processItems(items);
+}, 300);
+batchProcessor.add(item1);
+batchProcessor.add(item2);
+await batchProcessor.flush(); // 立即处理
+```
+
+### 6. 性能监控
+
+#### 性能测量
+- **适用场景**：关键操作、API 调用、渲染性能
+- **使用方式**：
+
+```typescript
+import {
+  measure,
+  measureAsync,
+  PerformanceMonitor,
+  getMemoryUsage,
+} from "@lowcode-platform/performance";
+
+// 同步函数测量
+const { result, duration } = measure(() => {
+  // 执行操作
+}, "operation-label");
+
+// 异步函数测量
+const { result, duration } = await measureAsync(async () => {
+  // 异步操作
+}, "async-operation");
+
+// 性能监控器
+const monitor = new PerformanceMonitor();
+monitor.mark("start");
+// ... 执行操作
+monitor.mark("end");
+const duration = monitor.measure("start", "end");
+
+// 内存使用监控
+const memory = getMemoryUsage();
+if (memory && memory.percentage > 80) {
+  console.warn("内存使用率过高:", memory.percentage);
+}
+```
+
+## 架构层级的性能优化
+
+### Domain Layer（领域层）
+- ✅ 使用纯函数和不可变数据结构
+- ✅ 避免副作用，便于缓存和优化
+- ❌ 不进行性能监控（属于基础设施关注点）
+
+### Application Layer（应用层）
+- ✅ 使用缓存优化重复计算
+- ✅ 使用批量操作处理多个用例
+- ✅ 使用性能监控测量用例执行时间
+- ❌ 不直接操作 DOM 或浏览器 API
+
+### Infrastructure Layer（基础设施层）
+- ✅ 实现缓存策略（MemoryCache、LRUCache）
+- ✅ 实现批量 API 调用
+- ✅ 实现请求去重和合并
+- ✅ 使用性能监控测量 API 调用时间
+
+### Presentation Layer（展示层）
+- ✅ 使用虚拟滚动优化长列表
+- ✅ 使用防抖/节流优化事件处理
+- ✅ 使用懒加载优化资源加载
+- ✅ 使用 React.memo、useMemo、useCallback 优化渲染
+- ✅ 使用代码分割优化初始加载
+
+## 性能优化检查清单
+
+### 函数执行
+- [ ] 频繁触发的事件使用防抖或节流
+- [ ] 搜索输入使用防抖（300ms）
+- [ ] 滚动事件使用节流（100-300ms）
+- [ ] 窗口调整使用防抖（300ms）
+
+### 缓存策略
+- [ ] API 响应使用缓存（设置合理 TTL）
+- [ ] 计算结果使用函数缓存
+- [ ] 固定大小缓存使用 LRU 策略
+- [ ] 定期清理过期缓存
+
+### 列表渲染
+- [ ] 长列表（>100 项）使用虚拟滚动
+- [ ] 列表项使用 React.memo 优化
+- [ ] 列表计算使用 useMemo 缓存
+- [ ] 列表事件处理使用 useCallback
+
+### 资源加载
+- [ ] 非首屏图片使用懒加载
+- [ ] 路由组件使用代码分割
+- [ ] 大型模块使用动态导入
+- [ ] 图片使用适当的格式和尺寸
+
+### 批量操作
+- [ ] 批量 API 调用使用批量处理
+- [ ] 批量更新使用防抖批量处理
+- [ ] 合理设置批次大小和并发数
+
+### 性能监控
+- [ ] 关键操作添加性能测量
+- [ ] 监控内存使用情况
+- [ ] 记录性能指标用于分析
+- [ ] 设置性能告警阈值
+
+## 性能优化最佳实践
+
+### 1. 优先优化关键路径
+- 识别用户最常使用的功能
+- 优化首屏加载时间
+- 优化交互响应时间
+
+### 2. 测量驱动优化
+- 优化前测量基准性能
+- 优化后验证改进效果
+- 使用性能监控持续跟踪
+
+### 3. 渐进式优化
+- 先解决明显的性能问题
+- 再优化细节和边缘情况
+- 避免过度优化
+
+### 4. 保持代码可读性
+- 性能优化不应牺牲代码可读性
+- 使用清晰的命名和注释
+- 将性能优化逻辑封装在工具函数中
+
+### 5. 考虑用户体验
+- 优化用户感知的性能（如加载状态）
+- 使用骨架屏和占位符
+- 提供取消和重试机制
+
+## 性能优化工具包
+
+**包路径**：`packages/performance`
+
+**导出路径**：
+- `@lowcode-platform/performance` - 所有导出
+- `@lowcode-platform/performance/debounce` - 防抖工具
+- `@lowcode-platform/performance/throttle` - 节流工具
+- `@lowcode-platform/performance/cache` - 缓存工具
+- `@lowcode-platform/performance/virtual` - 虚拟滚动工具
+- `@lowcode-platform/performance/lazy-load` - 懒加载工具
+- `@lowcode-platform/performance/monitor` - 性能监控工具
+- `@lowcode-platform/performance/batch` - 批量操作工具
+
+## 实施流程
+
+1. **识别性能瓶颈**：使用性能监控工具识别问题
+2. **选择优化策略**：根据场景选择合适的优化工具
+3. **实施优化**：使用 `@lowcode-platform/performance` 工具
+4. **验证效果**：测量优化前后的性能指标
+5. **持续监控**：在生产环境中持续监控性能
