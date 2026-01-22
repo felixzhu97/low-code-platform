@@ -45,6 +45,9 @@ export * from "./textarea";
 export * from "./toast";
 export * from "./toggle-group";
 export * from "./toggle";
+export * from "./toolbar";
+export * from "./toolbar-group";
+export * from "./toolbar-separator";
 export * from "./tooltip";
 
 // 工具组件

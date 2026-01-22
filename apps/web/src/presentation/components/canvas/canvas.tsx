@@ -4,7 +4,15 @@ import React from "react";
 import { useCallback } from "react";
 import { ScrollArea } from "@/presentation";
 import { Button } from "../ui/button";
-import { Trash2, Smartphone, Tablet } from "lucide-react";
+import {
+  Toolbar,
+  ToolbarGroup,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui";
+import { Trash2, Smartphone, Tablet, Grid, Grid3x3 } from "lucide-react";
 import { cn } from "@/application/services/utils";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
@@ -136,39 +144,75 @@ export const Canvas = React.memo<CanvasProps>(() => {
   return (
     <div className="flex-1 bg-gray-50">
       {!isPreviewMode && (
-        <div className="flex h-12 items-center justify-between border-b bg-background px-4">
-          <span className="font-medium">画布</span>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="show-grid" className="text-xs">
-                显示网格
-              </Label>
-              <Switch
-                id="show-grid"
-                checked={showGrid}
-                onCheckedChange={toggleGrid}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Label htmlFor="snap-grid" className="text-xs">
-                对齐网格
-              </Label>
-              <Switch
-                id="snap-grid"
-                checked={snapToGrid}
-                onCheckedChange={toggleSnapToGrid}
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={clearAllComponents}
-              disabled={components.length === 0}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+        <TooltipProvider>
+          <div className="flex h-12 items-center justify-between border-b bg-background px-4 shadow-sm transition-shadow duration-200">
+            <span className="font-semibold text-sm">画布</span>
+            <Toolbar className="border-0 shadow-none bg-transparent px-0">
+              <ToolbarGroup aria-label="画布工具" className="gap-3">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2">
+                      <Label
+                        htmlFor="show-grid"
+                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                      >
+                        <Grid className="h-4 w-4 text-muted-foreground" />
+                        <span className="hidden sm:inline">显示网格</span>
+                      </Label>
+                      <Switch
+                        id="show-grid"
+                        checked={showGrid}
+                        onCheckedChange={toggleGrid}
+                        aria-label="切换显示网格"
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>显示/隐藏画布网格辅助线</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2">
+                      <Label
+                        htmlFor="snap-grid"
+                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                      >
+                        <Grid3x3 className="h-4 w-4 text-muted-foreground" />
+                        <span className="hidden sm:inline">对齐网格</span>
+                      </Label>
+                      <Switch
+                        id="snap-grid"
+                        checked={snapToGrid}
+                        onCheckedChange={toggleSnapToGrid}
+                        aria-label="切换对齐网格"
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>启用/禁用组件对齐到网格</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={clearAllComponents}
+                      disabled={components.length === 0}
+                      aria-label="清空画布"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>清空画布上的所有组件</p>
+                  </TooltipContent>
+                </Tooltip>
+              </ToolbarGroup>
+            </Toolbar>
           </div>
-        </div>
+        </TooltipProvider>
       )}
       <ScrollArea
         className={
