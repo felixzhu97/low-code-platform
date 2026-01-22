@@ -1,0 +1,464 @@
+# Apple Human Interface Guidelines 规则
+
+## 核心原则
+
+1. **清晰性（Clarity）**：界面设计应清晰易懂，通过一致的导航、简洁的布局和明确的信息层次引导用户
+2. **尊重内容（Deference）**：界面应突出内容本身，减少干扰，让用户专注于主要任务
+3. **深度（Depth）**：使用层次、阴影和动画创造视觉深度，帮助用户理解界面结构和交互关系
+4. **一致性（Consistency）**：在整个应用中保持统一的设计语言和交互模式，降低学习成本
+5. **用户控制（User Control）**：用户应该能够控制应用的行为，提供明确的反馈和可撤销的操作
+6. **可访问性（Accessibility）**：确保所有用户都能使用应用，包括使用辅助技术的用户
+
+## 设计原则
+
+### 1. 清晰性（Clarity）
+
+#### 视觉层次
+- **使用明确的视觉层次**：重要信息使用更大的字体、更醒目的颜色或更突出的位置
+- **合理使用留白**：避免界面拥挤，给元素足够的呼吸空间
+- **清晰的标签和说明**：使用简洁明了的文字，避免技术术语
+
+```typescript
+// ✅ 好的示例：清晰的视觉层次
+<div className="space-y-4">
+  <h1 className="text-3xl font-bold">主要标题</h1>
+  <h2 className="text-xl font-semibold">次要标题</h2>
+  <p className="text-base text-gray-600">正文内容</p>
+</div>
+
+// ❌ 避免：混乱的层次
+<div>
+  <span className="text-lg">标题</span>
+  <h1 className="text-sm">内容</h1>
+</div>
+```
+
+#### 导航一致性
+- **使用一致的导航模式**：在整个应用中保持导航结构的一致性
+- **提供清晰的当前位置指示**：使用面包屑、标签或高亮显示当前位置
+- **简化导航路径**：减少用户到达目标所需的步骤
+
+```typescript
+// ✅ 好的示例：清晰的导航结构
+<nav aria-label="主导航">
+  <ul className="flex space-x-4">
+    <li>
+      <a href="/dashboard" aria-current="page">仪表板</a>
+    </li>
+    <li>
+      <a href="/projects">项目</a>
+    </li>
+  </ul>
+</nav>
+```
+
+### 2. 尊重内容（Deference）
+
+#### 内容优先
+- **突出主要内容**：使用视觉设计引导用户关注核心内容
+- **减少界面元素干扰**：隐藏或弱化次要功能，保持界面简洁
+- **使用全屏或沉浸式体验**：对于内容查看场景，最大化内容展示区域
+
+```typescript
+// ✅ 好的示例：内容优先的设计
+<div className="container mx-auto px-4">
+  <article className="max-w-3xl mx-auto">
+    <h1 className="text-4xl font-bold mb-6">{title}</h1>
+    <div className="prose prose-lg">{content}</div>
+  </article>
+</div>
+
+// ❌ 避免：过多的界面元素分散注意力
+<div className="container">
+  <Sidebar />
+  <Toolbar />
+  <Breadcrumb />
+  <Content />
+  <RelatedContent />
+</div>
+```
+
+#### 流畅的动画
+- **使用自然的动画**：动画应该感觉自然，符合物理规律
+- **动画时长适中**：快速响应（100-300ms），避免过长的动画
+- **动画有目的性**：每个动画都应该传达信息或引导用户注意力
+
+```typescript
+// ✅ 好的示例：自然的过渡动画
+const AnimatedCard = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+```
+
+### 3. 深度（Depth）
+
+#### 层次和阴影
+- **使用阴影创造层次感**：通过阴影深度区分不同层级的内容
+- **使用分层设计**：模态框、下拉菜单等应明显浮于背景之上
+- **合理使用透明度**：使用半透明背景创建层次感
+
+```typescript
+// ✅ 好的示例：使用阴影创建深度
+const Card = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      {children}
+    </div>
+  );
+};
+
+const Modal = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md mx-auto mt-20">
+        {children}
+      </div>
+    </div>
+  );
+};
+```
+
+#### 视差效果
+- **谨慎使用视差**：视差效果应该微妙，增强体验而非分散注意力
+- **性能考虑**：确保视差效果不影响滚动性能
+
+```typescript
+// ✅ 好的示例：微妙的视差效果
+const ParallaxSection = () => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  
+  return (
+    <motion.div style={{ y }} className="relative">
+      <img src="/hero.jpg" alt="Hero" />
+    </motion.div>
+  );
+};
+```
+
+### 4. 一致性（Consistency）
+
+#### 设计系统
+- **使用统一的设计令牌**：颜色、字体、间距等应保持一致
+- **复用组件**：使用设计系统中的组件，避免重复创建相似组件
+- **保持交互模式一致**：相同类型的操作应使用相同的交互方式
+
+```typescript
+// ✅ 好的示例：使用设计系统
+import { Button, Card, Input } from "@lowcode-platform/ui";
+
+const Form = () => {
+  return (
+    <Card>
+      <Input label="用户名" />
+      <Button variant="primary">提交</Button>
+    </Card>
+  );
+};
+```
+
+#### 术语和标签
+- **使用一致的术语**：在整个应用中使用相同的词汇描述相同的概念
+- **保持标签简洁**：使用简短、清晰的标签
+- **遵循平台约定**：使用用户熟悉的术语和模式
+
+```typescript
+// ✅ 好的示例：一致的术语
+// 在整个应用中使用 "保存" 而不是混用 "保存"、"存储"、"提交"
+<Button onClick={handleSave}>保存</Button>
+<Button onClick={handleCancel}>取消</Button>
+```
+
+### 5. 用户控制（User Control）
+
+#### 明确的反馈
+- **提供即时反馈**：用户操作应立即得到视觉或触觉反馈
+- **显示加载状态**：长时间操作应显示进度指示器
+- **错误处理**：错误信息应清晰、可操作，帮助用户解决问题
+
+```typescript
+// ✅ 好的示例：明确的反馈
+const SaveButton = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await saveData();
+      toast.success("保存成功");
+    } catch (error) {
+      toast.error("保存失败，请重试");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  return (
+    <Button onClick={handleSave} disabled={isLoading}>
+      {isLoading ? "保存中..." : "保存"}
+    </Button>
+  );
+};
+```
+
+#### 可撤销操作
+- **提供撤销功能**：对于重要操作，提供撤销或重做选项
+- **确认危险操作**：删除等不可逆操作应要求用户确认
+- **保存草稿**：长时间编辑应自动保存草稿
+
+```typescript
+// ✅ 好的示例：可撤销的操作
+const DeleteButton = ({ onDelete }: { onDelete: () => void }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+  
+  return (
+    <>
+      <Button variant="danger" onClick={() => setShowConfirm(true)}>
+        删除
+      </Button>
+      {showConfirm && (
+        <ConfirmDialog
+          title="确认删除"
+          message="此操作不可撤销，确定要删除吗？"
+          onConfirm={onDelete}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+    </>
+  );
+};
+```
+
+### 6. 可访问性（Accessibility）
+
+#### 语义化 HTML
+- **使用正确的 HTML 元素**：使用语义化标签（`<nav>`, `<main>`, `<article>` 等）
+- **提供替代文本**：所有图片应包含有意义的 `alt` 属性
+- **使用 ARIA 标签**：当 HTML 语义不足时，使用 ARIA 属性增强可访问性
+
+```typescript
+// ✅ 好的示例：语义化和可访问性
+<nav aria-label="主导航">
+  <ul role="list">
+    <li>
+      <a href="/" aria-current="page">首页</a>
+    </li>
+  </ul>
+</nav>
+
+<img src="/logo.png" alt="公司标志" />
+
+<button aria-label="关闭对话框" onClick={onClose}>
+  <CloseIcon aria-hidden="true" />
+</button>
+```
+
+#### 键盘导航
+- **支持键盘操作**：所有交互功能应可通过键盘访问
+- **合理的焦点顺序**：Tab 键导航顺序应符合逻辑
+- **可见的焦点指示**：为键盘焦点提供清晰的视觉指示
+
+```typescript
+// ✅ 好的示例：键盘导航支持
+const Modal = ({ onClose }: { onClose: () => void }) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+  
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      className="focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <h2 id="modal-title">对话框标题</h2>
+    </div>
+  );
+};
+```
+
+#### 颜色对比度
+- **满足 WCAG 标准**：文本与背景的对比度应至少达到 4.5:1（正常文本）或 3:1（大文本）
+- **不仅仅依赖颜色**：使用颜色之外的方式传达信息（图标、形状、文字）
+
+```typescript
+// ✅ 好的示例：足够的对比度
+// 使用设计系统中的颜色，确保对比度符合标准
+<p className="text-gray-900 bg-white">正常文本</p>
+<p className="text-gray-600 bg-gray-100">次要文本</p>
+
+// ✅ 好的示例：不依赖颜色传达信息
+<button className="flex items-center gap-2">
+  <ErrorIcon />
+  <span>错误：请检查输入</span>
+</button>
+```
+
+## 响应式设计
+
+### 适配不同屏幕
+- **移动优先**：从移动端开始设计，逐步增强到桌面端
+- **灵活的布局**：使用弹性布局和网格系统适应不同屏幕尺寸
+- **触摸友好的目标**：触摸目标至少 44x44 像素
+
+```typescript
+// ✅ 好的示例：响应式设计
+const ResponsiveLayout = () => {
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card />
+        <Card />
+        <Card />
+      </div>
+    </div>
+  );
+};
+
+// ✅ 触摸友好的按钮
+<button className="min-h-[44px] min-w-[44px] px-4 py-2">
+  点击
+</button>
+```
+
+## 性能与用户体验
+
+### 加载体验
+- **显示加载状态**：使用骨架屏或加载指示器
+- **渐进式加载**：优先加载关键内容，延迟加载次要内容
+- **优化图片**：使用适当的图片格式和尺寸
+
+```typescript
+// ✅ 好的示例：加载状态
+const DataCard = () => {
+  const { data, isLoading } = useQuery();
+  
+  if (isLoading) {
+    return <SkeletonCard />;
+  }
+  
+  return <Card>{data}</Card>;
+};
+```
+
+### 错误处理
+- **友好的错误信息**：使用用户能理解的语言
+- **提供解决方案**：错误信息应包含如何解决问题的建议
+- **优雅降级**：功能不可用时提供替代方案
+
+```typescript
+// ✅ 好的示例：友好的错误处理
+const ErrorMessage = ({ error }: { error: Error }) => {
+  return (
+    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="flex items-center gap-2">
+        <ErrorIcon className="text-red-600" />
+        <h3 className="font-semibold text-red-900">出错了</h3>
+      </div>
+      <p className="text-red-700 mt-2">{error.message}</p>
+      <Button onClick={handleRetry} className="mt-4">
+        重试
+      </Button>
+    </div>
+  );
+};
+```
+
+## 架构层级的设计原则
+
+### Domain Layer（领域层）
+- ❌ 不涉及 UI 设计原则（属于展示层关注点）
+
+### Application Layer（应用层）
+- ✅ 定义用户交互流程和用例
+- ✅ 确保业务逻辑支持用户控制原则（如撤销操作）
+- ❌ 不直接处理 UI 反馈（通过接口定义）
+
+### Infrastructure Layer（基础设施层）
+- ✅ 实现可访问性支持（如屏幕阅读器 API）
+- ✅ 实现性能优化（如图片优化、懒加载）
+- ❌ 不定义 UI 设计规范
+
+### Presentation Layer（展示层）
+- ✅ 实现所有 Apple HIG 设计原则
+- ✅ 使用设计系统组件
+- ✅ 实现可访问性功能
+- ✅ 优化加载和错误状态
+- ✅ 实现响应式设计
+
+## 设计检查清单
+
+### 清晰性
+- [ ] 视觉层次清晰，重要信息突出
+- [ ] 使用足够的留白，避免界面拥挤
+- [ ] 标签和说明简洁明了
+- [ ] 导航结构一致且易于理解
+
+### 尊重内容
+- [ ] 主要内容突出显示
+- [ ] 减少不必要的界面元素
+- [ ] 动画自然流畅，时长适中
+- [ ] 动画有明确的目的
+
+### 深度
+- [ ] 使用阴影和层次区分内容层级
+- [ ] 模态框和弹出层有明显的深度感
+- [ ] 视差效果（如有）微妙且不影响性能
+
+### 一致性
+- [ ] 使用统一的设计令牌（颜色、字体、间距）
+- [ ] 复用设计系统组件
+- [ ] 交互模式在整个应用中保持一致
+- [ ] 术语和标签统一
+
+### 用户控制
+- [ ] 所有操作都有即时反馈
+- [ ] 长时间操作显示加载状态
+- [ ] 错误信息清晰且可操作
+- [ ] 重要操作可撤销或需要确认
+
+### 可访问性
+- [ ] 使用语义化 HTML
+- [ ] 所有图片有有意义的 alt 文本
+- [ ] 支持键盘导航
+- [ ] 焦点指示清晰可见
+- [ ] 颜色对比度符合 WCAG 标准
+- [ ] 不依赖颜色传达信息
+
+### 响应式设计
+- [ ] 适配不同屏幕尺寸
+- [ ] 触摸目标至少 44x44 像素
+- [ ] 移动端和桌面端体验都良好
+
+### 性能
+- [ ] 显示加载状态（骨架屏或加载指示器）
+- [ ] 优化图片加载
+- [ ] 错误处理友好且提供解决方案
+
+## 实施流程
+
+1. **设计阶段**：根据 Apple HIG 原则设计界面和交互
+2. **组件开发**：使用设计系统创建可复用组件
+3. **可访问性检查**：使用工具（如 axe、WAVE）检查可访问性
+4. **响应式测试**：在不同设备和屏幕尺寸上测试
+5. **性能优化**：确保加载和交互性能良好
+6. **用户测试**：进行可用性测试，收集反馈并迭代
+
+## 相关资源
+
+- [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+- [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/WCAG21/quickref/)
+- [MDN Web Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)

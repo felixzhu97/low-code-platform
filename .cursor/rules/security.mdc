@@ -1,0 +1,468 @@
+# 安全规则
+
+## 核心原则
+
+1. **零信任原则**：永不信任，始终验证。所有用户、设备、应用和数据访问都必须经过严格的身份验证和授权
+2. **最小权限原则**：用户和设备只能访问其工作所需的最小资源集
+3. **纵深防御**：采用多层安全防护，假设攻击者可能已经进入系统内部
+4. **架构一致性**：安全措施不违反整洁架构的依赖规则
+5. **持续监控**：持续监控用户行为、设备状态和系统活动，动态调整访问权限
+
+## 安全策略
+
+### 1. 身份认证（Authentication）
+
+#### 用户认证
+- **适用场景**：所有需要用户身份的操作
+- **认证方式**：支持多种认证方式（密码、OAuth2/OIDC、SSO）
+- **多因素认证（MFA）**：敏感操作必须启用 MFA
+- **会话管理**：使用安全的会话管理机制
+
+```typescript
+// 认证接口定义（Domain Layer）
+interface AuthenticationService {
+  authenticate(credentials: Credentials): Promise<AuthResult>;
+  refreshToken(refreshToken: string): Promise<TokenPair>;
+  logout(sessionId: string): Promise<void>;
+}
+
+// 认证实现（Infrastructure Layer）
+class OAuth2AuthenticationService implements AuthenticationService {
+  async authenticate(credentials: Credentials): Promise<AuthResult> {
+    // OAuth2 认证逻辑
+  }
+}
+```
+
+#### 设备认证
+- **设备证书**：使用数字证书验证设备身份
+- **设备合规检查**：验证设备是否符合安全策略
+- **设备信任评分**：基于设备状态计算信任分数
+
+#### API 认证
+- **令牌验证**：所有 API 请求必须包含有效的访问令牌
+- **令牌过期**：使用短期访问令牌和长期刷新令牌
+- **令牌撤销**：支持令牌撤销机制
+
+```typescript
+// API 认证中间件（Infrastructure Layer）
+export async function authenticateRequest(
+  request: Request
+): Promise<AuthenticatedUser> {
+  const token = extractToken(request);
+  if (!token) {
+    throw new UnauthorizedError("Missing authentication token");
+  }
+  
+  const user = await verifyToken(token);
+  if (!user) {
+    throw new UnauthorizedError("Invalid token");
+  }
+  
+  return user;
+}
+```
+
+### 2. 访问授权（Authorization）
+
+#### 基于角色的访问控制（RBAC）
+- **角色定义**：明确定义用户角色和权限
+- **权限检查**：在应用层进行权限验证
+- **动态授权**：基于实时风险评估动态调整权限
+
+```typescript
+// 授权接口定义（Domain Layer）
+interface AuthorizationService {
+  hasPermission(user: User, resource: Resource, action: Action): Promise<boolean>;
+  checkRole(user: User, role: Role): boolean;
+}
+
+// 权限检查（Application Layer）
+class CreateUserUseCase {
+  constructor(
+    private authService: AuthorizationService,
+    private userRepository: UserRepository
+  ) {}
+  
+  async execute(command: CreateUserCommand, actor: User): Promise<User> {
+    // 检查权限
+    if (!await this.authService.hasPermission(actor, "user", "create")) {
+      throw new ForbiddenError("Insufficient permissions");
+    }
+    
+    // 执行业务逻辑
+    return await this.userRepository.create(command);
+  }
+}
+```
+
+#### 资源级授权
+- **资源所有权**：验证用户对资源的访问权限
+- **数据隔离**：确保用户只能访问自己的数据
+- **操作审计**：记录所有授权决策和操作
+
+### 3. 输入验证与清理
+
+#### 输入验证
+- **所有输入必须验证**：不信任任何外部输入
+- **类型验证**：验证数据类型和格式
+- **范围验证**：验证数值范围和长度限制
+- **业务规则验证**：验证业务逻辑约束
+
+```typescript
+// 输入验证（Application Layer）
+class CreateUserCommand {
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+    public readonly name: string
+  ) {
+    this.validate();
+  }
+  
+  private validate(): void {
+    // 邮箱格式验证
+    if (!isValidEmail(this.email)) {
+      throw new ValidationError("Invalid email format");
+    }
+    
+    // 密码强度验证
+    if (!isStrongPassword(this.password)) {
+      throw new ValidationError("Password does not meet requirements");
+    }
+    
+    // 名称长度验证
+    if (this.name.length < 2 || this.name.length > 100) {
+      throw new ValidationError("Name length must be between 2 and 100");
+    }
+  }
+}
+```
+
+#### 输出编码
+- **XSS 防护**：对所有输出进行适当的编码
+- **SQL 注入防护**：使用参数化查询
+- **命令注入防护**：避免直接执行用户输入的命令
+
+```typescript
+// 使用参数化查询（Infrastructure Layer）
+async findUserById(id: string): Promise<User | null> {
+  // ✅ 正确：使用参数化查询
+  const result = await this.db.query(
+    "SELECT * FROM users WHERE id = $1",
+    [id]
+  );
+  
+  // ❌ 错误：字符串拼接
+  // const result = await this.db.query(
+  //   `SELECT * FROM users WHERE id = '${id}'`
+  // );
+  
+  return result.rows[0] || null;
+}
+```
+
+### 4. 数据保护
+
+#### 传输加密
+- **TLS 1.3**：所有网络通信使用 TLS 1.3 加密
+- **HTTPS 强制**：Web 应用强制使用 HTTPS
+- **API 加密**：API 通信使用加密传输
+
+#### 静态加密
+- **数据库加密**：敏感数据在数据库中加密存储
+- **文件加密**：敏感文件加密存储
+- **密钥管理**：使用密钥管理服务（KMS）管理加密密钥
+
+```typescript
+// 数据加密服务（Infrastructure Layer）
+interface EncryptionService {
+  encrypt(data: string, keyId: string): Promise<string>;
+  decrypt(encryptedData: string, keyId: string): Promise<string>;
+}
+
+// 敏感数据加密存储
+class UserRepository {
+  constructor(
+    private db: Database,
+    private encryption: EncryptionService
+  ) {}
+  
+  async save(user: User): Promise<void> {
+    // 加密敏感字段
+    const encryptedPassword = await this.encryption.encrypt(
+      user.password,
+      "password-key"
+    );
+    
+    await this.db.query(
+      "INSERT INTO users (id, email, password) VALUES ($1, $2, $3)",
+      [user.id, user.email, encryptedPassword]
+    );
+  }
+}
+```
+
+#### 数据分类分级
+- **数据分类**：对数据进行分类和标记
+- **分级保护**：根据数据敏感度实施分级保护
+- **数据丢失防护（DLP）**：防止敏感数据泄露
+
+### 5. 安全配置
+
+#### 环境变量
+- **敏感信息**：使用环境变量存储敏感配置
+- **密钥管理**：不在代码中硬编码密钥
+- **配置验证**：启动时验证必要的配置项
+
+```typescript
+// 配置管理（Infrastructure Layer）
+class ConfigService {
+  private readonly jwtSecret: string;
+  private readonly dbPassword: string;
+  
+  constructor() {
+    // ✅ 从环境变量读取
+    this.jwtSecret = process.env.JWT_SECRET;
+    this.dbPassword = process.env.DB_PASSWORD;
+    
+    if (!this.jwtSecret || !this.dbPassword) {
+      throw new Error("Missing required environment variables");
+    }
+  }
+}
+```
+
+#### 依赖安全
+- **依赖扫描**：定期扫描依赖包的安全漏洞
+- **及时更新**：及时更新存在安全漏洞的依赖
+- **最小依赖**：只引入必要的依赖包
+
+### 6. 日志与监控
+
+#### 安全日志
+- **访问日志**：记录所有访问请求
+- **认证日志**：记录认证成功和失败
+- **授权日志**：记录授权决策和拒绝
+- **操作审计**：记录敏感操作的详细信息
+
+```typescript
+// 审计日志（Infrastructure Layer）
+interface AuditLogger {
+  logAccess(user: User, resource: string, action: string): Promise<void>;
+  logAuthentication(userId: string, success: boolean): Promise<void>;
+  logAuthorization(user: User, resource: string, action: string, allowed: boolean): Promise<void>;
+}
+
+// 在用例中记录审计日志
+class DeleteUserUseCase {
+  constructor(
+    private userRepository: UserRepository,
+    private auditLogger: AuditLogger
+  ) {}
+  
+  async execute(command: DeleteUserCommand, actor: User): Promise<void> {
+    await this.auditLogger.logAccess(actor, "user", "delete");
+    
+    await this.userRepository.delete(command.userId);
+    
+    await this.auditLogger.logAccess(actor, "user", "delete");
+  }
+}
+```
+
+#### 异常检测
+- **异常行为检测**：检测异常的用户行为模式
+- **威胁检测**：识别已知和未知的安全威胁
+- **实时告警**：及时通知安全团队关键安全事件
+
+### 7. 错误处理
+
+#### 安全错误处理
+- **信息泄露防护**：错误消息不泄露敏感信息
+- **统一错误处理**：使用统一的错误处理机制
+- **错误日志记录**：记录详细的错误信息用于调试
+
+```typescript
+// 安全错误处理（Infrastructure Layer）
+class ErrorHandler {
+  handleError(error: Error, request: Request): Response {
+    // 记录详细错误（用于内部调试）
+    this.logger.error("Error occurred", {
+      error: error.message,
+      stack: error.stack,
+      requestId: request.id
+    });
+    
+    // 返回通用错误消息（不泄露敏感信息）
+    if (error instanceof ValidationError) {
+      return Response.json(
+        { error: "Invalid input" },
+        { status: 400 }
+      );
+    }
+    
+    if (error instanceof UnauthorizedError) {
+      return Response.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+    
+    // 生产环境不返回详细错误信息
+    return Response.json(
+      { error: "An error occurred" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+## 架构层级的安全要求
+
+### Domain Layer（领域层）
+- ✅ 定义安全相关的领域概念（User、Role、Permission）
+- ✅ 定义安全接口（AuthenticationService、AuthorizationService）
+- ✅ 定义业务规则和验证逻辑
+- ❌ 不实现具体的安全机制（属于基础设施关注点）
+- ❌ 不直接处理 HTTP 请求或响应
+
+### Application Layer（应用层）
+- ✅ 使用认证服务验证用户身份
+- ✅ 使用授权服务检查权限
+- ✅ 验证输入数据的业务规则
+- ✅ 记录安全审计日志
+- ❌ 不直接处理令牌或会话（委托给基础设施层）
+- ❌ 不直接访问数据库或外部服务
+
+### Infrastructure Layer（基础设施层）
+- ✅ 实现认证服务（OAuth2、JWT、Session）
+- ✅ 实现授权服务（RBAC、ABAC）
+- ✅ 实现加密服务（数据加密、传输加密）
+- ✅ 实现审计日志服务
+- ✅ 实现输入验证和清理
+- ✅ 实现安全配置管理
+- ❌ 不包含业务逻辑
+
+### Presentation Layer（展示层）
+- ✅ 在 API 路由中验证认证令牌
+- ✅ 在组件中检查用户权限
+- ✅ 对用户输入进行前端验证（但不依赖前端验证）
+- ✅ 使用 HTTPS 传输数据
+- ✅ 安全地存储和传输令牌
+- ❌ 不在前端存储敏感信息（如密码、密钥）
+
+## 安全检查清单
+
+### 身份认证
+- [ ] 所有需要认证的端点都进行了身份验证
+- [ ] 使用安全的密码存储（哈希 + 盐值）
+- [ ] 支持多因素认证（MFA）
+- [ ] 实现会话超时和自动登出
+- [ ] 实现令牌刷新机制
+- [ ] 实现令牌撤销机制
+
+### 访问授权
+- [ ] 所有操作都进行了权限检查
+- [ ] 实现基于角色的访问控制（RBAC）
+- [ ] 验证资源所有权
+- [ ] 实现数据隔离（用户只能访问自己的数据）
+- [ ] 记录所有授权决策
+
+### 输入验证
+- [ ] 所有用户输入都进行了验证
+- [ ] 验证数据类型和格式
+- [ ] 验证数值范围和长度限制
+- [ ] 验证业务规则约束
+- [ ] 对输出进行适当的编码（防止 XSS）
+
+### 数据保护
+- [ ] 所有网络通信使用 TLS 加密
+- [ ] 敏感数据在数据库中加密存储
+- [ ] 使用密钥管理服务（KMS）管理密钥
+- [ ] 实现密钥轮换机制
+- [ ] 对数据进行分类和标记
+
+### 安全配置
+- [ ] 敏感信息存储在环境变量中
+- [ ] 不在代码中硬编码密钥
+- [ ] 定期扫描依赖包的安全漏洞
+- [ ] 及时更新存在安全漏洞的依赖
+- [ ] 使用最小权限原则配置服务
+
+### 日志与监控
+- [ ] 记录所有访问请求
+- [ ] 记录认证成功和失败
+- [ ] 记录授权决策和拒绝
+- [ ] 记录敏感操作的详细信息
+- [ ] 实现异常行为检测
+- [ ] 实现实时安全告警
+
+### 错误处理
+- [ ] 错误消息不泄露敏感信息
+- [ ] 使用统一的错误处理机制
+- [ ] 记录详细的错误信息用于调试
+- [ ] 生产环境不返回详细错误堆栈
+
+## 安全最佳实践
+
+### 1. 遵循安全开发生命周期（SDLC）
+- 在需求阶段考虑安全要求
+- 在设计阶段进行安全设计审查
+- 在开发阶段实施安全编码实践
+- 在测试阶段进行安全测试
+- 在部署阶段进行安全配置检查
+
+### 2. 定期安全审计
+- 定期审查访问权限
+- 定期审查安全配置
+- 定期审查安全日志
+- 定期进行安全漏洞扫描
+
+### 3. 安全培训
+- 定期进行安全培训
+- 保持对最新安全威胁的了解
+- 分享安全最佳实践
+
+### 4. 事件响应
+- 建立安全事件响应流程
+- 及时响应安全事件
+- 记录和分析安全事件
+- 从安全事件中学习改进
+
+### 5. 零信任架构
+- 实施零信任安全模型
+- 持续验证用户和设备身份
+- 动态调整访问权限
+- 假设网络已被入侵
+
+## 安全工具和库
+
+### 认证和授权
+- **JWT**：JSON Web Token 用于令牌管理
+- **OAuth2/OIDC**：开放标准认证协议
+- **bcrypt/argon2**：密码哈希算法
+
+### 加密
+- **crypto**：Node.js 内置加密模块
+- **tls**：传输层安全协议
+
+### 输入验证
+- **zod**：TypeScript 模式验证库
+- **validator.js**：字符串验证库
+- **sanitize-html**：HTML 清理库
+
+### 安全扫描
+- **npm audit**：npm 依赖安全扫描
+- **Snyk**：依赖安全扫描工具
+- **OWASP ZAP**：Web 应用安全扫描
+
+## 实施流程
+
+1. **安全需求分析**：识别安全需求和威胁模型
+2. **安全设计**：设计安全架构和防护措施
+3. **安全编码**：遵循安全编码实践
+4. **安全测试**：进行安全测试和漏洞扫描
+5. **安全部署**：进行安全配置和部署
+6. **安全监控**：持续监控安全状态和事件
+7. **安全维护**：定期更新和维护安全措施
