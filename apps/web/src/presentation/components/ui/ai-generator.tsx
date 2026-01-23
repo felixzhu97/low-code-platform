@@ -168,6 +168,11 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 <SelectItem value="openai">OpenAI (GPT-4)</SelectItem>
                 <SelectItem value="claude">Claude (Anthropic)</SelectItem>
                 <SelectItem value="deepseek">DeepSeek</SelectItem>
+                <SelectItem value="gemini">Google Gemini</SelectItem>
+                <SelectItem value="azure-openai">Azure OpenAI</SelectItem>
+                <SelectItem value="groq">Groq</SelectItem>
+                <SelectItem value="mistral">Mistral AI</SelectItem>
+                <SelectItem value="ollama">Ollama (本地)</SelectItem>
               </SelectContent>
             </Select>
           </div>

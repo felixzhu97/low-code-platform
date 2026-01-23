@@ -41,6 +41,54 @@ export interface ClaudeConfig extends AIClientConfig {
 }
 
 /**
+ * Gemini 客户端配置
+ */
+export interface GeminiConfig extends AIClientConfig {
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/**
+ * Azure OpenAI 客户端配置
+ */
+export interface AzureOpenAIConfig extends AIClientConfig {
+  resourceName: string;
+  deploymentName: string;
+  apiVersion?: string;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/**
+ * Groq 客户端配置
+ */
+export interface GroqConfig extends AIClientConfig {
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/**
+ * Mistral 客户端配置
+ */
+export interface MistralConfig extends AIClientConfig {
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/**
+ * Ollama 客户端配置
+ */
+export interface OllamaConfig extends AIClientConfig {
+  baseURL?: string;
+  model?: string;
+  temperature?: number;
+}
+
+/**
  * AI 生成器配置
  */
 export interface AIGeneratorConfig {

@@ -12,7 +12,22 @@ import {
 } from "@/presentation/components/ui/tabs";
 import { Header } from "@/presentation/components/ui";
 import { Button } from "@/presentation/components/ui/button";
-import { Eye, Undo2, Redo2 } from "lucide-react";
+import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarSeparator,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/presentation/components/ui";
+import { Eye, Undo2, Redo2, MoreHorizontal } from "lucide-react";
+import { useToolbarResponsive } from "@/presentation/hooks";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
@@ -136,6 +151,9 @@ export default function LowCodePlatform() {
   );
   const [wasmError, setWasmError] = useState<string | null>(null);
 
+  // 响应式工具栏
+  const { shouldCollapse } = useToolbarResponsive();
+
   // 从 stores 获取状态
   const {
     // 组件状态
@@ -210,6 +228,34 @@ export default function LowCodePlatform() {
     }
   };
 
+  // 键盘快捷键支持
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Z / Cmd+Z: 撤销
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo()) {
+          undo();
+        }
+      }
+      // Ctrl+Shift+Z / Cmd+Shift+Z: 重做
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && e.shiftKey) {
+        e.preventDefault();
+        if (canRedo()) {
+          redo();
+        }
+      }
+      // Ctrl+P / Cmd+P: 预览（阻止默认打印）
+      if ((e.ctrlKey || e.metaKey) && e.key === "p") {
+        e.preventDefault();
+        togglePreviewMode();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [canUndo, canRedo, undo, redo, togglePreviewMode]);
+
   // 处理模板选择
   const handleSelectTemplate = useCallback(
     async (templateComponents: any[]) => {
@@ -242,76 +288,188 @@ export default function LowCodePlatform() {
     <DndProvider backend={HTML5Backend}>
       <div className="flex h-screen flex-col">
         <Header>
-          <div className="flex items-center justify-between w-full gap-4">
-            {/* 左侧：基础操作按钮 */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={undo}
-                disabled={!canUndo()}
-              >
-                <Undo2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={redo}
-                disabled={!canRedo()}
-              >
-                <Redo2 className="h-4 w-4" />
-              </Button>
-              <div className="h-4 w-px bg-border" />
-              <Button variant="outline" size="sm" onClick={togglePreviewMode}>
-                <Eye className="h-4 w-4" />
-                <span className="ml-2">
-                  {isPreviewMode ? "退出预览" : "预览"}
-                </span>
-              </Button>
-            </div>
+          <TooltipProvider>
+            <Toolbar className="w-full border-0 shadow-none bg-transparent px-0">
+              {/* 左侧：基础操作按钮 */}
+              <ToolbarGroup aria-label="基础操作">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={undo}
+                      disabled={!canUndo()}
+                      aria-label="撤销"
+                    >
+                      <Undo2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">撤销</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>撤销 (Ctrl+Z)</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={redo}
+                      disabled={!canRedo()}
+                      aria-label="重做"
+                    >
+                      <Redo2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">重做</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>重做 (Ctrl+Shift+Z)</p>
+                  </TooltipContent>
+                </Tooltip>
+                <ToolbarSeparator />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={togglePreviewMode}
+                      aria-label={isPreviewMode ? "退出预览" : "预览"}
+                    >
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                      <span className="ml-2 hidden sm:inline">
+                        {isPreviewMode ? "退出预览" : "预览"}
+                      </span>
+                      <span className="sr-only">
+                        {isPreviewMode ? "退出预览" : "预览"}
+                      </span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isPreviewMode ? "退出预览模式" : "进入预览模式"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </ToolbarGroup>
 
-            {/* 中间：功能组件 */}
-            <div className="flex items-center gap-2 flex-1 justify-center">
-              <Suspense fallback={<ComponentLoader />}>
-                <ResponsiveControls />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <TemplateGallery />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <AIGenerator />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <FormBuilder />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <ComponentGrouping />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <AnimationEditor />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <ThemeEditor />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <Collaboration />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <ComponentLibraryManager />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <SchemaImport />
-              </Suspense>
-              <Suspense fallback={<ComponentLoader />}>
-                <CodeExport />
-              </Suspense>
-            </div>
+              {/* 中间：核心功能 */}
+              <div className="flex items-center gap-2 flex-1 justify-center">
+                <ToolbarGroup aria-label="核心功能">
+                  <Suspense fallback={<ComponentLoader />}>
+                    <ResponsiveControls />
+                  </Suspense>
+                  <Suspense fallback={<ComponentLoader />}>
+                    <TemplateGallery />
+                  </Suspense>
+                  <Suspense fallback={<ComponentLoader />}>
+                    <AIGenerator />
+                  </Suspense>
+                </ToolbarGroup>
 
-            {/* 右侧：状态信息 */}
-            <div className="flex items-center gap-2">
-              <WasmStatusText status={wasmStatus} error={wasmError} />
-            </div>
-          </div>
+                {!shouldCollapse && (
+                  <>
+                    <ToolbarSeparator />
+                    {/* 编辑功能 */}
+                    <ToolbarGroup aria-label="编辑功能">
+                      <Suspense fallback={<ComponentLoader />}>
+                        <FormBuilder />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <ComponentGrouping />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <AnimationEditor />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <ThemeEditor />
+                      </Suspense>
+                    </ToolbarGroup>
+
+                    <ToolbarSeparator />
+                    {/* 协作与导出 */}
+                    <ToolbarGroup aria-label="协作与导出">
+                      <Suspense fallback={<ComponentLoader />}>
+                        <Collaboration />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <ComponentLibraryManager />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <SchemaImport />
+                      </Suspense>
+                      <Suspense fallback={<ComponentLoader />}>
+                        <CodeExport />
+                      </Suspense>
+                    </ToolbarGroup>
+                  </>
+                )}
+
+                {/* 移动端/平板端：更多菜单 */}
+                {shouldCollapse && (
+                  <>
+                    <ToolbarSeparator />
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button variant="outline" size="sm" aria-label="更多功能">
+                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                          <span className="ml-2 hidden sm:inline">更多</span>
+                          <span className="sr-only">更多功能</span>
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="right" className="w-80 overflow-y-auto">
+                        <SheetHeader>
+                          <SheetTitle>更多功能</SheetTitle>
+                        </SheetHeader>
+                        <div className="mt-6 space-y-4">
+                          <div className="space-y-2">
+                            <h3 className="text-sm font-semibold text-muted-foreground">
+                              编辑功能
+                            </h3>
+                            <div className="flex flex-col gap-2">
+                              <Suspense fallback={<ComponentLoader />}>
+                                <FormBuilder />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <ComponentGrouping />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <AnimationEditor />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <ThemeEditor />
+                              </Suspense>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="text-sm font-semibold text-muted-foreground">
+                              协作与导出
+                            </h3>
+                            <div className="flex flex-col gap-2">
+                              <Suspense fallback={<ComponentLoader />}>
+                                <Collaboration />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <ComponentLibraryManager />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <SchemaImport />
+                              </Suspense>
+                              <Suspense fallback={<ComponentLoader />}>
+                                <CodeExport />
+                              </Suspense>
+                            </div>
+                          </div>
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  </>
+                )}
+              </div>
+
+              {/* 右侧：状态信息 */}
+              <ToolbarGroup aria-label="状态信息">
+                <WasmStatusText status={wasmStatus} error={wasmError} />
+              </ToolbarGroup>
+            </Toolbar>
+          </TooltipProvider>
         </Header>
         <div className="flex flex-1 overflow-hidden">
           {!isPreviewMode && (
