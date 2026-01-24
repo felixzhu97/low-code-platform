@@ -1,0 +1,133 @@
+---
+alwaysApply: false
+description: "Low-code platform solution strategy: business challenges and how the platform addresses them. Use when designing features, writing specs, or making product/architecture decisions."
+---
+
+# Low-Code Platform Solution
+
+## Purpose
+
+This rule captures the **business challenges** the Felix low-code platform addresses and the **solution strategy** (capabilities and principles). Use it to:
+
+- Align new features with platform goals
+- Prioritize work by solution impact
+- Avoid scope creep or misaligned functionality
+- Guide architecture and UX decisions
+
+## Business Challenges
+
+| #   | Challenge                                                                                | Impact                                         |
+| --- | ---------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | **Slow delivery** — Long cycles from idea to live page (design → dev → deploy)           | Delayed time-to-market, high iteration cost    |
+| 2   | **Design–dev gap** — Handoff friction, design drift, rework                              | Rework, miscommunication, poor design fidelity |
+| 3   | **High technical barrier** — Non-devs can’t build; front-end talent scarce/expensive     | Bottlenecks, cost, limited who can ship        |
+| 4   | **Data–UI integration complexity** — APIs, validation, charts, forms require custom code | More dev effort, bugs, duplication             |
+| 5   | **Collaboration & versioning** — Multi-user edits, conflicts, no clear history           | Merge hell, blame, rollback pain               |
+| 6   | **Design-to-production gap** — Prototypes don’t become deployable apps                   | Waste, duplication, deployment friction        |
+| 7   | **Inconsistency & low reuse** — Ad-hoc components, no shared themes/templates            | Inconsistent UX, high maintenance              |
+
+## Solution Pillars
+
+### 1. Visual-first, fast iteration
+
+- **Drag-and-drop canvas** — Add, move, nest, delete components without code.
+- **Real-time preview** — WYSIWYG; no separate preview mode for basic checks.
+- **Templates** — Start from templates (login, dashboard, forms, etc.) instead of blank.
+- **AI generation** — Natural-language → components/pages to speed up creation.
+
+**Guiding question:** Does this change help designers iterate faster with less code?
+
+### 2. Design–dev bridge
+
+- **Design in editor** — Designers produce real, editable layouts and bindings, not static mockups.
+- **Export clean code** — React/Next.js export for developers to integrate and extend.
+- **Schema in/out** — Export/import schema (JSON) for tooling, versioning, and reuse.
+
+**Guiding question:** Does this keep “design as source of truth” while staying dev-friendly?
+
+### 3. Lower technical barrier
+
+- **Config over code** — Properties, themes, layout via UI; minimal scripting.
+- **Curated component library** — Base, layout, form, chart components; predictable APIs.
+- **Guided data binding** — Connect static/API data to components via config, not custom code.
+
+**Guiding question:** Can a page designer succeed without writing component logic?
+
+### 4. Data-aware building
+
+- **Data sources** — Static (JSON) and API; validate, preview, refresh.
+- **Binding UX** — Map fields to components; support lists, transforms, formatting.
+- **Charts & forms** — Chart config + form builder + validation (e.g. Zod) without hand-written wiring.
+
+**Guiding question:** Does this reduce custom data-fetching and validation code?
+
+### 5. Collaboration & history
+
+- **Real-time collaboration** — Multi-user editing, presence, basic conflict handling.
+- **History** — Undo/redo, version snapshots, restore.
+- **Conflict handling** — Detect conflicts, support merge or overwrite strategies.
+
+**Guiding question:** Does this make multi-user editing and rollback reliable and understandable?
+
+### 6. Design-to-production path
+
+- **Export** — React components, full Next.js app, optional Git push.
+- **Deploy** — Scripts/config for Docker, Vercel, Netlify, etc.; AWS integration where relevant.
+- **Config over hardcode** — Env, feature flags, etc. where applicable.
+
+**Guiding question:** Does this shorten the path from “done in editor” to “live in production”?
+
+### 7. Consistency & reuse
+
+- **Theming** — Global theme; presets; light/dark.
+- **Custom components** — Save compositions as components; group, import/export.
+- **Templates** — Shared template library; save, apply, customize.
+
+**Guiding question:** Does this reduce duplication and keep visual/UX consistency?
+
+## Challenge–Solution Mapping
+
+| Challenge                  | Primary solution pillars                 |
+| -------------------------- | ---------------------------------------- |
+| Slow delivery              | 1. Visual-first; 6. Design-to-production |
+| Design–dev gap             | 2. Design–dev bridge                     |
+| High technical barrier     | 3. Lower barrier; 4. Data-aware          |
+| Data–UI complexity         | 4. Data-aware                            |
+| Collaboration & versioning | 5. Collaboration & history               |
+| Design-to-production gap   | 6. Design-to-production                  |
+| Inconsistency & low reuse  | 7. Consistency & reuse                   |
+
+## Development Guidance
+
+### When adding features
+
+1. **Map to challenges** — Which of the 7 challenges does this reduce? If none, validate need.
+2. **Map to pillars** — Which pillar(s) does it support? Keep the mapping explicit in ADRs/PRs.
+3. **Respect layers** — Follow Clean Architecture (see `clean-architecture.mdc`); domain first, then application, then infrastructure/presentation.
+
+### When prioritizing
+
+- Prefer work that touches **multiple pillars** or **high-impact challenges** (e.g. slow delivery, design–dev gap).
+- Avoid features that deepen technical debt or add one-off, non-reusable behavior.
+
+### When designing UX
+
+- Prefer **config over code** for designers.
+- Keep **exported code** and **schema** clean, readable, and stable.
+- Preserve **undo/redo** and **versioning** semantics for collaborative editing.
+
+### References
+
+- **User stories & epics:** `docs/product/user-stories.md`
+- **Business architecture:** `docs/architecture/togaf/business-architecture.puml`
+- **Wardley map:** `docs/strategy/wardley-maps/wardley-map.puml`
+- **Architecture overview:** `docs/README.md`
+
+## Checklist (solution alignment)
+
+- [ ] Feature addresses at least one business challenge
+- [ ] Feature aligns with one or more solution pillars
+- [ ] No unnecessary increase in technical barrier for designers
+- [ ] Export/schema behavior considered if applicable
+- [ ] Collaboration/history impact considered if editing-related
+- [ ] Consistency/reuse (themes, components, templates) considered where relevant
