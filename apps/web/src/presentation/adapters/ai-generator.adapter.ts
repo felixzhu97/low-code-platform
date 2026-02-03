@@ -18,18 +18,12 @@ export interface AIGeneratorConfig {
   model?: string;
   temperature?: number;
   maxTokens?: number;
-  // Azure OpenAI 特殊配置
   resourceName?: string;
   deploymentName?: string;
   apiVersion?: string;
-  // Ollama 特殊配置
   baseURL?: string;
 }
 
-/**
- * AI 生成器适配器
- * 封装 AI 生成器调用逻辑，处理生成的组件/页面到画布的转换
- */
 export class AIGeneratorAdapter {
   private generator: AIGenerator | null = null;
   private templateAdapter: TemplateAdapter;
@@ -38,14 +32,8 @@ export class AIGeneratorAdapter {
     this.templateAdapter = templateAdapter;
   }
 
-  /**
-   * 初始化 AI 生成器
-   */
   initialize(config: AIGeneratorConfig): void {
-    // 构建客户端配置
     const clientConfig = this.buildClientConfig(config);
-
-    // 使用工厂创建客户端
     const client = AIClientFactory.createClient(
       config.provider,
       clientConfig as any
@@ -54,9 +42,6 @@ export class AIGeneratorAdapter {
     this.generator = new AIGenerator({ client });
   }
 
-  /**
-   * 构建客户端配置
-   */
   private buildClientConfig(config: AIGeneratorConfig) {
     const baseConfig = {
       apiKey: config.apiKey,
@@ -81,9 +66,8 @@ export class AIGeneratorAdapter {
       case "ollama":
         return {
           ...baseConfig,
-          apiKey: config.apiKey || "", // Ollama 可选
+          apiKey: config.apiKey || "",
           baseURL: config.baseURL || "http://localhost:11434",
-          // Ollama 不使用 maxTokens
           maxTokens: undefined,
         };
       default:
@@ -91,9 +75,6 @@ export class AIGeneratorAdapter {
     }
   }
 
-  /**
-   * 生成组件
-   */
   async generateComponent(
     description: string,
     type?: string,
@@ -117,9 +98,6 @@ export class AIGeneratorAdapter {
     }
   }
 
-  /**
-   * 生成页面
-   */
   async generatePage(
     description: string,
     layout?: "centered" | "full-width" | "sidebar" | "grid"
@@ -143,35 +121,27 @@ export class AIGeneratorAdapter {
     }
   }
 
-  /**
-   * 应用生成的组件到画布
-   */
   async applyComponentsToCanvas(components: Component[]): Promise<Component[]> {
     if (components.length === 0) {
       return [];
     }
-
-    // 使用 TemplateAdapter 处理组件 ID 和引用关系
     return await this.templateAdapter.applyTemplateFromComponents(components);
   }
 
-  /**
-   * 处理错误
-   */
   private handleError(error: unknown): void {
     if (error instanceof Error) {
       if ("statusCode" in error && (error as AIClientError).statusCode === 401) {
-        throw new Error("API 密钥无效，请检查您的 API Key");
+        throw new Error("Invalid API key. Please check your API Key.");
       } else if (
         "statusCode" in error &&
         (error as AIClientError).statusCode === 429
       ) {
-        throw new Error("API 速率限制，请稍后重试");
+        throw new Error("API rate limit exceeded. Please try again later.");
       } else if (error instanceof ParseError) {
-        throw new Error(`解析响应失败: ${error.message}`);
+        throw new Error(`Failed to parse response: ${error.message}`);
       } else if (error instanceof ValidationError) {
         throw new Error(
-          `验证失败: ${error.errors?.join(", ") || error.message}`
+          `Validation failed: ${error.errors?.join(", ") || error.message}`
         );
       }
     }

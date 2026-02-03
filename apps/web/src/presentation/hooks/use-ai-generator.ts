@@ -11,27 +11,25 @@ export interface UseAIGeneratorOptions {
   provider?: AIProvider;
   apiKey?: string;
   model?: string;
+  baseURL?: string;
   temperature?: number;
   maxTokens?: number;
 }
 
 export interface UseAIGeneratorReturn {
-  // 状态
   loading: boolean;
   error: Error | null;
   isInitialized: boolean;
-
-  // 配置
   provider: AIProvider;
   apiKey: string;
   model: string | undefined;
+  baseURL: string | undefined;
   temperature: number | undefined;
   maxTokens: number | undefined;
-
-  // 方法
   setProvider: (provider: AIProvider) => void;
   setApiKey: (apiKey: string) => void;
   setModel: (model: string) => void;
+  setBaseURL: (baseURL: string) => void;
   setTemperature: (temperature: number) => void;
   setMaxTokens: (maxTokens: number) => void;
   initialize: () => void;
@@ -48,16 +46,12 @@ export interface UseAIGeneratorReturn {
   clearError: () => void;
 }
 
-/**
- * AI 生成器 Hook
- * 管理 AI 生成器实例和状态
- */
+const OLLAMA_PROVIDER: AIProvider = "ollama";
+
 export function useAIGenerator(
   options: UseAIGeneratorOptions = {}
 ): UseAIGeneratorReturn {
   const { templateAdapter } = useAdapters();
-
-  // 状态
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [provider, setProvider] = useState<AIProvider>(
@@ -65,6 +59,9 @@ export function useAIGenerator(
   );
   const [apiKey, setApiKey] = useState<string>(options.apiKey || "");
   const [model, setModel] = useState<string | undefined>(options.model);
+  const [baseURL, setBaseURL] = useState<string | undefined>(
+    options.baseURL || "http://localhost:11434"
+  );
   const [temperature, setTemperature] = useState<number | undefined>(
     options.temperature
   );
@@ -73,24 +70,24 @@ export function useAIGenerator(
   );
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // 创建适配器实例
   const adapter = useMemo(
     () => new AIGeneratorAdapter(templateAdapter),
     [templateAdapter]
   );
 
-  // 初始化适配器
   const initialize = useCallback(() => {
-    if (!apiKey) {
-      setError(new Error("请先输入 API Key"));
+    const isOllama = provider === OLLAMA_PROVIDER;
+    if (!isOllama && !apiKey) {
+      setError(new Error("Please enter an API Key"));
       return;
     }
 
     try {
       const config: AIGeneratorConfig = {
         provider,
-        apiKey,
+        apiKey: isOllama ? "" : apiKey,
         model,
+        baseURL: isOllama ? baseURL : undefined,
         temperature,
         maxTokens,
       };
@@ -103,9 +100,8 @@ export function useAIGenerator(
       setError(error);
       setIsInitialized(false);
     }
-  }, [adapter, provider, apiKey, model, temperature, maxTokens]);
+  }, [adapter, provider, apiKey, model, baseURL, temperature, maxTokens]);
 
-  // 生成组件
   const generateComponent = useCallback(
     async (
       description: string,
@@ -138,7 +134,6 @@ export function useAIGenerator(
     [adapter, isInitialized, initialize]
   );
 
-  // 生成页面
   const generatePage = useCallback(
     async (
       description: string,
@@ -166,7 +161,6 @@ export function useAIGenerator(
     [adapter, isInitialized, initialize]
   );
 
-  // 应用组件到画布
   const applyComponentsToCanvas = useCallback(
     async (components: Component[]): Promise<Component[]> => {
       setLoading(true);
@@ -188,28 +182,24 @@ export function useAIGenerator(
     [adapter]
   );
 
-  // 清除错误
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
   return {
-    // 状态
     loading,
     error,
     isInitialized,
-
-    // 配置
     provider,
     apiKey,
     model,
+    baseURL,
     temperature,
     maxTokens,
-
-    // 方法
     setProvider,
     setApiKey,
     setModel,
+    setBaseURL,
     setTemperature,
     setMaxTokens,
     initialize,

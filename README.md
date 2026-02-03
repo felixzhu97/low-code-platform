@@ -6,7 +6,7 @@ A visual low-code development platform built with Next.js and React, supporting 
 
 - **🎨 Visual Editing**: Drag-and-drop canvas, real-time preview, component tree view, property panel
 - **🧩 Component System**: Built-in component library based on Radix UI, supports custom components and component import/export
-- **🤖 AI Generation**: Generate components and pages through natural language, supports multiple AI services including OpenAI, Claude, DeepSeek
+- **🤖 AI Generation**: Generate components and pages through natural language; supports cloud providers (OpenAI, Claude, DeepSeek, etc.) and **local LLM via Ollama** (no API key required)
 - **📊 Data & Charts**: Data binding tools, chart components (Recharts), form builder (React Hook Form + Zod)
 - **🎭 Themes & Animations**: Theme editor, animation editor, responsive design, dark mode
 - **🌐 Internationalization**: Multi-language support (Chinese/English), language switcher component, localization tools
@@ -18,7 +18,7 @@ A visual low-code development platform built with Next.js and React, supporting 
 
 **Frontend**: Next.js 15 + React 19 + TypeScript + Tailwind CSS + Radix UI + React DnD + Recharts + Zustand
 
-**Backend**: NestJS 11 + TypeScript + Clean Architecture
+**Backend**: Python + FastAPI (see `apps/server`)
 
 **Monorepo**: pnpm 10 workspaces + Vitest/Jest + ESLint/Prettier
 
@@ -30,7 +30,7 @@ A visual low-code development platform built with Next.js and React, supporting 
 low-code-platform/
 ├── apps/
 │   ├── web/          # Next.js frontend application (Clean Architecture)
-│   └── server/        # NestJS backend application
+│   └── server/        # FastAPI backend application
 ├── packages/          # Shared packages
 │   ├── ai-generator/  # AI generator
 │   ├── aws/           # AWS integration
@@ -93,12 +93,22 @@ AWS_SECRET_ACCESS_KEY=your_key
 AWS_REGION=us-east-1
 ```
 
+### Local LLM (Ollama)
+
+To generate pages with a **local model** (no API key):
+
+1. Install [Ollama](https://ollama.com) and run `ollama serve`
+2. Pull a model: `ollama pull codellama`
+3. In the editor, open **AI Generate** → choose **Ollama (Local)** → leave API Key empty → enter a description and generate
+
+See [docs/local-llm-setup.md](docs/local-llm-setup.md) for full setup and troubleshooting.
+
 ## 🎯 Usage Guide
 
 1. **Add Components**: Drag components from the left component panel to the canvas
 2. **Configure Properties**: Modify component properties in the right property panel
 3. **Use Templates**: Select pre-built templates from the template library to get started quickly
-4. **AI Generation**: Generate components or pages through natural language descriptions
+4. **AI Generation**: Generate components or pages through natural language descriptions (cloud or local Ollama)
 5. **Export Code**: Convert designs into deployable frontend code
 
 ## 🔧 Development

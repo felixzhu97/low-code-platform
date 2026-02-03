@@ -43,29 +43,33 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
     error,
     provider,
     apiKey,
+    model,
+    baseURL,
     setProvider,
     setApiKey,
+    setModel,
+    setBaseURL,
     generateComponent,
     generatePage,
     applyComponentsToCanvas,
     clearError,
   } = useAIGenerator();
+  const isOllama = provider === "ollama";
 
-  // 处理生成
   const handleGenerate = useCallback(async () => {
     if (!description.trim()) {
       toast({
-        title: "请输入描述",
-        description: "请描述您想要生成的页面或组件",
+        title: "Description required",
+        description: "Describe the page or component you want to generate",
         variant: "destructive",
       });
       return;
     }
 
-    if (!apiKey.trim()) {
+    if (!isOllama && !apiKey.trim()) {
       toast({
-        title: "请输入 API Key",
-        description: "请先输入您的 AI API Key",
+        title: "API Key required",
+        description: "Please enter your AI API Key",
         variant: "destructive",
       });
       return;
@@ -77,10 +81,8 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
       let components: Component[];
 
       if (generationType === "page") {
-        // 生成页面
         components = await generatePage(description, layout);
       } else {
-        // 生成组件
         const component = await generateComponent(
           description,
           componentType || undefined
@@ -88,12 +90,11 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
         components = [component];
       }
 
-      // 应用组件到画布
       const appliedComponents = await applyComponentsToCanvas(components);
 
       toast({
-        title: "生成成功",
-        description: `已成功生成并添加 ${appliedComponents.length} 个组件到画布`,
+        title: "Generated",
+        description: `Added ${appliedComponents.length} component(s) to the canvas`,
       });
 
       // 调用回调
@@ -106,9 +107,9 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
       setDescription("");
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "生成失败，请稍后重试";
+        err instanceof Error ? err.message : "Generation failed. Please try again.";
       toast({
-        title: "生成失败",
+        title: "Generation failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -116,6 +117,7 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
   }, [
     description,
     apiKey,
+    isOllama,
     generationType,
     layout,
     componentType,
@@ -131,31 +133,17 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Sparkles className="h-4 w-4 mr-2" />
-          AI 生成
+          AI Generate
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>AI 生成页面/组件</DialogTitle>
+          <DialogTitle>AI Generate Page / Component</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* API Key 配置 */}
           <div className="space-y-2">
-            <Label htmlFor="api-key">API Key</Label>
-            <Input
-              id="api-key"
-              type="password"
-              placeholder="请输入您的 AI API Key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          {/* AI 提供商选择 */}
-          <div className="space-y-2">
-            <Label htmlFor="provider">AI 提供商</Label>
+            <Label htmlFor="provider">AI Provider</Label>
             <Select
               value={provider}
               onValueChange={(value) => setProvider(value as any)}
@@ -172,14 +160,54 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 <SelectItem value="azure-openai">Azure OpenAI</SelectItem>
                 <SelectItem value="groq">Groq</SelectItem>
                 <SelectItem value="mistral">Mistral AI</SelectItem>
-                <SelectItem value="ollama">Ollama (本地)</SelectItem>
+                <SelectItem value="ollama">Ollama (Local)</SelectItem>
+                <SelectItem value="siliconflow">SiliconFlow</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* 生成类型选择 */}
+          {!isOllama && (
+            <div className="space-y-2">
+              <Label htmlFor="api-key">API Key</Label>
+              <Input
+                id="api-key"
+                type="password"
+                placeholder="Enter your AI API Key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+          )}
+
+          {isOllama && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="ollama-base-url">Base URL</Label>
+                <Input
+                  id="ollama-base-url"
+                  type="url"
+                  placeholder="http://localhost:11434"
+                  value={baseURL ?? "http://localhost:11434"}
+                  onChange={(e) => setBaseURL(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ollama-model">Model</Label>
+                <Input
+                  id="ollama-model"
+                  placeholder="codellama"
+                  value={model ?? "codellama"}
+                  onChange={(e) => setModel(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+            </>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="generation-type">生成类型</Label>
+            <Label htmlFor="generation-type">Generate</Label>
             <Select
               value={generationType}
               onValueChange={(value) =>
@@ -191,16 +219,15 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="page">页面</SelectItem>
-                <SelectItem value="component">组件</SelectItem>
+                <SelectItem value="page">Page</SelectItem>
+                <SelectItem value="component">Component</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* 布局选择（仅页面生成时显示） */}
           {generationType === "page" && (
             <div className="space-y-2">
-              <Label htmlFor="layout">布局</Label>
+              <Label htmlFor="layout">Layout</Label>
               <Select
                 value={layout}
                 onValueChange={(value) =>
@@ -214,22 +241,21 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="centered">居中布局</SelectItem>
-                  <SelectItem value="full-width">全宽布局</SelectItem>
-                  <SelectItem value="sidebar">侧边栏布局</SelectItem>
-                  <SelectItem value="grid">网格布局</SelectItem>
+                  <SelectItem value="centered">Centered</SelectItem>
+                  <SelectItem value="full-width">Full width</SelectItem>
+                  <SelectItem value="sidebar">Sidebar</SelectItem>
+                  <SelectItem value="grid">Grid</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           )}
 
-          {/* 组件类型（仅组件生成时显示） */}
           {generationType === "component" && (
             <div className="space-y-2">
-              <Label htmlFor="component-type">组件类型（可选）</Label>
+              <Label htmlFor="component-type">Component type (optional)</Label>
               <Input
                 id="component-type"
-                placeholder="例如: button, form, card..."
+                placeholder="e.g. button, form, card"
                 value={componentType}
                 onChange={(e) => setComponentType(e.target.value)}
                 disabled={loading}
@@ -237,15 +263,14 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
             </div>
           )}
 
-          {/* 描述输入 */}
           <div className="space-y-2">
-            <Label htmlFor="description">描述</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               placeholder={
                 generationType === "page"
-                  ? "例如: 创建一个用户登录页面，包含邮箱输入框、密码输入框和登录按钮"
-                  : "例如: 创建一个蓝色的主按钮，文字为'提交'"
+                  ? "e.g. A login page with email, password and submit button"
+                  : "e.g. A blue primary button with label Submit"
               }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -254,7 +279,6 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
             />
           </div>
 
-          {/* 错误提示 */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -262,25 +286,24 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
             </Alert>
           )}
 
-          {/* 操作按钮 */}
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
               onClick={() => setIsOpen(false)}
               disabled={loading}
             >
-              取消
+              Cancel
             </Button>
             <Button onClick={handleGenerate} disabled={loading || !description.trim()}>
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  生成中...
+                  Generating...
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  生成
+                  Generate
                 </>
               )}
             </Button>

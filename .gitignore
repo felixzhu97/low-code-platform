@@ -72,3 +72,9 @@ Desktop.ini
 
 # turbo (if using turbo)
 .turbo/
+
+__pycache__/
+*.py[cod]
+.venv/
+
+.doc

@@ -11,6 +11,7 @@ export * from "./azure-openai-client";
 export * from "./groq-client";
 export * from "./mistral-client";
 export * from "./ollama-client";
+export * from "./siliconflow-client";
 export * from "./client-factory";
 
 export { BaseAIClient } from "./base-client";
@@ -22,6 +23,7 @@ export { AzureOpenAIClient } from "./azure-openai-client";
 export { GroqClient } from "./groq-client";
 export { MistralClient } from "./mistral-client";
 export { OllamaClient } from "./ollama-client";
+export { SiliconFlowClient } from "./siliconflow-client";
 export { AIClientFactory } from "./client-factory";
 
 export type { DeepSeekConfig } from "./deepseek-client";
@@ -30,4 +32,5 @@ export type { AzureOpenAIConfig } from "./azure-openai-client";
 export type { GroqConfig } from "./groq-client";
 export type { MistralConfig } from "./mistral-client";
 export type { OllamaConfig } from "./ollama-client";
+export type { SiliconFlowConfig } from "./siliconflow-client";
 export type { AIProviderType } from "./client-factory";

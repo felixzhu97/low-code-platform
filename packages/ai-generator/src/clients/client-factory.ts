@@ -9,6 +9,7 @@ import type {
   OllamaConfig,
 } from "../types";
 import type { DeepSeekConfig } from "./deepseek-client";
+import type { SiliconFlowConfig } from "./siliconflow-client";
 import { OpenAIClient } from "./openai-client";
 import { ClaudeClient } from "./claude-client";
 import { DeepSeekClient } from "./deepseek-client";
@@ -17,10 +18,8 @@ import { AzureOpenAIClient } from "./azure-openai-client";
 import { GroqClient } from "./groq-client";
 import { MistralClient } from "./mistral-client";
 import { OllamaClient } from "./ollama-client";
+import { SiliconFlowClient } from "./siliconflow-client";
 
-/**
- * 支持的所有 AI 提供商类型
- */
 export type AIProviderType =
   | "openai"
   | "claude"
@@ -29,11 +28,9 @@ export type AIProviderType =
   | "azure-openai"
   | "groq"
   | "mistral"
-  | "ollama";
+  | "ollama"
+  | "siliconflow";
 
-/**
- * 客户端配置联合类型
- */
 export type AIClientConfigUnion =
   | OpenAIConfig
   | ClaudeConfig
@@ -42,16 +39,10 @@ export type AIClientConfigUnion =
   | AzureOpenAIConfig
   | GroqConfig
   | MistralConfig
-  | OllamaConfig;
+  | OllamaConfig
+  | SiliconFlowConfig;
 
-/**
- * 客户端工厂
- * 统一管理所有 AI 客户端的创建
- */
 export class AIClientFactory {
-  /**
-   * 创建 AI 客户端实例
-   */
   static createClient(
     provider: AIProviderType,
     config: AIClientConfigUnion
@@ -80,14 +71,13 @@ export class AIClientFactory {
         return new MistralClient(config as MistralConfig);
       case "ollama":
         return new OllamaClient(config as OllamaConfig);
+      case "siliconflow":
+        return new SiliconFlowClient(config as SiliconFlowConfig);
       default:
         throw new Error(`Unsupported AI provider: ${provider}`);
     }
   }
 
-  /**
-   * 获取提供商的默认模型
-   */
   static getDefaultModel(provider: AIProviderType): string {
     switch (provider) {
       case "openai":
@@ -105,15 +95,14 @@ export class AIClientFactory {
       case "mistral":
         return "mistral-medium";
       case "ollama":
-        return "llama2";
+        return "codellama";
+      case "siliconflow":
+        return "Pro/deepseek-ai/DeepSeek-V3.2";
       default:
         throw new Error(`Unsupported AI provider: ${provider}`);
     }
   }
 
-  /**
-   * 获取所有支持的提供商列表
-   */
   static getSupportedProviders(): AIProviderType[] {
     return [
       "openai",
@@ -124,12 +113,10 @@ export class AIClientFactory {
       "groq",
       "mistral",
       "ollama",
+      "siliconflow",
     ];
   }
 
-  /**
-   * 获取提供商的显示名称
-   */
   static getProviderDisplayName(provider: AIProviderType): string {
     switch (provider) {
       case "openai":
@@ -147,7 +134,9 @@ export class AIClientFactory {
       case "mistral":
         return "Mistral AI";
       case "ollama":
-        return "Ollama (本地)";
+        return "Ollama (Local)";
+      case "siliconflow":
+        return "SiliconFlow";
       default:
         return provider;
     }

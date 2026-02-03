@@ -2,55 +2,57 @@ import { BaseAIClient } from "./base-client";
 import type { AIMessage, AIClientConfig } from "../types";
 import { AIClientError } from "../types";
 
-export interface OllamaConfig extends Omit<AIClientConfig, "apiKey"> {
-  apiKey?: string;
-  baseURL?: string;
+export interface SiliconFlowConfig extends AIClientConfig {
   model?: string;
   temperature?: number;
+  maxTokens?: number;
 }
 
-export class OllamaClient extends BaseAIClient {
-  private readonly baseURL: string;
-  protected readonly ollamaConfig: OllamaConfig;
+const DEFAULT_BASE_URL = "https://api.siliconflow.com/v1";
+const DEFAULT_MODEL = "Pro/deepseek-ai/DeepSeek-V3.2";
 
-  constructor(config: OllamaConfig) {
+export class SiliconFlowClient extends BaseAIClient {
+  private readonly baseURL: string;
+  protected readonly siliconFlowConfig: SiliconFlowConfig;
+
+  constructor(config: SiliconFlowConfig) {
     super(config);
-    this.ollamaConfig = {
+    this.siliconFlowConfig = {
       ...config,
-      baseURL: config.baseURL || "http://localhost:11434",
-      model: config.model || "codellama",
+      model: config.model || DEFAULT_MODEL,
       temperature: config.temperature ?? 0.7,
+      maxTokens: config.maxTokens ?? 2000,
     };
-    this.baseURL = this.ollamaConfig.baseURL || "http://localhost:11434";
+    this.baseURL = config.baseURL || DEFAULT_BASE_URL;
   }
 
   private get model(): string {
-    return this.ollamaConfig.model || "codellama";
+    return this.siliconFlowConfig.model || DEFAULT_MODEL;
   }
 
   private get temperature(): number {
-    return this.ollamaConfig.temperature ?? 0.7;
+    return this.siliconFlowConfig.temperature ?? 0.7;
+  }
+
+  private get maxTokens(): number {
+    return this.siliconFlowConfig.maxTokens ?? 2000;
   }
 
   async generate(messages: AIMessage[]): Promise<string> {
     return this.withRetry(async () => {
-      const { system, prompt } = this.convertMessages(messages);
-
       const response = await this.fetchWithTimeout(
-        `${this.baseURL}/api/generate`,
+        `${this.baseURL}/chat/completions`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.apiKey}`,
           },
           body: JSON.stringify({
             model: this.model,
-            prompt: prompt,
-            system: system,
-            stream: false,
-            options: {
-              temperature: this.temperature,
-            },
+            messages: this.convertMessages(messages),
+            temperature: this.temperature,
+            max_tokens: this.maxTokens,
           }),
         }
       );
@@ -58,35 +60,32 @@ export class OllamaClient extends BaseAIClient {
       if (!response.ok) {
         const error = await this.parseErrorResponse(response);
         throw new AIClientError(
-          error.message || `Ollama API error: ${response.statusText}`,
+          error.message || `SiliconFlow API error: ${response.statusText}`,
           response.status,
           error
         );
       }
 
       const data = await response.json();
-      return data.response || "";
+      return data.choices[0]?.message?.content || "";
     });
   }
 
   async *stream(messages: AIMessage[]): AsyncGenerator<string> {
-    const { system, prompt } = this.convertMessages(messages);
-
     const response = await this.fetchWithTimeout(
-      `${this.baseURL}/api/generate`,
+      `${this.baseURL}/chat/completions`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${this.config.apiKey}`,
         },
         body: JSON.stringify({
           model: this.model,
-          prompt: prompt,
-          system: system,
+          messages: this.convertMessages(messages),
+          temperature: this.temperature,
+          max_tokens: this.maxTokens,
           stream: true,
-          options: {
-            temperature: this.temperature,
-          },
         }),
       }
     );
@@ -94,7 +93,7 @@ export class OllamaClient extends BaseAIClient {
     if (!response.ok) {
       const error = await this.parseErrorResponse(response);
       throw new AIClientError(
-        error.message || `Ollama API error: ${response.statusText}`,
+        error.message || `SiliconFlow API error: ${response.statusText}`,
         response.status,
         error
       );
@@ -120,14 +119,18 @@ export class OllamaClient extends BaseAIClient {
 
         for (const line of lines) {
           const trimmed = line.trim();
-          if (trimmed === "") continue;
+          if (trimmed === "" || trimmed === "data: [DONE]") continue;
 
-          try {
-            const data = JSON.parse(trimmed);
-            if (data.response) {
-              yield data.response;
+          if (trimmed.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(trimmed.slice(6));
+              const content = data.choices[0]?.delta?.content;
+              if (content) {
+                yield content;
+              }
+            } catch {
+              // skip parse errors
             }
-          } catch {
           }
         }
       }
@@ -136,28 +139,11 @@ export class OllamaClient extends BaseAIClient {
     }
   }
 
-  private convertMessages(messages: AIMessage[]): {
-    system?: string;
-    prompt: string;
-  } {
-    const systemMessages = messages.filter((m) => m.role === "system");
-    const conversationMessages = messages.filter((m) => m.role !== "system");
-
-    // 合并对话消息为单个 prompt
-    const prompt = conversationMessages
-      .map((msg) => {
-        const prefix = msg.role === "user" ? "User: " : "Assistant: ";
-        return `${prefix}${msg.content}`;
-      })
-      .join("\n\n") + "\n\nAssistant: ";
-
-    return {
-      system:
-        systemMessages.length > 0
-          ? systemMessages.map((m) => m.content).join("\n\n")
-          : undefined,
-      prompt,
-    };
+  private convertMessages(messages: AIMessage[]) {
+    return messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
   }
 
   private async parseErrorResponse(
@@ -166,8 +152,9 @@ export class OllamaClient extends BaseAIClient {
     try {
       const data = await response.json();
       const error = new Error(
-        data.error || response.statusText
+        data.error?.message || response.statusText
       ) as Error & { code?: string };
+      error.code = data.error?.code;
       return error;
     } catch {
       const error = new Error(response.statusText) as Error & { code?: string };
