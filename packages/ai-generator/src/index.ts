@@ -1,25 +1,25 @@
-/**
- * @lowcode-platform/ai-generator
- * AI-powered component and page generation service
- */
-
-// Export types
 export * from "./types";
-
-// Export clients
-export * from "./clients";
-
-// Export prompts
+export {
+  BaseAIClient,
+  OpenAIClient,
+  ClaudeClient,
+  DeepSeekClient,
+  GeminiClient,
+  AzureOpenAIClient,
+  GroqClient,
+  MistralClient,
+  OllamaClient,
+  SiliconFlowClient,
+  AIClientFactory,
+} from "./clients";
+export type {
+  DeepSeekConfig,
+  SiliconFlowConfig,
+  AIProviderType,
+  AIClientConfigUnion,
+} from "./clients";
 export * from "./prompts";
-
-// Export generators
 export * from "./generators";
-
-// Export parsers
 export * from "./parsers";
-
-// Export validators
 export * from "./validators";
-
-// Export main generator class
 export { AIGenerator } from "./generator";

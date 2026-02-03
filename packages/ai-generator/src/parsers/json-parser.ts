@@ -143,12 +143,9 @@ export class JSONParser {
       }
     }
 
-    return obj as Component;
+    return obj as unknown as Component;
   }
 
-  /**
-   * 验证和规范化页面
-   */
   private validateAndNormalizePage(data: unknown): PageSchema {
     if (!data || typeof data !== "object") {
       throw new ParseError("Page data must be an object");
@@ -230,12 +227,9 @@ export class JSONParser {
       obj.dataSources = [];
     }
 
-    return obj as PageSchema;
+    return obj as unknown as PageSchema;
   }
 
-  /**
-   * 生成唯一 ID
-   */
   private generateId(): string {
     // 简单的 ID 生成（在实际使用中可以考虑使用 nanoid 或 uuid）
     return `comp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;

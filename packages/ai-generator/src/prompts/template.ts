@@ -1,10 +1,3 @@
-/**
- * 提示词模板常量
- */
-
-/**
- * 组件类型列表
- */
 export const COMPONENT_TYPES = [
   "text",
   "button",
@@ -44,117 +37,66 @@ export const COMPONENT_TYPES = [
   "notification",
 ] as const;
 
-/**
- * 组件属性说明
- */
-export const COMPONENT_PROPERTIES = {
+export const COMPONENT_PROPERTIES: Record<
+  string,
+  Record<string, string>
+> = {
   button: {
-    text: "按钮文本",
-    variant: "按钮样式变体 (default | outline | ghost | link | destructive)",
-    size: "按钮尺寸 (small | default | large | icon)",
-    disabled: "是否禁用",
-    icon: "图标名称",
-    iconPosition: "图标位置 (left | right)",
-    fullWidth: "是否全宽",
-    onClick: "点击事件处理",
+    text: "Button label",
+    variant: "default | outline | ghost | link | destructive",
+    size: "small | default | large | icon",
+    disabled: "boolean",
+    icon: "icon name",
+    iconPosition: "left | right",
+    fullWidth: "boolean",
+    onClick: "event handler",
   },
   input: {
-    placeholder: "占位符文本",
-    type: "输入框类型 (text | email | password | number | tel | url)",
-    label: "标签文本",
-    helperText: "帮助文本",
-    required: "是否必填",
-    disabled: "是否禁用",
-    value: "默认值",
+    placeholder: "placeholder text",
+    type: "text | email | password | number | tel | url",
+    label: "label text",
+    helperText: "helper text",
+    required: "boolean",
+    disabled: "boolean",
+    value: "default value",
   },
   form: {
-    layout: "表单布局 (vertical | horizontal | inline)",
-    labelAlign: "标签对齐方式 (left | right)",
-    colon: "是否显示冒号",
-    requiredMark: "必填标记样式",
+    layout: "vertical | horizontal | inline",
+    labelAlign: "left | right",
+    colon: "boolean",
+    requiredMark: "required marker style",
   },
   container: {
-    width: "容器宽度",
-    height: "容器高度",
-    padding: "内边距",
-    margin: "外边距",
-    backgroundColor: "背景颜色",
-    borderRadius: "圆角",
-    border: "边框",
+    width: "width",
+    height: "height",
+    padding: "padding",
+    margin: "margin",
+    backgroundColor: "background color",
+    borderRadius: "border radius",
+    border: "border",
   },
-} as const;
+};
 
-/**
- * 系统提示词模板
- */
-export const SYSTEM_PROMPT_TEMPLATE = `You are an AI assistant specialized in generating low-code platform components and pages. 
+export const SYSTEM_PROMPT_TEMPLATE = `You generate low-code platform components and pages. Output must be valid JSON only: no markdown, no code fences, no explanation.
 
-Your task is to generate valid component structures based on user descriptions. All components must follow the Component interface specification:
+Component shape:
+{ "id": "unique-id", "type": "<type>", "name": "<name>", "position": { "x": 0, "y": 0 }, "properties": {}, "children": [], "parentId": null, "dataSource": null, "dataMapping": [] }
 
-{
-  id: string;           // Unique identifier (use nanoid or uuid)
-  type: string;         // Component type from the available types
-  name: string;         // Human-readable name
-  position?: {          // Optional position on canvas
-    x: number;
-    y: number;
-  };
-  properties?: Record<string, unknown>;  // Component-specific properties
-  children?: (Component | string)[];     // Child components or component IDs
-  parentId?: string | null;              // Parent component ID
-  dataSource?: string | null;            // Associated data source ID
-  dataMapping?: unknown[];               // Data mapping configuration
-}
+Required: id (unique), type, name. Optional: position, properties, children, parentId, dataSource, dataMapping.
 
-Available component types: ${COMPONENT_TYPES.join(", ")}
+Available types: ${COMPONENT_TYPES.join(", ")}`;
 
-Always return valid JSON only, without markdown formatting or explanatory text.`;
-
-/**
- * 组件生成提示词模板
- */
-export const COMPONENT_GENERATION_PROMPT = `Generate a component based on the following description:
-
-Description: {description}
+export const COMPONENT_GENERATION_PROMPT = `Description: {description}
 Type: {type}
 Position: {position}
 
-Context:
-{context}
+Context: {context}
 
-Return a valid JSON object matching the Component interface. Include appropriate default properties for the component type.`;
+Return a single JSON object: one Component with a unique id, correct type, name, and sensible default properties. Output only the JSON.`;
 
-/**
- * 页面生成提示词模板
- */
-export const PAGE_GENERATION_PROMPT = `Generate a complete page schema based on the following description:
-
-Description: {description}
+export const PAGE_GENERATION_PROMPT = `Description: {description}
 Layout: {layout}
 
-The page should include:
-- A logical component hierarchy
-- Appropriate layout containers
-- Styled components with reasonable default properties
-- Proper component positioning
+Return a JSON object with: version (string), metadata (name, description, createdAt, updatedAt, version), components (array of Components), canvas (showGrid, snapToGrid, viewportWidth, activeDevice), theme (object), dataSources (array).
 
-Return a valid JSON object matching the PageSchema interface:
-{
-  version: string;
-  metadata: {
-    name: string;
-    description?: string;
-    createdAt: string;
-    updatedAt: string;
-    version: string;
-  };
-  components: Component[];
-  canvas: {
-    showGrid: boolean;
-    snapToGrid: boolean;
-    viewportWidth: number;
-    activeDevice: string;
-  };
-  theme: unknown;
-  dataSources: unknown[];
-}`;
+Use a clear component hierarchy and layout containers. Set sensible positions and default properties. Output only the JSON.`;

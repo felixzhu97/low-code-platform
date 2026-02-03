@@ -89,7 +89,7 @@ export class AIClientFactory {
       case "gemini":
         return "gemini-pro";
       case "azure-openai":
-        return "gpt-4"; // 实际由部署名称决定
+        return "gpt-4";
       case "groq":
         return "mixtral-8x7b-32768";
       case "mistral":

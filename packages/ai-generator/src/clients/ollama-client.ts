@@ -14,7 +14,7 @@ export class OllamaClient extends BaseAIClient {
   protected readonly ollamaConfig: OllamaConfig;
 
   constructor(config: OllamaConfig) {
-    super(config);
+    super({ ...config, apiKey: config.apiKey ?? "" });
     this.ollamaConfig = {
       ...config,
       baseURL: config.baseURL || "http://localhost:11434",
