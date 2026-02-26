@@ -34,11 +34,6 @@ package "前端技术栈 (Frontend Technology Stack)" {
   
   component [Local Storage\n本地存储] as LocalStorageBrowser
   
-  component [WebAssembly\nWASM运行时] as WASM
-  component [Rust\n系统编程语言] as Rust
-  component [wasm-bindgen\nRust-JS互操作] as WasmBindgen
-  component [wasm-pack\nWASM打包工具] as WasmPack
-  
   component [AI生成器包\nAI Generator Package] as AIGeneratorPackage
   component [OpenAI客户端\nOpenAI Client] as OpenAIClientTech
   component [Claude客户端\nClaude Client] as ClaudeClientTech
@@ -54,7 +49,6 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Browser --> Zustand
   Browser --> I18n
   Browser --> LocalStorageBrowser
-  Browser --> WASM
   
   I18n --> ReactI18Next
   ReactI18Next --> LanguageSwitch
@@ -65,10 +59,6 @@ package "前端技术栈 (Frontend Technology Stack)" {
   UtilsPackages --> PerformanceUtils
   UtilsPackages --> SchemaUtils
   UtilsPackages --> Utils
-  
-  Rust --> WasmBindgen
-  WasmBindgen --> WasmPack
-  WasmPack --> WASM
   
   AIGeneratorPackage --> OpenAIClientTech
   AIGeneratorPackage --> ClaudeClientTech
@@ -302,8 +292,6 @@ note right of Browser
   - react-i18next: 国际化支持
   - 工具包: 组件/数据绑定/布局/性能/Schema工具
   - Local Storage: 浏览器本地存储
-  - Rust/WASM: 性能关键路径优化
-  - wasm-bindgen: Rust-JS互操作
   - AI生成器包: OpenAI/Claude/DeepSeek多提供商支持
 end note
 

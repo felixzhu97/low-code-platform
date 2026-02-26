@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, Suspense, lazy, useEffect, useState } from "react";
+import { useCallback, Suspense, lazy, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Canvas, PropertiesPanel } from "@/presentation/components/canvas";
@@ -31,8 +31,6 @@ import { useToolbarResponsive } from "@/presentation/hooks";
 import { toast } from "@/presentation/hooks/use-toast";
 import { useAdapters, useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
-import { print, printWithTimestamp, initWasm } from "@/shared/wasm";
-
 // 动态导入 Header 中的功能组件
 const ResponsiveControls = lazy(() =>
   import("@/presentation/components/ui").then((mod) => ({
@@ -123,34 +121,7 @@ const TabContentLoader = () => (
   </div>
 );
 
-// WASM 状态文字组件
-function WasmStatusText({
-  status,
-  error,
-}: Readonly<{
-  status: "loading" | "success" | "error";
-  error: string | null;
-}>) {
-  let text: string;
-
-  if (status === "success") {
-    text = "WASM 就绪";
-  } else if (status === "error") {
-    text = `WASM 错误: ${error || "加载失败"}`;
-  } else {
-    text = "WASM 加载中...";
-  }
-
-  return <span className="text-xs text-muted-foreground">{text}</span>;
-}
-
 export default function LowCodePlatform() {
-  // WASM 加载状态
-  const [wasmStatus, setWasmStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
-  const [wasmError, setWasmError] = useState<string | null>(null);
-
   // 响应式工具栏
   const { shouldCollapse } = useToolbarResponsive();
 
@@ -174,51 +145,6 @@ export default function LowCodePlatform() {
 
   // 获取适配器
   const { templateAdapter } = useAdapters();
-
-  // 初始化并使用 WASM 打印功能
-  useEffect(() => {
-    const initWasmPrint = async () => {
-      try {
-        setWasmStatus("loading");
-        setWasmError(null);
-
-        // 初始化 WASM 模块
-        await initWasm();
-        setWasmStatus("success");
-
-        // 调用 WASM print 函数
-        const result = await print("Hello from Rust WASM!");
-        console.log("WASM Print Result:", result);
-
-        // 调用带时间戳的打印函数
-        const timestampResult = await printWithTimestamp(
-          "WASM 模块已成功加载并运行"
-        );
-        console.log("WASM Print with Timestamp:", timestampResult);
-
-        // 显示成功提示
-        toast({
-          title: "WASM 模块加载成功",
-          description: "Rust WebAssembly 模块已成功初始化",
-        });
-      } catch (error) {
-        console.error("WASM 初始化或调用失败:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "WASM 模块加载失败";
-        setWasmStatus("error");
-        setWasmError(errorMessage);
-
-        // 显示错误提示
-        toast({
-          title: "WASM 模块加载失败",
-          description: errorMessage,
-          variant: "destructive",
-        });
-      }
-    };
-
-    initWasmPrint();
-  }, []);
 
   // 处理预览模式切换
   const togglePreviewMode = () => {
@@ -464,10 +390,6 @@ export default function LowCodePlatform() {
                 )}
               </div>
 
-              {/* 右侧：状态信息 */}
-              <ToolbarGroup aria-label="状态信息">
-                <WasmStatusText status={wasmStatus} error={wasmError} />
-              </ToolbarGroup>
             </Toolbar>
           </TooltipProvider>
         </Header>

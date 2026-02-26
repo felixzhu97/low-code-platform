@@ -12,7 +12,15 @@ A visual low-code development platform built with Next.js and React, supporting 
 - **🌐 Internationalization**: Multi-language support (Chinese/English), language switcher component, localization tools
 - **🤝 Real-time Collaboration**: WebSocket real-time synchronization, conflict resolution, collaborative cursors, history merging
 - **☁️ Cloud Service Integration**: AWS integration (S3, Lambda, API Gateway, etc.), one-click deployment
-- **⚡ Performance Optimization**: Rust/WASM acceleration (data parsing, Schema processing, layout calculation), performance toolset, graceful degradation
+- **⚡ Performance Optimization**: Performance toolset, optimized data parsing and Schema processing
+
+## 📸 Screenshots
+
+### Editor
+
+<p align="center">
+  <img src="./screenshots/platform-editor-overview.png" width="600" alt="Platform Editor Overview" />
+</p>
 
 ## 🛠 Tech Stack
 
@@ -21,8 +29,6 @@ A visual low-code development platform built with Next.js and React, supporting 
 **Backend**: Python + FastAPI (see `apps/server`)
 
 **Monorepo**: pnpm 10 workspaces + Vitest/Jest + ESLint/Prettier
-
-**Performance Optimization**: Rust + WebAssembly
 
 ## 📦 Project Structure
 
@@ -42,8 +48,7 @@ low-code-platform/
 │   ├── performance/   # Performance optimization
 │   ├── schema/        # Schema utilities
 │   ├── test-utils/    # Test utilities
-│   ├── utils/         # General utilities
-│   └── wasm/          # Rust/WASM modules
+│   └── utils/         # General utilities
 └── docs/              # Documentation
 ```
 
@@ -53,16 +58,12 @@ low-code-platform/
 
 - Node.js >= 18.0.0
 - pnpm >= 10.0.0
-- Rust >= 1.70.0 (only needed for WASM development)
 
 ### Installation & Running
 
 ```bash
 # Install dependencies
 pnpm install
-
-# Build WASM modules (first run or after WASM code updates)
-pnpm build:wasm
 
 # Start development server
 pnpm dev              # Start both frontend and backend
@@ -119,10 +120,8 @@ Adopts **Clean Architecture** design:
 
 - **Domain Layer**: Core business logic
 - **Application Layer**: Application use cases and business processes
-- **Infrastructure Layer**: Technical implementations (WASM adapters, etc.)
+- **Infrastructure Layer**: Technical implementations (repositories, adapters, etc.)
 - **Presentation Layer**: UI components and user interactions
-
-WASM modules adopt the **Port-Adapter pattern** to ensure graceful degradation and type safety.
 
 ### Shared Packages
 
@@ -135,29 +134,14 @@ WASM modules adopt the **Port-Adapter pattern** to ensure graceful degradation a
 - `@lowcode-platform/performance` - Performance optimization
 - `@lowcode-platform/schema` - Schema utilities
 - `@lowcode-platform/component-utils` - Component utilities
-- `@lowcode-platform/wasm` - WASM modules
 - `@lowcode-platform/utils` - General utilities
 - `@lowcode-platform/test-utils` - Test utilities
-
-### WASM Development
-
-```bash
-# Install Rust and wasm-pack
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-rustup target add wasm32-unknown-unknown
-
-# Development workflow
-# 1. Modify Rust code in packages/wasm/src/
-# 2. Run pnpm build:wasm to compile
-# 3. Test in browser
-```
 
 ## 📝 Todo
 
 **In Progress**: Improve backend API, add more chart types, add page templates
 
-**Planned**: Database connections, mobile component library, custom CSS, project management and version control, WASM optimization
+**Planned**: Database connections, mobile component library, custom CSS, project management and version control
 
 ## 🤝 Contributing
 
@@ -181,5 +165,4 @@ Issues and Pull Requests are welcome.
 
 - [Next.js](https://nextjs.org/docs) | [React](https://react.dev) | [NestJS](https://docs.nestjs.com)
 - [Tailwind CSS](https://tailwindcss.com) | [Radix UI](https://www.radix-ui.com)
-- [Rust](https://www.rust-lang.org/learn) | [WebAssembly](https://webassembly.org/)
 - [Architecture Documentation](docs/architecture/README.md) | [Product Documentation](docs/product/) | [Project Documentation](docs/project/)

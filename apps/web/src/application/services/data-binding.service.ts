@@ -207,44 +207,18 @@ export class DataBindingService {
     };
   }
 
-  /**
-   * 自动生成数据映射（异步版本，使用 WASM）
-   */
   static async generateDataMappingAsync(
     sourceData: any,
     targetStructure: any
   ): Promise<DataMapping[]> {
-    try {
-      const { getWasmAdapter } = await import("@/infrastructure/wasm");
-      const wasm = getWasmAdapter();
-      const mappings = await wasm.dataMapper.generateMapping(
-        sourceData,
-        targetStructure
-      );
-      return mappings as DataMapping[];
-    } catch (error) {
-      console.warn("WASM mapping generation failed, using fallback:", error);
-      // 降级到同步版本
-      return this.generateDataMapping(sourceData, targetStructure);
-    }
+    return this.generateDataMapping(sourceData, targetStructure);
   }
 
-  /**
-   * 应用映射规则（异步版本，使用 WASM）
-   */
   static async applyMappingAsync(
     data: any,
     mappings: DataMapping[]
   ): Promise<any> {
-    try {
-      const { getWasmAdapter } = await import("@/infrastructure/wasm");
-      const wasm = getWasmAdapter();
-      return await wasm.dataMapper.applyMapping(data, mappings);
-    } catch (error) {
-      console.warn("WASM mapping application failed, using fallback:", error);
-      // 降级到同步版本
-      return this.applyMapping(data, mappings);
-    }
+    return this.applyMapping(data, mappings);
   }
 
   /**
@@ -266,22 +240,11 @@ export class DataBindingService {
     return result;
   }
 
-  /**
-   * 转换数据（异步版本，使用 WASM）
-   */
   static async transformDataAsync(
     data: any,
     transformRules: any
   ): Promise<any> {
-    try {
-      const { getWasmAdapter } = await import("@/infrastructure/wasm");
-      const wasm = getWasmAdapter();
-      return await wasm.dataMapper.transformData(data, transformRules);
-    } catch (error) {
-      console.warn("WASM data transformation failed, using fallback:", error);
-      // 降级到同步版本
-      return this.transformValue(data, transformRules?.type);
-    }
+    return this.transformValue(data, transformRules?.type);
   }
 
   /**

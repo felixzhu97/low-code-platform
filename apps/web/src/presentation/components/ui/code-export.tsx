@@ -18,10 +18,7 @@ import {
   useUIStore,
 } from "@/infrastructure/state-management/stores";
 import { PersistenceManager } from "@/infrastructure/state-management/stores/persistence.manager";
-import {
-  projectDataToSchema,
-  projectDataToSchemaJson,
-} from "@/domain/entities/schema.types";
+import { projectDataToSchemaJson } from "@/domain/entities/schema.types";
 
 interface CodeExportProps {
   // 移除 props，现在从 store 获取状态
@@ -35,7 +32,6 @@ export function CodeExport({}: CodeExportProps) {
   const [schemaJson, setSchemaJson] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 异步生成 Schema JSON（使用 WASM）
   const generateSchemaJson = async (): Promise<string> => {
     if (components.length === 0) {
       return JSON.stringify(
@@ -73,15 +69,7 @@ export function CodeExport({}: CodeExportProps) {
       projectName || "未命名项目"
     );
 
-    // 使用 WASM 异步版本序列化 Schema
-    try {
-      return await projectDataToSchemaJson(projectData);
-    } catch (error) {
-      console.warn("WASM schema serialization failed, using fallback:", error);
-      // 降级到同步版本
-      const schema = projectDataToSchema(projectData);
-      return JSON.stringify(schema, null, 2);
-    }
+    return await projectDataToSchemaJson(projectData);
   };
 
   // 在组件挂载时生成 Schema

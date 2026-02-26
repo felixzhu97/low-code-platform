@@ -1,5 +1,4 @@
 import type { DataSource, DataSourceConfig } from "@/domain/datasource";
-import { getWasmAdapter } from "@/infrastructure/wasm";
 
 /**
  * 数据源管理服务
@@ -210,23 +209,7 @@ export class DataSourceService {
 
       switch (config.fileType) {
         case "json":
-          // 使用 WASM 验证 JSON
-          console.log(
-            "[DataSourceService] Parsing JSON file, text length:",
-            text.length
-          );
-          try {
-            const wasm = getWasmAdapter();
-            const isValid = await wasm.dataParser.validateJson(text);
-            if (!isValid) {
-              throw new Error("Invalid JSON format");
-            }
-            console.log("[DataSourceService] JSON validation success via WASM");
-            return JSON.parse(text);
-          } catch (error) {
-            console.warn("WASM JSON validation failed, using fallback:", error);
-            return JSON.parse(text);
-          }
+          return JSON.parse(text);
         case "csv":
           return await this.parseCSV(text);
         case "xml":
@@ -262,64 +245,31 @@ export class DataSourceService {
    * 解析CSV数据
    */
   private static async parseCSV(csvText: string): Promise<any[]> {
-    console.log(
-      "[DataSourceService] parseCSV called, text length:",
-      csvText.length
-    );
-    try {
-      // 优先使用 WASM 解析
-      const wasm = getWasmAdapter();
-      const result = await wasm.dataParser.parseCsv(csvText);
-      console.log(
-        "[DataSourceService] parseCSV success via WASM, rows:",
-        Array.isArray(result) ? result.length : "N/A"
-      );
-      return result;
-    } catch (error) {
-      console.warn("WASM CSV parsing failed, using fallback:", error);
-      // 降级到 JavaScript 实现
-      const lines = csvText.split("\n");
-      const headers = lines[0].split(",").map((h) => h.trim());
-      const data = [];
+    const lines = csvText.split("\n");
+    const headers = lines[0].split(",").map((h) => h.trim());
+    const data = [];
 
-      for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(",").map((v) => v.trim());
-        if (values.length === headers.length) {
-          const row: any = {};
-          headers.forEach((header, index) => {
-            row[header] = values[index];
-          });
-          data.push(row);
-        }
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(",").map((v) => v.trim());
+      if (values.length === headers.length) {
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        data.push(row);
       }
-
-      return data;
     }
+
+    return data;
   }
 
   /**
    * 解析XML数据
    */
   private static async parseXML(xmlText: string): Promise<any> {
-    console.log(
-      "[DataSourceService] parseXML called, text length:",
-      xmlText.length
-    );
-    try {
-      // 优先使用 WASM 解析
-      const wasm = getWasmAdapter();
-      const result = await wasm.dataParser.parseXml(xmlText);
-      console.log("[DataSourceService] parseXML success via WASM");
-      return result;
-    } catch (error) {
-      console.warn("WASM XML parsing failed, using fallback:", error);
-      // 降级到 JavaScript 实现
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-
-      // 转换为JSON格式
-      return this.xmlToJson(xmlDoc.documentElement);
-    }
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    return this.xmlToJson(xmlDoc.documentElement);
   }
 
   /**

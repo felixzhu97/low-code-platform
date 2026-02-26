@@ -38,27 +38,6 @@ const nextConfig = {
   transpilePackages: ["@lowcode-platform/ai-generator"],
   // Webpack 优化配置
   webpack: (config, { isServer }) => {
-    // WASM 支持配置（客户端和服务端都需要）
-    if (!isServer) {
-      // 确保 WASM 文件作为资源文件处理
-      config.experiments = {
-        ...config.experiments,
-        asyncWebAssembly: true,
-      };
-    }
-
-    // 配置 WASM 文件的加载（服务端和客户端都需要）
-    const wasmPkgPath = path.resolve(__dirname, "../../packages/wasm/pkg");
-    const wasmMainPath = path.resolve(wasmPkgPath, "lowcode_platform_wasm.js");
-    const wasmStubPath = path.resolve(
-      __dirname,
-      "./src/shared/stubs/wasm-stub.ts"
-    );
-
-    // 检查文件是否存在（构建时）
-    const wasmExists = existsSync(wasmPkgPath) && existsSync(wasmMainPath);
-
-    // 配置 AI Generator 包 - 检查多个可能的位置
     const aiGeneratorSrcPath = path.resolve(
       __dirname,
       "../../packages/ai-generator/src/index.ts"
@@ -78,15 +57,10 @@ const nextConfig = {
       existsSync(aiGeneratorNodeModulesPath) ||
       existsSync(path.resolve(__dirname, "../../packages/ai-generator"));
 
-    // 设置别名：如果包不存在，使用占位符
     config.resolve.alias = {
       ...config.resolve.alias,
-      // WASM 别名 - 如果不存在则使用占位符
-      "@lowcode-platform/wasm": wasmExists ? wasmMainPath : wasmStubPath,
-      "@lowcode-platform/wasm/pkg": wasmExists ? wasmPkgPath : wasmStubPath,
     };
 
-    // 如果 AI Generator 不存在，使用占位符
     if (!aiGeneratorExists) {
       console.warn(
         `WARNING: AI Generator package not found. Using stub implementation.`
@@ -95,14 +69,6 @@ const nextConfig = {
         aiGeneratorStubPath;
     }
 
-    // 如果 WASM 不存在，使用占位符
-    if (!wasmExists) {
-      console.warn(
-        `WARNING: WASM package not found at ${wasmPkgPath}. Using stub implementation.`
-      );
-    }
-
-    // 确保 WASM 文件被正确处理
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
