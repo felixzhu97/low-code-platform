@@ -1,5 +1,7 @@
 # Local LLM Setup for Page Generation
 
+**中文简体:** [本地 LLM 配置](../zh/local-llm-setup.md)
+
 This guide configures a local large language model so you can generate web pages from natural language without using third-party APIs.
 
 ## Overview

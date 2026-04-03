@@ -11,6 +11,7 @@ import {
   migrateSchema,
   SchemaValidationError,
 } from "@/domain/entities/schema.types";
+import { schemaEmpty } from "./component-renderer/renderer-emotion";
 
 interface SchemaRendererProps {
   schema: PageSchema | string; // 支持直接传入 Schema 对象或 JSON 字符串
@@ -147,7 +148,7 @@ export function SchemaRenderer({
   return (
     <div className={className} style={canvasStyle}>
       {rootComponents.length === 0 ? (
-        <div className="flex h-full items-center justify-center text-muted-foreground">
+        <div css={schemaEmpty}>
           没有组件可渲染
         </div>
       ) : (

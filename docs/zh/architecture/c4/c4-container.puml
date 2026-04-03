@@ -1,0 +1,27 @@
+@startuml c4-container-felix-zh
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 容器图 — Felix 低代码平台
+
+Person(user, "设计师 / 开发者", "使用平台")
+
+System_Boundary(boundary, "Felix 低代码平台") {
+    Container(web, "Web 应用", "TypeScript、Next.js 15、React 19 — Emotion + Tailwind + Radix", "编辑器、预览、属性面板，`apps/web`")
+    Container(api, "API 服务", "Python、FastAPI、Uvicorn、Pydantic", "REST API，`apps/server`")
+    ContainerDb(db, "主数据库", "PostgreSQL / SQL", "项目、Schema、用户（按部署启用）")
+    ContainerDb(cache, "缓存", "Redis", "会话、热点路径（按部署启用）")
+}
+
+System_Ext(llm, "大模型 API", "AI 能力外部模型")
+System_Ext(object_store, "对象存储", "文件与导出包")
+
+Rel(user, web, "使用", "HTTPS/WSS")
+Rel(web, api, "JSON / REST", "HTTPS")
+Rel(api, db, "读写", "SQL/TCP")
+Rel(api, cache, "读写", "TCP")
+Rel(api, object_store, "可选文件 I/O", "HTTPS")
+Rel(web, llm, "可选浏览器侧 AI", "HTTPS")
+
+@enduml

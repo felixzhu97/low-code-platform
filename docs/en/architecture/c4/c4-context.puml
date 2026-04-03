@@ -1,0 +1,27 @@
+@startuml c4-context-felix-low-code
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context — Felix Low-Code Platform
+
+Person(designer, "Page designer", "Builds pages with drag-and-drop")
+Person(developer, "Developer", "Exports code, integrates data and APIs")
+Person(viewer, "End user", "Views published experiences when deployed")
+
+System(felix, "Felix Low-Code Platform", "Visual builder, schema, templates, preview, optional export and AI assist")
+
+System_Ext(llm, "LLM providers", "OpenAI, Anthropic, DeepSeek, Ollama, …")
+System_Ext(auth, "Identity provider", "OAuth2 / OIDC / enterprise SSO")
+System_Ext(storage, "Object storage", "Assets, exports, uploads (S3-compatible)")
+System_Ext(cdn, "CDN / edge", "Static assets and cached content")
+
+Rel(designer, felix, "Edits pages", "HTTPS/WSS")
+Rel(developer, felix, "Configures projects, exports", "HTTPS")
+Rel(viewer, felix, "Consumes published output", "HTTPS (when hosted)")
+Rel(felix, llm, "AI-assisted generation (optional)", "HTTPS")
+Rel(felix, auth, "Authenticates users", "HTTPS")
+Rel(felix, storage, "Stores and reads files", "HTTPS")
+Rel(felix, cdn, "Serves UI assets", "HTTPS")
+
+@enduml

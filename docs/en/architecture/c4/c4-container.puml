@@ -1,0 +1,27 @@
+@startuml c4-container-felix-low-code
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container — Felix Low-Code Platform
+
+Person(user, "Designer / developer", "Uses the platform")
+
+System_Boundary(boundary, "Felix Low-Code Platform") {
+    Container(web, "Web application", "TypeScript, Next.js 15, React 19 — Emotion + Tailwind + Radix", "Editor, preview, properties, `apps/web`")
+    Container(api, "API service", "Python, FastAPI, Uvicorn, Pydantic", "REST API — `apps/server`")
+    ContainerDb(db, "Primary database", "PostgreSQL / SQL", "Projects, schemas, users (when enabled)")
+    ContainerDb(cache, "Cache", "Redis", "Sessions, hot paths (when enabled)")
+}
+
+System_Ext(llm, "LLM APIs", "External models for AI features")
+System_Ext(object_store, "Object storage", "Files and export bundles")
+
+Rel(user, web, "Uses", "HTTPS/WSS")
+Rel(web, api, "JSON over REST", "HTTPS")
+Rel(api, db, "Reads and writes", "SQL/TCP")
+Rel(api, cache, "Reads and writes", "TCP")
+Rel(api, object_store, "Optional file I/O", "HTTPS")
+Rel(web, llm, "Optional client-side AI", "HTTPS")
+
+@enduml

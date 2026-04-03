@@ -24,9 +24,9 @@ A visual low-code development platform built with Next.js and React, supporting 
 
 ## 🛠 Tech Stack
 
-**Frontend**: Next.js 15 + React 19 + TypeScript + Tailwind CSS + Radix UI + React DnD + Recharts + Zustand
+**Frontend**: Next.js 15 + React 19 + TypeScript + **Emotion** (styled / `css`) + Tailwind CSS (design tokens, shadcn/ui primitives) + Radix UI + React DnD + Recharts + Zustand
 
-**Backend**: Python + FastAPI (see `apps/server`)
+**Backend**: Python + FastAPI (`apps/server`)
 
 **Monorepo**: pnpm 10 workspaces + Vitest/Jest + ESLint/Prettier
 
@@ -102,7 +102,7 @@ To generate pages with a **local model** (no API key):
 2. Pull a model: `ollama pull codellama`
 3. In the editor, open **AI Generate** → choose **Ollama (Local)** → leave API Key empty → enter a description and generate
 
-See [docs/local-llm-setup.md](docs/local-llm-setup.md) for full setup and troubleshooting.
+See [docs/en/local-llm-setup.md](docs/en/local-llm-setup.md) (English) or [docs/zh/local-llm-setup.md](docs/zh/local-llm-setup.md) (中文) for setup and troubleshooting.
 
 ## 🎯 Usage Guide
 
@@ -163,6 +163,6 @@ Issues and Pull Requests are welcome.
 
 ## 🔗 Related Links
 
-- [Next.js](https://nextjs.org/docs) | [React](https://react.dev) | [NestJS](https://docs.nestjs.com)
-- [Tailwind CSS](https://tailwindcss.com) | [Radix UI](https://www.radix-ui.com)
-- [Architecture Documentation](docs/architecture/README.md) | [Product Documentation](docs/product/) | [Project Documentation](docs/project/)
+- [Next.js](https://nextjs.org/docs) | [React](https://react.dev) | [FastAPI](https://fastapi.tiangolo.com/)
+- [Emotion](https://emotion.sh/docs/introduction) | [Tailwind CSS](https://tailwindcss.com) | [Radix UI](https://www.radix-ui.com)
+- [Architecture (中文)](docs/zh/platform-architecture.md) | [Architecture (English)](docs/en/architecture.md) | [Local LLM (English)](docs/en/local-llm-setup.md) | [本地 LLM (中文)](docs/zh/local-llm-setup.md)

@@ -1,0 +1,29 @@
+@startuml c4-component-web-felix-low-code
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Component — web application (`apps/web`)
+
+Container_Boundary(web, "Web application") {
+    Component(shell, "Editor shell", "React, Emotion", "`page.tsx`, rails, loaders, toolbar")
+    Component(canvas, "Canvas & panels", "React, Emotion, React DnD", "`canvas`, `component-panel`, `properties-panel`")
+    Component(renderers, "Component renderers", "React, Emotion", "basic, layout, form, data, chart, schema")
+    Component(app, "Application layer", "TypeScript", "use-cases, application services, ports")
+    Component(domain, "Domain layer", "TypeScript", "entities, value objects, domain services")
+    Component(infra, "Infrastructure adapters", "TypeScript", "Zustand stores, repository impls, external I/O")
+    Component(packages, "Monorepo packages", "TypeScript", "`packages/*` — shared utils and contracts")
+}
+
+Rel(shell, canvas, "Hosts")
+Rel(canvas, app, "Dispatches actions, uses cases")
+Rel(renderers, app, "Reads schema and bindings")
+Rel(shell, app, "Coordinates editor state")
+Rel(app, domain, "Uses")
+Rel(app, infra, "Uses ports implemented by")
+Rel(infra, domain, "Maps persistence to")
+Rel(infra, packages, "Imports")
+Rel(shell, packages, "Imports")
+Rel(renderers, packages, "Imports")
+
+@enduml

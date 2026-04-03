@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCallback } from "react";
+import styled from "@emotion/styled";
 import { ScrollArea } from "@/presentation";
 import { Button } from "../ui/button";
 import {
@@ -13,30 +14,129 @@ import {
   TooltipTrigger,
 } from "../ui";
 import { Trash2, Smartphone, Tablet, Grid, Grid3x3 } from "lucide-react";
-import { cn } from "@/application/services/utils";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { ComponentManagementService } from "@/application/services/component-management.service";
 import { useCanvasDrag } from "@/presentation";
 import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
-import { useAllStores, useComponentState } from "@/presentation/hooks";
+import { useAllStores } from "@/presentation/hooks";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 import type { Component } from "@/domain/component";
 
-type CanvasProps = {
-  // 移除 props，现在从 store 获取状态
-};
+const CanvasRoot = styled.div`
+  flex: 1;
+  background-color: #f9fafb;
+`;
+
+const ToolbarBar = styled.div`
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  padding: 0 1rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: box-shadow 200ms;
+`;
+
+const ToolbarTitle = styled.span`
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+`;
+
+const ToolRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const StyledToolbar = styled(Toolbar)`
+  border-width: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+`;
+
+const StyledToolbarGroup = styled(ToolbarGroup)`
+  gap: 0.75rem;
+`;
+
+const StyledLabel = styled(Label)`
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const LabelText = styled.span`
+  @media (max-width: 639px) {
+    display: none;
+  }
+`;
+
+const CanvasScroll = styled(ScrollArea)<{ $preview: boolean }>`
+  height: ${(p) =>
+    p.$preview ? "calc(100vh - 3.5rem)" : "calc(100vh - 7.5rem)"};
+`;
+
+const CanvasArea = styled.div`
+  position: relative;
+  min-height: calc(100vh - 7.5rem);
+  padding: 1rem;
+`;
+
+const DeviceBanner = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.5rem 0;
+`;
+
+const DevicePill = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--background));
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+`;
+
+const EmptyDropZone = styled.div`
+  display: flex;
+  height: 100%;
+  min-height: 400px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 2px dashed hsl(var(--border));
+`;
+
+const EmptyDropText = styled.div`
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+`;
+
+type CanvasProps = Record<string, never>;
 
 export const Canvas = React.memo<CanvasProps>(() => {
-  // 从 stores 获取状态
   const {
-    // 组件状态
     components,
-    selectedComponent,
     selectComponent,
     clearAllComponents,
-    // 画布状态
     isPreviewMode,
     showGrid,
     snapToGrid,
@@ -45,11 +145,9 @@ export const Canvas = React.memo<CanvasProps>(() => {
     theme,
     toggleGrid,
     toggleSnapToGrid,
-    // 数据状态
     dataSources,
   } = useAllStores();
 
-  // 使用自定义Hook处理组件交互
   const {
     selectedId,
     isDragging,
@@ -60,11 +158,9 @@ export const Canvas = React.memo<CanvasProps>(() => {
     handleMouseMove,
     handleMouseUp,
     handleKeyDown,
-    handleClear,
   } = useComponentInteraction({
     components,
     onUpdateComponents: (newComponents) => {
-      // 直接更新 store
       useComponentStore.getState().updateComponents(newComponents);
     },
     onSelectComponent: selectComponent,
@@ -72,11 +168,9 @@ export const Canvas = React.memo<CanvasProps>(() => {
     snapToGrid,
   });
 
-  // 使用自定义Hook处理拖拽
   const { drop, isOver, dropTargetId } = useCanvasDrag({
     components,
     onUpdateComponents: (newComponents) => {
-      // 直接更新 store
       useComponentStore.getState().updateComponents(newComponents);
     },
     isPreviewMode,
@@ -84,7 +178,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     theme,
   });
 
-  // 获取组件绑定的数据源
   const getComponentData = useCallback(
     (component: Component) => {
       return ComponentManagementService.getComponentData(
@@ -95,7 +188,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     [dataSources]
   );
 
-  // 创建ref合并函数
   const setRefs = useCallback(
     (element: HTMLDivElement | null) => {
       canvasRef.current = element;
@@ -104,7 +196,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     [drop, canvasRef]
   );
 
-  // 递归渲染组件
   const renderComponent = useCallback(
     (component: Component, parentComponent: Component | null = null) => {
       const componentData = getComponentData(component);
@@ -137,35 +228,44 @@ export const Canvas = React.memo<CanvasProps>(() => {
     ]
   );
 
-  // 获取根级组件（没有父组件的组件）
   const rootComponents =
     ComponentManagementService.getRootComponents(components);
 
+  const gridBackground =
+    showGrid && !isPreviewMode
+      ? "linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)"
+      : "none";
+
+  const canvasBackgroundColor =
+    isOver && !isPreviewMode
+      ? "rgb(239 246 255)"
+      : theme?.backgroundColor || "#ffffff";
+
   return (
-    <div className="flex-1 bg-gray-50">
+    <CanvasRoot>
       {!isPreviewMode && (
         <TooltipProvider>
-          <div className="flex h-12 items-center justify-between border-b bg-background px-4 shadow-sm transition-shadow duration-200">
-            <span className="font-semibold text-sm">画布</span>
-            <Toolbar className="border-0 shadow-none bg-transparent px-0">
-              <ToolbarGroup aria-label="画布工具" className="gap-3">
+          <ToolbarBar>
+            <ToolbarTitle>画布</ToolbarTitle>
+            <StyledToolbar>
+              <StyledToolbarGroup aria-label="画布工具">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex items-center gap-2">
-                      <Label
-                        htmlFor="show-grid"
-                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                      >
-                        <Grid className="h-4 w-4 text-muted-foreground" />
-                        <span className="hidden sm:inline">显示网格</span>
-                      </Label>
+                    <ToolRow>
+                      <StyledLabel htmlFor="show-grid">
+                        <Grid
+                          size={16}
+                          style={{ color: "hsl(var(--muted-foreground))" }}
+                        />
+                        <LabelText>显示网格</LabelText>
+                      </StyledLabel>
                       <Switch
                         id="show-grid"
                         checked={showGrid}
                         onCheckedChange={toggleGrid}
                         aria-label="切换显示网格"
                       />
-                    </div>
+                    </ToolRow>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>显示/隐藏画布网格辅助线</p>
@@ -173,21 +273,21 @@ export const Canvas = React.memo<CanvasProps>(() => {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex items-center gap-2">
-                      <Label
-                        htmlFor="snap-grid"
-                        className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                      >
-                        <Grid3x3 className="h-4 w-4 text-muted-foreground" />
-                        <span className="hidden sm:inline">对齐网格</span>
-                      </Label>
+                    <ToolRow>
+                      <StyledLabel htmlFor="snap-grid">
+                        <Grid3x3
+                          size={16}
+                          style={{ color: "hsl(var(--muted-foreground))" }}
+                        />
+                        <LabelText>对齐网格</LabelText>
+                      </StyledLabel>
                       <Switch
                         id="snap-grid"
                         checked={snapToGrid}
                         onCheckedChange={toggleSnapToGrid}
                         aria-label="切换对齐网格"
                       />
-                    </div>
+                    </ToolRow>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>启用/禁用组件对齐到网格</p>
@@ -202,24 +302,20 @@ export const Canvas = React.memo<CanvasProps>(() => {
                       disabled={components.length === 0}
                       aria-label="清空画布"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 size={16} />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>清空画布上的所有组件</p>
                   </TooltipContent>
                 </Tooltip>
-              </ToolbarGroup>
-            </Toolbar>
-          </div>
+              </StyledToolbarGroup>
+            </StyledToolbar>
+          </ToolbarBar>
         </TooltipProvider>
       )}
-      <ScrollArea
-        className={
-          isPreviewMode ? "h-[calc(100vh-3.5rem)]" : "h-[calc(100vh-7.5rem)]"
-        }
-      >
-        <div
+      <CanvasScroll $preview={isPreviewMode}>
+        <CanvasArea
           id="canvas-area"
           ref={setRefs}
           onMouseMove={handleMouseMove}
@@ -227,18 +323,10 @@ export const Canvas = React.memo<CanvasProps>(() => {
           onMouseLeave={handleMouseUp}
           onKeyDown={handleKeyDown}
           tabIndex={0}
-          className={cn(
-            "relative min-h-[calc(100vh-7.5rem)] p-4",
-            isOver && !isPreviewMode && "bg-blue-50",
-            showGrid && !isPreviewMode && "bg-grid-pattern"
-          )}
           style={{
-            backgroundSize: "20px 20px",
-            backgroundImage:
-              showGrid && !isPreviewMode
-                ? "linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)"
-                : "none",
-            backgroundColor: theme?.backgroundColor || "#ffffff",
+            backgroundSize: showGrid && !isPreviewMode ? "20px 20px" : undefined,
+            backgroundImage: gridBackground,
+            backgroundColor: canvasBackgroundColor,
             color: theme?.textColor || "#000000",
             fontFamily: theme?.fontFamily || "system-ui, sans-serif",
             width: isPreviewMode ? `${viewportWidth}px` : "100%",
@@ -247,33 +335,33 @@ export const Canvas = React.memo<CanvasProps>(() => {
           onClick={handleClearSelection}
         >
           {activeDevice !== "desktop" && isPreviewMode && (
-            <div className="absolute left-0 right-0 top-0 flex items-center justify-center bg-muted/50 py-2">
-              <div className="flex items-center gap-2 rounded-full bg-background px-3 py-1 text-xs shadow-sm">
+            <DeviceBanner>
+              <DevicePill>
                 {activeDevice === "mobile" ? (
-                  <Smartphone className="h-3 w-3" />
+                  <Smartphone size={12} />
                 ) : (
-                  <Tablet className="h-3 w-3" />
+                  <Tablet size={12} />
                 )}
                 <span>
                   {activeDevice === "mobile" ? "移动设备" : "平板设备"} (
                   {viewportWidth}px)
                 </span>
-              </div>
-            </div>
+              </DevicePill>
+            </DeviceBanner>
           )}
 
           {rootComponents.length === 0 ? (
-            <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
-              <div className="text-center text-muted-foreground">
+            <EmptyDropZone>
+              <EmptyDropText>
                 <p>将组件拖拽到此处或选择一个模板开始</p>
-              </div>
-            </div>
+              </EmptyDropText>
+            </EmptyDropZone>
           ) : (
             rootComponents.map((component) => renderComponent(component))
           )}
-        </div>
-      </ScrollArea>
-    </div>
+        </CanvasArea>
+      </CanvasScroll>
+    </CanvasRoot>
   );
 });
 

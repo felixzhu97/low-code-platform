@@ -297,6 +297,21 @@ package "核心业务流程 (Core Business Processes)" {
   JsonInputProcess --> CreateTempDataSource
   JsonInputProcess --> AutoRenderToComponent
   
+  component [国际化配置流程] as I18nConfigProcess
+  component [检测浏览器语言] as DetectBrowserLanguage
+  component [选择界面语言] as SelectInterfaceLanguage
+  component [加载语言资源] as LoadLanguageResources
+  component [应用语言设置] as ApplyLanguageSettings
+  component [保存语言偏好] as SaveLanguagePreference
+  
+  component [用户认证流程] as UserAuthProcess
+  component [用户登录] as UserLogin
+  component [校验凭证] as VerifyCredentials
+  component [生成访问令牌] as GenerateAccessToken
+  component [建立会话] as EstablishSession
+  component [授权访问] as AuthorizeAccess
+  component [用户登出] as UserLogout
+  
   I18nConfigProcess --> DetectBrowserLanguage
   I18nConfigProcess --> SelectInterfaceLanguage
   I18nConfigProcess --> LoadLanguageResources

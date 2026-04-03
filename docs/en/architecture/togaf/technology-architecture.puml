@@ -1,0 +1,319 @@
+@startuml Technology_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF Technology Architecture — Felix Low-Code Platform
+
+package "Frontend Technology Stack" {
+  
+  component [Web Browser] as Browser
+  component [React 19] as React
+  component [Next.js 15] as NextJS
+  component [TypeScript] as TypeScript
+  component [Tailwind CSS] as Tailwind
+  component [Emotion] as Emotion
+  component [Radix UI] as RadixUI
+  component [React DnD] as ReactDnD
+  component [Recharts] as Recharts
+  component [Zustand] as Zustand
+  
+  component [i18n] as I18n
+  component [react-i18next] as ReactI18Next
+  component [Language switch] as LanguageSwitch
+  
+  component [Utils Packages] as UtilsPackages
+  component [Component Utils] as ComponentUtils
+  component [Data Binding Utils] as DataBindingUtils
+  component [Layout Utils] as LayoutUtils
+  component [Performance Utils] as PerformanceUtils
+  component [Schema utils] as SchemaUtils
+  component [Utils] as Utils
+  
+  component [Local Storage] as LocalStorageBrowser
+  
+  component [AI Generator Package] as AIGeneratorPackage
+  component [OpenAI Client] as OpenAIClientTech
+  component [Claude Client] as ClaudeClientTech
+  component [DeepSeek Client] as DeepSeekClientTech
+  
+  Browser --> React
+  Browser --> NextJS
+  Browser --> TypeScript
+  Browser --> Tailwind
+  Browser --> Emotion
+  Browser --> RadixUI
+  Browser --> ReactDnD
+  Browser --> Recharts
+  Browser --> Zustand
+  Browser --> I18n
+  Browser --> LocalStorageBrowser
+  
+  I18n --> ReactI18Next
+  ReactI18Next --> LanguageSwitch
+  
+  UtilsPackages --> ComponentUtils
+  UtilsPackages --> DataBindingUtils
+  UtilsPackages --> LayoutUtils
+  UtilsPackages --> PerformanceUtils
+  UtilsPackages --> SchemaUtils
+  UtilsPackages --> Utils
+  
+  AIGeneratorPackage --> OpenAIClientTech
+  AIGeneratorPackage --> ClaudeClientTech
+  AIGeneratorPackage --> DeepSeekClientTech
+}
+
+package "Backend Technology Stack" {
+  
+  component [Application Server] as AppServer
+  component [FastAPI] as FastAPI
+  component [Python 3] as PythonRT
+  component [Uvicorn] as Uvicorn
+  component [Pydantic] as Pydantic
+  
+  AppServer --> FastAPI
+  AppServer --> PythonRT
+  FastAPI --> Uvicorn
+  FastAPI --> Pydantic
+}
+
+package "Data Storage Layer" {
+  
+  component [PostgreSQL] as PostgreSQL
+  component [Primary DB] as PrimaryDB
+  component [Replica DB] as ReplicaDB
+  
+  component [Redis] as Redis
+  component [Cache Cluster] as CacheCluster
+  component [Session Store] as SessionStore
+  component [Message Queue] as MessageQueue
+  
+  component [Object Storage] as ObjectStorage
+  component [S3 compatible] as FileStorage
+  
+  component [Local Storage] as LocalStorageTech
+  
+  PostgreSQL --> PrimaryDB
+  PostgreSQL --> ReplicaDB
+  Redis --> CacheCluster
+  Redis --> SessionStore
+  Redis --> MessageQueue
+  ObjectStorage --> FileStorage
+  LocalStorageTech --> Browser
+}
+
+package "Infrastructure Layer" {
+  
+  component [Cloud Platform] as CloudPlatform
+  component [Load Balancer] as LoadBalancer
+  
+  component [Web Server Cluster] as WebCluster
+  component [Next.js SSR] as NextSSR
+  component [Static assets] as StaticAssets
+  
+  component [API Server Cluster] as APICluster
+  component [RESTful API] as RESTAPI
+  component [GraphQL API] as GraphQL
+  
+  component [WebSocket Server] as WSServer
+  component [Collaboration] as CollaborationWS
+  component [Message Broadcast] as MessageBroadcast
+  
+  component [Task Queue] as TaskQueue
+  component [Code Generation] as CodeGenTask
+  component [Data Sync] as DataSyncTask
+  
+  component [AWS Integration] as AWSIntegration
+  component [S3 Operations] as S3Ops
+  component [CloudFormation] as CloudFormation
+  component [Lambda] as Lambda
+  component [API Gateway] as APIGatewayAWS
+  component [CloudFront] as CloudFront
+  component [IAM] as IAM
+  
+  component [Collaboration Package] as CollaborationPackage
+  component [WebSocket Mgmt] as WebSocketMgmt
+  component [Real-time Sync] as RealTimeSync
+  component [Conflict Resolution] as ConflictResolution
+  
+  CloudPlatform --> LoadBalancer
+  CloudPlatform --> WebCluster
+  CloudPlatform --> APICluster
+  CloudPlatform --> WSServer
+  CloudPlatform --> TaskQueue
+  
+  WebCluster --> NextSSR
+  WebCluster --> StaticAssets
+  
+  APICluster --> RESTAPI
+  APICluster --> GraphQL
+  
+  WSServer --> CollaborationWS
+  WSServer --> MessageBroadcast
+  
+  TaskQueue --> CodeGenTask
+  TaskQueue --> DataSyncTask
+  
+  AWSIntegration --> S3Ops
+  AWSIntegration --> CloudFormation
+  AWSIntegration --> Lambda
+  AWSIntegration --> APIGatewayAWS
+  AWSIntegration --> CloudFront
+  AWSIntegration --> IAM
+  
+  CollaborationPackage --> WebSocketMgmt
+  CollaborationPackage --> RealTimeSync
+  CollaborationPackage --> ConflictResolution
+}
+
+package "Network & Security" {
+  
+  component [CDN] as CDN
+  component [WAF] as WAF
+  component [SSL/TLS] as SSL
+  component [Auth Service] as AuthService
+  component [API Gateway] as APIGateway
+}
+
+package "Monitoring & Operations" {
+  
+  component [Prometheus] as Prometheus
+  component [Grafana] as Grafana
+  component [ELK Stack] as ELK
+  component [Sentry] as Sentry
+  component [Health Check] as HealthCheck
+}
+
+package "CI/CD & Deployment" {
+  
+  component [Git Repository] as GitRepo
+  component [CI/CD Pipeline] as CICD
+  component [Kubernetes] as K8s
+  component [Docker Container] as Docker
+}
+
+Browser --> CDN : HTTPS
+CDN --> LoadBalancer : HTTPS
+LoadBalancer --> WAF : security check
+WAF --> WebCluster : route
+WAF --> APIGateway : API route
+
+WebCluster --> APICluster : internal call
+APIGateway --> APICluster : API request
+APIGateway --> AuthService : authentication
+
+APICluster --> PostgreSQL : SQL connection
+APICluster --> Redis : cache access
+APICluster --> ObjectStorage : file ops
+APICluster --> TaskQueue : async tasks
+APICluster --> AWSIntegration : AWS calls
+
+Browser <--> WSServer : WebSocket
+Browser --> LocalStorageTech : local storage
+WSServer --> Redis : messaging
+WSServer --> PostgreSQL : state persist
+WSServer --> CollaborationPackage : collaboration
+
+TaskQueue --> ObjectStorage : result storage
+TaskQueue --> GitRepo : push code
+AWSIntegration --> ObjectStorage : S3 storage
+AWSIntegration --> CDN : CloudFront
+Browser --> UtilsPackages : utils
+Browser --> I18n : i18n
+Browser --> AIGeneratorPackage : AI generator
+AIGeneratorPackage --> OpenAIClientTech : invoke
+AIGeneratorPackage --> ClaudeClientTech : invoke
+AIGeneratorPackage --> DeepSeekClientTech : invoke
+
+OpenAIClientTech --> APIGateway : HTTPS API
+ClaudeClientTech --> APIGateway : HTTPS API
+DeepSeekClientTech --> APIGateway : HTTPS API
+
+component [Production] as ProdEnv
+component [Development] as DevEnv
+component [Dev Server] as DevServer
+component [Local DB] as LocalDB
+component [Testing] as TestEnv
+component [Test Server] as TestServer
+component [Test DB] as TestDB
+
+DevEnv --> DevServer
+DevEnv --> LocalDB
+TestEnv --> TestServer
+TestEnv --> TestDB
+
+CICD --> ProdEnv : deploy
+CICD --> TestEnv : test deploy
+Docker --> K8s : orchestration
+K8s --> ProdEnv : scheduling
+
+WebCluster --> Prometheus : metrics
+APICluster --> Prometheus : metrics
+WSServer --> Prometheus : metrics
+PostgreSQL --> Prometheus : metrics
+Redis --> Prometheus : metrics
+
+Prometheus --> Grafana : visualization
+WebCluster --> ELK : logs
+APICluster --> ELK : logs
+WebCluster --> Sentry : errors
+APICluster --> Sentry : errors
+
+APICluster --> HealthCheck : health
+WSServer --> HealthCheck : health
+
+note right of Browser
+  **Frontend stack:**
+  - Next.js: SSR/SSG、App Router
+  - React 19: UI runtime
+  - TypeScript: type safety
+  - Emotion: Emotion CSS-in-JS in editor
+  - Tailwind CSS: Tailwind tokens, shadcn, with Emotion
+  - Zustand: state
+  - react-i18next: i18n
+  - Workspace packages: components, binding, layout, performance, schema
+  - Local Storage: browser storage
+  - AI generator: multi-provider (incl. Ollama)
+end note
+
+note right of AppServer
+  **Backend (this repo):**
+  - FastAPI: REST API
+  - Python + Pydantic: validation & models
+  - Uvicorn: ASGI host
+end note
+
+note right of PostgreSQL
+  **Data storage:**
+  - PostgreSQL: relational
+  - Redis: cache & sessions
+  - Object storage: & media (S3)
+  - Local Storage: browser (prefs & temp)
+end note
+
+note right of AWSIntegration
+  **AWS:**
+  - S3: object storage
+  - CloudFormation: IaC
+  - Lambda: Lambda
+  - API Gateway: API gateway
+  - CloudFront: CDN
+  - IAM: IAM
+end note
+
+note right of CollaborationPackage
+  **Collaboration package:**
+  - WebSocket: WS connections
+  - Realtime sync: multi-user sync
+  - Conflicts: conflict handling
+end note
+
+note right of CloudPlatform
+  **Deployment:**
+  - Microservices
+  - Horizontal scale
+  - Load balance
+  - HA
+end note
+
+@enduml

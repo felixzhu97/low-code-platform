@@ -14,7 +14,8 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [React 19\nUI框架] as React
   component [Next.js 15\n全栈框架] as NextJS
   component [TypeScript\n类型系统] as TypeScript
-  component [Tailwind CSS\n样式框架] as Tailwind
+  component [Tailwind CSS\n样式与设计令牌] as Tailwind
+  component [Emotion\nCSS-in-JS 样式] as Emotion
   component [Radix UI\n组件库] as RadixUI
   component [React DnD\n拖拽库] as ReactDnD
   component [Recharts\n图表库] as Recharts
@@ -43,6 +44,7 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Browser --> NextJS
   Browser --> TypeScript
   Browser --> Tailwind
+  Browser --> Emotion
   Browser --> RadixUI
   Browser --> ReactDnD
   Browser --> Recharts
@@ -68,17 +70,15 @@ package "前端技术栈 (Frontend Technology Stack)" {
 package "后端技术栈 (Backend Technology Stack)" {
   
   component [应用服务器\nApplication Server] as AppServer
-  component [NestJS 11\n后端框架] as NestJS
-  component [TypeScript\n类型系统] as TSBackend
-  component [Express\nHTTP服务器] as Express
-  component [Socket.IO\nWebSocket] as SocketIO
-  component [TypeORM\nORM框架] as TypeORM
+  component [FastAPI\nPython Web 框架] as FastAPI
+  component [Python 3\n运行时] as PythonRT
+  component [Uvicorn\nASGI 服务器] as Uvicorn
+  component [Pydantic\n数据校验] as Pydantic
   
-  AppServer --> NestJS
-  AppServer --> TSBackend
-  AppServer --> Express
-  AppServer --> SocketIO
-  AppServer --> TypeORM
+  AppServer --> FastAPI
+  AppServer --> PythonRT
+  FastAPI --> Uvicorn
+  FastAPI --> Pydantic
 }
 
 package "数据存储层 (Data Storage Layer)" {
@@ -284,23 +284,23 @@ WSServer --> HealthCheck : 健康检查
 
 note right of Browser
   **前端技术选型：**
-  - Next.js: SSR/SSG支持
-  - React 19: 最新UI框架
+  - Next.js: SSR/SSG、App Router
+  - React 19: UI 运行时
   - TypeScript: 类型安全
-  - Tailwind CSS: 原子化CSS
-  - Zustand: 轻量级状态管理
-  - react-i18next: 国际化支持
-  - 工具包: 组件/数据绑定/布局/性能/Schema工具
-  - Local Storage: 浏览器本地存储
-  - AI生成器包: OpenAI/Claude/DeepSeek多提供商支持
+  - Emotion: 画布与编辑器区域 CSS-in-JS
+  - Tailwind CSS: 设计令牌、shadcn 原子类、与 Emotion 共存
+  - Zustand: 状态管理
+  - react-i18next: 国际化
+  - 工作区工具包: 组件/数据绑定/布局/性能/Schema
+  - Local Storage: 浏览器存储
+  - AI 生成器包: 多模型提供方（含 Ollama）
 end note
 
 note right of AppServer
-  **后端技术选型：**
-  - NestJS: 模块化架构
-  - TypeORM: 数据库ORM
-  - Socket.IO: 实时通信
-  - Express: HTTP服务器
+  **后端技术选型（当前仓库）：**
+  - FastAPI: REST API
+  - Python + Pydantic: 校验与模型
+  - Uvicorn: ASGI 宿主
 end note
 
 note right of PostgreSQL

@@ -12,6 +12,8 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^3.9.1",
     "@lowcode-platform/ai-generator": "workspace:*",
     "@radix-ui/react-accordion": "1.2.2",

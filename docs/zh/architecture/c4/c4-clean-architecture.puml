@@ -1,0 +1,21 @@
+@startuml c4-clean-architecture-felix-zh
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 整洁架构 — 依赖规则（`apps/web/src`）
+
+Container_Boundary(web, "Web 应用（整洁架构）") {
+    Component(presentation, "表现层", "React、Emotion、Radix、Tailwind 类名", "`presentation/` — 受控视图")
+    Component(application, "应用层", "TypeScript", "`application/` — 用例、DTO、编排")
+    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务、仓储接口")
+    Component(infrastructure, "基础设施层", "TypeScript", "`infrastructure/` — 状态、HTTP、持久化实现")
+}
+
+Rel(presentation, application, "调用用例与服务")
+Rel(application, domain, "依赖")
+Rel(infrastructure, application, "实现端口")
+Rel(infrastructure, domain, "使用类型与接口")
+Rel(presentation, domain, "仅可引用类型 — 不依赖基础设施")
+
+@enduml

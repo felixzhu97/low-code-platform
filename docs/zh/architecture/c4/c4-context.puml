@@ -1,0 +1,27 @@
+@startuml c4-context-felix-zh
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 系统上下文 — Felix 低代码平台
+
+Person(designer, "页面设计师", "使用拖拽搭建页面")
+Person(developer, "开发者", "导出代码、对接数据与 API")
+Person(viewer, "终端用户", "访问已发布的页面体验")
+
+System(felix, "Felix 低代码平台", "可视化搭建、Schema、模板、预览，可选导出与 AI 辅助")
+
+System_Ext(llm, "大模型服务", "OpenAI、Anthropic、DeepSeek、Ollama 等")
+System_Ext(auth, "身份提供方", "OAuth2 / OIDC / 企业 SSO")
+System_Ext(storage, "对象存储", "素材、导出包、上传（S3 兼容）")
+System_Ext(cdn, "CDN / 边缘网络", "静态资源与缓存")
+
+Rel(designer, felix, "编辑页面", "HTTPS/WSS")
+Rel(developer, felix, "配置项目、导出", "HTTPS")
+Rel(viewer, felix, "访问发布内容", "HTTPS（托管后）")
+Rel(felix, llm, "AI 辅助生成（可选）", "HTTPS")
+Rel(felix, auth, "用户认证", "HTTPS")
+Rel(felix, storage, "读写文件", "HTTPS")
+Rel(felix, cdn, "分发前端资源", "HTTPS")
+
+@enduml

@@ -1,0 +1,14 @@
+@startuml c4-code-felix-zh
+skinparam classAttributeIconSize 0
+title 代码级示意 — 协作关系（`apps/web`）
+
+class "画布（表现层）" as Canvas
+class "创建组件用例（应用层）" as UC
+class "组件存储（基础设施）" as Store
+class "组件实体（领域）" as Comp
+
+Canvas --> UC : 调用
+UC --> Store : 经端口
+Store --> Comp : 持有状态
+
+@enduml

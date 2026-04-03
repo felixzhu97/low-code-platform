@@ -1,0 +1,30 @@
+@startuml c4-deployment-felix-zh
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 部署 — 参考拓扑（开发 / 生产可不同）
+
+Deployment_Node(client, "客户端", "macOS、Windows、Linux、移动浏览器") {
+    Deployment_Node(browser, "浏览器", " Chromium / WebKit / Firefox ") {
+        Container(webui, "SPA / SSR", "Next.js 产物 — Emotion + 静态资源")
+    }
+}
+
+Deployment_Node(hoster, "应用托管", "Kubernetes、虚拟机或 PaaS") {
+    Deployment_Node(compute, "计算") {
+        Container(next_runtime, "Next.js 运行时", "Node.js — SSR 与路由")
+        Container(fastapi_runtime, "FastAPI", "Uvicorn — REST API")
+    }
+    Deployment_Node(data, "数据层（可选）") {
+        ContainerDb(postgres, "PostgreSQL")
+        ContainerDb(redis, "Redis")
+    }
+}
+
+Rel(browser, next_runtime, "HTTPS", "SSR 与应用路由")
+Rel(browser, fastapi_runtime, "HTTPS", "REST API")
+Rel(fastapi_runtime, postgres, "SQL", "")
+Rel(fastapi_runtime, redis, "TCP", "")
+
+@enduml

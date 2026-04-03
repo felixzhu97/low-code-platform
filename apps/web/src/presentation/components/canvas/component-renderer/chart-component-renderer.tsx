@@ -11,6 +11,7 @@ import {
   RadialBarChart,
   TreemapChart,
 } from "@/presentation/components/charts";
+import { fallbackBox } from "./renderer-emotion";
 
 interface ChartComponentRendererProps {
   component: Component;
@@ -134,7 +135,7 @@ export function ChartComponentRenderer({
 
     default:
       return (
-        <div className="rounded border p-2" style={{ ...animationStyle }}>
+        <div css={fallbackBox} style={{ ...animationStyle }}>
           {component.name || component.type}
         </div>
       );

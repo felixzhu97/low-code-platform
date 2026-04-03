@@ -17,7 +17,7 @@ const nextConfig = {
     unoptimized: true,
   },
   compiler: {
-    // 移除 console.log（生产环境）
+    emotion: true,
     removeConsole:
       process.env.NODE_ENV === "production"
         ? {

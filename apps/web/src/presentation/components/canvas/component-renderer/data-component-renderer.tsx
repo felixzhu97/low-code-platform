@@ -36,7 +36,83 @@ import {
   Folder,
   FolderOpen,
 } from "lucide-react";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import { cn } from "@/application/services/utils";
+import {
+  tableShell,
+  treePanelShell,
+  tableHeaderBar,
+  overflowXAuto,
+  paginationBar,
+  fallbackBox,
+  mutedCenter,
+  flex1,
+  flexBetween,
+  flexRowGap1,
+  flexRowGap2,
+} from "./renderer-emotion";
+
+const ThNowrap = styled(TableHead)`
+  white-space: nowrap;
+`;
+
+const TdNowrap = styled(TableCell)`
+  white-space: nowrap;
+`;
+
+const TdEmpty = styled(TableCell)`
+  height: 6rem;
+  text-align: center;
+`;
+
+const PageNumBtn = styled(Button)`
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+`;
+
+const SelectSm = styled.select`
+  border-radius: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+`;
+
+const TreeSearchInput = styled.input`
+  width: 100%;
+  border-radius: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+`;
+
+const DataCardRoot = styled(Card)`
+  overflow: hidden;
+`;
+
+const DataCardHeader = styled(CardHeader)<{ $stats?: boolean }>`
+  ${(p) => p.$stats && "padding-bottom: 0.5rem;"}
+`;
+
+const DataCardTitle = styled(CardTitle)`
+  font-size: 1rem;
+  line-height: 1.5rem;
+`;
+
+const StatsValue = styled.div`
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+`;
+
+const DataCardFooter = styled(CardFooter)`
+  border-top: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.75rem 1.5rem;
+`;
 
 interface DataComponentRendererProps {
   component: Component;
@@ -59,36 +135,36 @@ export function DataComponentRenderer({
   switch (component.type) {
     case "data-table":
       return (
-        <div
-          className="w-full overflow-hidden rounded-md border"
-          style={{ ...animationStyle }}
-        >
+        <div css={tableShell} style={{ ...animationStyle }}>
           {props.title && (
-            <div className="bg-muted px-4 py-2 text-sm font-medium">
+            <div css={tableHeaderBar}>
               {props.title}
             </div>
           )}
-          <div className="overflow-x-auto">
+          <div css={overflowXAuto}>
             <Table>
               {data ? (
                 <>
                   <TableHeader>
                     <TableRow>
                       {(props.columns || []).map((column: TableColumn) => (
-                        <TableHead
-                          key={column.key}
-                          className="whitespace-nowrap"
-                        >
-                          <div className="flex items-center gap-1">
+                        <ThNowrap key={column.key}>
+                          <div css={flexRowGap1}>
                             {column.title}
                             {column.sortable && (
-                              <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                              <ArrowUpDown
+                                size={12}
+                                style={{ color: "hsl(var(--muted-foreground))" }}
+                              />
                             )}
                             {column.filterable && (
-                              <Filter className="h-3 w-3 text-muted-foreground" />
+                              <Filter
+                                size={12}
+                                style={{ color: "hsl(var(--muted-foreground))" }}
+                              />
                             )}
                           </div>
-                        </TableHead>
+                        </ThNowrap>
                       ))}
                     </TableRow>
                   </TableHeader>
@@ -108,24 +184,18 @@ export function DataComponentRenderer({
                           >
                             {(props.columns || []).map(
                               (column: TableColumn) => (
-                                <TableCell
-                                  key={column.key}
-                                  className="whitespace-nowrap"
-                                >
+                                <TdNowrap key={column.key}>
                                   {row[column.dataIndex]}
-                                </TableCell>
+                                </TdNowrap>
                               )
                             )}
                           </TableRow>
                         ))
                     ) : (
                       <TableRow>
-                        <TableCell
-                          colSpan={(props.columns || []).length}
-                          className="h-24 text-center"
-                        >
+                        <TdEmpty colSpan={(props.columns || []).length}>
                           无数据
-                        </TableCell>
+                        </TdEmpty>
                       </TableRow>
                     )}
                   </TableBody>
@@ -135,23 +205,17 @@ export function DataComponentRenderer({
                   <TableHeader>
                     <TableRow>
                       {(props.columns || []).map((column: TableColumn) => (
-                        <TableHead
-                          key={column.key}
-                          className="whitespace-nowrap"
-                        >
+                        <ThNowrap key={column.key}>
                           {column.title}
-                        </TableHead>
+                        </ThNowrap>
                       ))}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
-                      <TableCell
-                        colSpan={(props.columns || []).length}
-                        className="h-24 text-center"
-                      >
+                      <TdEmpty colSpan={(props.columns || []).length}>
                         请绑定数据源
-                      </TableCell>
+                      </TdEmpty>
                     </TableRow>
                   </TableBody>
                 </>
@@ -159,21 +223,27 @@ export function DataComponentRenderer({
             </Table>
           </div>
           {props.pagination && (
-            <div className="flex items-center justify-between border-t bg-muted/50 px-4 py-2">
-              <div className="text-sm text-muted-foreground">
+            <div css={paginationBar}>
+              <div
+                css={css`
+                  font-size: 0.875rem;
+                  line-height: 1.25rem;
+                  color: hsl(var(--muted-foreground));
+                `}
+              >
                 共{" "}
                 {data && Array.isArray(data)
                   ? data.length
                   : 0}{" "}
                 条
               </div>
-              <div className="flex items-center gap-1">
+              <div css={flexRowGap1}>
                 <Button variant="outline" size="sm" disabled>
                   上一页
                 </Button>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                <PageNumBtn variant="outline" size="sm">
                   1
-                </Button>
+                </PageNumBtn>
                 <Button variant="outline" size="sm" disabled>
                   下一页
                 </Button>
@@ -185,16 +255,19 @@ export function DataComponentRenderer({
 
     case "data-list":
       return (
-        <div
-          className="w-full overflow-hidden rounded-md border"
-          style={{ ...animationStyle }}
-        >
+        <div css={tableShell} style={{ ...animationStyle }}>
           {props.title && (
-            <div className="bg-muted px-4 py-2 text-sm font-medium">
+            <div css={tableHeaderBar}>
               {props.title}
             </div>
           )}
-          <div className="divide-y">
+          <div
+            css={css`
+              & > * + * {
+                border-top: 1px solid hsl(var(--border));
+              }
+            `}
+          >
             {data &&
             Array.isArray(data) &&
             data.length > 0 ? (
@@ -203,18 +276,24 @@ export function DataComponentRenderer({
                 .map((item: any, index: number) => (
                   <div
                     key={index}
-                    className={cn(
-                      "flex p-4",
-                      props.itemLayout === "vertical" && "flex-col",
-                      props.itemLayout !== "vertical" && "items-center"
-                    )}
+                    css={css`
+                      display: flex;
+                      padding: 1rem;
+                      ${props.itemLayout === "vertical"
+                        ? "flex-direction: column;"
+                        : "align-items: center;"}
+                    `}
                   >
                     {props.listType === "avatar" && (
                       <div
-                        className={cn(
-                          "mr-4",
-                          props.itemLayout === "vertical" && "mb-2"
-                        )}
+                        css={css`
+                          margin-right: 1rem;
+                          ${props.itemLayout === "vertical" &&
+                          `
+                            margin-right: 0;
+                            margin-bottom: 0.5rem;
+                          `}
+                        `}
                       >
                         <Avatar>
                           <AvatarImage src={item.avatar || ""} />
@@ -224,22 +303,42 @@ export function DataComponentRenderer({
                         </Avatar>
                       </div>
                     )}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">
+                    <div css={flex1}>
+                      <div css={flexBetween}>
+                        <div css={css({ fontWeight: 500 })}>
                           {item.title || item.name || `项目 ${index + 1}`}
                         </div>
                         {props.showExtra && (
-                          <div className="text-sm text-muted-foreground">
+                          <div
+                            css={css`
+                              font-size: 0.875rem;
+                              line-height: 1.25rem;
+                              color: hsl(var(--muted-foreground));
+                            `}
+                          >
                             {item.date || "2023-01-01"}
                           </div>
                         )}
                       </div>
-                      <div className="mt-1 text-sm text-muted-foreground">
+                      <div
+                        css={css`
+                          margin-top: 0.25rem;
+                          font-size: 0.875rem;
+                          line-height: 1.25rem;
+                          color: hsl(var(--muted-foreground));
+                        `}
+                      >
                         {item.description || "这是一个列表项描述"}
                       </div>
                       {props.showActions && (
-                        <div className="mt-2 flex items-center gap-2">
+                        <div
+                          css={css`
+                            margin-top: 0.5rem;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                          `}
+                        >
                           <Button variant="ghost" size="sm">
                             查看
                           </Button>
@@ -252,8 +351,19 @@ export function DataComponentRenderer({
                   </div>
                 ))
             ) : (
-              <div className="flex h-24 items-center justify-center">
-                <p className="text-muted-foreground">
+              <div
+                css={css`
+                  display: flex;
+                  height: 6rem;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >
+                <p
+                  css={css`
+                    color: hsl(var(--muted-foreground));
+                  `}
+                >
                   {data ? "无数据" : "请绑定数据源"}
                 </p>
               </div>
@@ -264,14 +374,14 @@ export function DataComponentRenderer({
 
     case "data-card":
       return (
-        <Card className="overflow-hidden" style={{ ...animationStyle }}>
-          <CardHeader className={cn(props.cardType === "stats" && "pb-2")}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+        <DataCardRoot style={{ ...animationStyle }}>
+          <DataCardHeader $stats={props.cardType === "stats"}>
+            <div css={flexBetween}>
+              <div css={flexRowGap2}>
                 <div>
-                  <CardTitle className="text-base">
+                  <DataCardTitle>
                     {props.title || "数据卡片"}
-                  </CardTitle>
+                  </DataCardTitle>
                   {props.cardType !== "stats" && (
                     <CardDescription>
                       {data?.description || "数据卡片描述"}
@@ -280,19 +390,32 @@ export function DataComponentRenderer({
                 </div>
               </div>
             </div>
-          </CardHeader>
+          </DataCardHeader>
           <CardContent>
             {props.cardType === "stats" ? (
               <div>
-                <div className="text-3xl font-bold">
+                <StatsValue>
                   {data?.value || data?.count || 0}
-                </div>
+                </StatsValue>
                 {props.showTrend && (
-                  <div className="mt-1 flex items-center gap-1">
+                  <div
+                    css={css`
+                      margin-top: 0.25rem;
+                      display: flex;
+                      align-items: center;
+                      gap: 0.25rem;
+                    `}
+                  >
                     <Badge variant="outline" className="text-emerald-500">
                       +{data?.increase || "12.5"}%
                     </Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <span
+                      css={css`
+                        font-size: 0.75rem;
+                        line-height: 1rem;
+                        color: hsl(var(--muted-foreground));
+                      `}
+                    >
                       vs 上期
                     </span>
                   </div>
@@ -301,28 +424,53 @@ export function DataComponentRenderer({
             ) : (
               <div>
                 {data ? (
-                  <div className="space-y-2">
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-direction: column;
+                      gap: 0.5rem;
+                    `}
+                  >
                     {Object.entries(data).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="text-sm font-medium">{key}:</span>
-                        <span className="text-sm">{String(value)}</span>
+                      <div
+                        key={key}
+                        css={css`
+                          display: flex;
+                          justify-content: space-between;
+                        `}
+                      >
+                        <span
+                          css={css`
+                            font-size: 0.875rem;
+                            font-weight: 500;
+                          `}
+                        >
+                          {key}:
+                        </span>
+                        <span css={css({ fontSize: "0.875rem" })}>
+                          {String(value)}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
-                    请绑定数据源
-                  </div>
+                  <div css={mutedCenter}>请绑定数据源</div>
                 )}
               </div>
             )}
           </CardContent>
-          <CardFooter className="border-t bg-muted/50 px-6 py-3">
-            <div className="text-xs text-muted-foreground">
+          <DataCardFooter>
+            <div
+              css={css`
+                font-size: 0.75rem;
+                line-height: 1rem;
+                color: hsl(var(--muted-foreground));
+              `}
+            >
               最后更新: {data?.updateTime || "2023-01-01 12:00:00"}
             </div>
-          </CardFooter>
-        </Card>
+          </DataCardFooter>
+        </DataCardRoot>
       );
 
     case "pagination":
@@ -369,7 +517,12 @@ export function DataComponentRenderer({
 
       return (
         <div
-          className="flex flex-col items-center gap-4"
+          css={css`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+          `}
           style={{ ...animationStyle }}
         >
           <Pagination>
@@ -409,25 +562,28 @@ export function DataComponentRenderer({
           </Pagination>
 
           {props.showTotal && (
-            <div className="text-sm text-muted-foreground">
+            <div
+              css={css`
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                color: hsl(var(--muted-foreground));
+              `}
+            >
               共 {props.total || totalPages * pageSize} 条记录，第 {currentPage}{" "}
               / {totalPages} 页
             </div>
           )}
 
           {showSizeChanger && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm">每页显示</span>
-              <select
-                className="rounded border px-2 py-1 text-sm"
-                value={pageSize}
-              >
+            <div css={flexRowGap2}>
+              <span css={css({ fontSize: "0.875rem" })}>每页显示</span>
+              <SelectSm value={pageSize}>
                 <option value={10}>10</option>
                 <option value={20}>20</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
-              </select>
-              <span className="text-sm">条</span>
+              </SelectSm>
+              <span css={css({ fontSize: "0.875rem" })}>条</span>
             </div>
           )}
         </div>
@@ -441,43 +597,76 @@ export function DataComponentRenderer({
         const isDisabled = node.disabled || false;
 
         return (
-          <div key={node.id} className="select-none">
+          <div key={node.id} css={css({ userSelect: "none" })}>
             <div
-              className={cn(
-                "flex items-center gap-1 px-2 py-1 hover:bg-muted/50 cursor-pointer rounded-sm",
-                isSelected && "bg-primary/10 text-primary",
-                isDisabled && "opacity-50 cursor-not-allowed",
-                level > 0 && "ml-4"
-              )}
+              css={css`
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.125rem;
+                cursor: pointer;
+                &:hover {
+                  background-color: hsl(var(--muted) / 0.5);
+                }
+                ${isSelected &&
+                `
+                  background-color: hsl(var(--primary) / 0.1);
+                  color: hsl(var(--primary));
+                `}
+                ${isDisabled &&
+                `
+                  opacity: 0.5;
+                  cursor: not-allowed;
+                `}
+                ${level > 0 && "margin-left: 1rem;"}
+              `}
               style={{ paddingLeft: `${level * 16 + 8}px` }}
             >
               {hasChildren ? (
                 <button
-                  className="p-0.5 hover:bg-muted rounded"
+                  type="button"
+                  css={css`
+                    padding: 0.125rem;
+                    border: none;
+                    background: transparent;
+                    border-radius: 0.25rem;
+                    cursor: pointer;
+                    &:hover {
+                      background-color: hsl(var(--muted));
+                    }
+                  `}
                   disabled={isDisabled}
                 >
                   {isExpanded ? (
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown size={12} />
                   ) : (
-                    <ChevronRight className="h-3 w-3" />
+                    <ChevronRight size={12} />
                   )}
                 </button>
               ) : (
-                <div className="w-4" />
+                <div css={css({ width: "1rem" })} />
               )}
 
-              <div className="flex items-center gap-1 flex-1">
+              <div
+                css={css`
+                  display: flex;
+                  align-items: center;
+                  gap: 0.25rem;
+                  flex: 1;
+                `}
+              >
                 {node.icon === "folder" ? (
                   isExpanded ? (
-                    <FolderOpen className="h-4 w-4 text-blue-500" />
+                    <FolderOpen size={16} color="rgb(59 130 246)" />
                   ) : (
-                    <Folder className="h-4 w-4 text-blue-500" />
+                    <Folder size={16} color="rgb(59 130 246)" />
                   )
                 ) : node.icon === "file" ? (
-                  <File className="h-4 w-4 text-gray-500" />
+                  <File size={16} color="rgb(107 114 128)" />
                 ) : null}
 
-                <span className="text-sm">{node.title}</span>
+                <span css={css({ fontSize: "0.875rem" })}>{node.title}</span>
               </div>
             </div>
 
@@ -551,22 +740,37 @@ export function DataComponentRenderer({
       const treeData = data || defaultTreeData;
 
       return (
-        <div
-          className="w-full overflow-hidden rounded-md border bg-background"
-          style={{ ...animationStyle }}
-        >
+        <div css={treePanelShell} style={{ ...animationStyle }}>
           {props.title && (
-            <div className="bg-muted px-4 py-2 text-sm font-medium border-b">
+            <div
+              css={[
+                tableHeaderBar,
+                css`
+                  border-bottom: 1px solid hsl(var(--border));
+                `,
+              ]}
+            >
               {props.title}
             </div>
           )}
 
-          <div className="p-2">
+          <div css={css({ padding: "0.5rem" })}>
             {Array.isArray(treeData) && treeData.length > 0 ? (
               treeData.map((node) => renderTreeNode(node))
             ) : (
-              <div className="flex h-24 items-center justify-center">
-                <p className="text-muted-foreground">
+              <div
+                css={css`
+                  display: flex;
+                  height: 6rem;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >
+                <p
+                  css={css`
+                    color: hsl(var(--muted-foreground));
+                  `}
+                >
                   {componentData ? "无数据" : "请绑定数据源"}
                 </p>
               </div>
@@ -574,12 +778,13 @@ export function DataComponentRenderer({
           </div>
 
           {props.showSearch && (
-            <div className="border-t p-2">
-              <input
-                type="text"
-                placeholder="搜索节点..."
-                className="w-full rounded border px-2 py-1 text-sm"
-              />
+            <div
+              css={css`
+                border-top: 1px solid hsl(var(--border));
+                padding: 0.5rem;
+              `}
+            >
+              <TreeSearchInput type="text" placeholder="搜索节点..." />
             </div>
           )}
         </div>
@@ -587,7 +792,7 @@ export function DataComponentRenderer({
 
     default:
       return (
-        <div className="rounded border p-2" style={{ ...animationStyle }}>
+        <div css={fallbackBox} style={{ ...animationStyle }}>
           {component.name || component.type}
         </div>
       );

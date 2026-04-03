@@ -33,8 +33,169 @@ import {
   TooltipTrigger,
 } from "@/presentation/components/ui";
 import { ChevronDown } from "lucide-react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { cn } from "@/application/services/utils";
 import { ComponentRenderer } from "./index";
+import { fallbackBox, mutedCenter } from "./renderer-emotion";
+
+const LayoutTabsList = styled(TabsList)`
+  width: 100%;
+`;
+
+const LayoutTabTrigger = styled(TabsTrigger)`
+  flex: 1;
+`;
+
+const LayoutTabsContent = styled(TabsContent)`
+  padding: 1rem;
+`;
+
+const CollapseTriggerButton = styled(Button)`
+  width: 100%;
+  justify-content: space-between;
+  padding: 1rem;
+`;
+
+const CollapsePanel = styled(CollapsibleContent)`
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+`;
+
+const DialogSection = styled.div`
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+`;
+
+const DrawerSection = styled.div`
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+`;
+
+const PopoverWide = styled(PopoverContent)`
+  width: 20rem;
+`;
+
+const PopoverStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const PopoverTitle = styled.h4`
+  font-weight: 500;
+  line-height: 1;
+`;
+
+const CardPlaceholderLabel = styled.div`
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: white;
+`;
+
+const LayoutCardContentPad = styled(CardContent)`
+  padding: 1rem;
+`;
+
+const CardTitleBar = styled.div<{ $onGradient?: boolean }>`
+  border-bottom: 1px solid
+    ${(p) => (p.$onGradient ? "rgb(255 255 255 / 0.2)" : "hsl(var(--border))")};
+  padding: 1rem;
+  font-weight: 500;
+  transition: color 200ms;
+  ${(p) => p.$onGradient && "color: white;"}
+`;
+
+const CardEmptyHint = styled.div<{ $onGradient?: boolean }>`
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: color 200ms;
+  color: ${(p) =>
+    p.$onGradient ? "rgb(255 255 255 / 0.8)" : "hsl(var(--muted-foreground))"};
+`;
+
+const GridLikeEmpty = styled.div<{ $dark?: boolean }>`
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: ${(p) => (p.$dark ? "#374151" : "hsl(var(--muted-foreground))")};
+`;
+
+const SplitFirstPanel = styled.div<{ $row: boolean }>`
+  overflow: hidden;
+  ${(p) =>
+    p.$row
+      ? "border-right: 1px dashed #d1d5db;"
+      : "border-bottom: 1px dashed #d1d5db;"}
+`;
+
+const SplitRestPanel = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
+
+const SplitPlaceholder = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ResponsiveChrome = styled.div`
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.5rem;
+`;
+
+const ResponsiveLabel = styled.span`
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+`;
+
+const DotsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const DeviceDot = styled.div`
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--muted));
+`;
+
+const PopoverDesc = styled.p`
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const PopoverChildrenWrap = styled.div`
+  margin-top: 1rem;
+`;
+
+const DialogContentSized = styled(DialogContent)`
+  @media (min-width: 640px) {
+    max-width: 425px;
+  }
+`;
+
+const GradientCardBlock = styled(Card)`
+  padding: 1rem;
+`;
 
 interface LayoutComponentRendererProps {
   component: Component;
@@ -67,7 +228,6 @@ export function LayoutComponentRenderer({
   themeStyle,
   animationStyle,
 }: LayoutComponentRendererProps) {
-  // 渲染子组件的通用函数
   const renderChildComponent = (
     child: Component,
     additionalProps: any = {}
@@ -83,7 +243,7 @@ export function LayoutComponentRenderer({
       dropTargetId={dropTargetId}
       onSelectComponent={onSelectComponent}
       onMouseDown={onMouseDown}
-      componentData={null} // 这里可以根据需要传递数据
+      componentData={null}
       {...additionalProps}
     />
   );
@@ -145,29 +305,19 @@ export function LayoutComponentRenderer({
           }}
         >
           {props.title && (
-            <div
-              className={cn(
-                "border-b p-4 font-medium transition-colors duration-200",
-                props.gradient && "border-white/20 text-white"
-              )}
-            >
+            <CardTitleBar $onGradient={!!props.gradient}>
               {props.title}
-            </div>
+            </CardTitleBar>
           )}
-          <CardContent className="p-4">
+          <LayoutCardContentPad>
             {childComponents.length > 0 ? (
               childComponents.map((child) => renderChildWrapper(child))
             ) : (
-              <div
-                className={cn(
-                  "text-center text-sm transition-colors duration-200",
-                  props.gradient ? "text-white/80" : "text-muted-foreground"
-                )}
-              >
+              <CardEmptyHint $onGradient={!!props.gradient}>
                 卡片内容
-              </div>
+              </CardEmptyHint>
             )}
-          </CardContent>
+          </LayoutCardContentPad>
         </Card>
       );
 
@@ -201,14 +351,9 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div
-              className={cn(
-                "text-center text-sm transition-colors duration-200",
-                props.gradient ? "text-gray-700" : "text-muted-foreground"
-              )}
-            >
+            <GridLikeEmpty $dark={!!props.gradient}>
               网格布局
-            </div>
+            </GridLikeEmpty>
           )}
         </div>
       );
@@ -244,14 +389,9 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div
-              className={cn(
-                "text-center text-sm transition-colors duration-200",
-                props.gradient ? "text-gray-700" : "text-muted-foreground"
-              )}
-            >
+            <GridLikeEmpty $dark={!!props.gradient}>
               弹性布局
-            </div>
+            </GridLikeEmpty>
           )}
         </div>
       );
@@ -272,8 +412,8 @@ export function LayoutComponentRenderer({
           }}
           data-component-id={component.id}
         >
-          <div
-            className="border-r border-dashed border-gray-300 overflow-hidden"
+          <SplitFirstPanel
+            $row={props.direction === "horizontal"}
             style={{
               width:
                 props.direction === "horizontal"
@@ -299,23 +439,23 @@ export function LayoutComponentRenderer({
                 width: "100%",
               })
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+              <SplitPlaceholder>
                 左侧/顶部区域
-              </div>
+              </SplitPlaceholder>
             )}
-          </div>
-          <div className="flex-1 overflow-hidden">
+          </SplitFirstPanel>
+          <SplitRestPanel>
             {childComponents.length > 1 && childComponents[1] ? (
               renderChildWrapper(childComponents[1], {
                 height: "100%",
                 width: "100%",
               })
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+              <SplitPlaceholder>
                 右侧/底部区域
-              </div>
+              </SplitPlaceholder>
             )}
-          </div>
+          </SplitRestPanel>
         </div>
       );
 
@@ -335,33 +475,33 @@ export function LayoutComponentRenderer({
           data-component-id={component.id}
         >
           <Tabs defaultValue={props.defaultTab || "tab-1"}>
-            <TabsList className="w-full">
+            <LayoutTabsList>
               {(
                 props.tabs || [
                   { id: "tab-1", label: "标签1" },
                   { id: "tab-2", label: "标签2" },
                 ]
               ).map((tab: any) => (
-                <TabsTrigger key={tab.id} value={tab.id} className="flex-1">
+                <LayoutTabTrigger key={tab.id} value={tab.id}>
                   {tab.label}
-                </TabsTrigger>
+                </LayoutTabTrigger>
               ))}
-            </TabsList>
+            </LayoutTabsList>
             {(
               props.tabs || [
                 { id: "tab-1", label: "标签1", content: "标签1内容" },
                 { id: "tab-2", label: "标签2", content: "标签2内容" },
               ]
             ).map((tab: any, index: number) => (
-              <TabsContent key={tab.id} value={tab.id} className="p-4">
+              <LayoutTabsContent key={tab.id} value={tab.id}>
                 {childComponents[index] ? (
                   renderChildWrapper(childComponents[index])
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div css={mutedCenter}>
                     {tab.content || `${tab.label}内容`}
                   </div>
                 )}
-              </TabsContent>
+              </LayoutTabsContent>
             ))}
           </Tabs>
         </div>
@@ -406,15 +546,15 @@ export function LayoutComponentRenderer({
             ))
           ) : (
             <>
-              <Card className="p-4 gradient-primary">
-                <div className="text-center text-sm text-white">卡片1</div>
-              </Card>
-              <Card className="p-4 gradient-secondary">
-                <div className="text-center text-sm text-white">卡片2</div>
-              </Card>
-              <Card className="p-4 gradient-success">
-                <div className="text-center text-sm text-white">卡片3</div>
-              </Card>
+              <GradientCardBlock className="gradient-primary">
+                <CardPlaceholderLabel>卡片1</CardPlaceholderLabel>
+              </GradientCardBlock>
+              <GradientCardBlock className="gradient-secondary">
+                <CardPlaceholderLabel>卡片2</CardPlaceholderLabel>
+              </GradientCardBlock>
+              <GradientCardBlock className="gradient-success">
+                <CardPlaceholderLabel>卡片3</CardPlaceholderLabel>
+              </GradientCardBlock>
             </>
           )}
         </div>
@@ -435,18 +575,18 @@ export function LayoutComponentRenderer({
           }}
           data-component-id={component.id}
         >
-          <div className="mb-2 flex items-center justify-between border-b pb-2">
-            <span className="text-xs font-medium">响应式容器</span>
-            <div className="flex items-center gap-1">
-              <div className="h-2 w-2 rounded-full bg-muted"></div>
-              <div className="h-2 w-2 rounded-full bg-muted"></div>
-              <div className="h-2 w-2 rounded-full bg-muted"></div>
-            </div>
-          </div>
+          <ResponsiveChrome>
+            <ResponsiveLabel>响应式容器</ResponsiveLabel>
+            <DotsRow>
+              <DeviceDot />
+              <DeviceDot />
+              <DeviceDot />
+            </DotsRow>
+          </ResponsiveChrome>
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">
+            <div css={mutedCenter}>
               响应式内容
             </div>
           )}
@@ -466,7 +606,7 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">
+            <div css={mutedCenter}>
               容器
             </div>
           )}
@@ -486,7 +626,7 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">行</div>
+            <div css={mutedCenter}>行</div>
           )}
         </div>
       );
@@ -504,7 +644,7 @@ export function LayoutComponentRenderer({
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
           ) : (
-            <div className="text-center text-sm text-muted-foreground">列</div>
+            <div css={mutedCenter}>列</div>
           )}
         </div>
       );
@@ -526,24 +666,27 @@ export function LayoutComponentRenderer({
         >
           <Collapsible defaultOpen={props.defaultOpen || false}>
             <CollapsibleTrigger asChild>
-              <Button
+              <CollapseTriggerButton
                 variant="ghost"
-                className="w-full justify-between p-4"
                 disabled={isPreviewMode}
               >
-                <span className="font-medium">{props.title || "折叠面板"}</span>
-                <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-              </Button>
+                <span css={css({ fontWeight: 500 })}>
+                  {props.title || "折叠面板"}
+                </span>
+                <ChevronDown
+                  className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180"
+                />
+              </CollapseTriggerButton>
             </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4">
+            <CollapsePanel>
               {childComponents.length > 0 ? (
                 childComponents.map((child) => renderChildWrapper(child))
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
+                <div css={mutedCenter}>
                   折叠面板内容
                 </div>
               )}
-            </CollapsibleContent>
+            </CollapsePanel>
           </Collapsible>
         </div>
       );
@@ -564,33 +707,33 @@ export function LayoutComponentRenderer({
           data-component-id={component.id}
         >
           <Tabs defaultValue={props.defaultTab || "tab-1"}>
-            <TabsList className="w-full">
+            <LayoutTabsList>
               {(
                 props.tabs || [
                   { id: "tab-1", label: "标签1" },
                   { id: "tab-2", label: "标签2" },
                 ]
               ).map((tab: any) => (
-                <TabsTrigger key={tab.id} value={tab.id} className="flex-1">
+                <LayoutTabTrigger key={tab.id} value={tab.id}>
                   {tab.label}
-                </TabsTrigger>
+                </LayoutTabTrigger>
               ))}
-            </TabsList>
+            </LayoutTabsList>
             {(
               props.tabs || [
                 { id: "tab-1", label: "标签1", content: "标签1内容" },
                 { id: "tab-2", label: "标签2", content: "标签2内容" },
               ]
             ).map((tab: any, index: number) => (
-              <TabsContent key={tab.id} value={tab.id} className="p-4">
+              <LayoutTabsContent key={tab.id} value={tab.id}>
                 {childComponents[index] ? (
                   renderChildWrapper(childComponents[index])
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div css={mutedCenter}>
                     {tab.content || `${tab.label}内容`}
                   </div>
                 )}
-              </TabsContent>
+              </LayoutTabsContent>
             ))}
           </Tabs>
         </div>
@@ -617,23 +760,23 @@ export function LayoutComponentRenderer({
                 {props.triggerText || "打开模态框"}
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContentSized>
               <DialogHeader>
                 <DialogTitle>{props.title || "模态框标题"}</DialogTitle>
                 {props.description && (
                   <DialogDescription>{props.description}</DialogDescription>
                 )}
               </DialogHeader>
-              <div className="py-4">
+              <DialogSection>
                 {childComponents.length > 0 ? (
                   childComponents.map((child) => renderChildWrapper(child))
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div css={mutedCenter}>
                     模态框内容
                   </div>
                 )}
-              </div>
-            </DialogContent>
+              </DialogSection>
+            </DialogContentSized>
           </Dialog>
         </div>
       );
@@ -666,15 +809,15 @@ export function LayoutComponentRenderer({
                   <DrawerDescription>{props.description}</DrawerDescription>
                 )}
               </DrawerHeader>
-              <div className="px-4 pb-4">
+              <DrawerSection>
                 {childComponents.length > 0 ? (
                   childComponents.map((child) => renderChildWrapper(child))
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div css={mutedCenter}>
                     抽屉内容
                   </div>
                 )}
-              </div>
+              </DrawerSection>
             </DrawerContent>
           </Drawer>
         </div>
@@ -701,27 +844,27 @@ export function LayoutComponentRenderer({
                 {props.triggerText || "打开弹出框"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="space-y-2">
-                <h4 className="font-medium leading-none">
+            <PopoverWide>
+              <PopoverStack>
+                <PopoverTitle>
                   {props.title || "弹出框标题"}
-                </h4>
+                </PopoverTitle>
                 {props.description && (
-                  <p className="text-sm text-muted-foreground">
+                  <PopoverDesc>
                     {props.description}
-                  </p>
+                  </PopoverDesc>
                 )}
-              </div>
-              <div className="mt-4">
+              </PopoverStack>
+              <PopoverChildrenWrap>
                 {childComponents.length > 0 ? (
                   childComponents.map((child) => renderChildWrapper(child))
                 ) : (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div css={mutedCenter}>
                     弹出框内容
                   </div>
                 )}
-              </div>
-            </PopoverContent>
+              </PopoverChildrenWrap>
+            </PopoverWide>
           </Popover>
         </div>
       );
@@ -758,7 +901,7 @@ export function LayoutComponentRenderer({
 
     default:
       return (
-        <div className="rounded border p-2" style={{ ...animationStyle }}>
+        <div css={fallbackBox} style={{ ...animationStyle }}>
           {component.name || component.type}
         </div>
       );

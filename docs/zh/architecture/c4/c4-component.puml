@@ -1,0 +1,29 @@
+@startuml c4-component-web-felix-zh
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 组件图 — Web 应用（`apps/web`）
+
+Container_Boundary(web, "Web 应用") {
+    Component(shell, "编辑器外壳", "React、Emotion", "`page.tsx`、侧栏、加载器、工具栏")
+    Component(canvas, "画布与面板", "React、Emotion、React DnD", "`canvas`、`component-panel`、`properties-panel`")
+    Component(renderers, "组件渲染器", "React、Emotion", "基础、布局、表单、数据、图表、schema")
+    Component(app, "应用层", "TypeScript", "用例、应用服务、端口")
+    Component(domain, "领域层", "TypeScript", "实体、值对象、领域服务")
+    Component(infra, "基础设施适配", "TypeScript", "Zustand、仓储实现、外部 I/O")
+    Component(packages, "Monorepo 包", "TypeScript", "`packages/*` 共享工具与契约")
+}
+
+Rel(shell, canvas, "承载")
+Rel(canvas, app, "调度动作、调用用例")
+Rel(renderers, app, "读取 Schema 与绑定")
+Rel(shell, app, "协调编辑状态")
+Rel(app, domain, "使用")
+Rel(app, infra, "经端口依赖")
+Rel(infra, domain, "持久化映射")
+Rel(infra, packages, "引用")
+Rel(shell, packages, "引用")
+Rel(renderers, packages, "引用")
+
+@enduml

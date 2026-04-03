@@ -100,7 +100,7 @@ const result = await generator.generatePage({
 });
 ```
 
-See [docs/local-llm-setup.md](../../docs/local-llm-setup.md) in the repo root for Ollama setup.
+See [docs/en/local-llm-setup.md](../../docs/en/local-llm-setup.md) (English) or [docs/zh/local-llm-setup.md](../../docs/zh/local-llm-setup.md) (中文) for Ollama setup.
 
 ## API overview
 

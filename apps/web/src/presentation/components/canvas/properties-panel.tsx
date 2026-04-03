@@ -29,9 +29,105 @@ import {
   DataSourceSelector,
   BoundDataEditor,
 } from "@/presentation/components/data-binding";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+
+const panelShell = css`
+  width: 20rem;
+  border-left: 1px solid hsl(var(--border));
+`;
+
+const padded = css`
+  padding: 1rem;
+`;
+
+const panelTitle = css`
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+`;
+
+const mutedLead = css`
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const mutedLeadSpaced = css`
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const sectionGrid = css`
+  display: grid;
+  gap: 1rem;
+`;
+
+const fieldGrid = css`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const flexRow = css`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const dataStack = css`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const bindStatusRow = css`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: hsl(var(--muted-foreground));
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+`;
+
+const bindStatusDot = css`
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: rgb(34 197 94);
+`;
+
+const valueSpan8 = css`
+  width: 2rem;
+  text-align: right;
+`;
+
+const valueSpan12 = css`
+  width: 3rem;
+  text-align: right;
+`;
+
+const PropsScrollArea = styled(ScrollArea)`
+  height: calc(100vh - 12rem);
+`;
+
+const FullTabsList = styled(TabsList)`
+  width: 100%;
+`;
+
+const EqualTabTrigger = styled(TabsTrigger)`
+  flex: 1;
+`;
+
+const FlexSlider = styled(Slider)`
+  flex: 1;
+`;
 
 export function PropertiesPanel() {
-  // 从 store 获取状态
   const { selectedComponent, updateComponent } = useComponentStore();
   const [properties, setProperties] = useState<any>({});
 
@@ -201,10 +297,10 @@ export function PropertiesPanel() {
 
   if (!selectedComponent) {
     return (
-      <div className="w-80 border-l">
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">属性面板</h2>
-          <p className="mt-4 text-sm text-muted-foreground">
+      <div css={panelShell}>
+        <div css={padded}>
+          <h2 css={panelTitle}>属性面板</h2>
+          <p css={mutedLeadSpaced}>
             选择一个组件来编辑其属性
           </p>
         </div>
@@ -213,37 +309,37 @@ export function PropertiesPanel() {
   }
 
   return (
-    <div className="w-80 border-l">
-      <div className="p-4">
-        <h2 className="text-lg font-semibold">属性面板</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <div css={panelShell}>
+      <div css={padded}>
+        <h2 css={panelTitle}>属性面板</h2>
+        <p css={mutedLead}>
           {selectedComponent.name} ({selectedComponent.id})
         </p>
       </div>
       <Tabs defaultValue="properties">
-        <TabsList className="w-full">
-          <TabsTrigger value="properties" className="flex-1">
+        <FullTabsList>
+          <EqualTabTrigger value="properties">
             属性
-          </TabsTrigger>
-          <TabsTrigger value="data" className="flex-1">
+          </EqualTabTrigger>
+          <EqualTabTrigger value="data">
             数据
-          </TabsTrigger>
-          <TabsTrigger value="events" className="flex-1">
+          </EqualTabTrigger>
+          <EqualTabTrigger value="events">
             事件
-          </TabsTrigger>
-        </TabsList>
+          </EqualTabTrigger>
+        </FullTabsList>
 
         <TabsContent value="properties">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="p-4">
+          <PropsScrollArea>
+            <div css={padded}>
               <Accordion type="single" collapsible defaultValue="basic">
                 <AccordionItem value="basic">
                   <AccordionTrigger>基本属性</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid gap-4">
+                    <div css={sectionGrid}>
                       {selectedComponent.type === "text" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="content">文本内容</Label>
                             <Input
                               id="content"
@@ -253,10 +349,10 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="fontSize">字体大小</Label>
-                            <div className="flex items-center gap-2">
-                              <Slider
+                            <div css={flexRow}>
+                              <FlexSlider
                                 id="fontSize"
                                 min={12}
                                 max={36}
@@ -265,14 +361,13 @@ export function PropertiesPanel() {
                                 onValueChange={(value) =>
                                   handlePropertyChange("fontSize", value[0])
                                 }
-                                className="flex-1"
                               />
-                              <span className="w-8 text-right">
+                              <span css={valueSpan8}>
                                 {properties.fontSize || 16}px
                               </span>
                             </div>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="fontWeight">字体粗细</Label>
                             <Select
                               value={properties.fontWeight || "normal"}
@@ -290,7 +385,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="color">文本颜色</Label>
                             <ColorPicker
                               color={properties.color || "#000000"}
@@ -299,7 +394,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="alignment">对齐方式</Label>
                             <Select
                               value={properties.alignment || "left"}
@@ -317,10 +412,10 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="lineHeight">行高</Label>
-                            <div className="flex items-center gap-2">
-                              <Slider
+                            <div css={flexRow}>
+                              <FlexSlider
                                 id="lineHeight"
                                 min={1}
                                 max={3}
@@ -329,14 +424,13 @@ export function PropertiesPanel() {
                                 onValueChange={(value) =>
                                   handlePropertyChange("lineHeight", value[0])
                                 }
-                                className="flex-1"
                               />
-                              <span className="w-8 text-right">
+                              <span css={valueSpan8}>
                                 {properties.lineHeight || 1.5}
                               </span>
                             </div>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="textTransform">文本转换</Label>
                             <Select
                               value={properties.textTransform || "none"}
@@ -357,7 +451,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="textDecoration">文本装饰</Label>
                             <Select
                               value={properties.textDecoration || "none"}
@@ -385,7 +479,7 @@ export function PropertiesPanel() {
 
                       {selectedComponent.type === "button" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="text">按钮文本</Label>
                             <Input
                               id="text"
@@ -395,7 +489,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="variant">样式变体</Label>
                             <Select
                               value={properties.variant || "default"}
@@ -418,7 +512,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="size">尺寸</Label>
                             <Select
                               value={properties.size || "default"}
@@ -436,7 +530,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="disabled">禁用</Label>
                             <Switch
                               id="disabled"
@@ -446,7 +540,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="fullWidth">全宽</Label>
                             <Switch
                               id="fullWidth"
@@ -456,7 +550,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="icon">图标</Label>
                             <Select
                               value={properties.icon || ""}
@@ -477,7 +571,7 @@ export function PropertiesPanel() {
                             </Select>
                           </div>
                           {properties.icon && (
-                            <div className="grid gap-2">
+                            <div css={fieldGrid}>
                               <Label htmlFor="iconPosition">图标位置</Label>
                               <Select
                                 value={properties.iconPosition || "left"}
@@ -500,7 +594,7 @@ export function PropertiesPanel() {
 
                       {selectedComponent.type === "image" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="src">图片地址</Label>
                             <Input
                               id="src"
@@ -510,7 +604,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="alt">替代文本</Label>
                             <Input
                               id="alt"
@@ -520,10 +614,10 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="width">宽度</Label>
-                            <div className="flex items-center gap-2">
-                              <Slider
+                            <div css={flexRow}>
+                              <FlexSlider
                                 id="width"
                                 min={50}
                                 max={800}
@@ -532,17 +626,16 @@ export function PropertiesPanel() {
                                 onValueChange={(value) =>
                                   handlePropertyChange("width", value[0])
                                 }
-                                className="flex-1"
                               />
-                              <span className="w-12 text-right">
+                              <span css={valueSpan12}>
                                 {properties.width || 300}px
                               </span>
                             </div>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="height">高度</Label>
-                            <div className="flex items-center gap-2">
-                              <Slider
+                            <div css={flexRow}>
+                              <FlexSlider
                                 id="height"
                                 min={50}
                                 max={600}
@@ -551,14 +644,13 @@ export function PropertiesPanel() {
                                 onValueChange={(value) =>
                                   handlePropertyChange("height", value[0])
                                 }
-                                className="flex-1"
                               />
-                              <span className="w-12 text-right">
+                              <span css={valueSpan12}>
                                 {properties.height || 200}px
                               </span>
                             </div>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="objectFit">填充方式</Label>
                             <Select
                               value={properties.objectFit || "cover"}
@@ -583,7 +675,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="rounded">圆角</Label>
                             <Switch
                               id="rounded"
@@ -593,7 +685,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="shadow">阴影</Label>
                             <Switch
                               id="shadow"
@@ -603,7 +695,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="border">边框</Label>
                             <Switch
                               id="border"
@@ -613,7 +705,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="caption">图片说明</Label>
                             <Input
                               id="caption"
@@ -628,7 +720,7 @@ export function PropertiesPanel() {
 
                       {selectedComponent.type === "divider" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="orientation">方向</Label>
                             <Select
                               value={properties.orientation || "horizontal"}
@@ -645,10 +737,10 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="thickness">粗细</Label>
-                            <div className="flex items-center gap-2">
-                              <Slider
+                            <div css={flexRow}>
+                              <FlexSlider
                                 id="thickness"
                                 min={1}
                                 max={10}
@@ -657,14 +749,13 @@ export function PropertiesPanel() {
                                 onValueChange={(value) =>
                                   handlePropertyChange("thickness", value[0])
                                 }
-                                className="flex-1"
                               />
-                              <span className="w-8 text-right">
+                              <span css={valueSpan8}>
                                 {properties.thickness || 1}px
                               </span>
                             </div>
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="color">颜色</Label>
                             <ColorPicker
                               color={properties.color || "#e2e8f0"}
@@ -673,7 +764,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="margin">外边距</Label>
                             <Input
                               id="margin"
@@ -684,7 +775,7 @@ export function PropertiesPanel() {
                               placeholder="例如: 1rem 0"
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="style">样式</Label>
                             <Select
                               value={properties.style || "solid"}
@@ -707,7 +798,7 @@ export function PropertiesPanel() {
 
                       {selectedComponent.type === "input" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="label">标签文本</Label>
                             <Input
                               id="label"
@@ -717,7 +808,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="placeholder">占位文本</Label>
                             <Input
                               id="placeholder"
@@ -730,7 +821,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="defaultValue">默认值</Label>
                             <Input
                               id="defaultValue"
@@ -743,7 +834,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="helperText">帮助文本</Label>
                             <Input
                               id="helperText"
@@ -756,7 +847,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="type">输入类型</Label>
                             <Select
                               value={properties.type || "text"}
@@ -778,7 +869,7 @@ export function PropertiesPanel() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="disabled">禁用</Label>
                             <Switch
                               id="disabled"
@@ -788,7 +879,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="required">必填</Label>
                             <Switch
                               id="required"
@@ -803,7 +894,7 @@ export function PropertiesPanel() {
 
                       {selectedComponent.type === "card" && (
                         <>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="title">卡片标题</Label>
                             <Input
                               id="title"
@@ -813,7 +904,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="shadow">阴影</Label>
                             <Switch
                               id="shadow"
@@ -823,7 +914,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="rounded">圆角</Label>
                             <Switch
                               id="rounded"
@@ -833,7 +924,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div css={flexRow}>
                             <Label htmlFor="border">边框</Label>
                             <Switch
                               id="border"
@@ -843,7 +934,7 @@ export function PropertiesPanel() {
                               }
                             />
                           </div>
-                          <div className="grid gap-2">
+                          <div css={fieldGrid}>
                             <Label htmlFor="padding">内边距</Label>
                             <Input
                               id="padding"
@@ -861,8 +952,8 @@ export function PropertiesPanel() {
                 <AccordionItem value="style">
                   <AccordionTrigger>样式</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid gap-4">
-                      <div className="grid gap-2">
+                    <div css={sectionGrid}>
+                      <div css={fieldGrid}>
                         <Label htmlFor="width">宽度</Label>
                         <Input
                           id="width"
@@ -873,7 +964,7 @@ export function PropertiesPanel() {
                           }
                         />
                       </div>
-                      <div className="grid gap-2">
+                      <div css={fieldGrid}>
                         <Label htmlFor="height">高度</Label>
                         <Input
                           id="height"
@@ -884,7 +975,7 @@ export function PropertiesPanel() {
                           }
                         />
                       </div>
-                      <div className="grid gap-2">
+                      <div css={fieldGrid}>
                         <Label htmlFor="margin">外边距</Label>
                         <Input
                           id="margin"
@@ -895,7 +986,7 @@ export function PropertiesPanel() {
                           }
                         />
                       </div>
-                      <div className="grid gap-2">
+                      <div css={fieldGrid}>
                         <Label htmlFor="padding">内边距</Label>
                         <Input
                           id="padding"
@@ -906,7 +997,7 @@ export function PropertiesPanel() {
                           }
                         />
                       </div>
-                      <div className="grid gap-2">
+                      <div css={fieldGrid}>
                         <Label htmlFor="bgColor">背景颜色</Label>
                         <ColorPicker
                           color={properties.bgColor || "#ffffff"}
@@ -920,13 +1011,13 @@ export function PropertiesPanel() {
                 </AccordionItem>
               </Accordion>
             </div>
-          </ScrollArea>
+          </PropsScrollArea>
         </TabsContent>
 
         <TabsContent value="data">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="p-4">
-              <div className="space-y-3">
+          <PropsScrollArea>
+            <div css={padded}>
+              <div css={dataStack}>
                 {/* 数据源选择器 */}
                 <DataSourceSelector
                   dataSources={dataSources}
@@ -960,21 +1051,21 @@ export function PropertiesPanel() {
 
                 {/* 绑定状态提示 - 简化显示 */}
                 {currentDataSource && currentBoundData !== null && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
-                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  <div css={bindStatusRow}>
+                    <div css={bindStatusDot} />
                     <span>数据已绑定</span>
                   </div>
                 )}
               </div>
             </div>
-          </ScrollArea>
+          </PropsScrollArea>
         </TabsContent>
 
         <TabsContent value="events">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="p-4">
-              <div className="grid gap-4">
-                <div className="grid gap-2">
+          <PropsScrollArea>
+            <div css={padded}>
+              <div css={sectionGrid}>
+                <div css={fieldGrid}>
                   <Label htmlFor="onClick">点击事件</Label>
                   <Select
                     value={properties.onClick || "none"}
@@ -995,7 +1086,7 @@ export function PropertiesPanel() {
                 </div>
 
                 {properties.onClick === "navigate" && (
-                  <div className="grid gap-2">
+                  <div css={fieldGrid}>
                     <Label htmlFor="navigateUrl">跳转地址</Label>
                     <Input
                       id="navigateUrl"
@@ -1009,7 +1100,7 @@ export function PropertiesPanel() {
                 )}
 
                 {properties.onClick === "openDialog" && (
-                  <div className="grid gap-2">
+                  <div css={fieldGrid}>
                     <Label htmlFor="dialogId">对话框ID</Label>
                     <Input
                       id="dialogId"
@@ -1023,7 +1114,7 @@ export function PropertiesPanel() {
                 )}
               </div>
             </div>
-          </ScrollArea>
+          </PropsScrollArea>
         </TabsContent>
       </Tabs>
     </div>

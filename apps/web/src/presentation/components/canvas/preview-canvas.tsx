@@ -3,17 +3,135 @@
 import type React from "react";
 
 import { useRef } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import type { Component } from "@/domain/component";
 import type { ThemeConfig } from "@/domain/theme";
 import type { PageSchema } from "@/domain/entities/schema.types";
 import { SchemaRenderer } from "./schema-renderer";
+
+const SchemaWrap = styled.div<{ $width: number }>`
+  width: ${(p) => p.$width}px;
+  overflow: auto;
+`;
+
+const PreviewEmptyOuter = styled.div<{ $width: number }>`
+  display: flex;
+  height: 100%;
+  min-height: 400px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 2px dashed hsl(var(--border));
+  width: ${(p) => p.$width}px;
+`;
+
+const PreviewEmptyInner = styled.div`
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+`;
+
+const PreviewButton = styled.button<{ $outline?: boolean; $fullWidth?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  width: ${(p) => (p.$fullWidth ? "100%" : "auto")};
+  ${(p) =>
+    p.$outline
+      ? css`
+          border: 1px solid hsl(var(--input));
+          background-color: hsl(var(--background));
+          color: hsl(var(--foreground));
+          &:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+          }
+        `
+      : css`
+          background-color: hsl(var(--primary));
+          color: hsl(var(--primary-foreground));
+          border: none;
+          &:hover {
+            background-color: hsl(var(--primary) / 0.9);
+          }
+        `}
+`;
+
+const PreviewImage = styled.img<{ $rounded?: boolean; $shadow?: boolean; $border?: boolean }>`
+  object-fit: cover;
+  ${(p) => p.$rounded && "border-radius: 0.5rem;"}
+  ${(p) => p.$shadow && "box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);"}
+  ${(p) => p.$border && "border: 1px solid hsl(var(--border));"}
+`;
+
+const Caption = styled.div`
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const PreviewDivider = styled.hr<{ $vertical?: boolean }>`
+  ${(p) => (p.$vertical ? "height: 100%; width: auto;" : "width: 100%;")}
+  border: none;
+`;
+
+const CardRoot = styled.div<{
+  $shadow?: boolean;
+  $rounded?: boolean;
+  $border?: boolean;
+}>`
+  ${(p) => p.$shadow && "box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);"}
+  ${(p) => p.$rounded && "border-radius: 0.5rem;"}
+  ${(p) =>
+    p.$border
+      ? "border: 1px solid hsl(var(--border));"
+      : "border: none;"}
+`;
+
+const CardTitleRow = styled.div`
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 1rem;
+  font-weight: 500;
+`;
+
+const MutedPlaceholder = styled.div`
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ChildSlot = styled.div`
+  position: relative;
+`;
+
+const GridLayoutRoot = styled.div`
+  display: grid;
+  min-height: 10rem;
+  min-width: 10rem;
+  border-radius: 0.25rem;
+  padding: 1rem;
+`;
+
+const DefaultFallback = styled.div`
+  border-radius: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  padding: 0.5rem;
+`;
 
 interface PreviewCanvasProps {
   readonly components?: Component[];
   readonly width: number;
   readonly theme?: ThemeConfig;
   readonly isAnimating?: boolean;
-  readonly schema?: PageSchema | string; // 支持 Schema JSON
+  readonly schema?: PageSchema | string;
 }
 
 export function PreviewCanvas({
@@ -25,42 +143,28 @@ export function PreviewCanvas({
 }: PreviewCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // 如果提供了 Schema，使用 SchemaRenderer
   if (schema) {
     return (
-      <div
-        style={{
-          width: `${width}px`,
-          overflow: "auto",
-        }}
-      >
+      <SchemaWrap $width={width}>
         <SchemaRenderer schema={schema} isReadOnly={true} />
-      </div>
+      </SchemaWrap>
     );
   }
 
-  // 如果没有提供 components，返回空状态
   if (!components || components.length === 0) {
     return (
-      <div
-        className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed"
-        style={{
-          width: `${width}px`,
-        }}
-      >
-        <div className="text-center text-muted-foreground">
+      <PreviewEmptyOuter $width={width}>
+        <PreviewEmptyInner>
           <p>没有组件可预览</p>
-        </div>
-      </div>
+        </PreviewEmptyInner>
+      </PreviewEmptyOuter>
     );
   }
 
-  // 递归渲染组件
   const renderComponent = (
     component: Component,
     parentComponent: Component | null = null
   ) => {
-    // 如果组件被设置为不可见，则不渲染
     if (component.properties?.visible === false) {
       return null;
     }
@@ -68,7 +172,6 @@ export function PreviewCanvas({
     const props = component.properties || {};
     const animation = props.animation;
 
-    // 应用动画样式
     let animationStyle = {};
     if (animation && isAnimating) {
       animationStyle = {
@@ -80,7 +183,6 @@ export function PreviewCanvas({
       };
     }
 
-    // 应用主题样式
     const themeStyle = {
       fontFamily: theme?.fontFamily || "system-ui, sans-serif",
       "--border-radius": theme?.borderRadius || "0.375rem",
@@ -88,12 +190,10 @@ export function PreviewCanvas({
       "--secondary": theme?.secondaryColor || "#6c757d",
     } as React.CSSProperties;
 
-    // 获取组件的子组件
     const childComponents = components.filter(
       (comp) => comp.parentId === component.id
     );
 
-    // 根据组件类型渲染不同的内容
     const renderComponentContent = () => {
       switch (component.type) {
         case "text":
@@ -103,11 +203,11 @@ export function PreviewCanvas({
                 fontSize: `${props.fontSize || 14}px`,
                 fontWeight: props.fontWeight || "normal",
                 color: props.color || "#1f2937",
-                textAlign: (props.alignment as any) || "left",
+                textAlign: (props.alignment as React.CSSProperties["textAlign"]) || "left",
                 lineHeight: props.lineHeight || "normal",
                 letterSpacing: props.letterSpacing || "normal",
-                textTransform: (props.textTransform as any) || "none",
-                textDecoration: (props.textDecoration as any) || "none",
+                textTransform: (props.textTransform as React.CSSProperties["textTransform"]) || "none",
+                textDecoration: (props.textDecoration as React.CSSProperties["textDecoration"]) || "none",
                 margin: props.margin || "0",
                 marginTop: props.marginTop || "0",
                 marginBottom: props.marginBottom || "0",
@@ -120,42 +220,36 @@ export function PreviewCanvas({
           );
         case "button":
           return (
-            <button
-              className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium ${
-                props.variant === "outline"
-                  ? "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              } ${props.fullWidth ? "w-full" : ""}`}
+            <PreviewButton
+              type="button"
+              $outline={props.variant === "outline"}
+              $fullWidth={!!props.fullWidth}
               disabled={props.disabled}
               style={{ ...themeStyle, ...animationStyle }}
             >
               {props.text || "按钮"}
-            </button>
+            </PreviewButton>
           );
         case "image":
           return (
             <div style={{ ...animationStyle }}>
-              <img
+              <PreviewImage
                 src={props.src || "/placeholder.svg?height=200&width=300"}
                 alt={props.alt || "示例图片"}
                 width={props.width || 300}
                 height={props.height || 200}
-                className={`object-cover ${props.rounded ? "rounded-lg" : ""} ${
-                  props.shadow ? "shadow-md" : ""
-                } ${props.border ? "border" : ""}`}
-                style={{ objectFit: (props.objectFit as any) || "cover" }}
+                $rounded={!!props.rounded}
+                $shadow={!!props.shadow}
+                $border={!!props.border}
+                style={{ objectFit: (props.objectFit as React.CSSProperties["objectFit"]) || "cover" }}
               />
-              {props.caption && (
-                <div className="mt-2 text-center text-sm text-muted-foreground">
-                  {props.caption}
-                </div>
-              )}
+              {props.caption && <Caption>{props.caption}</Caption>}
             </div>
           );
         case "divider":
           return (
-            <hr
-              className={props.orientation === "vertical" ? "h-full" : "w-full"}
+            <PreviewDivider
+              $vertical={props.orientation === "vertical"}
               style={{
                 margin: props.margin || "1rem 0",
                 borderStyle: props.style || "solid",
@@ -170,10 +264,10 @@ export function PreviewCanvas({
           );
         case "card":
           return (
-            <div
-              className={`${props.shadow ? "shadow-md" : ""} ${
-                props.rounded ? "rounded-lg" : ""
-              } ${props.border ? "border" : "border-0"}`}
+            <CardRoot
+              $shadow={!!props.shadow}
+              $rounded={!!props.rounded}
+              $border={!!props.border}
               style={{
                 padding: props.padding || "1rem",
                 backgroundColor: props.bgColor || "#ffffff",
@@ -188,14 +282,11 @@ export function PreviewCanvas({
                 ...animationStyle,
               }}
             >
-              {props.title && (
-                <div className="border-b p-4 font-medium">{props.title}</div>
-              )}
+              {props.title && <CardTitleRow>{props.title}</CardTitleRow>}
               {childComponents.length > 0 ? (
                 childComponents.map((child) => (
-                  <div
+                  <ChildSlot
                     key={child.id}
-                    className="relative"
                     style={{
                       margin: child.properties?.margin || "0",
                       padding: child.properties?.padding || "0",
@@ -204,19 +295,16 @@ export function PreviewCanvas({
                     }}
                   >
                     {renderComponent(child, component)}
-                  </div>
+                  </ChildSlot>
                 ))
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
-                  卡片内容
-                </div>
+                <MutedPlaceholder>卡片内容</MutedPlaceholder>
               )}
-            </div>
+            </CardRoot>
           );
         case "grid-layout":
           return (
-            <div
-              className="grid min-h-40 min-w-40 rounded p-4"
+            <GridLayoutRoot
               style={{
                 gridTemplateColumns: `repeat(${props.columns || 3}, 1fr)`,
                 gap: props.gap ? `${props.gap * 0.25}rem` : "0.5rem",
@@ -233,9 +321,8 @@ export function PreviewCanvas({
             >
               {childComponents.length > 0 ? (
                 childComponents.map((child) => (
-                  <div
+                  <ChildSlot
                     key={child.id}
-                    className="relative"
                     style={{
                       margin: child.properties?.margin || "0",
                       padding: child.properties?.padding || "0",
@@ -244,14 +331,12 @@ export function PreviewCanvas({
                     }}
                   >
                     {renderComponent(child, component)}
-                  </div>
+                  </ChildSlot>
                 ))
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
-                  网格布局
-                </div>
+                <MutedPlaceholder>网格布局</MutedPlaceholder>
               )}
-            </div>
+            </GridLayoutRoot>
           );
         case "flex-layout":
           return (
@@ -274,9 +359,8 @@ export function PreviewCanvas({
             >
               {childComponents.length > 0 ? (
                 childComponents.map((child) => (
-                  <div
+                  <ChildSlot
                     key={child.id}
-                    className="relative"
                     style={{
                       width: child.properties?.width || "auto",
                       height: child.properties?.height || "auto",
@@ -287,19 +371,16 @@ export function PreviewCanvas({
                     }}
                   >
                     {renderComponent(child, component)}
-                  </div>
+                  </ChildSlot>
                 ))
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
-                  弹性布局
-                </div>
+                <MutedPlaceholder>弹性布局</MutedPlaceholder>
               )}
             </div>
           );
         case "container":
           return (
-            <div
-              className="relative"
+            <ChildSlot
               style={{
                 ...themeStyle,
                 ...animationStyle,
@@ -344,22 +425,19 @@ export function PreviewCanvas({
                   </div>
                 ))
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
-                  容器
-                </div>
+                <MutedPlaceholder>容器</MutedPlaceholder>
               )}
-            </div>
+            </ChildSlot>
           );
         default:
           return (
-            <div className="rounded border p-2">
+            <DefaultFallback>
               {component.name || component.type}
-            </div>
+            </DefaultFallback>
           );
       }
     };
 
-    // 如果是根级组件（没有父组件）
     if (!parentComponent) {
       const rootProps = component.properties || {};
       return (
@@ -395,18 +473,15 @@ export function PreviewCanvas({
       );
     }
 
-    // 如果是子组件
     return renderComponentContent();
   };
 
-  // 获取根级组件（没有父组件的组件）
   const rootComponents = components.filter((comp) => !comp.parentId);
 
-  // 计算画布高度 - 确保至少有足够的空间来容纳所有组件
   const calculateCanvasHeight = () => {
     if (rootComponents.length === 0) return 500;
 
-    let maxHeight = 500; // 默认最小高度
+    let maxHeight = 500;
 
     rootComponents.forEach((component) => {
       const compHeight = component.properties?.height
@@ -414,7 +489,7 @@ export function PreviewCanvas({
         : 0;
       const compY = component.position?.y || 0;
 
-      const totalHeight = compY + compHeight + 100; // 添加一些额外空间
+      const totalHeight = compY + compHeight + 100;
       if (totalHeight > maxHeight) {
         maxHeight = totalHeight;
       }
@@ -423,11 +498,10 @@ export function PreviewCanvas({
     return maxHeight;
   };
 
-  // 计算画布宽度 - 确保至少有足够的空间来容纳所有组件
   const calculateCanvasWidth = () => {
     if (rootComponents.length === 0) return width;
 
-    let maxWidth = width; // 默认最小宽度
+    let maxWidth = width;
 
     rootComponents.forEach((component) => {
       const compWidth = component.properties?.width
@@ -435,7 +509,7 @@ export function PreviewCanvas({
         : 0;
       const compX = component.position?.x || 0;
 
-      const totalWidth = compX + compWidth + 100; // 添加一些额外空间
+      const totalWidth = compX + compWidth + 100;
       if (totalWidth > maxWidth) {
         maxWidth = totalWidth;
       }
@@ -460,11 +534,11 @@ export function PreviewCanvas({
       }}
     >
       {rootComponents.length === 0 ? (
-        <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
-          <div className="text-center text-muted-foreground">
+        <PreviewEmptyOuter $width={width}>
+          <PreviewEmptyInner>
             <p>此模板没有组件</p>
-          </div>
-        </div>
+          </PreviewEmptyInner>
+        </PreviewEmptyOuter>
       ) : (
         <div style={{ display: "flex", flexDirection: "column" }}>
           {[...rootComponents]

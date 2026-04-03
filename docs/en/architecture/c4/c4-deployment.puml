@@ -1,0 +1,30 @@
+@startuml c4-deployment-felix-low-code
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Deployment — reference topology (dev / prod may vary)
+
+Deployment_Node(client, "Client", "macOS, Windows, Linux, mobile browsers") {
+    Deployment_Node(browser, "Browser", " Chromium / WebKit / Firefox ") {
+        Container(webui, "SPA / SSR", "Next.js bundle — Emotion + static assets")
+    }
+}
+
+Deployment_Node(hoster, "Application hosting", "Kubernetes, VM, or PaaS") {
+    Deployment_Node(compute, "Compute") {
+        Container(next_runtime, "Next.js server", "Node.js — SSR and routes")
+        Container(fastapi_runtime, "FastAPI", "Uvicorn — REST API")
+    }
+    Deployment_Node(data, "Data tier (optional)") {
+        ContainerDb(postgres, "PostgreSQL")
+        ContainerDb(redis, "Redis")
+    }
+}
+
+Rel(browser, next_runtime, "HTTPS", "SSR and app routes")
+Rel(browser, fastapi_runtime, "HTTPS", "REST API")
+Rel(fastapi_runtime, postgres, "SQL", "")
+Rel(fastapi_runtime, redis, "TCP", "")
+
+@enduml

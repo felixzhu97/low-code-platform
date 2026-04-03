@@ -4,6 +4,8 @@
 
 Felix 低代码平台是一个基于 Next.js 和 React 的现代化可视化页面搭建平台，采用**整洁架构（Clean Architecture）**和**领域驱动设计（DDD）**的分层架构设计，支持拖拽式组件编辑、实时协作、代码导出等核心功能。
 
+**导航：** [仓库说明](../../README.md) · [架构概述（English）](../en/architecture.md) · [C4 中文](./architecture/c4/) · [C4 English](../en/architecture/c4/) · [本地 LLM](local-llm-setup.md) · [Local LLM EN](../en/local-llm-setup.md)
+
 ## 架构设计原则
 
 - **分层架构**：采用 DDD（领域驱动设计）的分层架构，清晰分离业务逻辑和技术实现
@@ -182,63 +184,9 @@ src/
 - 基础设施层实现领域层和应用层定义的接口
 - 表现层只依赖应用层，通过适配器访问用例
 
-## 整洁架构 UML 图
+## 整洁架构与图示
 
-本项目采用整洁架构（Clean Architecture）设计，以下 UML 图展示了架构的各个层面：
-
-### 1. 包依赖图 (Package Diagram)
-
-- 文件：[clean-architecture-package.puml](./architecture/clean-architecture-package.puml)
-- 描述：展示各层之间的依赖关系和包结构
-- 核心内容：
-  - Presentation Layer（表现层）：UI 组件、适配器、Hooks
-  - Application Layer（应用层）：用例、DTO、Mapper、端口
-  - Domain Layer（领域层）：实体、值对象、仓储接口、领域服务
-  - Infrastructure Layer（基础设施层）：持久化实现、状态管理、数据源
-  - Shared Layer（共享层）：工具函数、类型定义、常量
-
-### 2. 类图 (Class Diagram)
-
-- 文件：[clean-architecture-class.puml](./architecture/clean-architecture-class.puml)
-- 描述：展示组件管理功能的类结构和关系
-- 核心内容：
-  - 领域实体：ComponentEntity、ComponentProperties、Position
-  - 仓储接口：IComponentRepository
-  - 应用用例：CreateComponentUseCase、UpdateComponentUseCase、DeleteComponentUseCase
-  - 基础设施实现：LocalStorageComponentRepository
-  - 表现层适配器：ComponentAdapter
-
-### 3. 序列图 (Sequence Diagram)
-
-- 文件：[clean-architecture-sequence.puml](./architecture/clean-architecture-sequence.puml)
-- 描述：展示创建组件用例的完整执行流程
-- 核心流程：
-  1. 用户操作触发 UI 组件
-  2. 适配器调用应用用例
-  3. 用例使用领域服务创建实体
-  4. 用例调用仓储接口保存数据
-  5. 基础设施层实现持久化
-  6. 结果返回并更新 UI
-
-### 4. 层次结构图 (Layers Diagram)
-
-- 文件：[clean-architecture-layers.puml](./architecture/clean-architecture-layers.puml)
-- 描述：可视化展示各层的组件和依赖关系
-- 特点：使用不同颜色区分各层，清晰展示依赖方向
-
-### 5. 组件图 (Component Diagram)
-
-- 文件：[clean-architecture-component.puml](./architecture/clean-architecture-component.puml)
-- 描述：展示完整系统的组件结构和交互关系
-- 包含：画布管理、组件管理、数据源管理等完整功能模块
-
-### 整洁架构文档
-
-详细的架构重构方案和指南请参考：
-
-- [整洁架构重构方案](./architecture/CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
-- [架构对比分析](./architecture/ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
-- [整洁架构快速指南](./architecture/CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
+分层与依赖以本文「架构层次说明」「依赖关系」及 `apps/web/src` 代码为准。C4 整洁架构视图：[c4-clean-architecture.puml](./architecture/c4/c4-clean-architecture.puml)。TOGAF 说明：[architecture/togaf/togaf-overview.md](architecture/togaf/togaf-overview.md)
 
 ## C4 架构模型
 
@@ -246,33 +194,33 @@ src/
 
 ### 1. 系统上下文图 (Context)
 
-- 文件：[c4-context.puml](./architecture/c4-context.puml)
+- 文件：[c4-context.puml](./architecture/c4/c4-context.puml)
 - 描述：展示系统与外部用户和系统的交互关系
 - 核心用户：页面设计师、开发者、终端用户、管理员
 - 外部系统：CDN 服务、对象存储、认证服务、数据分析、第三方 API、代码托管
 
 ### 2. 容器架构图 (Container)
 
-- 文件：[c4-container.puml](./architecture/c4-container.puml)
+- 文件：[c4-container.puml](./architecture/c4/c4-container.puml)
 - 描述：展示系统内部的主要容器和它们之间的关系
 - 核心容器：
-  - Web 应用 (Next.js 15 + React 19)
-  - API 层 (Next.js API Routes)
-  - 实时协作 (WebSocket/SSE)
-  - 数据存储 (PostgreSQL/MongoDB + Redis)
-  - 文件存储 (对象存储/CDN)
+  - Web 应用 (`apps/web`)：Next.js 15 + React 19，编辑器与预览（Emotion + Tailwind + Radix）
+  - API 服务 (`apps/server`)：Python FastAPI + Uvicorn
+  - 可选：实时协作 (WebSocket/SSE)、Next.js 路由 / BFF
+  - 数据存储：PostgreSQL / Redis（按部署启用）
+  - 文件存储：对象存储 / CDN
 
 ### 3. 组件架构图 (Component)
 
-- 前端组件架构：[c4-component.puml](./architecture/c4-component.puml) - 展示 Web 应用容器内的组件结构
-- 整洁架构层次：[c4-clean-architecture.puml](./architecture/c4-clean-architecture.puml) - 详细展示整洁架构的层次结构和依赖关系
+- 前端组件架构：[c4-component.puml](./architecture/c4/c4-component.puml) - 展示 Web 应用容器内的组件结构
+- 整洁架构层次：[c4-clean-architecture.puml](./architecture/c4/c4-clean-architecture.puml) - 详细展示整洁架构的层次结构和依赖关系
 - 描述：详细展示各个容器内部的组件结构，包括表现层、应用层、领域层和基础设施层
 
 #### 前端架构层次
 
 - **领域层**：组件实体、数据源实体、主题实体、组件工厂
 - **应用层**：组件管理服务、历史管理服务、工具服务
-- **表现层**：
+- **表现层**（Emotion 承载画布与编辑器布局，Tailwind 与设计令牌、shadcn 并存）：
   - 核心编辑器：画布、组件面板、属性面板、组件树
   - 组件渲染器：基础、布局、表单、图表、数据组件渲染器
   - 图表子系统：柱状图、折线图、饼图、面积图、仪表盘、雷达图
@@ -286,13 +234,13 @@ src/
 
 ### 4. 代码级别图 (Code)
 
-- 文件：[c4-code.puml](./architecture/c4-code.puml)
+- 文件：[c4-code.puml](./architecture/c4/c4-code.puml)
 - 描述：展示关键类和方法的具体实现
 - 包含：类型定义、服务类、React 组件、用例类、仓储接口和实现、状态管理
 
 ### 5. 部署架构图 (Deployment)
 
-- 文件：[c4-deployment.puml](./architecture/c4-deployment.puml)
+- 文件：[c4-deployment.puml](./architecture/c4/c4-deployment.puml)
 - 描述：展示系统的部署拓扑和运行环境
 - 部署环境：
   - 客户端环境：Web 浏览器、移动设备
@@ -302,7 +250,7 @@ src/
 
 ## C4 模型文件清单
 
-所有 C4 模型文件位于 `architecture/` 目录：
+中文 C4 源文件位于 `zh/architecture/c4/`，英文 C4 位于 `en/architecture/c4/`（两套并行，标签语言不同）：
 
 1. **c4-context.puml** - 系统上下文图，展示系统与外部用户和系统的关系
 2. **c4-container.puml** - 容器架构图，展示系统内部的主要容器
@@ -324,167 +272,25 @@ src/
 
 ```bash
 # 使用 PlantUML CLI 生成图片
-plantuml -tpng docs/architecture/c4-context.puml
-plantuml -tsvg docs/architecture/c4-container.puml
-plantuml -tpng docs/architecture/c4-component.puml
-plantuml -tpng docs/architecture/c4-clean-architecture.puml
-plantuml -tpng docs/architecture/c4-code.puml
-plantuml -tpng docs/architecture/c4-deployment.puml
+plantuml -tpng docs/zh/architecture/c4/c4-context.puml
+plantuml -tpng docs/zh/architecture/c4/c4-container.puml
+plantuml -tpng docs/zh/architecture/c4/c4-component.puml
+plantuml -tpng docs/zh/architecture/c4/c4-clean-architecture.puml
+plantuml -tpng docs/zh/architecture/c4/c4-code.puml
+plantuml -tpng docs/zh/architecture/c4/c4-deployment.puml
+plantuml -tpng docs/en/architecture/c4/c4-context.puml
+plantuml -tpng docs/en/architecture/c4/c4-container.puml
+plantuml -tpng docs/en/architecture/c4/c4-component.puml
+plantuml -tpng docs/en/architecture/c4/c4-clean-architecture.puml
+plantuml -tpng docs/en/architecture/c4/c4-code.puml
+plantuml -tpng docs/en/architecture/c4/c4-deployment.puml
 ```
 
-## 零信任网络架构文档
+## 规划中、尚未随仓库提供的图示
 
-零信任网络架构文档描述了 Felix 低代码平台的零信任安全架构设计，采用"永不信任，始终验证"的安全模型，确保所有用户、设备、应用和数据都经过严格的身份验证和授权。
+以下主题曾有文档规划，**当前仓库无对应 PlantUML**，需要时可自行在 `docs/` 下增设目录后补充：零信任网络、用户地图（角色/旅程/协作/画像）、沃德利地图。
 
-### 零信任架构
-
-- 文件：[zero-trust-architecture.puml](./architecture/zero-trust/zero-trust-architecture.puml)
-- 描述：展示整个平台的零信任网络架构设计
-- 核心内容：
-  - **用户/设备层**：用户终端、设备代理、设备验证和合规检查
-  - **接入层**：零信任代理、API 网关、策略执行点、负载均衡器
-  - **控制层 - IAM**：身份提供者、多因素认证、单点登录、策略决策点
-  - **控制层 - 设备与信任管理**：设备注册、信任评分引擎、行为分析、异常检测
-  - **控制层 - 监控与响应**：SIEM、安全分析、威胁检测、事件响应
-  - **应用层**：Web 应用、后端服务、实时服务、服务网格
-  - **数据层 - 数据保护**：数据加密、传输加密、静态加密、密钥管理、DLP
-  - **数据层 - 数据存储**：PostgreSQL、Redis、对象存储及其安全控制
-  - **网络层 - 网络分段**：网络分段策略、微隔离、安全隧道、网络监控
-
-### 零信任核心原则
-
-1. **永不信任，始终验证**：不假设任何用户、设备或网络是可信的，所有访问请求都必须经过验证
-2. **最小权限访问**：用户和设备只能访问其工作所需的最小资源集
-3. **持续监控和验证**：持续监控用户行为、设备状态和网络活动，动态调整访问权限
-4. **假设网络已被入侵**：采用纵深防御策略，假设攻击者可能已经进入网络内部
-
-### 零信任架构使用说明
-
-零信任架构文件可以使用以下工具渲染：
-
-- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
-- **VS Code 插件**：PlantUML
-- **命令行工具**：PlantUML CLI
-
-### 零信任架构查看方式
-
-```bash
-# 使用 PlantUML CLI 生成图片
-plantuml -tpng docs/architecture/zero-trust/zero-trust-architecture.puml
-plantuml -tsvg docs/architecture/zero-trust/zero-trust-architecture.puml
-```
-
-详细的零信任架构说明和使用方法，请参考：[零信任架构文档](./architecture/zero-trust/README.md)
-
-## 用户地图文档
-
-用户地图文档帮助理解平台的不同用户角色、使用流程、协作关系和用户特征，为产品设计和开发提供重要参考。
-
-### 1. 用户角色/权限地图
-
-- 文件：[user-role-permission-map.puml](./user-maps/user-role-permission-map.puml)
-- 描述：展示四种用户角色（页面设计师、开发者、终端用户、管理员）及其权限范围
-- 核心内容：
-  - 用户角色定义和职责说明
-  - 功能权限矩阵（项目管理、页面编辑、模板管理、代码导出、协作功能等）
-  - 角色之间的权限层级关系
-  - 各角色的权限说明和限制
-
-### 2. 用户旅程图
-
-- 文件：[user-journey-map.puml](./user-maps/user-journey-map.puml)
-- 描述：展示用户从注册到使用平台的完整流程
-- 核心内容：
-  - 页面设计师旅程：从注册到导出代码的完整流程
-  - 开发者旅程：从登录到二次开发的流程
-  - 终端用户旅程：访问和使用生成页面的流程
-  - 管理员旅程：系统管理和配置的流程
-  - 关键触点和用户情绪点标注
-
-### 3. 用户协作关系图
-
-- 文件：[user-collaboration-map.puml](./user-maps/user-collaboration-map.puml)
-- 描述：展示多人协作时的用户关系和交互流程
-- 核心内容：
-  - 邀请协作者的流程
-  - 实时协作编辑的场景和同步机制
-  - 冲突检测和解决流程（最后写入优先、手动合并、操作回滚）
-  - 权限管理和变更通知
-  - 操作历史同步机制
-
-### 4. 用户画像地图
-
-- 文件：[user-persona-map.puml](./user-maps/user-persona-map.puml)
-- 描述：展示不同用户角色的特征、需求和使用场景
-- 核心内容：
-  - 页面设计师画像：背景、目标、痛点、使用场景和使用习惯
-  - 开发者画像：技术背景、开发目标、痛点和使用习惯
-  - 终端用户画像：基本信息、使用目标和体验需求
-  - 管理员画像：管理职责、系统管理需求和使用习惯
-  - 用户与平台功能的映射关系
-
-### 用户地图文件清单
-
-所有用户地图文件位于 `user-maps/` 目录：
-
-1. **user-role-permission-map.puml** - 用户角色/权限地图，定义用户角色和权限矩阵
-2. **user-journey-map.puml** - 用户旅程图，展示不同角色的使用流程
-3. **user-collaboration-map.puml** - 用户协作关系图，展示多人协作场景
-4. **user-persona-map.puml** - 用户画像地图，展示用户特征和需求
-
-### 用户地图使用说明
-
-这些用户地图文件可以使用以下工具渲染：
-
-- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
-- **VS Code 插件**：PlantUML
-- **命令行工具**：PlantUML CLI
-
-### 用户地图查看方式
-
-```bash
-# 使用 PlantUML CLI 生成图片
-plantuml -tpng docs/user-maps/user-role-permission-map.puml
-plantuml -tpng docs/user-maps/user-journey-map.puml
-plantuml -tpng docs/user-maps/user-collaboration-map.puml
-plantuml -tpng docs/user-maps/user-persona-map.puml
-```
-
-## 沃德利地图文档
-
-沃德利地图（Wardley Map）是一种战略地图，用于可视化价值网络和组件演化阶段，帮助理解平台各组件在演化图谱中的位置，为技术决策和战略规划提供重要参考。
-
-### 沃德利地图
-
-- 文件：[wardley-map.puml](./wardley-maps/wardley-map.puml)
-- 描述：展示平台的价值网络和组件演化阶段
-- 核心内容：
-  - **价值网络（Y 轴）**：从用户需求层到基础设施层的完整价值链条
-    - 用户需求层：页面设计师、开发者、终端用户的需求
-    - 应用层：可视化编辑器、模板系统、协作功能
-    - 平台层：组件系统、数据绑定、主题系统、代码生成引擎
-    - 基础设施层：部署服务、存储服务、CDN 服务、数据库服务、认证服务
-  - **演化阶段（X 轴）**：各组件的演化位置
-    - **Genesis（创新）**：AI 辅助设计、智能布局推荐等新兴技术
-    - **Custom Built（定制构建）**：可视化编辑器、实时协作等平台核心差异化能力
-    - **Product（产品化）**：组件系统、模板系统、代码生成等标准化产品
-    - **Commodity（商品化）**：CDN、存储、数据库、认证等标准化云服务
-  - **依赖关系**：展示组件之间的依赖和价值流动
-
-### 沃德利地图使用说明
-
-沃德利地图文件可以使用以下工具渲染：
-
-- **在线工具**：[PlantUML Online](http://www.plantuml.com/plantuml/)
-- **VS Code 插件**：PlantUML
-- **命令行工具**：PlantUML CLI
-
-### 沃德利地图查看方式
-
-```bash
-# 使用 PlantUML CLI 生成图片
-plantuml -tpng docs/wardley-maps/wardley-map.puml
-```
+PlantUML 渲染工具：[PlantUML Online](http://www.plantuml.com/plantuml/) · VS Code PlantUML 插件 · PlantUML CLI。
 
 ## 技术栈
 
@@ -492,7 +298,7 @@ plantuml -tpng docs/wardley-maps/wardley-map.puml
 
 - **框架**：Next.js 15 + React 19
 - **语言**：TypeScript
-- **UI 库**：Radix UI + Tailwind CSS
+- **样式**：Emotion（画布与编辑器壳层）+ Tailwind CSS（设计令牌、shadcn 类名）+ Radix UI
 - **图表库**：Recharts
 - **拖拽功能**：react-dnd
 - **表单处理**：React Hook Form + Zod
@@ -501,11 +307,11 @@ plantuml -tpng docs/wardley-maps/wardley-map.puml
 
 ### 后端技术
 
-- **API**：Next.js API Routes
-- **实时通信**：WebSocket/Server-Sent Events
-- **数据库**：PostgreSQL/MongoDB
-- **缓存**：Redis
-- **文件存储**：云对象存储 (S3/OSS)
+- **API**：FastAPI（`apps/server`）+ Uvicorn；可按部署增加 BFF / Next 路由
+- **实时通信**：协作场景可选用 WebSocket / SSE
+- **数据库**：PostgreSQL 等（按部署）
+- **缓存**：Redis（按部署）
+- **文件存储**：对象存储 S3/OSS 兼容（按部署）
 
 ### 开发工具
 
@@ -659,17 +465,11 @@ npm run dev
 
 ## 相关文档
 
-- [整洁架构重构方案](./architecture/CLEAN_ARCHITECTURE_REFACTORING.md) - 详细的重构步骤和目录结构
-- [架构对比分析](./architecture/ARCHITECTURE_COMPARISON.md) - 当前架构与优化后架构的对比
-- [整洁架构快速指南](./architecture/CLEAN_ARCHITECTURE_GUIDE.md) - 开发者的快速参考指南
-- [ER 设计图](./architecture/er-design.puml) - 数据库实体关系图
-- [用户角色/权限地图](./user-maps/user-role-permission-map.puml) - 用户角色和权限定义
-- [用户旅程图](./user-maps/user-journey-map.puml) - 用户使用流程
-- [用户协作关系图](./user-maps/user-collaboration-map.puml) - 多人协作场景
-- [用户画像地图](./user-maps/user-persona-map.puml) - 用户特征和需求
-- [沃德利地图](./strategy/wardley-maps/wardley-map.puml) - 价值网络和组件演化阶段
-- [零信任网络架构](./architecture/zero-trust/zero-trust-architecture.puml) - 零信任安全架构设计
+- [TOGAF 文档（中文）](./architecture/togaf/togaf-overview.md)
+- [本地 LLM（Ollama）](./local-llm-setup.md)
+- [Architecture overview (English)](../en/architecture.md)
+- [仓库说明（根目录）](../../README.md)
 
 ---
 
-**最后更新时间**：2024 年 12 月
+**最后更新时间**：2026 年 4 月

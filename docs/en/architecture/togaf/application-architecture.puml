@@ -1,0 +1,343 @@
+@startuml Application_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF Application Architecture — Felix Low-Code Platform
+
+package "Felix low-code application system" {
+  
+  package "Presentation Layer" {
+    
+    component [Visual Editor] as VisualEditor
+    interface "Editor API" as VisualEditorInterface
+    
+    component [Component Panel] as ComponentPanel
+    interface "Picker API" as ComponentPanelInterface
+    
+    component [Property Panel] as PropertyPanel
+    interface "Property API" as PropertyPanelInterface
+    
+    component [Template Library] as TemplateLibrary
+    interface "Template API" as TemplateLibraryInterface
+    
+    component [Data Panel] as DataPanel
+    interface "Data panel API" as DataPanelInterface
+    
+    component [DataSource Selector] as DataSourceSelector
+    interface "Datasource picker API" as DataSourceSelectorInterface
+    
+    component [JSON Data Input] as JsonDataInput
+    interface "JSON input API" as JsonDataInputInterface
+    
+    component [Schema Export] as SchemaExport
+    interface "Schema export API" as SchemaExportUIInterface
+    
+    component [Schema Import] as SchemaImport
+    interface "Schema import API" as SchemaImportUIInterface
+    
+    component [Component Renderers] as ComponentRenderers
+    component [Basic Component Renderer] as BasicRenderer
+    component [Chart Component Renderer] as ChartRenderer
+    component [Data Component Renderer] as DataRenderer
+    component [Form Component Renderer] as FormRenderer
+    component [Layout Component Renderer] as LayoutRenderer
+    
+    component [Auth Components] as AuthComponents
+    
+    component [Projects Components] as ProjectsComponents
+    
+    component [Form Builder] as FormBuilder
+    interface "Form builder API" as FormBuilderInterface
+    
+    component [AI Generator] as AIGeneratorUI
+    interface "AI gen API" as AIGeneratorUIInterface
+    
+    VisualEditor --> VisualEditorInterface
+    ComponentPanel --> ComponentPanelInterface
+    PropertyPanel --> PropertyPanelInterface
+    TemplateLibrary --> TemplateLibraryInterface
+    DataPanel --> DataPanelInterface
+    DataSourceSelector --> DataSourceSelectorInterface
+    JsonDataInput --> JsonDataInputInterface
+    SchemaExport --> SchemaExportUIInterface
+    SchemaImport --> SchemaImportUIInterface
+    FormBuilder --> FormBuilderInterface
+    AIGeneratorUI --> AIGeneratorUIInterface
+    
+    ComponentRenderers --> BasicRenderer
+    ComponentRenderers --> ChartRenderer
+    ComponentRenderers --> DataRenderer
+    ComponentRenderers --> FormRenderer
+    ComponentRenderers --> LayoutRenderer
+  }
+  
+  package "Application Layer" {
+    
+    component [Component Management Service] as ComponentService
+    interface "Component API" as ComponentServiceInterface
+    
+    component [Template Management Service] as TemplateService
+    interface "Template svc API" as TemplateServiceInterface
+    
+    component [Data Binding Service] as DataBindingService
+    interface "Binding API" as DataBindingServiceInterface
+    
+    component [DataSource Service] as DataSourceService
+    interface "Datasource API" as DataSourceServiceInterface
+    
+    component [DataSource Structure Service] as DataSourceStructureService
+    interface "Structure API" as DataSourceStructureServiceInterface
+    
+    component [JSON Helper Service] as JsonHelperService
+    interface "JSON API" as JsonHelperServiceInterface
+    
+    component [Canvas Management Service] as CanvasService
+    interface "Canvas API" as CanvasServiceInterface
+    
+    component [History Service] as HistoryService
+    interface "History API" as HistoryServiceInterface
+    
+    component [Schema Management Service] as SchemaService
+    interface "Schema svc API" as SchemaServiceInterface
+    
+    component [Template Command Service] as TemplateCommandService
+    interface "Template cmd API" as TemplateCommandServiceInterface
+    
+    component [AI Generator Adapter] as AIGeneratorAdapter
+    interface "AI adapter API" as AIGeneratorAdapterInterface
+    
+    ComponentService --> ComponentServiceInterface
+    TemplateService --> TemplateServiceInterface
+    DataBindingService --> DataBindingServiceInterface
+    DataSourceService --> DataSourceServiceInterface
+    DataSourceStructureService --> DataSourceStructureServiceInterface
+    JsonHelperService --> JsonHelperServiceInterface
+    CanvasService --> CanvasServiceInterface
+    HistoryService --> HistoryServiceInterface
+    SchemaService --> SchemaServiceInterface
+    TemplateCommandService --> TemplateCommandServiceInterface
+    AIGeneratorAdapter --> AIGeneratorAdapterInterface
+  }
+  
+  package "Domain Layer" {
+    
+    component [Component Entity] as ComponentEntity
+    component [Template Entity] as TemplateEntity
+    component [Project Entity] as ProjectEntity
+    component [DataSource Entity] as DataSourceEntity
+    component [PageSchema Entity] as SchemaEntity
+    component [Component Factory] as ComponentFactory
+  }
+  
+  package "Infrastructure Layer" {
+    
+    component [Component Repository] as ComponentRepo
+    interface "Repository API" as ComponentRepoInterface
+    
+    component [Template Repository] as TemplateRepo
+    interface "Repository API" as TemplateRepoInterface
+    
+    component [DataSource Repository] as DataSourceRepo
+    interface "Repository API" as DataSourceRepoInterface
+    
+    component [State Management] as StateManagement
+    interface "State API" as StateManagementInterface
+    component [Canvas Store] as CanvasStore
+    component [Component Store] as ComponentStore
+    component [Data Store] as DataStore
+    component [History Store] as HistoryStore
+    component [Theme Store] as ThemeStore
+    component [UI Store] as UIStore
+    
+    component [Persistence Layer] as PersistenceLayer
+    component [Local Storage Adapter] as LocalStorageAdapter
+    component [Database Adapter] as DatabaseAdapter
+    
+    component [Collaboration Service] as CollaborationService
+    interface "Collab API" as CollaborationServiceInterface
+    
+    component [Schema Export Service] as SchemaExportService
+    interface "Schema export API" as SchemaExportInterface
+    
+    component [Schema Import Service] as SchemaImportService
+    interface "Schema import API" as SchemaImportInterface
+    
+    component [Schema Renderer] as SchemaRenderer
+    interface "Schema renderer API" as SchemaRendererInterface
+    
+    component [Persistence Manager] as PersistenceManager
+    interface "Persistence API" as PersistenceManagerInterface
+    
+    component [Data Parser Adapter] as DataParserAdapter
+    component [Schema Processor Adapter] as SchemaProcessorAdapter
+    component [Data Mapper Adapter] as DataMapperAdapter
+    component [Layout Calculator Adapter] as LayoutCalculatorAdapter
+    
+    component [AI Generator Package] as AIGeneratorPackage
+    interface "AI package API" as AIGeneratorPackageInterface
+    component [AI Clients] as AIClients
+    component [OpenAI Client] as OpenAIClient
+    component [Claude Client] as ClaudeClient
+    component [DeepSeek Client] as DeepSeekClient
+    component [Component Generator] as ComponentGenerator
+    component [Page Generator] as PageGenerator
+    component [Component Validator] as ComponentValidator
+    component [Page Validator] as PageValidator
+    component [Prompt Builders] as PromptBuilders
+    component [JSON Parser] as JsonParser
+    
+    ComponentRepo --> ComponentRepoInterface
+    TemplateRepo --> TemplateRepoInterface
+    DataSourceRepo --> DataSourceRepoInterface
+    StateManagement --> StateManagementInterface
+    StateManagement --> CanvasStore
+    StateManagement --> ComponentStore
+    StateManagement --> DataStore
+    StateManagement --> HistoryStore
+    StateManagement --> ThemeStore
+    StateManagement --> UIStore
+    
+    PersistenceLayer --> LocalStorageAdapter
+    PersistenceLayer --> DatabaseAdapter
+    PersistenceManager --> PersistenceLayer : uses
+    
+    CollaborationService --> CollaborationServiceInterface
+    SchemaExportService --> SchemaExportInterface
+    SchemaImportService --> SchemaImportInterface
+    SchemaRenderer --> SchemaRendererInterface
+    PersistenceManager --> PersistenceManagerInterface
+    
+    AIGeneratorPackage --> AIGeneratorPackageInterface
+    AIGeneratorPackage --> AIClients
+    AIClients --> OpenAIClient
+    AIClients --> ClaudeClient
+    AIClients --> DeepSeekClient
+    AIGeneratorPackage --> ComponentGenerator
+    AIGeneratorPackage --> PageGenerator
+    AIGeneratorPackage --> ComponentValidator
+    AIGeneratorPackage --> PageValidator
+    AIGeneratorPackage --> PromptBuilders
+    AIGeneratorPackage --> JsonParser
+  }
+}
+
+package "External Systems" {
+  component [Authentication Service] as AuthService
+  component [Database] as Database
+  component [Cache Service] as CacheService
+  component [Object Storage] as ObjectStorage
+  component [Git Repository] as GitRepo
+  component [CDN Service] as CDNService
+  component [OpenAI API] as OpenAIService
+  component [Claude API] as ClaudeService
+  component [DeepSeek API] as DeepSeekService
+}
+
+VisualEditor --> ComponentService : invoke
+VisualEditor --> CanvasService : invoke
+VisualEditor --> HistoryService : invoke
+ComponentPanel --> ComponentService : invoke
+PropertyPanel --> ComponentService : invoke
+PropertyPanel --> DataBindingService : invoke
+TemplateLibrary --> TemplateService : invoke
+DataPanel --> DataBindingService : invoke
+DataPanel --> DataSourceService : invoke
+DataSourceSelector --> DataSourceService : invoke
+DataSourceSelector --> DataBindingService : invoke
+JsonDataInput --> JsonHelperService : invoke
+JsonDataInput --> DataSourceStructureService : invoke
+SchemaExport --> SchemaExportService : invoke
+SchemaImport --> SchemaImportService : invoke
+FormBuilder --> TemplateCommandService : invoke
+AIGeneratorUI --> AIGeneratorAdapter : invoke
+ComponentRenderers --> ComponentService : invoke
+VisualEditor --> ComponentRenderers : uses
+
+ComponentService --> ComponentEntity : uses
+ComponentService --> ComponentRepo : uses
+TemplateService --> TemplateEntity : uses
+TemplateService --> TemplateRepo : uses
+TemplateCommandService --> TemplateEntity : uses
+TemplateCommandService --> TemplateRepo : uses
+DataBindingService --> DataSourceEntity : uses
+DataBindingService --> DataSourceRepo : uses
+DataSourceService --> DataSourceEntity : uses
+DataSourceService --> DataSourceRepo : uses
+DataSourceStructureService --> DataSourceEntity : uses
+JsonHelperService --> DataSourceEntity : process
+CanvasService --> ComponentFactory : uses
+SchemaExportService --> SchemaEntity : uses
+SchemaExportService --> PersistenceManager : uses
+SchemaImportService --> SchemaEntity : uses
+SchemaImportService --> PersistenceManager : uses
+SchemaRenderer --> SchemaEntity : uses
+SchemaRenderer --> ComponentService : uses
+
+AIGeneratorAdapter --> AIGeneratorPackage : uses
+AIGeneratorAdapter --> TemplateService : uses (see adapter)
+
+AIGeneratorPackage --> ComponentGenerator : uses
+AIGeneratorPackage --> PageGenerator : uses
+AIGeneratorPackage --> ComponentValidator : uses
+AIGeneratorPackage --> PageValidator : uses
+AIGeneratorPackage --> PromptBuilders : uses
+AIGeneratorPackage --> JsonParser : uses
+ComponentGenerator --> AIClients : invoke
+PageGenerator --> AIClients : invoke
+AIClients --> OpenAIClient : uses
+AIClients --> ClaudeClient : uses
+AIClients --> DeepSeekClient : uses
+
+DataSourceService --> DataParserAdapter : uses (see adapter)
+SchemaExportService --> SchemaProcessorAdapter : uses (see adapter)
+SchemaImportService --> SchemaProcessorAdapter : uses (see adapter)
+DataBindingService --> DataMapperAdapter : uses (see adapter)
+CanvasService --> LayoutCalculatorAdapter : uses (see adapter)
+
+OpenAIClient --> OpenAIService : API call
+ClaudeClient --> ClaudeService : API call
+DeepSeekClient --> DeepSeekService : API call
+
+ComponentRepo --> Database : R/W
+TemplateRepo --> Database : R/W
+DataSourceRepo --> Database : R/W
+StateManagement --> CacheService : R/W
+PersistenceManager --> PersistenceLayer : uses
+PersistenceLayer --> DatabaseAdapter : uses
+PersistenceLayer --> LocalStorageAdapter : uses
+DatabaseAdapter --> Database : R/W
+LocalStorageAdapter --> CacheService : local storage
+
+CollaborationService --> StateManagement : sync state
+CollaborationService --> CacheService : messaging
+
+ComponentService ..> AuthService : authorize
+TemplateService ..> AuthService : authorize
+SchemaExportService ..> AuthService : authorize
+SchemaImportService ..> AuthService : authorize
+
+SchemaExportService --> ObjectStorage : store Schema
+SchemaImportService --> ObjectStorage : load Schema
+VisualEditor --> CDNService : load static
+SchemaRenderer --> CDNService : load static
+
+note right of VisualEditor
+  **Main flows:**
+  1. Components → services → domain → stores → local/DB
+  2. Data delta → state → collaboration
+  3. JSON → JSON svc → datasource → binding → renderers
+  4. Datasource pick → service → parse → render
+  5. Schema export → svc → processor → persistence → files
+  6. Schema import → svc → processor → persistence → state
+  7. Schema render → renderer → component svc → canvas
+  8. CSV/XML → datasource svc → parser → binding
+  9. Mapping → binding → mapper → renderers
+  10. Layout → canvas svc → calculator → move
+  11. Forms → template cmd → template → renderers
+  12. State persist → manager → adapters → storage
+  13. AI component chain → canvas
+  14. AI page chain → canvas
+end note
+
+@enduml
+

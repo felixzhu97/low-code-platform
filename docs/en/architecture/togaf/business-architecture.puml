@@ -1,0 +1,406 @@
+@startuml Business_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF Business Architecture — Felix Low-Code Platform
+
+package "Business Roles" {
+  actor "Page Designer" as Designer
+  actor "Developer" as Developer
+  actor "Administrator" as Admin
+  actor "End User" as EndUser
+}
+
+package "Business Capabilities" {
+  
+  component [Visual editing] as VisualEditCapability
+  component [Component drag-drop] as ComponentDrag
+  component [Live preview] as RealTimePreview
+  component [Property config] as PropertyConfig
+  component [Layout management] as LayoutManagement
+  
+  component [Component management] as ComponentMgmtCapability
+  component [Component library] as ComponentLibraryMgmt
+  component [Custom components] as CustomComponent
+  component [Component import/export] as ComponentImportExport
+  component [Component grouping] as ComponentGrouping
+  
+  component [Data binding] as DataBindingCapability
+  component [DataSource mgmt] as DataSourceMgmt
+  component [Data mapping] as DataMapping
+  component [Live data refresh] as RealTimeDataUpdate
+  component [Data validation] as DataValidation
+  component [JSON quick input] as JsonQuickInput
+  component [Template recommendation] as TemplateRecommendation
+  component [Smart render] as IntelligentRender
+  component [Data structure parse] as DataStructureParse
+  
+  component [Collaboration] as CollaborationCapability
+  component [Concurrent edit] as MultiUserEdit
+  component [Op sync] as OperationSync
+  component [Conflict resolution] as ConflictResolution
+  component [Version mgmt] as VersionManagement
+  
+  component [Code generation] as CodeGenCapability
+  component [Code export] as CodeExport
+  component [Format conversion] as FormatConversion
+  component [Git integration] as GitIntegration
+  component [Deployment support] as DeploymentSupport
+  
+  component [Schema mgmt] as SchemaMgmtCapability
+  component [Schema export] as SchemaExport
+  component [Schema import] as SchemaImport
+  component [Schema render] as SchemaRender
+  component [Schema validation] as SchemaValidation
+  component [Schema versioning] as SchemaVersionMgmt
+  
+  component [Template mgmt] as TemplateMgmtCapability
+  component [Template library] as TemplateLibrary
+  component [Apply template] as TemplateApply
+  component [Template customize] as TemplateCustomization
+  component [Template share] as TemplateSharing
+  
+  component [i18n capability] as InternationalizationCapability
+  component [Multi-language] as MultiLanguageSupport
+  component [Locale switch] as LanguageSwitch
+  component [Localization mgmt] as LocalizationContentMgmt
+  component [Date/number format] as DateNumberFormat
+  
+  component [Auth capability] as AuthenticationCapability
+  component [User auth] as UserAuthentication
+  component [RBAC] as PermissionManagement
+  component [Session mgmt] as SessionManagement
+  component [SSO] as SingleSignOn
+  
+  component [Charts] as ChartVisualizationCapability
+  component [Chart types] as MultipleChartTypes
+  component [Data viz] as DataVisualization
+  component [Chart config] as ChartConfiguration
+  component [Live data refresh] as ChartRealTimeUpdate
+  
+  component [AI generation] as AIGenerationCapability
+  component [NL generation] as NaturalLanguageGeneration
+  component [AI components] as ComponentAIGeneration
+  component [AI pages] as PageAIGeneration
+  component [Multi AI provider] as MultiAIProviderSupport
+  component [Validate output] as GenerationValidation
+  component [Streaming] as StreamingGeneration
+  
+  VisualEditCapability --> ComponentDrag
+  VisualEditCapability --> RealTimePreview
+  VisualEditCapability --> PropertyConfig
+  VisualEditCapability --> LayoutManagement
+  
+  ComponentMgmtCapability --> ComponentLibraryMgmt
+  ComponentMgmtCapability --> CustomComponent
+  ComponentMgmtCapability --> ComponentImportExport
+  ComponentMgmtCapability --> ComponentGrouping
+  
+  DataBindingCapability --> DataSourceMgmt
+  DataBindingCapability --> DataMapping
+  DataBindingCapability --> RealTimeDataUpdate
+  DataBindingCapability --> DataValidation
+  DataBindingCapability --> JsonQuickInput
+  DataBindingCapability --> TemplateRecommendation
+  DataBindingCapability --> IntelligentRender
+  DataBindingCapability --> DataStructureParse
+  
+  CollaborationCapability --> MultiUserEdit
+  CollaborationCapability --> OperationSync
+  CollaborationCapability --> ConflictResolution
+  CollaborationCapability --> VersionManagement
+  
+  CodeGenCapability --> CodeExport
+  CodeGenCapability --> FormatConversion
+  CodeGenCapability --> GitIntegration
+  CodeGenCapability --> DeploymentSupport
+  
+  SchemaMgmtCapability --> SchemaExport
+  SchemaMgmtCapability --> SchemaImport
+  SchemaMgmtCapability --> SchemaRender
+  SchemaMgmtCapability --> SchemaValidation
+  SchemaMgmtCapability --> SchemaVersionMgmt
+  
+  TemplateMgmtCapability --> TemplateLibrary
+  TemplateMgmtCapability --> TemplateApply
+  TemplateMgmtCapability --> TemplateCustomization
+  TemplateMgmtCapability --> TemplateSharing
+  
+  InternationalizationCapability --> MultiLanguageSupport
+  InternationalizationCapability --> LanguageSwitch
+  InternationalizationCapability --> LocalizationContentMgmt
+  InternationalizationCapability --> DateNumberFormat
+  
+  AuthenticationCapability --> UserAuthentication
+  AuthenticationCapability --> PermissionManagement
+  AuthenticationCapability --> SessionManagement
+  AuthenticationCapability --> SingleSignOn
+  
+  ChartVisualizationCapability --> MultipleChartTypes
+  ChartVisualizationCapability --> DataVisualization
+  ChartVisualizationCapability --> ChartConfiguration
+  ChartVisualizationCapability --> ChartRealTimeUpdate
+  
+  AIGenerationCapability --> NaturalLanguageGeneration
+  AIGenerationCapability --> ComponentAIGeneration
+  AIGenerationCapability --> PageAIGeneration
+  AIGenerationCapability --> MultiAIProviderSupport
+  AIGenerationCapability --> GenerationValidation
+  AIGenerationCapability --> StreamingGeneration
+}
+
+package "Core Business Processes" {
+  
+  component [Page design flow] as PageDesignProcess
+  component [Designer login] as DesignerLogin
+  component [Browse templates / new project] as BrowseOrCreate
+  component [Open editor] as EnterEditor
+  component [Drag to canvas] as DragComponent
+  component [Configure props/style] as ConfigComponent
+  component [Bind datasource] as BindDataSource
+  component [Preview] as PreviewEffect
+  component [Adjust layout] as AdjustLayout
+  component [Save project] as SaveProject
+  component [Publish] as PublishPage
+  
+  component [Template flow] as TemplateProcess
+  component [Browse templates] as BrowseTemplate
+  component [Pick template] as SelectTemplate
+  component [Preview template] as PreviewTemplate
+  component [Edit from template] as EditTemplate
+  component [Apply template] as ApplyTemplate
+  component [Save as project] as SaveAsProject
+  
+  component [Collab flow] as CollaborationProcess
+  component [Create collab project] as CreateCollaborationProject
+  component [Invite members] as InviteMembers
+  component [Members join] as MembersJoin
+  component [Concurrent edit] as MultiUserEditing
+  component [Sync & conflicts] as SyncAndConflict
+  component [Version history] as VersionHistoryMgmt
+  component [Merge changes] as MergeChanges
+  
+  component [Export flow] as CodeExportProcess
+  component [Pick project] as SelectProject
+  component [Preview page] as PreviewPageEffect
+  component [Export format] as SelectExportFormat
+  component [Generate code] as GenerateCode
+  component [Download / Git push] as DownloadOrPush
+  component [Local setup] as LocalConfig
+  component [Extend] as SecondaryDevelopment
+  component [Prod deploy] as DeployToProduction
+  
+  component [Schema export flow] as SchemaExportProcess
+  component [Pick export] as SelectExportSchema
+  component [Build Schema JSON] as GenerateSchemaJSON
+  component [Validate Schema] as ValidateSchemaFormat
+  component [Download Schema] as DownloadSchemaFile
+  component [Share Schema] as ShareSchema
+  
+  component [Schema import flow] as SchemaImportProcess
+  component [Pick import] as SelectImportSchema
+  component [Upload Schema] as UploadSchemaFile
+  component [Schema version] as ValidateSchemaVersion
+  component [Migrate Schema] as MigrateSchema
+  component [Import to canvas] as ImportToCanvas
+  component [Render page] as RenderPage
+  
+  component [Data mgmt flow] as DataMgmtProcess
+  component [Create datasource] as CreateDataSource
+  component [Config connection] as ConfigDataConnection
+  component [Test connection] as TestDataConnection
+  component [Create mapping] as CreateDataMapping
+  component [Bind component] as BindToComponent
+  component [Live data refresh] as RealTimeUpdate
+  component [Monitor data] as MonitorDataStatus
+  
+  component [JSON input flow] as JsonInputProcess
+  component [Pick component type] as SelectComponentType
+  component [Pick JSON template] as SelectJsonTemplate
+  component [Edit JSON] as InputJsonData
+  component [Validate JSON] as ValidateJsonFormat
+  component [Temp datasource] as CreateTempDataSource
+  component [Auto render] as AutoRenderToComponent
+  
+  PageDesignProcess --> DesignerLogin
+  PageDesignProcess --> BrowseOrCreate
+  PageDesignProcess --> EnterEditor
+  PageDesignProcess --> DragComponent
+  PageDesignProcess --> ConfigComponent
+  PageDesignProcess --> BindDataSource
+  PageDesignProcess --> PreviewEffect
+  PageDesignProcess --> AdjustLayout
+  PageDesignProcess --> SaveProject
+  PageDesignProcess --> PublishPage
+  
+  TemplateProcess --> BrowseTemplate
+  TemplateProcess --> SelectTemplate
+  TemplateProcess --> PreviewTemplate
+  TemplateProcess --> EditTemplate
+  TemplateProcess --> ApplyTemplate
+  TemplateProcess --> SaveAsProject
+  
+  CollaborationProcess --> CreateCollaborationProject
+  CollaborationProcess --> InviteMembers
+  CollaborationProcess --> MembersJoin
+  CollaborationProcess --> MultiUserEditing
+  CollaborationProcess --> SyncAndConflict
+  CollaborationProcess --> VersionHistoryMgmt
+  CollaborationProcess --> MergeChanges
+  
+  CodeExportProcess --> SelectProject
+  CodeExportProcess --> PreviewPageEffect
+  CodeExportProcess --> SelectExportFormat
+  CodeExportProcess --> GenerateCode
+  CodeExportProcess --> DownloadOrPush
+  CodeExportProcess --> LocalConfig
+  CodeExportProcess --> SecondaryDevelopment
+  CodeExportProcess --> DeployToProduction
+  
+  SchemaExportProcess --> SelectExportSchema
+  SchemaExportProcess --> GenerateSchemaJSON
+  SchemaExportProcess --> ValidateSchemaFormat
+  SchemaExportProcess --> DownloadSchemaFile
+  SchemaExportProcess --> ShareSchema
+  
+  SchemaImportProcess --> SelectImportSchema
+  SchemaImportProcess --> UploadSchemaFile
+  SchemaImportProcess --> ValidateSchemaVersion
+  SchemaImportProcess --> MigrateSchema
+  SchemaImportProcess --> ImportToCanvas
+  SchemaImportProcess --> RenderPage
+  
+  DataMgmtProcess --> CreateDataSource
+  DataMgmtProcess --> ConfigDataConnection
+  DataMgmtProcess --> TestDataConnection
+  DataMgmtProcess --> CreateDataMapping
+  DataMgmtProcess --> BindToComponent
+  DataMgmtProcess --> RealTimeUpdate
+  DataMgmtProcess --> MonitorDataStatus
+  
+  JsonInputProcess --> SelectComponentType
+  JsonInputProcess --> SelectJsonTemplate
+  JsonInputProcess --> InputJsonData
+  JsonInputProcess --> ValidateJsonFormat
+  JsonInputProcess --> CreateTempDataSource
+  JsonInputProcess --> AutoRenderToComponent
+  
+  component [i18n config flow] as I18nConfigProcess
+  component [Detect locale] as DetectBrowserLanguage
+  component [Pick UI language] as SelectInterfaceLanguage
+  component [Load messages] as LoadLanguageResources
+  component [Apply locale] as ApplyLanguageSettings
+  component [Save preference] as SaveLanguagePreference
+  
+  component [Auth flow] as UserAuthProcess
+  component [Login] as UserLogin
+  component [Verify credentials] as VerifyCredentials
+  component [Issue token] as GenerateAccessToken
+  component [Create session] as EstablishSession
+  component [Authorize] as AuthorizeAccess
+  component [Logout] as UserLogout
+  
+  I18nConfigProcess --> DetectBrowserLanguage
+  I18nConfigProcess --> SelectInterfaceLanguage
+  I18nConfigProcess --> LoadLanguageResources
+  I18nConfigProcess --> ApplyLanguageSettings
+  I18nConfigProcess --> SaveLanguagePreference
+  
+  UserAuthProcess --> UserLogin
+  UserAuthProcess --> VerifyCredentials
+  UserAuthProcess --> GenerateAccessToken
+  UserAuthProcess --> EstablishSession
+  UserAuthProcess --> AuthorizeAccess
+  UserAuthProcess --> UserLogout
+  
+  component [AI generation flow] as AIGenerationProcess
+  component [NL description] as InputNaturalLanguage
+  component [Pick AI provider] as SelectAIProvider
+  component [API key] as ConfigAPIKey
+  component [Generation type] as SelectGenerationType
+  component [AI build] as AIGenerateComponentOrPage
+  component [Validate gen] as ValidateGenerationResult
+  component [Apply canvas] as ApplyToCanvas
+  component [Preview tune] as PreviewAndAdjust
+  
+  AIGenerationProcess --> InputNaturalLanguage
+  AIGenerationProcess --> SelectAIProvider
+  AIGenerationProcess --> ConfigAPIKey
+  AIGenerationProcess --> SelectGenerationType
+  AIGenerationProcess --> AIGenerateComponentOrPage
+  AIGenerationProcess --> ValidateGenerationResult
+  AIGenerationProcess --> ApplyToCanvas
+  AIGenerationProcess --> PreviewAndAdjust
+}
+
+package "Value Stream" {
+  
+  component [Discover needs] as Step1
+  component [Solution design] as Step2
+  component [Visual build] as Step3
+  component [Data integration] as Step4
+  component [Verify] as Step5
+  component [Collab refine] as Step6
+  component [Code generation] as Step7
+  component [Release] as Step8
+  
+  Step1 --> Step2 : requirements
+  Step2 --> Step3 : page design
+  Step3 --> Step4 : data binding
+  Step4 --> Step5 : validation
+  Step5 --> Step6 : collaboration
+  Step6 --> Step7 : export code
+  Step7 --> Step8 : release
+}
+
+Designer --> VisualEditCapability : uses
+Designer --> ComponentMgmtCapability : uses
+Designer --> DataBindingCapability : uses
+Designer --> CollaborationCapability : uses
+Designer --> TemplateMgmtCapability : uses
+Designer --> SchemaMgmtCapability : uses
+Designer --> InternationalizationCapability : uses
+Designer --> ChartVisualizationCapability : uses
+Designer --> AIGenerationCapability : uses
+
+Developer --> CodeGenCapability : uses
+Developer --> VisualEditCapability : uses
+Developer --> SchemaMgmtCapability : uses
+Developer --> ChartVisualizationCapability : uses
+
+Admin --> ComponentMgmtCapability : manages
+Admin --> TemplateMgmtCapability : manages
+Admin --> CollaborationCapability : configures
+Admin --> AuthenticationCapability : manages
+Admin --> InternationalizationCapability : configures
+
+EndUser --> Step8 : access
+
+PageDesignProcess --> VisualEditCapability : depends on
+PageDesignProcess --> ComponentMgmtCapability : depends on
+PageDesignProcess --> DataBindingCapability : depends on
+
+TemplateProcess --> TemplateMgmtCapability : depends on
+TemplateProcess --> ComponentMgmtCapability : depends on
+
+CollaborationProcess --> CollaborationCapability : depends on
+
+CodeExportProcess --> CodeGenCapability : depends on
+
+SchemaExportProcess --> SchemaMgmtCapability : depends on
+SchemaImportProcess --> SchemaMgmtCapability : depends on
+
+DataMgmtProcess --> DataBindingCapability : depends on
+JsonInputProcess --> DataBindingCapability : depends on
+
+I18nConfigProcess --> InternationalizationCapability : depends on
+UserAuthProcess --> AuthenticationCapability : depends on
+
+PageDesignProcess --> ChartVisualizationCapability : depends on
+DataMgmtProcess --> ChartVisualizationCapability : depends on
+
+AIGenerationProcess --> AIGenerationCapability : depends on
+AIGenerationProcess --> ComponentMgmtCapability : depends on
+AIGenerationProcess --> VisualEditCapability : depends on
+
+@enduml

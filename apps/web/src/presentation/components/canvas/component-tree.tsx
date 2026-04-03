@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import {
@@ -13,17 +14,158 @@ import {
   EyeOff,
   Trash2,
 } from "lucide-react";
-import { cn } from "../../../application/services/utils";
 
 import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
-interface ComponentTreeProps {
-  // 移除 props，现在从 store 获取状态
+const TreeRoot = styled.div`
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+`;
+
+const TreeHeader = styled.div`
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 0.5rem 1rem;
+`;
+
+const TreeTitle = styled.h3`
+  font-weight: 500;
+`;
+
+const TreeScroll = styled(ScrollArea)`
+  flex: 1;
+  min-height: 0;
+`;
+
+const DropZone = styled.div<{ $active: boolean }>`
+  padding: 0.5rem;
+  background-color: ${(p) =>
+    p.$active ? "hsl(var(--primary) / 0.05)" : "transparent"};
+`;
+
+const NodeOuter = styled.div`
+  user-select: none;
+`;
+
+const NodeRow = styled.div<{
+  $levelPadding: number;
+  $selected: boolean;
+  $dropHighlight: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  padding-left: ${(p) => p.$levelPadding}px;
+  &:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+  ${(p) =>
+    p.$selected &&
+    `
+    background-color: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+  `}
+  ${(p) =>
+    p.$dropHighlight &&
+    `
+    background-color: hsl(var(--primary) / 0.1);
+  `}
+`;
+
+const ExpandToggleButton = styled(Button)`
+  width: 1.25rem;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  padding: 0;
+`;
+
+const ExpandSpacer = styled.div`
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+`;
+
+const RowMain = styled.div`
+  margin-left: 0.25rem;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const RowLabel = styled.span`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+`;
+
+const RowActions = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const VisibilityActionButton = styled(Button)`
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 1.5rem;
+  padding: 0;
+  color: hsl(var(--muted-foreground));
+  &:hover {
+    color: hsl(var(--foreground));
+  }
+`;
+
+const DeleteActionButton = styled(Button)`
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 1.5rem;
+  padding: 0;
+  color: hsl(var(--muted-foreground));
+  &:hover {
+    color: hsl(var(--destructive));
+  }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+function dragLeaveToOutside(e: React.DragEvent, onLeave: () => void) {
+  const related = e.relatedTarget as Node | null;
+  if (!related || !e.currentTarget.contains(related)) {
+    onLeave();
+  }
 }
 
-export function ComponentTree({}: ComponentTreeProps) {
-  // 从 store 获取状态
+function isContainerType(type: string): boolean {
+  return [
+    "container",
+    "grid-layout",
+    "flex-layout",
+    "split-layout",
+    "tab-layout",
+    "card-group",
+    "responsive-container",
+    "row",
+    "column",
+  ].includes(type);
+}
+
+export function ComponentTree() {
   const {
     components,
     selectedComponentId,
@@ -35,13 +177,13 @@ export function ComponentTree({}: ComponentTreeProps) {
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>(
     {}
   );
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const [rootDropActive, setRootDropActive] = useState(false);
 
-  // 扩展的组件类型，包含 children 属性
   interface ComponentWithChildren extends Component {
     children?: ComponentWithChildren[];
   }
 
-  // 构建组件树结构
   const buildComponentTree = (
     comps: Component[],
     parentId: string | null = null
@@ -49,10 +191,9 @@ export function ComponentTree({}: ComponentTreeProps) {
     if (!comps || comps.length === 0) {
       return [];
     }
-    
+
     return comps
       .filter((comp) => {
-        // 处理 parentId 可能是 null、undefined 或字符串的情况
         const compParentId = comp.parentId ?? null;
         return compParentId === parentId;
       })
@@ -62,7 +203,6 @@ export function ComponentTree({}: ComponentTreeProps) {
       }));
   };
 
-  // 确保 components 是数组
   const componentsArray = Array.isArray(components) ? components : [];
   const componentTree = buildComponentTree(componentsArray);
 
@@ -79,14 +219,15 @@ export function ComponentTree({}: ComponentTreeProps) {
 
   const handleDragOver = (e: React.DragEvent, component: Component | null) => {
     e.preventDefault();
-    // 只有容器类组件可以接收拖放
-    if (component && isContainer(component.type)) {
-      e.currentTarget.classList.add("bg-primary/10");
+    if (component && isContainerType(component.type)) {
+      setDropTargetId(component.id);
+    } else {
+      setDropTargetId(null);
     }
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("bg-primary/10");
+  const handleDragLeaveRow = (e: React.DragEvent) => {
+    dragLeaveToOutside(e, () => setDropTargetId(null));
   };
 
   const handleDrop = (
@@ -94,35 +235,19 @@ export function ComponentTree({}: ComponentTreeProps) {
     targetComponent: Component | null
   ) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("bg-primary/10");
+    setDropTargetId(null);
+    setRootDropActive(false);
 
     const componentId = e.dataTransfer.getData("component-id");
     if (!componentId) return;
 
-    // 如果目标是画布（targetComponent为null）或者是容器类组件
-    if (!targetComponent || isContainer(targetComponent.type)) {
+    if (!targetComponent || isContainerType(targetComponent.type)) {
       updateComponent(componentId, {
         parentId: targetComponent?.id || null,
       });
     }
   };
 
-  // 判断组件类型是否为容器
-  const isContainer = (type: string): boolean => {
-    return [
-      "container",
-      "grid-layout",
-      "flex-layout",
-      "split-layout",
-      "tab-layout",
-      "card-group",
-      "responsive-container",
-      "row",
-      "column",
-    ].includes(type);
-  };
-
-  // 获取组件类型的显示名称
   const getComponentTypeName = (type: string): string => {
     const typeMap: Record<string, string> = {
       container: "容器",
@@ -149,70 +274,60 @@ export function ComponentTree({}: ComponentTreeProps) {
     return typeMap[type] || type;
   };
 
-  // 递归渲染组件树节点
   const renderTreeNode = (component: ComponentWithChildren, level = 0) => {
     const hasChildren = component.children && component.children.length > 0;
     const isExpanded = expandedNodes[component.id] || false;
     const isSelected = component.id === selectedComponentId;
-    const isContainer = [
-      "container",
-      "grid-layout",
-      "flex-layout",
-      "split-layout",
-      "tab-layout",
-      "card-group",
-      "responsive-container",
-      "row",
-      "column",
-    ].includes(component.type);
+    const asContainer = isContainerType(component.type);
+    const levelPadding = level * 12 + 8;
 
     return (
-      <div key={component.id} className="select-none">
-        <div
-          className={cn(
-            "flex items-center rounded-md px-2 py-1 hover:bg-muted/50",
-            isSelected && "bg-primary/10 text-primary"
-          )}
-          style={{ paddingLeft: `${level * 12 + 8}px` }}
+      <NodeOuter key={component.id}>
+        <NodeRow
+          $levelPadding={levelPadding}
+          $selected={isSelected}
+          $dropHighlight={dropTargetId === component.id && asContainer}
           onClick={() => selectComponent(component)}
           draggable
           onDragStart={(e) => handleDragStart(e, component)}
           onDragOver={(e) => handleDragOver(e, component)}
-          onDragLeave={handleDragLeave}
+          onDragLeave={handleDragLeaveRow}
           onDrop={(e) => handleDrop(e, component)}
         >
           {hasChildren ? (
-            <Button
+            <ExpandToggleButton
               variant="ghost"
               size="icon"
-              className="h-5 w-5"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleExpand(component.id);
               }}
             >
               {isExpanded ? (
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDown size={12} />
               ) : (
-                <ChevronRight className="h-3 w-3" />
+                <ChevronRight size={12} />
               )}
-            </Button>
+            </ExpandToggleButton>
           ) : (
-            <div className="h-5 w-5" />
+            <ExpandSpacer />
           )}
 
-          <div className="ml-1 flex flex-1 items-center gap-1.5 overflow-hidden">
-            {isContainer ? (
-              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+          <RowMain>
+            {asContainer ? (
+              <Layers
+                size={14}
+                strokeWidth={2}
+                style={{ color: "hsl(var(--muted-foreground))", flexShrink: 0 }}
+              />
             ) : null}
-            <span className="flex-1 truncate text-sm">
+            <RowLabel>
               {component.name || getComponentTypeName(component.type)}
-            </span>
-            <div className="flex items-center">
-              <Button
+            </RowLabel>
+            <RowActions>
+              <VisibilityActionButton
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
                   updateComponent(component.id, {
@@ -224,61 +339,60 @@ export function ComponentTree({}: ComponentTreeProps) {
                 }}
               >
                 {component.properties?.visible === false ? (
-                  <EyeOff className="h-3.5 w-3.5" />
+                  <EyeOff size={14} />
                 ) : (
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye size={14} />
                 )}
-              </Button>
-              <Button
+              </VisibilityActionButton>
+              <DeleteActionButton
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-destructive"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteComponent(component.id);
                 }}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </div>
-        </div>
+                <Trash2 size={14} />
+              </DeleteActionButton>
+            </RowActions>
+          </RowMain>
+        </NodeRow>
 
         {hasChildren && isExpanded && (
           <div>
             {component.children!.map((child) => renderTreeNode(child, level + 1))}
           </div>
         )}
-      </div>
+      </NodeOuter>
     );
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b px-4 py-2">
-        <h3 className="font-medium">组件树</h3>
-      </div>
-      <ScrollArea className="flex-1">
-        <div
-          className="p-2"
+    <TreeRoot>
+      <TreeHeader>
+        <TreeTitle>组件树</TreeTitle>
+      </TreeHeader>
+      <TreeScroll>
+        <DropZone
+          $active={rootDropActive}
           onDragOver={(e) => {
             e.preventDefault();
-            e.currentTarget.classList.add("bg-primary/5");
+            setRootDropActive(true);
           }}
           onDragLeave={(e) => {
-            e.currentTarget.classList.remove("bg-primary/5");
+            dragLeaveToOutside(e, () => setRootDropActive(false));
           }}
           onDrop={(e) => handleDrop(e, null)}
         >
           {componentTree.length > 0 ? (
             componentTree.map((component) => renderTreeNode(component))
           ) : (
-            <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
+            <EmptyState>
               <p>暂无组件</p>
-            </div>
+            </EmptyState>
           )}
-        </div>
-      </ScrollArea>
-    </div>
+        </DropZone>
+      </TreeScroll>
+    </TreeRoot>
   );
 }

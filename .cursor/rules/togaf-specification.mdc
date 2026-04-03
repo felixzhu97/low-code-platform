@@ -267,5 +267,5 @@ docs/togaf/
 ## 参考资源
 
 - [TOGAF 官方文档](https://www.opengroup.org/togaf)
-- [项目 TOGAF 架构图](../docs/togaf/README.md)
-- [架构概览图](../docs/togaf/overview.puml)
+- [项目 TOGAF 说明](docs/zh/architecture/togaf/togaf-overview.md)
+- [业务架构 PlantUML](docs/zh/architecture/togaf/business-architecture.puml)

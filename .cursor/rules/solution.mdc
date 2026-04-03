@@ -119,9 +119,9 @@ This rule captures the **business challenges** the Felix low-code platform addre
 ### References
 
 - **User stories & epics:** `docs/product/user-stories.md`
-- **Business architecture:** `docs/architecture/togaf/business-architecture.puml`
+- **Business architecture:** `docs/zh/architecture/togaf/business-architecture.puml`
 - **Wardley map:** `docs/strategy/wardley-maps/wardley-map.puml`
-- **Architecture overview:** `docs/README.md`
+- **Architecture overview:** `docs/zh/platform-architecture.md` · `docs/en/architecture.md`
 
 ## Checklist (solution alignment)
 

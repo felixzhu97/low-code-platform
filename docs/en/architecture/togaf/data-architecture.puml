@@ -1,0 +1,477 @@
+@startuml Data_Architecture
+!theme plain
+skinparam linetype ortho
+
+title TOGAF Data Architecture — Felix Low-Code Platform
+
+package "Core Data Entities" {
+  
+  component [Component] as Component
+  component [id: String] as ComponentId
+  component [name: String] as ComponentName
+  component [type: String] as ComponentType
+  component [props: Object] as ComponentProps
+  component [style: Object] as ComponentStyle
+  component [position: Position] as ComponentPosition
+  component [children: List] as ComponentChildren
+  component [parentId: String] as ComponentParentId
+  component [dataBinding: Object] as ComponentDataBinding
+  
+  component [Template] as Template
+  component [Template_id: String] as TemplateId
+  component [Template_name: String] as TemplateName
+  component [Template_description: String] as TemplateDescription
+  component [Template_category: String] as TemplateCategory
+  component [rootComponent: Component] as TemplateRootComponent
+  component [Template_preview: Object] as TemplatePreview
+  component [Template_authorId: String] as TemplateAuthorId
+  component [Template_isPublic: Boolean] as TemplateIsPublic
+  
+  component [Project] as Project
+  component [Project_id: String] as ProjectId
+  component [Project_name: String] as ProjectName
+  component [Project_description: String] as ProjectDescription
+  component [Project_rootComponent: Component] as ProjectRootComponent
+  component [Project_theme: ThemeConfig] as ProjectTheme
+  component [Project_dataSources: List] as ProjectDataSources
+  component [Project_ownerId: String] as ProjectOwnerId
+  component [Project_collaborators: List] as ProjectCollaborators
+  component [Project_status: ProjectStatus] as ProjectStatus
+  
+  component [DataSource] as DataSource
+  component [DataSource_id: String] as DataSourceId
+  component [DataSource_name: String] as DataSourceName
+  component [DataSource_type: DataSourceType] as DataSourceType
+  component [DataSource_config: Object] as DataSourceConfig
+  component [DataSource_data: Object] as DataSourceData
+  component [DataSource_status: DataSourceStatus] as DataSourceStatus
+  component [DataSource_errorMessage: String] as DataSourceErrorMessage
+  component [DataSource_lastUpdated: DateTime] as DataSourceLastUpdated
+  
+  component [JsonDataTemplate] as JsonDataTemplate
+  component [JsonTemplate_id: String] as JsonTemplateId
+  component [JsonTemplate_name: String] as JsonTemplateName
+  component [JsonTemplate_description: String] as JsonTemplateDescription
+  component [JsonTemplate_data: Object] as JsonTemplateData
+  component [JsonTemplate_componentTypes: List<String>] as JsonTemplateComponentTypes
+  component [JsonTemplate_preview: String] as JsonTemplatePreview
+  
+  component [DataMapping] as DataMapping
+  component [DataMapping_id: String] as DataMappingId
+  component [DataMapping_componentId: String] as DataMappingComponentId
+  component [DataMapping_dataSourceId: String] as DataMappingDataSourceId
+  component [DataMapping_field: String] as DataMappingField
+  component [DataMapping_sourcePath: String] as DataMappingSourcePath
+  component [DataMapping_targetPath: String] as DataMappingTargetPath
+  component [DataMapping_transform: TransformType] as DataMappingTransform
+  component [DataMapping_defaultValue: Any] as DataMappingDefaultValue
+  
+  component [User] as User
+  component [User_id: String] as UserId
+  component [User_username: String] as UserUsername
+  component [User_email: String] as UserEmail
+  component [User_role: String] as UserRole
+  component [User_preferences: UserPreferences] as UserPreferences
+  
+  component [ThemeConfig] as ThemeConfig
+  component [ThemeConfig_id: String] as ThemeConfigId
+  component [ThemeConfig_name: String] as ThemeConfigName
+  component [ThemeConfig_colors: ColorPalette] as ThemeConfigColors
+  component [ThemeConfig_typography: TypographyConfig] as ThemeConfigTypography
+  component [ThemeConfig_spacing: SpacingConfig] as ThemeConfigSpacing
+  component [ThemeConfig_isDarkMode: Boolean] as ThemeConfigIsDarkMode
+  
+  component [HistoryRecord] as HistoryRecord
+  component [HistoryRecord_id: String] as HistoryRecordId
+  component [HistoryRecord_projectId: String] as HistoryRecordProjectId
+  component [HistoryRecord_userId: String] as HistoryRecordUserId
+  component [HistoryRecord_operation: OperationType] as HistoryRecordOperation
+  component [HistoryRecord_data: Object] as HistoryRecordData
+  component [HistoryRecord_timestamp: DateTime] as HistoryRecordTimestamp
+  
+  component [PageSchema] as PageSchema
+  component [PageSchema_version: String] as PageSchemaVersion
+  component [PageSchema_metadata: SchemaMetadata] as PageSchemaMetadata
+  component [PageSchema_components: List<Component>] as PageSchemaComponents
+  component [PageSchema_canvas: CanvasConfig] as PageSchemaCanvas
+  component [PageSchema_theme: ThemeConfig] as PageSchemaTheme
+  component [PageSchema_dataSources: List<DataSource>] as PageSchemaDataSources
+  component [PageSchema_settings: ProjectSettings] as PageSchemaSettings
+  
+  component [ChartConfig] as ChartConfig
+  component [ChartConfig_type: ChartType] as ChartConfigType
+  component [ChartConfig_xField: String] as ChartConfigXField
+  component [ChartConfig_yField: String] as ChartConfigYField
+  component [ChartConfig_seriesField: String] as ChartConfigSeriesField
+  component [ChartConfig_colorField: String] as ChartConfigColorField
+  component [ChartConfig_annotations: List] as ChartConfigAnnotations
+  
+  component [TableColumn] as TableColumn
+  component [TableColumn_key: String] as TableColumnKey
+  component [TableColumn_title: String] as TableColumnTitle
+  component [TableColumn_dataIndex: String] as TableColumnDataIndex
+  component [TableColumn_width: Number] as TableColumnWidth
+  component [TableColumn_render: String] as TableColumnRender
+  
+  component [PaginationConfig] as PaginationConfig
+  component [PaginationConfig_current: Number] as PaginationConfigCurrent
+  component [PaginationConfig_pageSize: Number] as PaginationConfigPageSize
+  component [PaginationConfig_total: Number] as PaginationConfigTotal
+  component [PaginationConfig_showTotal: Boolean] as PaginationConfigShowTotal
+  
+  component [TreeNode] as TreeNode
+  component [TreeNode_id: String] as TreeNodeId
+  component [TreeNode_title: String] as TreeNodeTitle
+  component [TreeNode_children: List<TreeNode>] as TreeNodeChildren
+  component [TreeNode_icon: String] as TreeNodeIcon
+  component [TreeNode_expanded: Boolean] as TreeNodeExpanded
+  component [TreeNode_selected: Boolean] as TreeNodeSelected
+  component [TreeNode_disabled: Boolean] as TreeNodeDisabled
+}
+
+Component "1" *-- "0..*" Component : parent-child
+Project "1" *-- "1" Component : root
+Project "1" *-- "0..*" DataSource : data sources
+Project "1" *-- "1" ThemeConfig : theme
+Template "1" *-- "1" Component : root
+DataSource "1" *-- "0..*" DataMapping : mapping
+Component "1" *-- "0..*" DataMapping : data binding
+Component "1" *-- "0..1" DataSource : direct bind
+Component "1" *-- "0..1" DataSource : direct bind
+Project "1" *-- "1" User : owner
+Project "1" *-- "0..*" User : collaborators
+HistoryRecord "1" *-- "1" Project : history
+PageSchema "1" *-- "1" Project : project base
+PageSchema "1" *-- "0..*" Component : has components
+PageSchema "1" *-- "0..*" DataSource : has data sources
+PageSchema "1" *-- "1" ThemeConfig : has theme
+Component "1" *-- "0..1" ChartConfig : chart config
+Component "1" *-- "0..*" TableColumn : table columns
+Component "1" *-- "0..1" PaginationConfig : pagination
+Component "1" *-- "0..*" TreeNode : tree nodes
+
+package "Data Storage Layer" {
+  
+  component [PostgreSQL] as PostgreSQL
+  component [components] as ComponentsTable
+  component [projects] as ProjectsTable
+  component [templates] as TemplatesTable
+  component [data_sources] as DataSourcesTable
+  component [users] as UsersTable
+  component [history_records] as HistoryRecordsTable
+  
+  component [Redis] as Redis
+  component [session_cache] as SessionCache
+  component [project_cache] as ProjectCache
+  component [collaboration_state] as CollaborationState
+  
+  component [Object Storage] as ObjectStorage
+  component [user_files] as UserFilesBucket
+  component [exported_code] as ExportedCodeBucket
+  component [template_previews] as TemplatePreviewsBucket
+  component [schema_files] as SchemaFilesBucket
+  
+  component [Local Storage] as LocalStorage
+  component [Temp cache] as TempDataCache
+  component [User prefs] as UserPreferencesStorage
+  component [Component cache] as ComponentStateCache
+  component [Form drafts] as FormDraftStorage
+  
+  PostgreSQL --> ComponentsTable
+  PostgreSQL --> ProjectsTable
+  PostgreSQL --> TemplatesTable
+  PostgreSQL --> DataSourcesTable
+  PostgreSQL --> DataMappingsTable
+  PostgreSQL --> UsersTable
+  PostgreSQL --> HistoryRecordsTable
+  
+  Redis --> SessionCache
+  Redis --> ProjectCache
+  Redis --> CollaborationState
+  
+  ObjectStorage --> UserFilesBucket
+  ObjectStorage --> ExportedCodeBucket
+  ObjectStorage --> TemplatePreviewsBucket
+  ObjectStorage --> SchemaFilesBucket
+  
+  LocalStorage --> TempDataCache
+  LocalStorage --> UserPreferencesStorage
+  LocalStorage --> ComponentStateCache
+  LocalStorage --> FormDraftStorage
+}
+
+package "Key Data Flow Scenarios" {
+  
+  component [Edit flow] as ComponentEditFlow
+  component [Drag component] as UserDragComponent
+  component [Create entity] as EditorCreateComponent
+  component [Validate data] as ServiceValidateData
+  component [Update local state] as StateUpdateLocal
+  component [Broadcast op] as CollaborationBroadcast
+  component [Persist DB] as RepositoryPersist
+  component [Cache update] as CacheUpdate
+  
+  component [Binding flow] as DataBindingFlow
+  component [Config datasource] as UserConfigDataSource
+  component [Create DataSource] as CreateDataSourceEntity
+  component [Test connection] as TestDataConnection
+  component [Create mapping] as CreateDataMappingEntity
+  component [Bind component] as BindToComponentEntity
+  component [Live fetch] as RealTimeDataFetch
+  component [Render update] as ComponentRenderUpdate
+  
+  component [JSON quick-input flow] as JsonQuickInputFlow
+  component [Pick component] as UserSelectComponent
+  component [Recommend template] as SystemRecommendTemplate
+  component [Input JSON] as UserInputJson
+  component [Validate JSON] as ValidateJsonFormat
+  component [Parse structure] as ParseDataStructure
+  component [Create static datasource] as CreateStaticDataSource
+  component [Auto-bind props] as AutoRenderToProperties
+  
+  component [Collab sync flow] as CollaborationFlow
+  component [User op] as UserOperation
+  component [Op event] as GenerateOperationEvent
+  component [Collab receive] as CollaborationReceive
+  component [Broadcast users] as BroadcastToUsers
+  component [Merge state] as StateMerge
+  component [Conflict resolution] as ConflictResolve
+  component [Persist state] as StatePersist
+  
+  component [Codegen flow] as CodeGenFlow
+  component [Trigger export] as UserTriggerExport
+  component [Read project] as ReadProjectData
+  component [Code generator] as CodeGeneratorProcess
+  component [Emit React] as GenerateReactCode
+  component [Package project] as PackageProject
+  component [Upload object storage] as UploadToStorage
+  component [Push Git] as PushToGit
+  
+  component [Schema export flow] as SchemaExportFlow
+  component [Export Schema] as UserTriggerSchemaExport
+  component [Read full project] as ReadFullProjectData
+  component [To PageSchema] as ConvertToPageSchema
+  component [Validate Schema] as ValidateSchemaFormat
+  component [Serialize JSON] as SerializeToJSON
+  component [Download Schema] as DownloadSchemaFile
+  component [Store object] as StoreToObjectStorage
+  
+  component [Schema import flow] as SchemaImportFlow
+  component [Upload Schema] as UserUploadSchemaFile
+  component [Parse JSON] as ParseJSONData
+  component [Schema version] as ValidateSchemaVersion
+  component [Migrate Schema] as MigrateOldSchema
+  component [To project] as ConvertToProjectData
+  component [Import state] as ImportToStateManagement
+  component [Render canvas] as RenderToCanvas
+  
+  component [Parse flow] as DataParseFlow
+  component [CSV parse] as CsvParse
+  component [XML parse] as XmlParse
+  component [JSON validate] as JsonValidate
+  
+  component [Mapping flow] as DataMappingFlow
+  component [Gen mapping] as MappingGenerate
+  component [Apply mapping] as MappingApply
+  component [Transform] as DataTransform
+  
+  component [Layout flow] as LayoutFlow
+  component [Layout calc] as LayoutCalculate
+  component [Grid snap] as GridSnap
+  component [Collision] as CollisionDetect
+  
+  component [Local storage flow] as LocalStorageFlow
+  component [Read local] as ReadLocalData
+  component [Write local] as WriteLocalData
+  component [Purge expired] as CleanExpiredData
+  component [Sync server] as SyncToServer
+  
+  component [State mgmt flow] as StateManagementFlow
+  component [State init] as StateInit
+  component [State update] as StateUpdate
+  component [Persist state] as StatePersist
+  component [Restore state] as StateRestore
+  
+  ComponentEditFlow --> UserDragComponent
+  ComponentEditFlow --> EditorCreateComponent
+  ComponentEditFlow --> ServiceValidateData
+  ComponentEditFlow --> StateUpdateLocal
+  ComponentEditFlow --> CollaborationBroadcast
+  ComponentEditFlow --> RepositoryPersist
+  ComponentEditFlow --> CacheUpdate
+  
+  DataBindingFlow --> UserConfigDataSource
+  DataBindingFlow --> CreateDataSourceEntity
+  DataBindingFlow --> TestDataConnection
+  DataBindingFlow --> CreateDataMappingEntity
+  DataBindingFlow --> BindToComponentEntity
+  DataBindingFlow --> RealTimeDataFetch
+  DataBindingFlow --> ComponentRenderUpdate
+  
+  JsonQuickInputFlow --> UserSelectComponent
+  JsonQuickInputFlow --> SystemRecommendTemplate
+  JsonQuickInputFlow --> UserInputJson
+  JsonQuickInputFlow --> ValidateJsonFormat
+  JsonQuickInputFlow --> ParseDataStructure
+  JsonQuickInputFlow --> CreateStaticDataSource
+  JsonQuickInputFlow --> AutoRenderToProperties
+  
+  CollaborationFlow --> UserOperation
+  CollaborationFlow --> GenerateOperationEvent
+  CollaborationFlow --> CollaborationReceive
+  CollaborationFlow --> BroadcastToUsers
+  CollaborationFlow --> StateMerge
+  CollaborationFlow --> ConflictResolve
+  CollaborationFlow --> StatePersist
+  
+  CodeGenFlow --> UserTriggerExport
+  CodeGenFlow --> ReadProjectData
+  CodeGenFlow --> CodeGeneratorProcess
+  CodeGenFlow --> GenerateReactCode
+  CodeGenFlow --> PackageProject
+  CodeGenFlow --> UploadToStorage
+  CodeGenFlow --> PushToGit
+  
+  SchemaExportFlow --> UserTriggerSchemaExport
+  SchemaExportFlow --> ReadFullProjectData
+  SchemaExportFlow --> ConvertToPageSchema
+  SchemaExportFlow --> ValidateSchemaFormat
+  SchemaExportFlow --> SerializeToJSON
+  SchemaExportFlow --> DownloadSchemaFile
+  SchemaExportFlow --> StoreToObjectStorage
+  
+  SchemaImportFlow --> UserUploadSchemaFile
+  SchemaImportFlow --> ParseJSONData
+  SchemaImportFlow --> ValidateSchemaVersion
+  SchemaImportFlow --> MigrateOldSchema
+  SchemaImportFlow --> ConvertToProjectData
+  SchemaImportFlow --> ImportToStateManagement
+  SchemaImportFlow --> RenderToCanvas
+  
+  DataParseFlow --> CsvParse
+  DataParseFlow --> XmlParse
+  DataParseFlow --> JsonValidate
+  
+  DataMappingFlow --> MappingGenerate
+  DataMappingFlow --> MappingApply
+  DataMappingFlow --> DataTransform
+  
+  LayoutFlow --> LayoutCalculate
+  LayoutFlow --> GridSnap
+  LayoutFlow --> CollisionDetect
+  
+  LocalStorageFlow --> ReadLocalData
+  LocalStorageFlow --> WriteLocalData
+  LocalStorageFlow --> CleanExpiredData
+  LocalStorageFlow --> SyncToServer
+  
+  StateManagementFlow --> StateInit
+  StateManagementFlow --> StateUpdate
+  StateManagementFlow --> StatePersist
+  StateManagementFlow --> StateRestore
+}
+
+Component ..> PostgreSQL : persist
+Template ..> PostgreSQL : persist
+Project ..> PostgreSQL : persist
+DataSource ..> PostgreSQL : persist
+DataMapping ..> PostgreSQL : persist
+User ..> PostgreSQL : persist
+HistoryRecord ..> PostgreSQL : persist
+PageSchema ..> ObjectStorage : files
+JsonDataTemplate ..> PostgreSQL : persist (opt)
+ChartConfig ..> PostgreSQL : persist (opt)
+TableColumn ..> PostgreSQL : persist (opt)
+PaginationConfig ..> PostgreSQL : persist (opt)
+TreeNode ..> PostgreSQL : persist (opt)
+
+Component ..> Redis : cache
+Project ..> Redis : cache
+Project ..> ObjectStorage : files
+PageSchema ..> Redis : cache
+
+Component ..> LocalStorage : temp cache
+Project ..> LocalStorage : temp cache
+User ..> LocalStorage : prefs
+
+ComponentEditFlow --> PostgreSQL : persist
+ComponentEditFlow --> Redis : cache refresh
+
+DataBindingFlow --> DataSource : uses
+DataBindingFlow --> DataMapping : uses
+DataBindingFlow --> Component : bind
+
+JsonQuickInputFlow --> JsonDataTemplate : uses
+JsonQuickInputFlow --> DataSource : create
+JsonQuickInputFlow --> Component : update props
+
+CollaborationFlow --> Redis : messaging
+CollaborationFlow --> PostgreSQL : state persist
+
+CodeGenFlow --> Project : read
+CodeGenFlow --> Component : read
+CodeGenFlow --> ObjectStorage : store
+
+SchemaExportFlow --> Project : read
+SchemaExportFlow --> Component : read
+SchemaExportFlow --> DataSource : read
+SchemaExportFlow --> ThemeConfig : read
+SchemaExportFlow --> PageSchema : create
+SchemaExportFlow --> ObjectStorage : store
+
+SchemaImportFlow --> PageSchema : read
+SchemaImportFlow --> ValidateSchemaVersion : uses
+SchemaImportFlow --> MigrateOldSchema : uses
+SchemaImportFlow --> ConvertToProjectData : uses
+SchemaImportFlow --> Project : create
+SchemaImportFlow --> Component : create
+SchemaImportFlow --> DataSource : create
+SchemaImportFlow --> ThemeConfig : create
+SchemaImportFlow --> Redis : state update
+
+DataParseFlow --> DataSource : upsert
+DataMappingFlow --> DataMapping : create/use
+LayoutFlow --> Component : move
+
+JsonQuickInputFlow --> JsonDataTemplate : uses
+JsonQuickInputFlow --> DataSource : create
+JsonQuickInputFlow --> Component : update props
+
+LocalStorageFlow --> LocalStorage : R/W
+LocalStorageFlow --> TempDataCache : temp
+LocalStorageFlow --> UserPreferencesStorage : user prefs
+LocalStorageFlow --> ComponentStateCache : cmp state
+LocalStorageFlow --> FormDraftStorage : drafts
+LocalStorageFlow --> PostgreSQL : sync server
+
+StateManagementFlow --> LocalStorage : state cache
+StateManagementFlow --> Redis : state sync
+StateManagementFlow --> PostgreSQL : state persist
+StateManagementFlow --> Component : bind state
+
+note right of PostgreSQL
+  **Data access:**
+  - read/write split
+  - replication
+  - sharding by project id
+  - indexes
+end note
+
+note right of Redis
+  **Caching:**
+  - hot cache
+  - sessions
+  - collab state
+  - TTL expiry
+end note
+
+note right of LocalStorage
+  **Local storage:**
+  - temp cache (auto purge)
+  - user prefs (persisted)
+  - component cache (session)
+  - form drafts (TTL)
+  - sync: incremental to server
+end note
+
+@enduml

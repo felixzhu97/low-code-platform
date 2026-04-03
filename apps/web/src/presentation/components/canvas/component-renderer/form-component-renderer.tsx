@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Component } from "@/domain/component";
+import styled from "@emotion/styled";
 import {
   Label,
   Select,
@@ -23,6 +24,36 @@ import {
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { CalendarIcon, Clock, Upload } from "lucide-react";
+import {
+  fieldStack,
+  flexRowGap2,
+  mutedSmall,
+  padX2,
+  sliderScaleRow,
+  radioOptionRow,
+  fallbackBox,
+} from "./renderer-emotion";
+
+const FlexGrowInput = styled(Input)`
+  flex: 1;
+  min-width: 0;
+`;
+
+const FullWidthSlider = styled(Slider)`
+  width: 100%;
+`;
+
+const DateTriggerButton = styled(Button)`
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  font-weight: 400;
+`;
+
+const PopoverCalendarPanel = styled(PopoverContent)`
+  width: auto;
+  padding: 0;
+`;
 
 interface FormComponentRendererProps {
   component: Component;
@@ -40,7 +71,7 @@ export function FormComponentRenderer({
   switch (component.type) {
     case "input":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
           <Input
             id={component.id}
@@ -52,14 +83,14 @@ export function FormComponentRenderer({
             style={{ ...themeStyle }}
           />
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "textarea":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
           <Textarea
             id={component.id}
@@ -71,14 +102,14 @@ export function FormComponentRenderer({
             style={{ ...themeStyle }}
           />
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "select":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
           <Select
             disabled={props.disabled}
@@ -98,15 +129,15 @@ export function FormComponentRenderer({
             </SelectContent>
           </Select>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "checkbox":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
-          <div className="flex items-center gap-2">
+        <div css={fieldStack} style={{ ...animationStyle }}>
+          <div css={flexRowGap2}>
             <Checkbox
               id={component.id}
               disabled={props.disabled}
@@ -116,19 +147,19 @@ export function FormComponentRenderer({
             <Label htmlFor={component.id}>{props.label || "复选框"}</Label>
           </div>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "radio":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label>{props.label}</Label>}
           <RadioGroup defaultValue={props.defaultValue || "option-1"}>
             {(props.options || ["选项1", "选项2", "选项3"]).map(
               (option: string, index: number) => (
-                <div key={index} className="flex items-center space-x-2">
+                <div key={index} css={radioOptionRow}>
                   <RadioGroupItem
                     value={`option-${index + 1}`}
                     id={`${component.id}-${index}`}
@@ -140,15 +171,15 @@ export function FormComponentRenderer({
             )}
           </RadioGroup>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "switch":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
-          <div className="flex items-center gap-2">
+        <div css={fieldStack} style={{ ...animationStyle }}>
+          <div css={flexRowGap2}>
             <Switch
               id={component.id}
               disabled={props.disabled}
@@ -158,57 +189,55 @@ export function FormComponentRenderer({
             <Label htmlFor={component.id}>{props.label || "开关"}</Label>
           </div>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "slider":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
-          <div className="px-2">
-            <Slider
+          <div css={padX2}>
+            <FullWidthSlider
               id={component.id}
               disabled={props.disabled}
               defaultValue={props.defaultValue || [50]}
               min={props.min || 0}
               max={props.max || 100}
               step={props.step || 1}
-              className="w-full"
             />
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <div css={sliderScaleRow}>
               <span>{props.min || 0}</span>
               <span>{props.max || 100}</span>
             </div>
           </div>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "date-picker":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
           <Popover>
             <PopoverTrigger asChild>
-              <Button
+              <DateTriggerButton
                 id={component.id}
                 variant="outline"
-                className="w-full justify-start text-left font-normal"
                 disabled={props.disabled}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <CalendarIcon size={16} style={{ marginRight: "0.5rem" }} />
                 {props.selectedDate ? (
                   format(props.selectedDate, "PPP", { locale: zhCN })
                 ) : (
                   <span>{props.placeholder || "选择日期"}</span>
                 )}
-              </Button>
+              </DateTriggerButton>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverCalendarPanel align="start">
               <Calendar
                 mode="single"
                 selected={props.selectedDate}
@@ -216,55 +245,59 @@ export function FormComponentRenderer({
                 disabled={props.disabled}
                 initialFocus
               />
-            </PopoverContent>
+            </PopoverCalendarPanel>
           </Popover>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "time-picker":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
-          <div className="flex items-center gap-2">
-            <Input
+          <div css={flexRowGap2}>
+            <FlexGrowInput
               id={component.id}
               type="time"
               placeholder={props.placeholder || "选择时间"}
               disabled={props.disabled}
               defaultValue={props.defaultValue || ""}
-              className="flex-1"
             />
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <Clock
+              size={16}
+              style={{ color: "hsl(var(--muted-foreground))", flexShrink: 0 }}
+            />
           </div>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
         </div>
       );
 
     case "file-upload":
       return (
-        <div className="space-y-2" style={{ ...animationStyle }}>
+        <div css={fieldStack} style={{ ...animationStyle }}>
           {props.label && <Label htmlFor={component.id}>{props.label}</Label>}
-          <div className="flex items-center gap-2">
-            <Input
+          <div css={flexRowGap2}>
+            <FlexGrowInput
               id={component.id}
               type="file"
               disabled={props.disabled}
               multiple={props.multiple || false}
               accept={props.accept || "*"}
-              className="flex-1"
             />
-            <Upload className="h-4 w-4 text-muted-foreground" />
+            <Upload
+              size={16}
+              style={{ color: "hsl(var(--muted-foreground))", flexShrink: 0 }}
+            />
           </div>
           {props.helperText && (
-            <p className="text-xs text-muted-foreground">{props.helperText}</p>
+            <p css={mutedSmall}>{props.helperText}</p>
           )}
           {props.maxSize && (
-            <p className="text-xs text-muted-foreground">
+            <p css={mutedSmall}>
               最大文件大小: {props.maxSize}
             </p>
           )}
@@ -273,7 +306,7 @@ export function FormComponentRenderer({
 
     default:
       return (
-        <div className="rounded border p-2" style={{ ...animationStyle }}>
+        <div css={fallbackBox} style={{ ...animationStyle }}>
           {component.name || component.type}
         </div>
       );

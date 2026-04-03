@@ -1,6 +1,9 @@
 import type React from "react";
 import type { Component } from "@/domain/component";
 import type { ThemeConfig } from "@/domain/theme";
+import { css } from "@emotion/react";
+import { cn } from "@/application/services/utils";
+import styled from "@emotion/styled";
 import {
   Button,
   Separator,
@@ -17,9 +20,320 @@ import {
   Card,
   CardContent,
 } from "@/presentation/components/ui";
-import { CheckCircle, Circle, Star, Clock, User } from "lucide-react";
-import { cn } from "@/application/services/utils";
+import { CheckCircle, Star, Clock, User } from "lucide-react";
 import { ComponentRenderer } from "./index";
+import { fallbackBox, mutedSmall } from "./renderer-emotion";
+
+const textPad = css`
+  padding: 0.5rem;
+`;
+
+const StyledButton = styled(Button)<{ $fullWidth?: boolean }>`
+  ${(p) => p.$fullWidth && "width: 100%;"}
+`;
+
+const ImageRoot = styled.div<{ $floating?: boolean }>`
+  ${(p) => p.$floating && ""}
+`;
+
+const ImageFrame = styled.div`
+  position: relative;
+  overflow: hidden;
+`;
+
+const PreviewImg = styled.img<{
+  $rounded?: boolean;
+  $shadow?: boolean;
+  $border?: boolean;
+  $gradientOverlay?: boolean;
+}>`
+  object-fit: cover;
+  ${(p) => p.$rounded && "border-radius: 0.5rem;"}
+  ${(p) => p.$shadow && "box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.12);"}
+  ${(p) => p.$border && "border: 2px solid #e5e7eb;"}
+  ${(p) =>
+    p.$gradientOverlay &&
+    `
+    .group:hover & {
+      filter: brightness(1.1);
+    }
+  `}
+`;
+
+const ImgGradientOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.2), transparent);
+  opacity: 0;
+  transition: opacity 300ms;
+  .group:hover & {
+    opacity: 1;
+  }
+`;
+
+const ImgOverlayCenter = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 300ms;
+  .group:hover & {
+    opacity: 1;
+  }
+`;
+
+const OverlayLabel = styled.span`
+  color: white;
+  font-weight: 600;
+  background: rgb(0 0 0 / 0.5);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+`;
+
+const Caption = styled.div`
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+  transition: color 200ms;
+  .group:hover & {
+    color: hsl(var(--foreground));
+  }
+`;
+
+const CarouselWrap = styled.div`
+  width: 100%;
+  max-width: 20rem;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const CarouselPad = styled.div`
+  padding: 0.25rem;
+`;
+
+const SquareCardContent = styled(CardContent)`
+  display: flex;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+`;
+
+const SlideNum = styled.span`
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  color: white;
+`;
+
+const StepsRoot = styled.div`
+  width: 100%;
+`;
+
+const StepsRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const StepCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const stepCircle = (isCompleted: boolean, isCurrent: boolean, isPending: boolean) => css`
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border-width: 2px;
+  border-style: solid;
+  ${isCompleted &&
+  `
+    background-color: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  `}
+  ${isCurrent &&
+  !isCompleted &&
+  `
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+  `}
+  ${isPending &&
+  `
+    border-color: hsl(var(--muted-foreground));
+    color: hsl(var(--muted-foreground));
+  `}
+`;
+
+const StepTitle = styled.div<{ $current?: boolean; $pending?: boolean }>`
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  ${(p) => p.$current && "color: hsl(var(--primary));"}
+  ${(p) => p.$pending && "color: hsl(var(--muted-foreground));"}
+`;
+
+const StepDesc = styled.div`
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const StepConnector = styled.div<{ $done: boolean }>`
+  position: absolute;
+  top: 1.25rem;
+  left: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  width: calc(100% - 2.5rem);
+  left: calc(50% + 1.25rem);
+  background-color: ${(p) =>
+    p.$done ? "hsl(var(--primary))" : "hsl(var(--muted))"};
+`;
+
+const ProgressWrap = styled.div`
+  width: 100%;
+`;
+
+const ProgressStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const ProgressLabels = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+`;
+
+const FullProgress = styled(Progress)`
+  width: 100%;
+`;
+
+const AvatarRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const StyledAvatar = styled(Avatar)<{ $size?: string }>`
+  height: 3rem;
+  width: 3rem;
+  ${(p) => p.$size === "sm" && "height: 2rem; width: 2rem;"}
+  ${(p) => p.$size === "lg" && "height: 4rem; width: 4rem;"}
+`;
+
+const AvatarMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const AvatarName = styled.p`
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+`;
+
+const BadgeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const CloseMini = styled.button`
+  margin-left: 0.25rem;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  &:hover {
+    background-color: hsl(var(--muted));
+  }
+`;
+
+const TagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const TimelineStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const TimelineRow = styled.div`
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+`;
+
+const TimelineDot = styled.div`
+  display: flex;
+  height: 1.5rem;
+  width: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+`;
+
+const TimelineBody = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const TimelineLine = styled.div`
+  position: absolute;
+  left: 0.75rem;
+  top: 1.5rem;
+  height: 100%;
+  width: 2px;
+  background-color: hsl(var(--border));
+`;
+
+const RatingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const StarBtn = styled.button<{ $size: string }>`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: color 150ms;
+  ${(p) => p.$size === "sm" && "height: 1rem; width: 1rem;"}
+  ${(p) => p.$size === "default" && "height: 1.25rem; width: 1.25rem;"}
+  ${(p) => p.$size === "lg" && "height: 1.5rem; width: 1.5rem;"}
+`;
+
+const RatingValue = styled.span`
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--muted-foreground));
+`;
 
 interface BasicComponentRendererProps {
   component: Component;
@@ -50,9 +364,7 @@ export function BasicComponentRenderer({
   onSelectComponent = () => {},
   onMouseDown = () => {},
 }: BasicComponentRendererProps) {
-  // 渲染图标的辅助函数
   const renderIcon = (iconName: string) => {
-    // 简化实现，实际项目中可以使用lucide-react或其他图标库
     switch (iconName) {
       case "plus":
         return <span>+</span>;
@@ -71,16 +383,16 @@ export function BasicComponentRenderer({
     case "text":
       return (
         <div
-          className="p-2"
+          css={textPad}
           style={{
             fontSize: `${props.fontSize}px`,
             fontWeight: props.fontWeight,
             color: props.color,
-            textAlign: props.alignment as any,
+            textAlign: props.alignment as React.CSSProperties["textAlign"],
             lineHeight: props.lineHeight,
             letterSpacing: props.letterSpacing,
-            textTransform: props.textTransform as any,
-            textDecoration: props.textDecoration as any,
+            textTransform: props.textTransform as React.CSSProperties["textTransform"],
+            textDecoration: props.textDecoration as React.CSSProperties["textDecoration"],
             ...themeStyle,
             ...animationStyle,
           }}
@@ -91,12 +403,12 @@ export function BasicComponentRenderer({
 
     case "button":
       return (
-        <Button
-          variant={(props.variant as any) || "default"}
-          size={(props.size as any) || "default"}
+        <StyledButton
+          variant={(props.variant as React.ComponentProps<typeof Button>["variant"]) || "default"}
+          size={(props.size as React.ComponentProps<typeof Button>["size"]) || "default"}
           disabled={props.disabled}
+          $fullWidth={!!props.fullWidth}
           className={cn(
-            props.fullWidth ? "w-full" : "",
             props.gradient && "gradient-primary text-white border-0",
             props.shadow && "shadow-medium",
             props.floating && "floating"
@@ -116,58 +428,48 @@ export function BasicComponentRenderer({
           }}
         >
           {props.icon && props.iconPosition === "left" && (
-            <span className="mr-2">{renderIcon(props.icon)}</span>
+            <span css={css({ marginRight: "0.5rem" })}>{renderIcon(props.icon)}</span>
           )}
           {props.text || "按钮"}
           {props.icon && props.iconPosition === "right" && (
-            <span className="ml-2">{renderIcon(props.icon)}</span>
+            <span css={css({ marginLeft: "0.5rem" })}>{renderIcon(props.icon)}</span>
           )}
-        </Button>
+        </StyledButton>
       );
 
     case "image":
       return (
-        <div
+        <ImageRoot
+          $floating={!!props.floating}
           className={cn(props.floating && "floating")}
           style={{ ...animationStyle }}
         >
-          <div className="relative overflow-hidden group">
-            <img
+          <ImageFrame className="group">
+            <PreviewImg
               src={props.src || "/placeholder.svg?height=200&width=300"}
               alt={props.alt || "示例图片"}
               width={props.width || 300}
               height={props.height || 200}
-              className={cn(
-                "object-cover",
-                props.rounded && "rounded-lg",
-                props.shadow && "shadow-medium",
-                props.border && "border-2 border-gray-200",
-                props.gradientOverlay && "group-hover:brightness-110"
-              )}
+              $rounded={!!props.rounded}
+              $shadow={!!props.shadow}
+              $border={!!props.border}
+              $gradientOverlay={!!props.gradientOverlay}
               style={{
-                objectFit: (props.objectFit as any) || "cover",
+                objectFit: (props.objectFit as React.CSSProperties["objectFit"]) || "cover",
                 filter: props.gradientOverlay
                   ? "contrast(1.1) saturate(1.1)"
                   : undefined,
               }}
             />
-            {props.gradientOverlay && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            )}
+            {props.gradientOverlay && <ImgGradientOverlay />}
             {props.overlayText && (
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="text-white font-semibold bg-black/50 px-3 py-1 rounded-lg">
-                  {props.overlayText}
-                </span>
-              </div>
+              <ImgOverlayCenter>
+                <OverlayLabel>{props.overlayText}</OverlayLabel>
+              </ImgOverlayCenter>
             )}
-          </div>
-          {props.caption && (
-            <div className="mt-2 text-center text-sm text-muted-foreground transition-colors duration-200 group-hover:text-foreground">
-              {props.caption}
-            </div>
-          )}
-        </div>
+          </ImageFrame>
+          {props.caption && <Caption>{props.caption}</Caption>}
+        </ImageRoot>
       );
 
     case "divider":
@@ -189,7 +491,7 @@ export function BasicComponentRenderer({
 
     case "carousel":
       return (
-        <div className="w-full max-w-xs mx-auto" style={{ ...animationStyle }}>
+        <CarouselWrap style={{ ...animationStyle }}>
           <Carousel
             opts={{
               align: "start",
@@ -199,11 +501,11 @@ export function BasicComponentRenderer({
           >
             <CarouselContent>
               {childComponents.length > 0 ? (
-                childComponents.map((child, index) => (
+                childComponents.map((child) => (
                   <CarouselItem key={child.id}>
-                    <div className="p-1">
+                    <CarouselPad>
                       <Card>
-                        <CardContent className="flex aspect-square items-center justify-center p-6">
+                        <SquareCardContent>
                           <ComponentRenderer
                             component={child}
                             parentComponent={component}
@@ -216,45 +518,39 @@ export function BasicComponentRenderer({
                             onMouseDown={onMouseDown}
                             componentData={null}
                           />
-                        </CardContent>
+                        </SquareCardContent>
                       </Card>
-                    </div>
+                    </CarouselPad>
                   </CarouselItem>
                 ))
               ) : (
                 <>
                   <CarouselItem>
-                    <div className="p-1">
+                    <CarouselPad>
                       <Card className="gradient-primary">
-                        <CardContent className="flex aspect-square items-center justify-center p-6">
-                          <span className="text-4xl font-semibold text-white">
-                            1
-                          </span>
-                        </CardContent>
+                        <SquareCardContent>
+                          <SlideNum>1</SlideNum>
+                        </SquareCardContent>
                       </Card>
-                    </div>
+                    </CarouselPad>
                   </CarouselItem>
                   <CarouselItem>
-                    <div className="p-1">
+                    <CarouselPad>
                       <Card className="gradient-secondary">
-                        <CardContent className="flex aspect-square items-center justify-center p-6">
-                          <span className="text-4xl font-semibold text-white">
-                            2
-                          </span>
-                        </CardContent>
+                        <SquareCardContent>
+                          <SlideNum>2</SlideNum>
+                        </SquareCardContent>
                       </Card>
-                    </div>
+                    </CarouselPad>
                   </CarouselItem>
                   <CarouselItem>
-                    <div className="p-1">
+                    <CarouselPad>
                       <Card className="gradient-success">
-                        <CardContent className="flex aspect-square items-center justify-center p-6">
-                          <span className="text-4xl font-semibold text-white">
-                            3
-                          </span>
-                        </CardContent>
+                        <SquareCardContent>
+                          <SlideNum>3</SlideNum>
+                        </SquareCardContent>
                       </Card>
-                    </div>
+                    </CarouselPad>
                   </CarouselItem>
                 </>
               )}
@@ -266,10 +562,10 @@ export function BasicComponentRenderer({
               </>
             )}
           </Carousel>
-        </div>
+        </CarouselWrap>
       );
 
-    case "steps":
+    case "steps": {
       const steps = props.steps || [
         { title: "步骤1", description: "第一步描述" },
         { title: "步骤2", description: "第二步描述" },
@@ -278,120 +574,79 @@ export function BasicComponentRenderer({
       const currentStep = props.currentStep || 1;
 
       return (
-        <div className="w-full" style={{ ...animationStyle }}>
-          <div className="flex items-center justify-between">
-            {steps.map((step: any, index: number) => {
+        <StepsRoot style={{ ...animationStyle }}>
+          <StepsRow>
+            {steps.map((step: { title: string; description?: string }, index: number) => {
               const stepNumber = index + 1;
               const isCompleted = stepNumber < currentStep;
               const isCurrent = stepNumber === currentStep;
               const isPending = stepNumber > currentStep;
 
               return (
-                <div key={index} className="flex flex-col items-center">
-                  <div
-                    className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-full border-2",
-                      isCompleted &&
-                        "bg-primary border-primary text-primary-foreground",
-                      isCurrent && "border-primary text-primary",
-                      isPending &&
-                        "border-muted-foreground text-muted-foreground"
-                    )}
-                  >
+                <StepCol key={index}>
+                  <div css={stepCircle(isCompleted, isCurrent, isPending)}>
                     {isCompleted ? (
-                      <CheckCircle className="h-5 w-5" />
+                      <CheckCircle size={20} />
                     ) : (
-                      <span className="text-sm font-medium">{stepNumber}</span>
+                      <span css={css({ fontSize: "0.875rem", fontWeight: 500 })}>
+                        {stepNumber}
+                      </span>
                     )}
                   </div>
-                  <div className="mt-2 text-center">
-                    <div
-                      className={cn(
-                        "text-sm font-medium",
-                        isCurrent && "text-primary",
-                        isPending && "text-muted-foreground"
-                      )}
-                    >
+                  <div css={css({ marginTop: "0.5rem", textAlign: "center" })}>
+                    <StepTitle $current={isCurrent} $pending={isPending && !isCurrent}>
                       {step.title}
-                    </div>
-                    {step.description && (
-                      <div className="text-xs text-muted-foreground">
-                        {step.description}
-                      </div>
-                    )}
+                    </StepTitle>
+                    {step.description && <StepDesc>{step.description}</StepDesc>}
                   </div>
                   {index < steps.length - 1 && (
-                    <div
-                      className={cn(
-                        "absolute top-5 left-1/2 h-0.5 w-full -translate-y-1/2",
-                        stepNumber < currentStep ? "bg-primary" : "bg-muted"
-                      )}
-                      style={{
-                        width: "calc(100% - 2.5rem)",
-                        left: "calc(50% + 1.25rem)",
-                      }}
-                    />
+                    <StepConnector $done={stepNumber < currentStep} />
                   )}
-                </div>
+                </StepCol>
               );
             })}
-          </div>
-        </div>
+          </StepsRow>
+        </StepsRoot>
       );
+    }
 
     case "progress":
       return (
-        <div className="w-full space-y-2" style={{ ...animationStyle }}>
+        <ProgressStack css={css({ width: "100%" })} style={{ ...animationStyle }}>
           {props.label && (
-            <div className="flex justify-between text-sm">
+            <ProgressLabels>
               <span>{props.label}</span>
               <span>{props.value || 0}%</span>
-            </div>
+            </ProgressLabels>
           )}
-          <Progress value={props.value || 0} className="w-full" />
+          <FullProgress value={props.value || 0} />
           {props.description && (
-            <p className="text-xs text-muted-foreground">{props.description}</p>
+            <p css={mutedSmall}>{props.description}</p>
           )}
-        </div>
+        </ProgressStack>
       );
 
     case "avatar":
       return (
-        <div
-          className="flex items-center space-x-4"
-          style={{ ...animationStyle }}
-        >
-          <Avatar
-            className={cn(
-              "h-12 w-12",
-              props.size === "sm" && "h-8 w-8",
-              props.size === "lg" && "h-16 w-16"
-            )}
-          >
+        <AvatarRow style={{ ...animationStyle }}>
+          <StyledAvatar $size={props.size}>
             <AvatarImage src={props.src || ""} alt={props.alt || "头像"} />
             <AvatarFallback>
-              {props.fallback || <User className="h-4 w-4" />}
+              {props.fallback || <User size={16} />}
             </AvatarFallback>
-          </Avatar>
+          </StyledAvatar>
           {props.showInfo && (
-            <div className="space-y-1">
-              <p className="text-sm font-medium leading-none">
-                {props.name || "用户名"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {props.description || "用户描述"}
-              </p>
-            </div>
+            <AvatarMeta>
+              <AvatarName>{props.name || "用户名"}</AvatarName>
+              <p css={mutedSmall}>{props.description || "用户描述"}</p>
+            </AvatarMeta>
           )}
-        </div>
+        </AvatarRow>
       );
 
     case "badge":
       return (
-        <div
-          className="flex items-center space-x-2"
-          style={{ ...animationStyle }}
-        >
+        <BadgeRow style={{ ...animationStyle }}>
           <Badge
             variant={props.variant || "default"}
             className={cn(
@@ -411,19 +666,16 @@ export function BasicComponentRenderer({
             {props.text || "徽章"}
           </Badge>
           {props.showClose && (
-            <button
-              className="ml-1 h-4 w-4 rounded-full hover:bg-muted"
-              onClick={() => {}}
-            >
+            <CloseMini type="button" onClick={() => {}}>
               ×
-            </button>
+            </CloseMini>
           )}
-        </div>
+        </BadgeRow>
       );
 
     case "tag":
       return (
-        <div className="flex flex-wrap gap-2" style={{ ...animationStyle }}>
+        <TagList style={{ ...animationStyle }}>
           {(props.tags || ["标签1", "标签2", "标签3"]).map(
             (tag: string, index: number) => (
               <div
@@ -452,20 +704,17 @@ export function BasicComponentRenderer({
               >
                 {tag}
                 {props.closable && (
-                  <button
-                    className="ml-1 h-3 w-3 rounded-full hover:bg-muted"
-                    onClick={() => {}}
-                  >
+                  <CloseMini type="button" onClick={() => {}}>
                     ×
-                  </button>
+                  </CloseMini>
                 )}
               </div>
             )
           )}
-        </div>
+        </TagList>
       );
 
-    case "timeline":
+    case "timeline": {
       const timelineItems = props.items || [
         { title: "事件1", description: "事件描述1", time: "2023-01-01" },
         { title: "事件2", description: "事件描述2", time: "2023-01-02" },
@@ -473,43 +722,51 @@ export function BasicComponentRenderer({
       ];
 
       return (
-        <div className="w-full" style={{ ...animationStyle }}>
-          <div className="space-y-4">
-            {timelineItems.map((item: any, index: number) => (
-              <div key={index} className="relative flex items-start space-x-3">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Clock className="h-3 w-3" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium">{item.title}</h4>
-                    <span className="text-xs text-muted-foreground">
-                      {item.time}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-                {index < timelineItems.length - 1 && (
-                  <div className="absolute left-3 top-6 h-full w-0.5 bg-border" />
-                )}
-              </div>
-            ))}
-          </div>
+        <div css={css({ width: "100%" })} style={{ ...animationStyle }}>
+          <TimelineStack>
+            {timelineItems.map(
+              (item: { title: string; description?: string; time?: string }, index: number) => (
+                <TimelineRow key={index}>
+                  <TimelineDot>
+                    <Clock size={12} />
+                  </TimelineDot>
+                  <TimelineBody>
+                    <div
+                      css={css`
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      `}
+                    >
+                      <h4 css={css({ fontSize: "0.875rem", fontWeight: 500 })}>
+                        {item.title}
+                      </h4>
+                      <span css={mutedSmall}>{item.time}</span>
+                    </div>
+                    <p css={css`
+                      font-size: 0.875rem;
+                      line-height: 1.25rem;
+                      color: hsl(var(--muted-foreground));
+                    `}>
+                      {item.description}
+                    </p>
+                  </TimelineBody>
+                  {index < timelineItems.length - 1 && <TimelineLine />}
+                </TimelineRow>
+              )
+            )}
+          </TimelineStack>
         </div>
       );
+    }
 
-    case "rating":
+    case "rating": {
       const maxRating = props.maxRating || 5;
       const rating = props.rating || 0;
       const size = props.size || "default";
 
       return (
-        <div
-          className="flex items-center space-x-1"
-          style={{ ...animationStyle }}
-        >
+        <RatingRow style={{ ...animationStyle }}>
           {Array.from({ length: maxRating }, (_, index) => {
             const starValue = index + 1;
             const isFilled = starValue <= rating;
@@ -517,39 +774,37 @@ export function BasicComponentRenderer({
               starValue === Math.ceil(rating) && rating % 1 !== 0;
 
             return (
-              <button
+              <StarBtn
                 key={index}
-                className={cn(
-                  "transition-colors",
-                  size === "sm" && "h-4 w-4",
-                  size === "default" && "h-5 w-5",
-                  size === "lg" && "h-6 w-6"
-                )}
+                type="button"
+                $size={size}
                 onClick={() => {}}
                 disabled={props.readonly}
               >
                 <Star
-                  className={cn(
-                    "h-full w-full",
-                    isFilled && "fill-yellow-400 text-yellow-400",
-                    isHalfFilled && "fill-yellow-400/50 text-yellow-400",
-                    !isFilled && !isHalfFilled && "text-muted-foreground"
-                  )}
+                  css={css`
+                    width: 100%;
+                    height: 100%;
+                    ${isFilled && "fill: #facc15; color: #facc15;"}
+                    ${isHalfFilled && "fill: rgb(250 204 21 / 0.5); color: #facc15;"}
+                    ${!isFilled && !isHalfFilled && "color: hsl(var(--muted-foreground));"}
+                  `}
                 />
-              </button>
+              </StarBtn>
             );
           })}
           {props.showValue && (
-            <span className="ml-2 text-sm text-muted-foreground">
+            <RatingValue>
               {rating}/{maxRating}
-            </span>
+            </RatingValue>
           )}
-        </div>
+        </RatingRow>
       );
+    }
 
     default:
       return (
-        <div className="rounded border p-2">
+        <div css={fallbackBox}>
           {component.name || component.type}
         </div>
       );

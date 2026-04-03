@@ -7,7 +7,9 @@ import { ChartComponentRenderer } from "./chart-component-renderer";
 import { FormComponentRenderer } from "./form-component-renderer";
 import { DataComponentRenderer } from "./data-component-renderer";
 import { LayoutComponentRenderer } from "./layout-component-renderer";
+import { css } from "@emotion/react";
 import { cn } from "@/application/services/utils";
+import { fallbackBox } from "./renderer-emotion";
 
 interface ComponentRendererProps {
   component: Component;
@@ -182,7 +184,7 @@ export function ComponentRenderer({
 
     // 默认渲染
     return (
-      <div className="rounded border p-2">
+      <div css={fallbackBox}>
         {component.name || component.type}
       </div>
     );
@@ -193,10 +195,13 @@ export function ComponentRenderer({
     return (
       <div
         key={component.id}
+        css={css`
+          position: absolute;
+          ${!isPreviewMode ? "cursor: grab;" : ""}
+          ${selectedId === component.id ? "cursor: grabbing;" : ""}
+        `}
         className={cn(
-          "absolute",
-          !isPreviewMode && "cursor-grab component-hover",
-          selectedId === component.id && "cursor-grabbing",
+          !isPreviewMode && "component-hover",
           isDropTarget && "component-drag-over"
         )}
         style={{

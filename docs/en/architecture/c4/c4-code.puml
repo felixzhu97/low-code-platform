@@ -1,0 +1,14 @@
+@startuml c4-code-felix-low-code
+skinparam classAttributeIconSize 0
+title Code level — illustrative collaborators (`apps/web`)
+
+class "Canvas (presentation)" as Canvas
+class "Create component use case (application)" as UC
+class "Component store (infrastructure)" as Store
+class "Component entity (domain)" as Comp
+
+Canvas --> UC : invokes
+UC --> Store : via port
+Store --> Comp : holds state
+
+@enduml
