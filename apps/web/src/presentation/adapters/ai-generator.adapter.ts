@@ -3,9 +3,9 @@ import type { PageSchema } from "@/domain/entities/schema.types";
 import {
   AIGenerator,
   AIClientFactory,
-  type AIClientError,
-  type ParseError,
-  type ValidationError,
+  AIClientError,
+  ParseError,
+  ValidationError,
   type AIProviderType,
 } from "@/lib/ai-generator";
 import { TemplateAdapter } from "./template.adapter";
@@ -91,7 +91,7 @@ export class AIGeneratorAdapter {
         position: position || { x: 0, y: 0 },
       });
 
-      return result.result;
+      return result.result as Component;
     } catch (error) {
       this.handleError(error);
       throw error;

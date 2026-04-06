@@ -96,7 +96,7 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" size="sm">
           浏览模板库
         </Button>
       </DialogTrigger>

@@ -1,45 +1,32 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../application/services/utils";
+import styled from "@emotion/styled";
+import { ToolbarSeparator } from "./toolbar-separator";
 
 interface ToolbarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * 是否显示分隔符（在组后）
-   * @default false
-   */
   withSeparator?: boolean;
-  /**
-   * 组标签（用于可访问性）
-   */
   "aria-label"?: string;
 }
 
+const StyledGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+`;
+
 const ToolbarGroup = React.forwardRef<HTMLDivElement, ToolbarGroupProps>(
-  ({ className, withSeparator = false, children, ...props }, ref) => {
-    return (
-      <>
-        <div
-          ref={ref}
-          className={cn(
-            "flex items-center gap-1 transition-opacity duration-200",
-            className
-          )}
-          {...props}
-        >
-          {children}
-        </div>
-        {withSeparator && (
-          <div
-            className="h-6 w-px bg-border mx-1"
-            role="separator"
-            aria-orientation="vertical"
-          />
-        )}
-      </>
-    );
-  }
+  ({ className, withSeparator = false, children, ...props }, ref) => (
+    <>
+      <StyledGroup ref={ref} className={className} {...props}>
+        {children}
+      </StyledGroup>
+      {withSeparator && <ToolbarSeparator />}
+    </>
+  )
 );
 ToolbarGroup.displayName = "ToolbarGroup";
 
-export { ToolbarGroup, type ToolbarGroupProps };
+export { ToolbarGroup };

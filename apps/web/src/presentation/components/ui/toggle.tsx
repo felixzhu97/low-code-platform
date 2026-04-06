@@ -2,44 +2,88 @@
 
 import * as React from "react"
 import * as TogglePrimitive from "@radix-ui/react-toggle"
-import { cva, type VariantProps } from "class-variance-authority"
+import styled from "@emotion/styled"
+import { css } from "@emotion/react"
 
-import { cn } from "../../../application/services/utils"
+type ToggleVariant = "default" | "outline"
+type ToggleSize = "default" | "sm" | "lg"
 
-const toggleVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 gap-2",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        outline:
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-      },
-      size: {
-        default: "h-10 px-3 min-w-10",
-        sm: "h-9 px-2.5 min-w-9",
-        lg: "h-11 px-5 min-w-11",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+interface ToggleProps extends React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> {
+  variant?: ToggleVariant
+  size?: ToggleSize
+}
+
+const StyledToggle = styled(TogglePrimitive.Root)<{ variant?: ToggleVariant; size?: ToggleSize }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
-)
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &[data-state="on"] {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  ${(p) => {
+    if (p.variant === "outline") {
+      return css`
+        background-color: transparent;
+        border: 1px solid hsl(var(--input));
+        &:hover {
+          background-color: hsl(var(--accent));
+          color: hsl(var(--accent-foreground));
+        }
+      `
+    }
+    return css`
+      background-color: transparent;
+      &:hover {
+        background-color: hsl(var(--muted));
+        color: hsl(var(--muted-foreground));
+      }
+    `
+  }}
+
+  ${(p) => {
+    const sizeMap = {
+      default: css`height: 2.5rem; padding: 0 0.75rem; min-width: 2.5rem;`,
+      sm: css`height: 2.25rem; padding: 0 0.625rem; min-width: 2.25rem;`,
+      lg: css`height: 2.75rem; padding: 0 1.25rem; min-width: 2.75rem;`,
+    }
+    return sizeMap[p.size || "default"]
+  }}
+`
 
 const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root
-    ref={ref}
-    className={cn(toggleVariants({ variant, size, className }))}
-    {...props}
-  />
+  ToggleProps
+>(({ className, variant = "default", size = "default", ...props }, ref) => (
+  <StyledToggle ref={ref} className={className} variant={variant} size={size} {...props} />
 ))
-
 Toggle.displayName = TogglePrimitive.Root.displayName
 
-export { Toggle, toggleVariants }
+export { Toggle };
+export type { ToggleVariant, ToggleSize };

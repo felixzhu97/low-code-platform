@@ -30,10 +30,10 @@ export interface ProjectData {
   theme: any;
   dataSources: any[];
   settings: {
-    activeTab: string;
-    sidebarCollapsed: boolean;
-    rightPanelCollapsed: boolean;
-    leftPanelCollapsed: boolean;
+    activeTab?: string;
+    sidebarCollapsed?: boolean;
+    rightPanelCollapsed?: boolean;
+    leftPanelCollapsed?: boolean;
   };
 }
 

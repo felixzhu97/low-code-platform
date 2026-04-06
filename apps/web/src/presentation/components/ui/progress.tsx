@@ -2,26 +2,34 @@
 
 import * as React from "react"
 import * as ProgressPrimitive from "@radix-ui/react-progress"
+import styled from "@emotion/styled"
 
-import { cn } from "../../../application/services/utils"
+const StyledProgressRoot = styled(ProgressPrimitive.Root)`
+  position: relative;
+  height: 1rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: hsl(var(--secondary));
+`
+
+const StyledProgressIndicator = styled(ProgressPrimitive.Indicator)`
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  background-color: hsl(var(--primary));
+  transition: transform 0.2s ease-in-out;
+`
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
 >(({ className, value, ...props }, ref) => (
-  <ProgressPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
-      className
-    )}
-    {...props}
-  >
-    <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 bg-primary transition-all"
+  <StyledProgressRoot ref={ref} className={className} {...props}>
+    <StyledProgressIndicator
       style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
     />
-  </ProgressPrimitive.Root>
+  </StyledProgressRoot>
 ))
 Progress.displayName = ProgressPrimitive.Root.displayName
 

@@ -112,18 +112,21 @@ const PageRoot = styled.div`
 
 const HeaderToolbar = styled(Toolbar)`
   width: 100%;
+  min-width: 0;
   border-width: 0;
   box-shadow: none;
   background: transparent;
   padding-left: 0;
   padding-right: 0;
+  gap: 0.375rem;
 `;
 
 const CenterToolbar = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
   flex: 1;
+  min-width: 0;
   justify-content: center;
 `;
 
@@ -169,7 +172,9 @@ const VisuallyHidden = styled.span`
 `;
 
 const ToolbarLabel = styled.span`
-  margin-left: 0.5rem;
+  margin-left: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
   @media (max-width: 639px) {
     display: none;
   }

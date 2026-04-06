@@ -2,6 +2,22 @@
  * AI Client type definitions
  */
 
+import type {
+  AIClient,
+  AIMessage,
+  AIClientConfig,
+  RetryConfig,
+  JSONSchema,
+  OpenAIConfig,
+  ClaudeConfig,
+  GeminiConfig,
+  AzureOpenAIConfig,
+  GroqConfig,
+  MistralConfig,
+  OllamaConfig,
+} from "./types";
+import { AIClientError } from "./types";
+
 export interface DeepSeekConfig extends AIClientConfig {
   model?: string;
   temperature?: number;
@@ -35,9 +51,6 @@ export type AIClientConfigUnion =
   | MistralConfig
   | OllamaConfig
   | SiliconFlowConfig;
-
-import type { AIClient, AIMessage, AIClientConfig, RetryConfig, JSONSchema } from "../types";
-import { AIClientError } from "../types";
 
 export {
   AIClient,

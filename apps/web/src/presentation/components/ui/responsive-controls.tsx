@@ -30,21 +30,21 @@ export function ResponsiveControls({}: ResponsiveControlsProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex shrink-0 items-center gap-1">
       <Tabs
         value={activeDevice}
         onValueChange={handleDeviceChange}
-        className="mr-2"
+        className="mr-1"
       >
-        <TabsList className="grid w-auto grid-cols-3">
-          <TabsTrigger value="mobile" className="px-3">
-            <Smartphone className="h-4 w-4" />
+        <TabsList className="grid h-8 w-auto grid-cols-3 gap-0 p-0.5">
+          <TabsTrigger value="mobile" className="h-7 px-2 py-0 text-xs">
+            <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
           </TabsTrigger>
-          <TabsTrigger value="tablet" className="px-3">
-            <Tablet className="h-4 w-4" />
+          <TabsTrigger value="tablet" className="h-7 px-2 py-0 text-xs">
+            <Tablet className="h-3.5 w-3.5" aria-hidden="true" />
           </TabsTrigger>
-          <TabsTrigger value="desktop" className="px-3">
-            <Laptop className="h-4 w-4" />
+          <TabsTrigger value="desktop" className="h-7 px-2 py-0 text-xs">
+            <Laptop className="h-3.5 w-3.5" aria-hidden="true" />
           </TabsTrigger>
         </TabsList>
       </Tabs>

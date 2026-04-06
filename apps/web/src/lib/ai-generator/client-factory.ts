@@ -1,5 +1,5 @@
 import type { AIClient } from "./types";
-import type {
+import {
   OpenAIConfig,
   ClaudeConfig,
   GeminiConfig,
@@ -7,9 +7,9 @@ import type {
   GroqConfig,
   MistralConfig,
   OllamaConfig,
-} from "../types";
-import type { DeepSeekConfig } from "./deepseek-client";
-import type { SiliconFlowConfig } from "./siliconflow-client";
+} from "./types";
+import { DeepSeekConfig } from "./deepseek-client";
+import { SiliconFlowConfig } from "./siliconflow-client";
 import { OpenAIClient } from "./openai-client";
 import { ClaudeClient } from "./claude-client";
 import { DeepSeekClient } from "./deepseek-client";

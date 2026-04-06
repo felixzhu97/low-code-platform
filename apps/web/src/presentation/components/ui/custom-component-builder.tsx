@@ -157,7 +157,7 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
               <Label>选择要包含的组件</Label>
               <ScrollArea className="h-[300px] rounded-md border">
                 <div className="grid grid-cols-2 gap-2 p-4">
-                  {existingComponents.map((component) => (
+                  {existingComponents.map((component: Component) => (
                     <Card
                       key={component.id}
                       className={`cursor-pointer transition-colors ${

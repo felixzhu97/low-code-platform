@@ -94,7 +94,7 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Library className="mr-2 h-4 w-4" />
+          <Library className="mr-1.5" aria-hidden="true" />
           组件库管理
         </Button>
       </DialogTrigger>
@@ -149,14 +149,14 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
             <ScrollArea className="h-[400px]">
               <div className="grid grid-cols-2 gap-4 p-2">
                 {filteredComponents.length > 0 ? (
-                  filteredComponents.map((component) => (
+                  filteredComponents.map((component: Component) => (
                     <Card key={component.id} className="overflow-hidden">
                       <CardContent className="p-3">
                         <div className="mb-2 flex items-center justify-between">
                           <div className="font-medium">{component.name}</div>
                           <div className="flex items-center gap-1">
                             <Badge variant="outline">
-                              {component.category}
+                              {component.properties?.category}
                             </Badge>
                             <Button
                               variant="ghost"
@@ -176,11 +176,11 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
                         </div>
                         <div className="text-sm text-muted-foreground">
                           类型: {component.type}
-                          {component.isContainer && " (容器)"}
+                          {component.properties?.isContainer && " (容器)"}
                         </div>
-                        {component.childComponents && (
+                        {component.properties?.childComponents && (
                           <div className="mt-1 text-xs text-muted-foreground">
-                            包含 {component.childComponents.length} 个子组件
+                            包含 {component.properties?.childComponents.length} 个子组件
                           </div>
                         )}
                       </CardContent>
@@ -217,19 +217,19 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
           <TabsContent value="favorites">
             <ScrollArea className="h-[400px]">
               <div className="grid grid-cols-2 gap-4 p-2">
-                {filteredComponents.filter((component) =>
+                {filteredComponents.filter((component: Component) =>
                   favorites.includes(component.id)
                 ).length > 0 ? (
                   filteredComponents
-                    .filter((component) => favorites.includes(component.id))
-                    .map((component) => (
+                    .filter((component: Component) => favorites.includes(component.id))
+                    .map((component: Component) => (
                       <Card key={component.id} className="overflow-hidden">
                         <CardContent className="p-3">
                           <div className="mb-2 flex items-center justify-between">
                             <div className="font-medium">{component.name}</div>
                             <div className="flex items-center gap-1">
                               <Badge variant="outline">
-                                {component.category}
+                                {component.properties?.category}
                               </Badge>
                               <Button
                                 variant="ghost"
@@ -243,7 +243,7 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
                           </div>
                           <div className="text-sm text-muted-foreground">
                             类型: {component.type}
-                            {component.isContainer && " (容器)"}
+                            {component.properties?.isContainer && " (容器)"}
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-between bg-muted/50 p-2">

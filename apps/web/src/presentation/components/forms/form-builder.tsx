@@ -425,8 +425,8 @@ export function FormBuilder({}: FormBuilderProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <FormInput className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm">
+          <FormInput className="mr-1.5" aria-hidden="true" />
           表单构建器
         </Button>
       </DialogTrigger>

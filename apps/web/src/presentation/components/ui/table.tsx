@@ -1,107 +1,144 @@
 import * as React from "react"
+import styled from "@emotion/styled"
 
-import { cn } from "../../../application/services/utils"
+const TableWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  overflow: auto;
+`
+
+const StyledTable = styled.table`
+  width: 100%;
+  caption-bottom: 0.875rem;
+  font-size: 0.875rem;
+`
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
+  <TableWrapper>
+    <StyledTable ref={ref} className={className} {...props} />
+  </TableWrapper>
 ))
 Table.displayName = "Table"
+
+const StyledThead = styled.thead`
+  tr {
+    border-bottom: 1px solid hsl(var(--border));
+  }
+`
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <StyledThead ref={ref} className={className} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
+
+const StyledTbody = styled.tbody`
+  tr:last-child {
+    border: 0;
+  }
+`
 
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
+  <StyledTbody ref={ref} className={className} {...props} />
 ))
 TableBody.displayName = "TableBody"
+
+const StyledTfoot = styled.tfoot`
+  border-top: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.5);
+  font-weight: 500;
+
+  tr:last-child {
+    border-bottom: 0;
+  }
+`
 
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className
-    )}
-    {...props}
-  />
+  <StyledTfoot ref={ref} className={className} {...props} />
 ))
 TableFooter.displayName = "TableFooter"
+
+const StyledTr = styled.tr`
+  border-bottom: 1px solid hsl(var(--border));
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+
+  &[data-state="selected"] {
+    background-color: hsl(var(--muted));
+  }
+`
 
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
 >(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-      className
-    )}
-    {...props}
-  />
+  <StyledTr ref={ref} className={className} {...props} />
 ))
 TableRow.displayName = "TableRow"
+
+const StyledTh = styled.th`
+  height: 3rem;
+  padding: 0 1rem;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+
+  &:has([role="checkbox"]) {
+    padding-right: 0;
+  }
+`
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
-      className
-    )}
-    {...props}
-  />
+  <StyledTh ref={ref} className={className} {...props} />
 ))
 TableHead.displayName = "TableHead"
+
+const StyledTd = styled.td`
+  padding: 1rem;
+  vertical-align: middle;
+
+  &:has([role="checkbox"]) {
+    padding-right: 0;
+  }
+`
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
-    {...props}
-  />
+  <StyledTd ref={ref} className={className} {...props} />
 ))
 TableCell.displayName = "TableCell"
+
+const StyledCaption = styled.caption`
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`
 
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
 >(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
-    {...props}
-  />
+  <StyledCaption ref={ref} className={className} {...props} />
 ))
 TableCaption.displayName = "TableCaption"
 

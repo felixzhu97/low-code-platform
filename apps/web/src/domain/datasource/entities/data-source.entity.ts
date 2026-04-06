@@ -2,6 +2,8 @@
  * 数据源实体
  * 表示低代码平台中的数据源配置
  */
+import type { DataSourceConfig } from "@/domain/entities/types";
+
 export interface DataSource {
   id: string;
   name: string;

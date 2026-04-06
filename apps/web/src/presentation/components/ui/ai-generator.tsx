@@ -132,7 +132,7 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Sparkles className="h-4 w-4 mr-2" />
+          <Sparkles className="mr-1.5" aria-hidden="true" />
           AI Generate
         </Button>
       </DialogTrigger>

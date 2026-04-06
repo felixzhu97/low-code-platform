@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DEFAULT_THEME_MODE } from "../presentation/styles/theme";
+import { ThemeProvider } from "../presentation/styles/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -14,9 +16,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        {children}
+    <html
+      lang="en"
+      data-theme={DEFAULT_THEME_MODE}
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

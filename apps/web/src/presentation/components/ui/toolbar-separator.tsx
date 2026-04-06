@@ -1,34 +1,45 @@
 "use client";
 
 import * as React from "react";
-import { Separator } from "./separator";
-import { cn } from "../../../application/services/utils";
+import styled from "@emotion/styled";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
+
+const StyledSeparator = styled(SeparatorPrimitive.Root)`
+  flex-shrink: 0;
+  background-color: hsl(var(--border));
+
+  &[data-orientation="vertical"] {
+    height: 1.5rem;
+    width: 1px;
+    margin: 0 0.25rem;
+  }
+
+  &[data-orientation="horizontal"] {
+    height: 1px;
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+`;
 
 interface ToolbarSeparatorProps
-  extends React.ComponentPropsWithoutRef<typeof Separator> {
-  /**
-   * 分隔符方向
-   * @default "vertical"
-   */
+  extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root> {
   orientation?: "horizontal" | "vertical";
 }
 
 const ToolbarSeparator = React.forwardRef<
-  React.ElementRef<typeof Separator>,
+  React.ElementRef<typeof SeparatorPrimitive.Root>,
   ToolbarSeparatorProps
->(({ className, orientation = "vertical", ...props }, ref) => {
+>(({ className, orientation = "vertical", decorative = true, ...props }, ref) => {
   return (
-    <Separator
+    <StyledSeparator
       ref={ref}
       orientation={orientation}
-      className={cn(
-        orientation === "vertical" ? "h-6 w-px mx-1" : "h-px w-full my-1",
-        className
-      )}
+      decorative={decorative}
+      className={className}
       {...props}
     />
   );
 });
 ToolbarSeparator.displayName = "ToolbarSeparator";
 
-export { ToolbarSeparator, type ToolbarSeparatorProps };
+export { ToolbarSeparator };

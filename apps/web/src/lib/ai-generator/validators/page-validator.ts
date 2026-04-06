@@ -1,4 +1,4 @@
-import type { PageSchema } from "@/lib/schema/types";
+import type { PageSchema } from "@lowcode-platform/schema/types";
 import { validateSchema, validateSchemaAsync } from "@lowcode-platform/schema/validator";
 import { ValidationError } from "../types";
 

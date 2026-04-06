@@ -80,9 +80,9 @@ const LabelText = styled.span`
   }
 `;
 
-const CanvasScroll = styled(ScrollArea)<{ $preview: boolean }>`
+const CanvasScroll = styled(ScrollArea)`
   height: ${(p) =>
-    p.$preview ? "calc(100vh - 3.5rem)" : "calc(100vh - 7.5rem)"};
+    p.preview ? "calc(100vh - 3.5rem)" : "calc(100vh - 7.5rem)"};
 `;
 
 const CanvasArea = styled.div`
@@ -314,7 +314,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
           </ToolbarBar>
         </TooltipProvider>
       )}
-      <CanvasScroll $preview={isPreviewMode}>
+      <CanvasScroll preview={isPreviewMode}>
         <CanvasArea
           id="canvas-area"
           ref={setRefs}

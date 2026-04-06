@@ -1,4 +1,4 @@
-import type { Component } from "@/lib/component-utils/types";
+import type { Component } from "@lowcode-platform/component-utils/types";
 import { validateComponent } from "@lowcode-platform/component-utils/validator";
 import { ValidationError } from "../types";
 

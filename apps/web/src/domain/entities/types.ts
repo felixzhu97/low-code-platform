@@ -66,7 +66,7 @@ export interface Component {
 export interface ComponentCategory {
   id: string;
   name: string;
-  icon: React.ReactNode;
+  icon: string | React.ReactNode; // 支持字符串、IconConfig对象或ReactNode
   components: {
     id: string;
     name: string;

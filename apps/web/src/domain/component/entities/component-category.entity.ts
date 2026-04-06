@@ -1,3 +1,5 @@
+import type React from "react";
+
 /**
  * 图标配置
  * 用于表示组件分类的图标，不依赖React框架
@@ -14,7 +16,7 @@ export interface IconConfig {
 export interface ComponentCategory {
   id: string;
   name: string;
-  icon: IconConfig | string; // 支持字符串（图标标识符）或IconConfig对象
+  icon: IconConfig | string | React.ReactNode; // 支持字符串、IconConfig对象或ReactNode
   components: {
     id: string;
     name: string;

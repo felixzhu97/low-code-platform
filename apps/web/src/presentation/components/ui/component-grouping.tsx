@@ -44,8 +44,8 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
     if (selectedIds.length < 2 || !groupName.trim()) return;
 
     // 找出要分组的组件
-    const groupComponents = components.filter((c) =>
-      selectedIds.includes(c.id)
+    const groupComponents = components.filter((component: Component) =>
+      selectedIds.includes(component.id)
     );
 
     // 计算组的位置（使用第一个组件的位置）
@@ -69,7 +69,7 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
     };
 
     // 调整子组件的位置为相对于组的位置
-    const childComponents = groupComponents.map((component) => {
+    const childComponents = groupComponents.map((component: Component) => {
       const relativeX = (component.position?.x || 0) - groupPosition.x;
       const relativeY = (component.position?.y || 0) - groupPosition.y;
 
@@ -93,7 +93,7 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={components.length < 2}>
-          <Group className="mr-2 h-4 w-4" />
+          <Group className="mr-1.5" aria-hidden="true" />
           组件分组
         </Button>
       </DialogTrigger>
@@ -120,7 +120,7 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
             <Label>选择组件</Label>
             <ScrollArea className="h-[200px] rounded-md border p-2">
               {components.length > 0 ? (
-                components.map((component) => (
+                components.map((component: Component) => (
                   <div
                     key={component.id}
                     className="flex items-center space-x-2 py-1"

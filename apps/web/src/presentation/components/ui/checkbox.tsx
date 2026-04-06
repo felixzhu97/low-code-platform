@@ -2,28 +2,60 @@
 
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import styled from "@emotion/styled"
 import { Check } from "lucide-react"
 
-import { cn } from "../../../application/services/utils"
+const StyledCheckbox = styled(CheckboxPrimitive.Root)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid hsl(var(--primary));
+  background-color: transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  &[data-state="checked"] {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`
+
+const StyledIndicator = styled(CheckboxPrimitive.Indicator)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: currentColor;
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+`
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
 >(({ className, ...props }, ref) => (
-  <CheckboxPrimitive.Root
-    ref={ref}
-    className={cn(
-      "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
-      className
-    )}
-    {...props}
-  >
-    <CheckboxPrimitive.Indicator
-      className={cn("flex items-center justify-center text-current")}
-    >
-      <Check className="h-4 w-4" />
-    </CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
+  <StyledCheckbox ref={ref} className={className} {...props}>
+    <StyledIndicator>
+      <Check size={12} />
+    </StyledIndicator>
+  </StyledCheckbox>
 ))
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 

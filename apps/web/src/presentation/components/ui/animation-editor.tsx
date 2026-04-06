@@ -103,8 +103,8 @@ export function AnimationEditor({}: AnimationEditorProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" disabled={!componentId}>
-          <Sparkles className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm" disabled={!componentId}>
+          <Sparkles className="mr-1.5" aria-hidden="true" />
           动画效果
         </Button>
       </DialogTrigger>

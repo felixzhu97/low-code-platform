@@ -157,8 +157,8 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Upload className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm">
+          <Upload className="mr-1.5" aria-hidden="true" />
           导入 Schema
         </Button>
       </DialogTrigger>

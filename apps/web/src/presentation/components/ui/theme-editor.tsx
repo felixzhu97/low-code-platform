@@ -84,8 +84,8 @@ export function ThemeEditor({}: ThemeEditorProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Palette className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm">
+          <Palette className="mr-1.5" aria-hidden="true" />
           主题设置
         </Button>
       </DialogTrigger>

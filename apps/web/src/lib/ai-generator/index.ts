@@ -27,3 +27,4 @@ export * from "./generators";
 export * from "./parsers";
 export * from "./validators";
 export { AIGenerator } from "./generator";
+export { ParseError, ValidationError } from "./types";

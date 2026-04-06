@@ -149,8 +149,8 @@ export function Collaboration({}: CollaborationProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Users className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm">
+          <Users className="mr-1.5" aria-hidden="true" />
           协作
         </Button>
       </DialogTrigger>

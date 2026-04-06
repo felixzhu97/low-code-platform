@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { isValidElement, ReactNode, useState } from "react";
 import { useDrag } from "react-dnd";
 import styled from "@emotion/styled";
 import { ScrollArea } from "../ui/scroll-area";
@@ -325,7 +325,7 @@ export function ComponentPanel() {
 
     return (
       <DraggableCard
-        ref={drag as React.RefCallback<HTMLDivElement>}
+        ref={drag as unknown as React.RefCallback<HTMLDivElement>}
         $dragging={isDragging}
       >
         <span>{component.name}</span>
@@ -371,7 +371,7 @@ export function ComponentPanel() {
                   )
                 }
               >
-                {category.icon}
+                {isValidElement(category.icon) ? (category.icon as ReactNode) : null}
                 <ChipLabel>{category.name}</ChipLabel>
               </CategoryFilterButton>
             ))}
@@ -385,7 +385,7 @@ export function ComponentPanel() {
               ).map((category) => (
                 <CategoryBlock key={category.id}>
                   <CategoryHeadingRow>
-                    {category.icon}
+                    {isValidElement(category.icon) ? (category.icon as ReactNode) : null}
                     <CategoryTitle>{category.name}</CategoryTitle>
                   </CategoryHeadingRow>
                   <ComponentGrid>

@@ -2,25 +2,48 @@
 
 import * as React from "react"
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
+import styled from "@emotion/styled"
+import { keyframes } from "@emotion/react"
 
-import { cn } from "../../../application/services/utils"
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`
+const zoomIn = keyframes`
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+`
 
 const HoverCard = HoverCardPrimitive.Root
-
 const HoverCardTrigger = HoverCardPrimitive.Trigger
+
+const StyledHoverCardContent = styled(HoverCardPrimitive.Content)`
+  z-index: 50;
+  width: 16rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--popover));
+  color: hsl(var(--popover-foreground));
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  outline: none;
+  animation: ${fadeIn} 0.15s ease-out, ${zoomIn} 0.15s ease-out;
+
+  &[data-state="closed"] {
+    animation: none;
+    opacity: 0;
+  }
+`
 
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
 >(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <HoverCardPrimitive.Content
+  <StyledHoverCardContent
     ref={ref}
     align={align}
     sideOffset={sideOffset}
-    className={cn(
-      "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      className
-    )}
+    className={className}
     {...props}
   />
 ))

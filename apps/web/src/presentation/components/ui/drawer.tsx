@@ -2,37 +2,61 @@
 
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
-
-import { cn } from "../../../application/services/utils"
+import { css } from "@emotion/react"
+import styled from "@emotion/styled"
 
 const Drawer = ({
   shouldScaleBackground = true,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
+  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
 )
 Drawer.displayName = "Drawer"
 
 const DrawerTrigger = DrawerPrimitive.Trigger
-
 const DrawerPortal = DrawerPrimitive.Portal
-
 const DrawerClose = DrawerPrimitive.Close
+
+const StyledOverlay = styled(DrawerPrimitive.Overlay)`
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(0, 0, 0, 0.8);
+`
 
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Overlay
-    ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
-    {...props}
-  />
+  <StyledOverlay ref={ref} className={className} {...props} />
 ))
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
+
+const StyledContent = styled(DrawerPrimitive.Content)`
+  position: fixed;
+  inset-x: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  margin-top: 1.5rem;
+
+  &[data-scale-background="true"] {
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+`
+
+const StyledContentHandle = styled.div`
+  margin: 0.5rem auto;
+  width: 5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--muted));
+`
 
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
@@ -40,40 +64,40 @@ const DrawerContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DrawerPortal>
     <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
-        className
-      )}
-      {...props}
-    >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+    <StyledContent ref={ref} className={className} {...props}>
+      <StyledContentHandle />
       {children}
-    </DrawerPrimitive.Content>
+    </StyledContent>
   </DrawerPortal>
 ))
 DrawerContent.displayName = "DrawerContent"
 
-const DrawerHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
-    {...props}
-  />
+const StyledHeader = styled.div`
+  display: grid;
+  gap: 0.375rem;
+  padding: 1rem;
+  text-align: center;
+
+  @media (min-width: 640px) {
+    text-align: left;
+  }
+`
+
+const DrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <StyledHeader className={className} {...props} />
 )
 DrawerHeader.displayName = "DrawerHeader"
 
-const DrawerFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-    {...props}
-  />
+const StyledFooter = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+`
+
+const DrawerFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <StyledFooter className={className} {...props} />
 )
 DrawerFooter.displayName = "DrawerFooter"
 
@@ -83,10 +107,13 @@ const DrawerTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Title
     ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
+    className={className}
+    css={css`
+      font-size: 1.125rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    `}
     {...props}
   />
 ))
@@ -98,21 +125,18 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={className}
+    css={css`
+      font-size: 0.875rem;
+      color: hsl(var(--muted-foreground));
+    `}
     {...props}
   />
 ))
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName
 
 export {
-  Drawer,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerTrigger,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerFooter,
-  DrawerTitle,
-  DrawerDescription,
+  Drawer, DrawerPortal, DrawerOverlay, DrawerTrigger,
+  DrawerClose, DrawerContent, DrawerHeader, DrawerFooter,
+  DrawerTitle, DrawerDescription,
 }

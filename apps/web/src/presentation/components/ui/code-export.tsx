@@ -114,8 +114,8 @@ export function CodeExport({}: CodeExportProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <FileJson className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="sm">
+          <FileJson className="mr-1.5" aria-hidden="true" />
           导出 Schema
         </Button>
       </DialogTrigger>
