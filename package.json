@@ -22,6 +22,7 @@
     "test:server": "pnpm --filter @lowcode-platform/server test"
   },
   "devDependencies": {
+    "next": "15.5.14",
     "typescript": "^5"
   }
 }
