@@ -36,21 +36,15 @@ A visual low-code development platform built with Next.js and React, supporting 
 low-code-platform/
 ├── apps/
 │   ├── web/          # Next.js frontend application (Clean Architecture)
-│   └── server/        # FastAPI backend application
-├── packages/          # Shared packages
-│   ├── ai-generator/  # AI generator
-│   ├── aws/           # AWS integration
-│   ├── collaboration/ # Collaboration tools
-│   ├── component-utils/ # Component utilities
-│   ├── data-binding/  # Data binding
-│   ├── i18n/          # Internationalization
-│   ├── layout-utils/  # Layout utilities
-│   ├── performance/   # Performance optimization
-│   ├── schema/        # Schema utilities
-│   ├── test-utils/    # Test utilities
-│   └── utils/         # General utilities
-└── docs/              # Documentation
+│   │   └── src/lib/  # Internal libraries (ai-generator)
+│   └── server/       # FastAPI backend application
+└── packages/         # Shared packages for data structures
+    ├── schema/       # Schema types and validation
+    ├── component-utils/ # Component tree utilities
+    └── utils/        # General utility functions
 ```
+
+> **Note**: `packages/` contains shared data structures used by both frontend and backend. `apps/web/src/lib/` contains application-specific code (ai-generator).
 
 ## 🚀 Quick Start
 
@@ -123,19 +117,19 @@ Adopts **Clean Architecture** design:
 - **Infrastructure Layer**: Technical implementations (repositories, adapters, etc.)
 - **Presentation Layer**: UI components and user interactions
 
-### Shared Packages
+### Shared Packages (`packages/`)
 
-- `@lowcode-platform/ai-generator` - AI generation
-- `@lowcode-platform/collaboration` - Real-time collaboration
-- `@lowcode-platform/aws` - AWS integration
-- `@lowcode-platform/data-binding` - Data binding
-- `@lowcode-platform/i18n` - Internationalization
-- `@lowcode-platform/layout-utils` - Layout utilities
-- `@lowcode-platform/performance` - Performance optimization
-- `@lowcode-platform/schema` - Schema utilities
-- `@lowcode-platform/component-utils` - Component utilities
-- `@lowcode-platform/utils` - General utilities
-- `@lowcode-platform/test-utils` - Test utilities
+Packages for data structures shared between frontend and backend:
+
+- `@lowcode-platform/schema` - Schema types and validation (Component, PageSchema, etc.)
+- `@lowcode-platform/component-utils` - Component tree manipulation utilities
+- `@lowcode-platform/utils` - General utility functions
+
+### Internal Libraries (`apps/web/src/lib/`)
+
+Application-specific code:
+
+- `ai-generator/` - AI-powered component and page generation
 
 ## 📝 Todo
 

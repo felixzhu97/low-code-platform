@@ -7,7 +7,7 @@ import {
   type ParseError,
   type ValidationError,
   type AIProviderType,
-} from "@lowcode-platform/ai-generator";
+} from "@/lib/ai-generator";
 import { TemplateAdapter } from "./template.adapter";
 
 export type AIProvider = AIProviderType;

@@ -40,51 +40,14 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     const aiGeneratorSrcPath = path.resolve(
       __dirname,
-      "../../packages/ai-generator/src/index.ts"
+      "./src/lib/ai-generator"
     );
-    const aiGeneratorNodeModulesPath = path.resolve(
-      __dirname,
-      "../../node_modules/@lowcode-platform/ai-generator"
-    );
-    const aiGeneratorStubPath = path.resolve(
-      __dirname,
-      "./src/shared/stubs/ai-generator-stub.ts"
-    );
-
-    // 检查包是否存在（可能在 workspace 或 node_modules 中）
-    const aiGeneratorExists =
-      existsSync(aiGeneratorSrcPath) ||
-      existsSync(aiGeneratorNodeModulesPath) ||
-      existsSync(path.resolve(__dirname, "../../packages/ai-generator"));
-
-    config.resolve.alias = {
-      ...config.resolve.alias,
-    };
-
-    if (!aiGeneratorExists) {
-      console.warn(
-        `WARNING: AI Generator package not found. Using stub implementation.`
-      );
-      config.resolve.alias["@lowcode-platform/ai-generator"] =
-        aiGeneratorStubPath;
-    }
 
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
       path: false,
     };
-
-    // 添加模块解析路径，确保能找到 workspace 包
-    if (!config.resolve.modules) {
-      config.resolve.modules = [];
-    }
-    if (Array.isArray(config.resolve.modules)) {
-      config.resolve.modules.push(
-        path.resolve(__dirname, "../../packages"),
-        path.resolve(__dirname, "../../node_modules")
-      );
-    }
 
     // 优化 chunk 分割
     if (!isServer) {

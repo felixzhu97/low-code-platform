@@ -14,17 +14,20 @@ Felix low-code platform is a visual page builder on **Next.js** and **React**, o
 - **Single responsibility:** Modules, facades, and use cases stay focused.
 - **Component model:** Extensible built-in components and custom component flows.
 - **Responsive UI:** Layout and preview adapt across viewports.
-- **Internationalization:** UI strings and locale switching via shared i18n packages.
-- **Scalability:** Monorepo packages (`packages/*`) isolate reusable logic.
+- **Scalability:** Shared packages (`packages/*`) for data structures; monorepo workspaces for dependencies.
 
 ## Repository layout
 
 ```text
 low-code-platform/
-├── apps/web/           # Next.js 15 editor + preview (Clean Architecture under src/)
-├── apps/server/        # FastAPI backend
-└── packages/           # Shared libraries (ai-generator, schema, data-binding, i18n, …)
+├── apps/
+│   ├── web/           # Next.js 15 editor + preview (Clean Architecture under src/)
+│   │   └── src/lib/  # Internal libraries (ai-generator)
+│   └── server/        # FastAPI backend
+└── packages/          # Shared packages (schema, component-utils, utils)
 ```
+
+> **Note**: `packages/` contains data structures shared between frontend and backend. `apps/web/src/lib/` contains application-specific code (ai-generator).
 
 Frontend source lives in **`apps/web/src/`**:
 
