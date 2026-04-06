@@ -41,7 +41,7 @@ apps/web/src/
 └── shared/             # Cross-cutting helpers used by multiple layers
 ```
 
-Editor chrome and component renderers use **Emotion**; **Tailwind** and **Radix** (shadcn patterns) remain for primitives and tokens.
+Editor chrome and component renderers use **Emotion**; **Radix** primitives provide accessibility and base components.
 
 Backend API is **FastAPI** under `apps/server/` (Python, Pydantic, Uvicorn).
 

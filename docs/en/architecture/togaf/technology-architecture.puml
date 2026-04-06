@@ -10,7 +10,6 @@ package "Frontend Technology Stack" {
   component [React 19] as React
   component [Next.js 15] as NextJS
   component [TypeScript] as TypeScript
-  component [Tailwind CSS] as Tailwind
   component [Emotion] as Emotion
   component [Radix UI] as RadixUI
   component [React DnD] as ReactDnD
@@ -39,7 +38,6 @@ package "Frontend Technology Stack" {
   Browser --> React
   Browser --> NextJS
   Browser --> TypeScript
-  Browser --> Tailwind
   Browser --> Emotion
   Browser --> RadixUI
   Browser --> ReactDnD
@@ -268,7 +266,6 @@ note right of Browser
   - React 19: UI runtime
   - TypeScript: type safety
   - Emotion: Emotion CSS-in-JS in editor
-  - Tailwind CSS: Tailwind tokens, shadcn, with Emotion
   - Zustand: state
   - react-i18next: i18n
   - Workspace packages: components, binding, layout, performance, schema

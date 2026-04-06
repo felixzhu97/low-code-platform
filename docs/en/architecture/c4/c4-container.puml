@@ -8,7 +8,7 @@ title Container — Felix Low-Code Platform
 Person(user, "Designer / developer", "Uses the platform")
 
 System_Boundary(boundary, "Felix Low-Code Platform") {
-    Container(web, "Web application", "TypeScript, Next.js 15, React 19 — Emotion + Tailwind + Radix", "Editor, preview, properties, `apps/web`")
+    Container(web, "Web application", "TypeScript, Next.js 15, React 19 — Emotion + Radix UI", "Editor, preview, properties, `apps/web`")
     Container(api, "API service", "Python, FastAPI, Uvicorn, Pydantic", "REST API — `apps/server`")
     ContainerDb(db, "Primary database", "PostgreSQL / SQL", "Projects, schemas, users (when enabled)")
     ContainerDb(cache, "Cache", "Redis", "Sessions, hot paths (when enabled)")

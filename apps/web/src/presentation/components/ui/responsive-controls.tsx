@@ -1,15 +1,50 @@
 "use client";
 
+import styled from "@emotion/styled";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 import { Laptop, Smartphone, Tablet } from "lucide-react";
 import { useCanvasStore } from "@/infrastructure/state-management/stores";
 
-interface ResponsiveControlsProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface ResponsiveControlsProps {}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const TabsStyled = styled(Tabs)`
+  margin-right: 0.25rem;
+`;
+
+const TabsListStyled = styled(TabsList)`
+  display: grid;
+  height: 2rem;
+  width: auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  padding: 0.125rem;
+`;
+
+const TabsTriggerStyled = styled(TabsTrigger)`
+  height: 1.75rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 0.75rem;
+`;
+
+const DeviceIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0.875rem;
+  width: 0.875rem;
+`;
 
 export function ResponsiveControls({}: ResponsiveControlsProps) {
-  // 从 store 获取状态
   const { activeDevice, setActiveDevice, setViewportWidth } = useCanvasStore();
 
   const handleDeviceChange = (device: string) => {
@@ -30,24 +65,29 @@ export function ResponsiveControls({}: ResponsiveControlsProps) {
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-1">
-      <Tabs
+    <Wrapper>
+      <TabsStyled
         value={activeDevice}
         onValueChange={handleDeviceChange}
-        className="mr-1"
       >
-        <TabsList className="grid h-8 w-auto grid-cols-3 gap-0 p-0.5">
-          <TabsTrigger value="mobile" className="h-7 px-2 py-0 text-xs">
-            <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
-          </TabsTrigger>
-          <TabsTrigger value="tablet" className="h-7 px-2 py-0 text-xs">
-            <Tablet className="h-3.5 w-3.5" aria-hidden="true" />
-          </TabsTrigger>
-          <TabsTrigger value="desktop" className="h-7 px-2 py-0 text-xs">
-            <Laptop className="h-3.5 w-3.5" aria-hidden="true" />
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-    </div>
+        <TabsListStyled>
+          <TabsTriggerStyled value="mobile">
+            <DeviceIcon>
+              <Smartphone aria-hidden="true" />
+            </DeviceIcon>
+          </TabsTriggerStyled>
+          <TabsTriggerStyled value="tablet">
+            <DeviceIcon>
+              <Tablet aria-hidden="true" />
+            </DeviceIcon>
+          </TabsTriggerStyled>
+          <TabsTriggerStyled value="desktop">
+            <DeviceIcon>
+              <Laptop aria-hidden="true" />
+            </DeviceIcon>
+          </TabsTriggerStyled>
+        </TabsListStyled>
+      </TabsStyled>
+    </Wrapper>
   );
 }

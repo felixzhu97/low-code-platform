@@ -6,7 +6,7 @@ LAYOUT_WITH_LEGEND()
 title Clean Architecture — dependency rule (`apps/web/src`)
 
 Container_Boundary(web, "Web application (clean architecture)") {
-    Component(presentation, "Presentation", "React, Emotion, Radix, Tailwind class names", "`presentation/` — UI, controlled views")
+    Component(presentation, "Presentation", "React, Emotion, Radix UI", "`presentation/` — UI, controlled views")
     Component(application, "Application", "TypeScript", "`application/` — use-cases, DTOs, orchestration")
     Component(domain, "Domain", "TypeScript", "`domain/` — entities, VOs, domain services, repository interfaces")
     Component(infrastructure, "Infrastructure", "TypeScript", "`infrastructure/` — store, HTTP, persistence implementations")

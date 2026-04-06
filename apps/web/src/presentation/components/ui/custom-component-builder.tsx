@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -29,12 +31,92 @@ import { Switch } from "./switch";
 import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
-interface CustomComponentBuilderProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface CustomComponentBuilderProps {}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const GridSection = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const GridItem = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const SwitchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const FieldSelector = styled(ScrollArea)`
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+`;
+
+const FieldGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 1rem;
+`;
+
+const FieldCard = styled(Card)<{ selected: boolean }>`
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  ${(p) =>
+    p.selected
+      ? css`
+          border-color: hsl(var(--primary));
+          background-color: hsl(var(--primary) / 0.05);
+        `
+      : ""}
+`;
+
+const FieldCardContent = styled(CardContent)`
+  padding: 0.75rem;
+`;
+
+const FieldCardRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const FieldName = styled.div`
+  font-weight: 500;
+`;
+
+const FieldType = styled.div`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const SelectedBadge = styled.div`
+  border-radius: 9999px;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.25rem;
+`;
+
+const StatusText = styled.div`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
 
 export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
-  // 从 store 获取状态
   const { addCustomComponent, components: existingComponents } = useAllStores();
   const [componentName, setComponentName] = useState("");
   const [componentType, setComponentType] = useState("container");
@@ -57,7 +139,6 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
 
     addCustomComponent(newComponent);
 
-    // 重置表单
     setComponentName("");
     setComponentType("container");
     setComponentCategory("layout");
@@ -77,11 +158,11 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <PlusCircle className="mr-2 h-4 w-4" />
+          <PlusCircle css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
           创建自定义组件
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent css={{ maxWidth: "42rem" }}>
         <DialogHeader>
           <DialogTitle>创建自定义组件</DialogTitle>
           <DialogDescription>
@@ -90,14 +171,14 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
         </DialogHeader>
 
         <Tabs defaultValue="basic">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList css={{ display: "grid", width: "100%", gridTemplateColumns: "repeat(2, 1fr)" }}>
             <TabsTrigger value="basic">基本信息</TabsTrigger>
             <TabsTrigger value="composition">组件组合</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="basic" className="space-y-4 py-4">
-            <div className="grid gap-4">
-              <div className="grid gap-2">
+          <TabsContent value="basic" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+            <GridSection>
+              <GridItem>
                 <Label htmlFor="component-name">组件名称</Label>
                 <Input
                   id="component-name"
@@ -105,9 +186,9 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
                   onChange={(e) => setComponentName(e.target.value)}
                   placeholder="输入组件名称"
                 />
-              </div>
+              </GridItem>
 
-              <div className="grid gap-2">
+              <GridItem>
                 <Label htmlFor="component-type">组件类型</Label>
                 <Select value={componentType} onValueChange={setComponentType}>
                   <SelectTrigger id="component-type">
@@ -120,9 +201,9 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
                     <SelectItem value="section">区块</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </GridItem>
 
-              <div className="grid gap-2">
+              <GridItem>
                 <Label htmlFor="component-category">组件分类</Label>
                 <Select
                   value={componentCategory}
@@ -139,44 +220,38 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
                     <SelectItem value="custom">自定义组件</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </GridItem>
 
-              <div className="flex items-center gap-2">
+              <SwitchRow>
                 <Switch
                   id="is-container"
                   checked={isContainer}
                   onCheckedChange={setIsContainer}
                 />
                 <Label htmlFor="is-container">可以包含其他组件</Label>
-              </div>
-            </div>
+              </SwitchRow>
+            </GridSection>
           </TabsContent>
 
-          <TabsContent value="composition" className="py-4">
-            <div className="space-y-4">
+          <TabsContent value="composition" css={{ paddingTop: "1rem" }}>
+            <Wrapper>
               <Label>选择要包含的组件</Label>
-              <ScrollArea className="h-[300px] rounded-md border">
-                <div className="grid grid-cols-2 gap-2 p-4">
+              <FieldSelector css={{ height: "18.75rem" }}>
+                <FieldGrid>
                   {existingComponents.map((component: Component) => (
-                    <Card
+                    <FieldCard
                       key={component.id}
-                      className={`cursor-pointer transition-colors ${
-                        selectedComponents.includes(component.id)
-                          ? "border-primary bg-primary/5"
-                          : ""
-                      }`}
+                      selected={selectedComponents.includes(component.id)}
                       onClick={() => toggleComponentSelection(component.id)}
                     >
-                      <CardContent className="p-3">
-                        <div className="flex items-center justify-between">
+                      <FieldCardContent>
+                        <FieldCardRow>
                           <div>
-                            <div className="font-medium">{component.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {component.type}
-                            </div>
+                            <FieldName>{component.name}</FieldName>
+                            <FieldType>{component.type}</FieldType>
                           </div>
                           {selectedComponents.includes(component.id) && (
-                            <div className="rounded-full bg-primary p-1 text-primary-foreground">
+                            <SelectedBadge>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
@@ -190,24 +265,22 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
                               >
                                 <polyline points="20 6 9 17 4 12"></polyline>
                               </svg>
-                            </div>
+                            </SelectedBadge>
                           )}
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </FieldCardRow>
+                      </FieldCardContent>
+                    </FieldCard>
                   ))}
-                </div>
-              </ScrollArea>
-              <div className="text-sm text-muted-foreground">
-                已选择 {selectedComponents.length} 个组件
-              </div>
-            </div>
+                </FieldGrid>
+              </FieldSelector>
+              <StatusText>已选择 {selectedComponents.length} 个组件</StatusText>
+            </Wrapper>
           </TabsContent>
         </Tabs>
 
         <DialogFooter>
           <Button onClick={handleSave} disabled={!componentName.trim()}>
-            <Save className="mr-2 h-4 w-4" />
+            <Save css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
             保存组件
           </Button>
         </DialogFooter>

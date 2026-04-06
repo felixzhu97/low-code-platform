@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
 import {
   Dialog,
   DialogContent,
@@ -21,12 +22,58 @@ import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 import { useSimplifiedActions } from "@/presentation/hooks";
 
-interface ComponentGroupingProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface ComponentGroupingProps {}
+
+const Wrapper = styled.div`
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 0;
+`;
+
+const FormGroup = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const ComponentItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+`;
+
+const ComponentLabel = styled(Label)`
+  display: flex;
+  flex: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+`;
+
+const TypeLabel = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+`;
+
+const EmptyText = styled.p`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const HelperText = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
 
 export function ComponentGrouping({}: ComponentGroupingProps) {
-  // 从 store 获取状态
   const { components } = useAllStores();
   const { addComponentWithHistory } = useSimplifiedActions();
   const [groupName, setGroupName] = useState("新建组");
@@ -43,16 +90,13 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
   const handleCreateGroup = () => {
     if (selectedIds.length < 2 || !groupName.trim()) return;
 
-    // 找出要分组的组件
     const groupComponents = components.filter((component: Component) =>
       selectedIds.includes(component.id)
     );
 
-    // 计算组的位置（使用第一个组件的位置）
     const firstComponent = groupComponents[0];
     const groupPosition = firstComponent.position || { x: 0, y: 0 };
 
-    // 创建组容器
     const groupContainer: Component = {
       id: `group-${Date.now()}`,
       type: "container",
@@ -68,7 +112,6 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
       children: [],
     };
 
-    // 调整子组件的位置为相对于组的位置
     const childComponents = groupComponents.map((component: Component) => {
       const relativeX = (component.position?.x || 0) - groupPosition.x;
       const relativeY = (component.position?.y || 0) - groupPosition.y;
@@ -82,7 +125,6 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
 
     groupContainer.children = childComponents;
 
-    // 添加新的组容器
     addComponentWithHistory(groupContainer);
 
     setGroupName("新建组");
@@ -93,11 +135,11 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={components.length < 2}>
-          <Group className="mr-1.5" aria-hidden="true" />
+          <Group css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }} aria-hidden="true" />
           组件分组
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent css={{ maxWidth: "28rem" }}>
         <DialogHeader>
           <DialogTitle>创建组件分组</DialogTitle>
           <DialogDescription>
@@ -105,8 +147,8 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
+        <Wrapper>
+          <FormGroup>
             <Label htmlFor="group-name">组名称</Label>
             <Input
               id="group-name"
@@ -114,17 +156,14 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="输入组名称"
             />
-          </div>
+          </FormGroup>
 
-          <div className="grid gap-2">
+          <FormGroup>
             <Label>选择组件</Label>
-            <ScrollArea className="h-[200px] rounded-md border p-2">
+            <ScrollArea css={{ height: "12.5rem", border: "1px solid hsl(var(--border))", borderRadius: "calc(var(--radius))", padding: "0.5rem" }}>
               {components.length > 0 ? (
                 components.map((component: Component) => (
-                  <div
-                    key={component.id}
-                    className="flex items-center space-x-2 py-1"
-                  >
+                  <ComponentItem key={component.id}>
                     <Checkbox
                       id={`component-${component.id}`}
                       checked={selectedIds.includes(component.id)}
@@ -132,37 +171,30 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
                         handleToggleComponent(component.id)
                       }
                     />
-                    <Label
-                      htmlFor={`component-${component.id}`}
-                      className="flex flex-1 cursor-pointer items-center justify-between text-sm"
-                    >
+                    <ComponentLabel htmlFor={`component-${component.id}`}>
                       <span>{component.name || component.type}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {component.type}
-                      </span>
-                    </Label>
-                  </div>
+                      <TypeLabel>{component.type}</TypeLabel>
+                    </ComponentLabel>
+                  </ComponentItem>
                 ))
               ) : (
-                <div className="flex h-full items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
-                    没有可用的组件
-                  </p>
-                </div>
+                <EmptyState>
+                  <EmptyText>没有可用的组件</EmptyText>
+                </EmptyState>
               )}
             </ScrollArea>
-            <p className="text-xs text-muted-foreground">
+            <HelperText>
               已选择 {selectedIds.length} 个组件
-            </p>
-          </div>
-        </div>
+            </HelperText>
+          </FormGroup>
+        </Wrapper>
 
         <DialogFooter>
           <Button
             onClick={handleCreateGroup}
             disabled={selectedIds.length < 2 || !groupName.trim()}
           >
-            <Layers className="mr-2 h-4 w-4" />
+            <Layers css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
             创建组
           </Button>
         </DialogFooter>

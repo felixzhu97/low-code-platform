@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Input,
   Label,
@@ -23,6 +25,80 @@ interface DataMappingEditorProps {
   onChange: (mapping: DataMapping) => void;
   onDelete?: () => void;
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  padding: 1rem;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Title = styled.h4`
+  font-weight: 500;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const GridItem = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const GridItemRow = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const SwitchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const SmallButton = styled(Button)`
+  height: 1.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 0.75rem;
+`;
+
+const ErrorText = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--destructive));
+`;
+
+const SelectTriggerStyled = styled(SelectTrigger)<{ $invalid?: boolean }>`
+  ${(props) =>
+    props.$invalid &&
+    css`
+      border-color: hsl(var(--destructive));
+    `}
+`;
+
+const InputStyled = styled(Input)<{ $invalid?: boolean }>`
+  ${(props) =>
+    props.$invalid &&
+    css`
+      border-color: hsl(var(--destructive));
+    `}
+`;
 
 export function DataMappingEditor({
   mapping,
@@ -48,7 +124,6 @@ export function DataMappingEditor({
   const [isValid, setIsValid] = useState(true);
   const [validationError, setValidationError] = useState<string>("");
 
-  // 更新父组件
   useEffect(() => {
     const updatedMapping: DataMapping = {
       field,
@@ -60,7 +135,6 @@ export function DataMappingEditor({
     onChange(updatedMapping);
   }, [field, sourcePath, targetPath, transform, defaultValue, useDefaultValue]);
 
-  // 验证源路径
   useEffect(() => {
     const validatePath = async () => {
       if (!sourcePath || !dataSource) {
@@ -169,19 +243,18 @@ export function DataMappingEditor({
   };
 
   return (
-    <div className="space-y-4 rounded-lg border p-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-medium">数据映射</h4>
+    <Wrapper>
+      <Header>
+        <Title>数据映射</Title>
         {onDelete && (
           <Button variant="ghost" size="sm" onClick={onDelete}>
             删除
           </Button>
         )}
-      </div>
+      </Header>
 
-      <div className="grid gap-4">
-        {/* 字段名 */}
-        <div className="grid gap-2">
+      <Grid>
+        <GridItem>
           <Label htmlFor="field-name">字段名</Label>
           <Input
             id="field-name"
@@ -189,38 +262,35 @@ export function DataMappingEditor({
             onChange={(e) => setField(e.target.value)}
             placeholder="例如: userName"
           />
-        </div>
+        </GridItem>
 
-        {/* 源路径 */}
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
+        <GridItem>
+          <Row>
             <Label htmlFor="source-path">源路径</Label>
             {availablePaths.length > 0 && (
-              <Button
+              <SmallButton
                 variant="ghost"
-                size="sm"
                 onClick={() =>
                   setSourcePathInputMode(
                     sourcePathInputMode === "select" ? "input" : "select"
                   )
                 }
-                className="h-6 px-2 text-xs"
               >
                 {sourcePathInputMode === "select" ? "手动输入" : "选择路径"}
-              </Button>
+              </SmallButton>
             )}
-          </div>
+          </Row>
           {sourcePathInputMode === "select" && availablePaths.length > 0 ? (
             <Select
               value={sourcePath}
               onValueChange={handleSourcePathSelectChange}
             >
-              <SelectTrigger
+              <SelectTriggerStyled
                 id="source-path"
-                className={!isValid ? "border-destructive" : ""}
+                $invalid={!isValid}
               >
                 <SelectValue placeholder="选择或输入路径" />
-              </SelectTrigger>
+              </SelectTriggerStyled>
               <SelectContent>
                 <SelectItem value="__manual__">手动输入...</SelectItem>
                 {availablePaths.map((path) => (
@@ -231,21 +301,18 @@ export function DataMappingEditor({
               </SelectContent>
             </Select>
           ) : (
-            <Input
+            <InputStyled
               id="source-path"
               value={sourcePath}
               onChange={(e) => setSourcePath(e.target.value)}
               placeholder="例如: users[0].name 或 metadata.total"
-              className={!isValid ? "border-destructive" : ""}
+              $invalid={!isValid}
             />
           )}
-          {!isValid && (
-            <p className="text-xs text-destructive">{validationError}</p>
-          )}
-        </div>
+          {!isValid && <ErrorText>{validationError}</ErrorText>}
+        </GridItem>
 
-        {/* 目标路径 */}
-        <div className="grid gap-2">
+        <GridItem>
           <Label htmlFor="target-path">目标路径</Label>
           {targetPathSuggestions.length > 0 ? (
             <Select value={targetPath} onValueChange={setTargetPath}>
@@ -269,10 +336,9 @@ export function DataMappingEditor({
               placeholder="例如: properties.text 或 properties.content"
             />
           )}
-        </div>
+        </GridItem>
 
-        {/* 转换类型 */}
-        <div className="grid gap-2">
+        <GridItem>
           <Label htmlFor="transform">转换类型</Label>
           <Select
             value={transform || "none"}
@@ -296,20 +362,19 @@ export function DataMappingEditor({
               <SelectItem value="json">JSON</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </GridItem>
 
-        {/* 默认值 */}
-        <div className="grid gap-2">
-          <div className="flex items-center gap-2">
+        <GridItem>
+          <SwitchRow>
             <Switch
               checked={useDefaultValue}
               onCheckedChange={setUseDefaultValue}
             />
             <Label htmlFor="use-default">使用默认值</Label>
-          </div>
+          </SwitchRow>
           {renderDefaultValueInput()}
-        </div>
-      </div>
-    </div>
+        </GridItem>
+      </Grid>
+    </Wrapper>
   );
 }

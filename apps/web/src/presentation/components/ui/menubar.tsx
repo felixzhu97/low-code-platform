@@ -207,7 +207,7 @@ const StyledCheckboxItem = styled(MenubarPrimitive.CheckboxItem)<{ inset?: boole
     opacity: 0.5;
   }
 
-  > span:first-child {
+  > span:first-of-type {
     position: absolute;
     left: 0.5rem;
     display: flex;
@@ -257,7 +257,7 @@ const StyledRadioItem = styled(MenubarPrimitive.RadioItem)<{ inset?: boolean }>`
     opacity: 0.5;
   }
 
-  > span:first-child {
+  > span:first-of-type {
     position: absolute;
     left: 0.5rem;
     display: flex;

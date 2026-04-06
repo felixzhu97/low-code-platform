@@ -674,7 +674,14 @@ export function LayoutComponentRenderer({
                   {props.title || "折叠面板"}
                 </span>
                 <ChevronDown
-                  className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180"
+                  css={css`
+                    height: 1rem;
+                    width: 1rem;
+                    transition: transform 0.2s ease;
+                    [data-state="open"] & {
+                      transform: rotate(180deg);
+                    }
+                  `}
                 />
               </CollapseTriggerButton>
             </CollapsibleTrigger>

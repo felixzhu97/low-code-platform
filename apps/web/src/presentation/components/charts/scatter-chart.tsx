@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import styled from "@emotion/styled";
 import {
   ScatterChart as RechartsScatterChart,
   Scatter,
@@ -30,7 +31,21 @@ interface ScatterChartProps {
   maxPointSize?: number;
 }
 
-// 默认演示数据
+const ChartContainer = styled.div`
+  width: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+`;
+
+const ChartWrapper = styled.div`
+  width: ${(p) => p.style?.width || "100%"};
+  height: ${(p) => p.style?.height || 300}px;
+`;
+
 const defaultData = [
   { x: 65, y: 120, z: 180, category: "产品A" },
   { x: 72, y: 135, z: 220, category: "产品A" },
@@ -60,18 +75,15 @@ export function ScatterChart({
   minPointSize = 10,
   maxPointSize = 60,
 }: ScatterChartProps) {
-  // 使用传入的数据或默认数据
   const chartData = useMemo(() => {
     return data && Array.isArray(data) && data.length > 0 ? data : defaultData;
   }, [data]);
 
-  // 处理数据，确保格式正确
   const processedData = useMemo(() => {
     if (!chartData || !Array.isArray(chartData)) {
       return [];
     }
 
-    // 如果没有colorField，直接返回单个系列
     if (!colorField) {
       return [
         {
@@ -85,7 +97,6 @@ export function ScatterChart({
       ];
     }
 
-    // 如果有colorField，按colorField分组
     const groupedData: Record<string, any[]> = {};
 
     chartData.forEach((item) => {
@@ -108,9 +119,9 @@ export function ScatterChart({
   }, [chartData, xField, yField, sizeField, colorField]);
 
   return (
-    <div className="w-full">
-      {title && <h3 className="mb-2 text-lg font-medium">{title}</h3>}
-      <div style={{ width: width || "100%", height: height || 300 }}>
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
+      <ChartWrapper style={{ width: width || "100%", height: height || 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <RechartsScatterChart
             margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
@@ -151,7 +162,7 @@ export function ScatterChart({
             ))}
           </RechartsScatterChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </ChartWrapper>
+    </ChartContainer>
   );
 }

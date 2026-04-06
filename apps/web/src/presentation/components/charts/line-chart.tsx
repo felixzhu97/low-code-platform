@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import {
   LineChart as RechartsLineChart,
   Line,
@@ -25,7 +26,17 @@ interface LineChartProps {
   yField?: string;
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { name: "1月", visits: 12500, sales: 8400 },
   { name: "2月", visits: 18900, sales: 12600 },
@@ -46,8 +57,8 @@ export function LineChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsLineChart
           data={chartData}
@@ -72,7 +83,7 @@ export function LineChart({
           <Line type="monotone" dataKey="sales" stroke="#82ca9d" name="销售" />
         </RechartsLineChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

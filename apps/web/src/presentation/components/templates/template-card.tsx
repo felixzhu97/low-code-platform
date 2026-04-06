@@ -1,6 +1,7 @@
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Star } from "lucide-react";
+import styled from "@emotion/styled";
 import type { Template } from "@/presentation/data/templates";
 
 interface TemplateCardProps {
@@ -11,6 +12,92 @@ interface TemplateCardProps {
   readonly onPreview: (templateId: string) => void;
 }
 
+const ThumbnailButton = styled.button`
+  position: relative;
+  height: 8rem;
+  width: 100%;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+`;
+
+const ThumbnailImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
+const FavoriteButton = styled(Button)`
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  height: 1.75rem;
+  width: 1.75rem;
+  background-color: hsl(var(--background) / 0.9);
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    background-color: hsl(var(--background));
+  }
+`;
+
+const ActionButton = styled(Button)`
+  height: 1.75rem;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+`;
+
+const CardWrapper = styled(Card)`
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const ThumbnailWrapper = styled.div`
+  position: relative;
+  height: 8rem;
+  width: 100%;
+  overflow: hidden;
+  background-color: hsl(var(--muted));
+`;
+
+const CardActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.25rem;
+`;
+
+const TitleText = styled.h3`
+  font-weight: 500;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const DescriptionText = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.5rem;
+`;
+
 export function TemplateCard({
   template,
   isFavorite,
@@ -19,21 +106,21 @@ export function TemplateCard({
   onPreview,
 }: TemplateCardProps) {
   return (
-    <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow">
-      <button
-        type="button"
-        className="relative h-32 w-full cursor-pointer group border-0 p-0 bg-transparent"
-        onClick={() => onSelect(template)}
-      >
-        <img
-          src={template.thumbnail || "/placeholder.svg"}
-          alt={template.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-        />
-        <Button
+    <CardWrapper>
+      <ThumbnailWrapper>
+        <button
+          type="button"
+          onClick={() => onSelect(template)}
+          style={{ border: 0, padding: 0, background: "transparent", width: "100%", height: "100%", cursor: "pointer" }}
+        >
+          <ThumbnailImage
+            src={template.thumbnail || "/placeholder.svg"}
+            alt={template.name}
+          />
+        </button>
+        <FavoriteButton
           variant="ghost"
           size="icon"
-          className="absolute top-1.5 right-1.5 h-7 w-7 bg-background/90 hover:bg-background backdrop-blur-sm"
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite(template.id);
@@ -41,44 +128,50 @@ export function TemplateCard({
           title={isFavorite ? "取消收藏" : "收藏"}
         >
           <Star
-            className={`h-3.5 w-3.5 ${
-              isFavorite ? "fill-yellow-400 text-yellow-400" : ""
-            }`}
+            css={{
+              width: "0.875rem",
+              height: "0.875rem",
+              ...(isFavorite
+                ? { fill: "#facc15", color: "#facc15" }
+                : {}),
+            }}
           />
-        </Button>
-      </button>
-      <CardContent className="p-2.5">
-        <div className="space-y-1">
-          <h3 className="font-medium text-sm truncate">{template.name}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+        </FavoriteButton>
+      </ThumbnailWrapper>
+      <CardContent css={{
+        padding: "0.625rem",
+      }}>
+        <div css={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+          <TitleText>{template.name}</TitleText>
+          <DescriptionText>
             {template.description}
-          </p>
-          <div className="flex items-center justify-between pt-1">
-            <Button
+          </DescriptionText>
+          <CardActions>
+            <ActionButton
               variant="ghost"
               size="sm"
-              className="h-7 text-xs px-2"
+              css={{ height: "1.75rem", fontSize: "0.75rem", padding: "0 0.5rem" }}
               onClick={(e) => {
                 e.stopPropagation();
                 onPreview(template.id);
               }}
             >
               预览
-            </Button>
-            <Button
+            </ActionButton>
+            <ActionButton
               variant="default"
               size="sm"
-              className="h-7 text-xs px-3"
+              css={{ height: "1.75rem", fontSize: "0.75rem", padding: "0 0.75rem" }}
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect(template);
               }}
             >
               使用
-            </Button>
-          </div>
+            </ActionButton>
+          </CardActions>
         </div>
       </CardContent>
-    </Card>
+    </CardWrapper>
   );
 }

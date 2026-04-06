@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import styled from "@emotion/styled";
 
 interface GaugeChartProps {
   value?: number;
@@ -15,6 +15,41 @@ interface GaugeChartProps {
   unit?: string;
 }
 
+const ChartContainer = styled.div`
+  width: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+`;
+
+const ChartWrapper = styled.div<{ width?: number; height?: number }>`
+  position: relative;
+  width: ${(p) => p.width || "100%"};
+  height: ${(p) => p.height || 300}px;
+`;
+
+const ValueDisplay = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 700;
+  transform: translateY(-20%);
+  color: hsl(var(--foreground));
+`;
+
+const UnitText = styled.span`
+  margin-left: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: hsl(var(--muted-foreground));
+`;
+
 export function GaugeChart({
   value = 88,
   min = 0,
@@ -26,21 +61,11 @@ export function GaugeChart({
   showValue = true,
   unit = "%",
 }: GaugeChartProps) {
-  // 计算百分比
   const percent = useMemo(() => {
     const normalizedValue = Math.max(min, Math.min(max, value));
     return (normalizedValue - min) / (max - min);
   }, [value, min, max]);
 
-  // 创建仪表盘数据
-  const data = useMemo(() => {
-    return [
-      { name: "value", value: percent },
-      { name: "empty", value: 1 - percent },
-    ];
-  }, [percent]);
-
-  // 确定颜色
   const color = useMemo(() => {
     if (percent <= 0.2) return colors[0];
     if (percent <= 0.4) return colors[1];
@@ -50,43 +75,40 @@ export function GaugeChart({
   }, [percent, colors]);
 
   return (
-    <div className="w-full">
-      {title && <h3 className="mb-2 text-lg font-medium">{title}</h3>}
-      <div
-        style={{ width: width || "100%", height: height || 300 }}
-        className="relative"
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              startAngle={180}
-              endAngle={0}
-              innerRadius="60%"
-              outerRadius="80%"
-              paddingAngle={0}
-              dataKey="value"
-              stroke="none"
-            >
-              <Cell fill={color} />
-              <Cell fill="#EEEEEE" />
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
+      <ChartWrapper width={width} height={height}>
+        <svg viewBox="0 0 200 100" style={{ width: "100%", height: "100%" }}>
+          <defs>
+            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={colors[0]} />
+              <stop offset="50%" stopColor={colors[2]} />
+              <stop offset="100%" stopColor={colors[4]} />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 20 90 A 80 80 0 0 1 180 90"
+            fill="none"
+            stroke="hsl(var(--muted))"
+            strokeWidth="15"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 20 90 A 80 80 0 0 1 180 90"
+            fill="none"
+            stroke={color}
+            strokeWidth="15"
+            strokeLinecap="round"
+            strokeDasharray={`${percent * 251.2} 251.2`}
+          />
+        </svg>
         {showValue && (
-          <div
-            className="absolute left-0 right-0 top-1/2 text-center text-3xl font-bold"
-            style={{ transform: "translateY(-20%)" }}
-          >
+          <ValueDisplay>
             {value}
-            <span className="ml-1 text-sm font-normal text-muted-foreground">
-              {unit}
-            </span>
-          </div>
+            <UnitText>{unit}</UnitText>
+          </ValueDisplay>
         )}
-      </div>
-    </div>
+      </ChartWrapper>
+    </ChartContainer>
   );
-}
+};

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import {
   RadialBarChart as RechartsRadialBarChart,
   RadialBar,
@@ -17,7 +18,17 @@ interface RadialBarChartProps {
   title?: string;
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { name: "18-24", uv: 31.47, pv: 2400, fill: "#8884d8" },
   { name: "25-29", uv: 26.69, pv: 4567, fill: "#83a6ed" },
@@ -38,8 +49,8 @@ export function RadialBarChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsRadialBarChart
           cx="50%"
@@ -72,7 +83,7 @@ export function RadialBarChart({
           />
         </RechartsRadialBarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

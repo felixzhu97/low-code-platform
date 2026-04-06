@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import { Treemap, ResponsiveContainer } from "recharts";
 
 interface TreemapChartProps {
@@ -11,7 +12,17 @@ interface TreemapChartProps {
   title?: string;
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { name: "A", size: 24593, fill: "#8884d8" },
   { name: "B", size: 19747, fill: "#83a6ed" },
@@ -49,7 +60,6 @@ const CustomizedContent = (props: any) => {
     name,
   } = props;
 
-  // 只在足够大的区域显示文字
   const showText = width > 40 && height > 20;
   const showIndex = width > 60 && height > 40;
 
@@ -109,8 +119,8 @@ export function TreemapChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <Treemap
           data={chartData}
@@ -121,7 +131,7 @@ export function TreemapChart({
           content={<CustomizedContent colors={COLORS} />}
         />
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

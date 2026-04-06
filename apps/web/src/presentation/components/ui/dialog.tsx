@@ -70,6 +70,54 @@ const StyledDialogContent = styled(DialogPrimitive.Content)`
   }
 `
 
+const CloseButton = styled(DialogPrimitive.Close)`
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  border-radius: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--foreground));
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &[data-state="open"] {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--muted-foreground));
+  }
+`
+
+const VisuallyHidden = styled.span`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+`
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -78,43 +126,10 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <StyledDialogContent ref={ref} className={className} {...props}>
       {children}
-      <DialogPrimitive.Close
-        css={css`
-          position: absolute;
-          right: 1rem;
-          top: 1rem;
-          border-radius: 0.25rem;
-          opacity: 0.7;
-          transition: opacity 0.2s ease-in-out;
-          padding: 0.25rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &:hover {
-            opacity: 1;
-          }
-
-          &:focus {
-            outline: 2px solid hsl(var(--ring));
-            outline-offset: 2px;
-          }
-
-          &:disabled {
-            pointer-events: none;
-            opacity: 0.5;
-          }
-
-          &[data-state="open"] {
-            background-color: hsl(var(--accent));
-            color: hsl(var(--muted-foreground));
-          }
-        `
-        }
-      >
+      <CloseButton>
         <X size={16} />
-        <span css={css`position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;`}>Close</span>
-      </DialogPrimitive.Close>
+        <VisuallyHidden>Close</VisuallyHidden>
+      </CloseButton>
     </StyledDialogContent>
   </DialogPortal>
 ))
@@ -143,11 +158,13 @@ const StyledDialogFooter = styled.div`
   display: flex;
   flex-direction: column-reverse;
   gap: 0.5rem;
+  margin-top: 1.5rem;
 
   @media (min-width: 640px) {
     flex-direction: row;
     justify-content: flex-end;
     gap: 0.5rem;
+    margin-top: 0;
   }
 `
 
@@ -164,6 +181,7 @@ const StyledDialogTitle = styled(DialogPrimitive.Title)`
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.025em;
+  color: hsl(var(--foreground));
 `
 
 const DialogTitle = React.forwardRef<

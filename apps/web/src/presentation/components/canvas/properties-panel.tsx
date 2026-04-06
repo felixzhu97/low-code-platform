@@ -115,12 +115,34 @@ const PropsScrollArea = styled(ScrollArea)`
   height: calc(100vh - 12rem);
 `;
 
+const tabsBarWrap = css`
+  padding: 0 1rem 0.75rem;
+`;
+
 const FullTabsList = styled(TabsList)`
   width: 100%;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  padding: 0.1875rem;
+  background-color: hsl(var(--muted) / 0.6);
 `;
 
 const EqualTabTrigger = styled(TabsTrigger)`
   flex: 1;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.3125rem 0.5rem;
+  border-radius: 0.375rem;
+
+  &[data-state="active"] {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+`;
+
+const accordionPanel = css`
+  margin-top: 0.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid hsl(var(--border) / 0.6);
 `;
 
 const FlexSlider = styled(Slider)`
@@ -317,21 +339,24 @@ export function PropertiesPanel() {
         </p>
       </div>
       <Tabs defaultValue="properties">
-        <FullTabsList>
-          <EqualTabTrigger value="properties">
-            属性
-          </EqualTabTrigger>
-          <EqualTabTrigger value="data">
-            数据
-          </EqualTabTrigger>
-          <EqualTabTrigger value="events">
-            事件
-          </EqualTabTrigger>
-        </FullTabsList>
+        <div css={tabsBarWrap}>
+          <FullTabsList>
+            <EqualTabTrigger value="properties">
+              属性
+            </EqualTabTrigger>
+            <EqualTabTrigger value="data">
+              数据
+            </EqualTabTrigger>
+            <EqualTabTrigger value="events">
+              事件
+            </EqualTabTrigger>
+          </FullTabsList>
+        </div>
 
         <TabsContent value="properties">
           <PropsScrollArea>
             <div css={padded}>
+              <div css={accordionPanel}>
               <Accordion type="single" collapsible defaultValue="basic">
                 <AccordionItem value="basic">
                   <AccordionTrigger>基本属性</AccordionTrigger>
@@ -1010,6 +1035,7 @@ export function PropertiesPanel() {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+              </div>
             </div>
           </PropsScrollArea>
         </TabsContent>

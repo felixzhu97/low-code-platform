@@ -1,4 +1,6 @@
 import React from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Button,
   Header,
@@ -40,6 +42,19 @@ interface PlatformHeaderProps {
   onImportComponents: (components: any[]) => void;
 }
 
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const ButtonIcon = styled.span`
+  display: flex;
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+`;
+
 export function PlatformHeader({
   canUndo,
   canRedo,
@@ -64,14 +79,16 @@ export function PlatformHeader({
 }: PlatformHeaderProps) {
   return (
     <Header>
-      <div className="flex items-center gap-2">
+      <ButtonGroup>
         <Button
           variant="outline"
           size="sm"
           onClick={onUndo}
           disabled={!canUndo}
         >
-          <Undo2 className="mr-2 h-4 w-4" />
+          <ButtonIcon>
+            <Undo2 />
+          </ButtonIcon>
           撤销
         </Button>
         <Button
@@ -80,11 +97,15 @@ export function PlatformHeader({
           onClick={onRedo}
           disabled={!canRedo}
         >
-          <Redo2 className="mr-2 h-4 w-4" />
+          <ButtonIcon>
+            <Redo2 />
+          </ButtonIcon>
           重做
         </Button>
         <Button variant="outline" size="sm" onClick={onTogglePreview}>
-          <Eye className="mr-2 h-4 w-4" />
+          <ButtonIcon>
+            <Eye />
+          </ButtonIcon>
           {previewMode ? "退出预览" : "预览"}
         </Button>
         <ResponsiveControls />
@@ -96,7 +117,7 @@ export function PlatformHeader({
         <Collaboration />
         <ComponentLibraryManager />
         <CodeExport />
-      </div>
+      </ButtonGroup>
     </Header>
   );
 }

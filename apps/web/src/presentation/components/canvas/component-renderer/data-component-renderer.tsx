@@ -406,7 +406,7 @@ export function DataComponentRenderer({
                       gap: 0.25rem;
                     `}
                   >
-                    <Badge variant="outline" className="text-emerald-500">
+                    <Badge variant="outline" css={{ color: "#10b981" }}>
                       +{data?.increase || "12.5"}%
                     </Badge>
                     <span

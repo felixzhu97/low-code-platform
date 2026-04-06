@@ -14,7 +14,6 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [React 19\nUI框架] as React
   component [Next.js 15\n全栈框架] as NextJS
   component [TypeScript\n类型系统] as TypeScript
-  component [Tailwind CSS\n样式与设计令牌] as Tailwind
   component [Emotion\nCSS-in-JS 样式] as Emotion
   component [Radix UI\n组件库] as RadixUI
   component [React DnD\n拖拽库] as ReactDnD
@@ -43,7 +42,6 @@ package "前端技术栈 (Frontend Technology Stack)" {
   Browser --> React
   Browser --> NextJS
   Browser --> TypeScript
-  Browser --> Tailwind
   Browser --> Emotion
   Browser --> RadixUI
   Browser --> ReactDnD
@@ -288,7 +286,6 @@ note right of Browser
   - React 19: UI 运行时
   - TypeScript: 类型安全
   - Emotion: 画布与编辑器区域 CSS-in-JS
-  - Tailwind CSS: 设计令牌、shadcn 原子类、与 Emotion 共存
   - Zustand: 状态管理
   - react-i18next: 国际化
   - 工作区工具包: 组件/数据绑定/布局/性能/Schema

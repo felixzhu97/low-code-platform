@@ -57,9 +57,9 @@ ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 const StyledToast = styled(ToastPrimitives.Root)<{ variant?: ToastVariant }>`
   pointer-events: auto;
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   width: 100%;
   overflow: hidden;
@@ -104,11 +104,18 @@ const StyledToast = styled(ToastPrimitives.Root)<{ variant?: ToastVariant }>`
         `}
 `
 
+const ToastContent = styled.div`
+  display: grid;
+  gap: 0.25rem;
+`
+
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & { variant?: ToastVariant }
 >(({ className, variant = "default", ...props }, ref) => (
-  <StyledToast ref={ref} variant={variant} className={className} {...props} />
+  <StyledToast ref={ref} variant={variant} className={className} {...props}>
+    <ToastContent>{props.children}</ToastContent>
+  </StyledToast>
 ))
 Toast.displayName = ToastPrimitives.Root.displayName
 
@@ -148,14 +155,6 @@ const StyledAction = styled(ToastPrimitives.Action)`
     pointer-events: none;
     opacity: 0.5;
   }
-
-  &.destructive & {
-    border-color: hsl(var(--destructive) / 0.4);
-    &:hover {
-      background-color: hsl(var(--destructive));
-      color: hsl(var(--destructive-foreground));
-    }
-  }
 `
 
 const ToastClose = React.forwardRef<
@@ -194,31 +193,15 @@ const StyledClose = styled(ToastPrimitives.Close)`
   }
 `
 
-const ToastTitle = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={className}
-    css={css`font-size: 0.875rem; font-weight: 600;`}
-    {...props}
-  />
-))
-ToastTitle.displayName = ToastPrimitives.Title.displayName
+const ToastTitle = styled(ToastPrimitives.Title)`
+  font-size: 0.875rem;
+  font-weight: 600;
+`
 
-const ToastDescription = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Description>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description
-    ref={ref}
-    className={className}
-    css={css`font-size: 0.875rem; opacity: 0.9;`}
-    {...props}
-  />
-))
-ToastDescription.displayName = ToastPrimitives.Description.displayName
+const ToastDescription = styled(ToastPrimitives.Description)`
+  font-size: 0.875rem;
+  opacity: 0.9;
+`
 
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
 type ToastActionElement = React.ReactElement<typeof ToastAction>

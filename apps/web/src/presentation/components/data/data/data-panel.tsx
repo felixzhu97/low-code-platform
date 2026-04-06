@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   ScrollArea,
   Button,
@@ -48,12 +50,240 @@ import type { DataSource, DataSourceConfig } from "@/domain/datasource";
 import { DataSourceService } from "@/application/services/data-source.service";
 import { useDataStore } from "@/infrastructure/state-management/stores";
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  border-right: 1px solid hsl(var(--border));
+`;
+
+const PanelHeader = styled.div`
+  padding: 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+`;
+
+const PanelTitle = styled.h2`
+  font-size: 1.125rem;
+  font-weight: 600;
+`;
+
+const PanelSubtitle = styled.p`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const TabsStyled = styled(Tabs)`
+  flex: 1;
+`;
+
+const TabsListStyled = styled(TabsList)`
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+`;
+
+const TabsContentStyled = styled(TabsContent)`
+  flex: 1;
+  padding: 0;
+`;
+
+const ContentArea = styled(ScrollArea)`
+  height: calc(100vh - 12rem);
+`;
+
+const ContentGrid = styled.div`
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+`;
+
+const SourceCard = styled(Card)`
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const SourceHeader = styled(CardHeader)`
+  padding: 0.75rem;
+`;
+
+const SourceHeaderRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+`;
+
+const SourceInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const SourceTitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+`;
+
+const SourceTitle = styled(CardTitle)`
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const SourceMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`;
+
+const SourceMetaText = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const SmallBadge = styled(Badge)`
+  font-size: 0.75rem;
+  height: 1rem;
+  padding: 0 0.375rem;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+`;
+
+const IconButton = styled(Button)`
+  height: 1.75rem;
+  width: 1.75rem;
+  padding: 0;
+`;
+
+const SourceContent = styled(CardContent)`
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-top: 0;
+`;
+
+const SourceFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Timestamp = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const BindButton = styled(Button)`
+  height: 1.75rem;
+  font-size: 0.75rem;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 2rem 0;
+  color: hsl(var(--muted-foreground));
+`;
+
+const EmptyIcon = styled(Database)`
+  width: 2rem;
+  height: 2rem;
+  margin: 0 auto 0.5rem;
+  opacity: 0.5;
+`;
+
+const EmptySubtitle = styled.p`
+  font-size: 0.875rem;
+`;
+
+const EmptyText = styled.p`
+  font-size: 0.75rem;
+`;
+
+const ErrorText = styled.div`
+  font-size: 0.75rem;
+  color: hsl(var(--destructive));
+  margin-top: 0.25rem;
+`;
+
+const AddPanel = styled.div`
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+`;
+
+const FormGroup = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const FormRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+`;
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
+`;
+
+const PreviewPre = styled.pre`
+  font-size: 0.875rem;
+  background-color: hsl(var(--muted));
+  padding: 1rem;
+  border-radius: calc(var(--radius));
+  overflow: auto;
+  max-height: 60vh;
+`;
+
+const EditForm = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const DataSourceIcon = styled.div<{ type: string }>`
+  width: 1rem;
+  height: 1rem;
+  color: ${(p) =>
+    p.type === "static"
+      ? "#3b82f6"
+      : p.type === "api"
+      ? "#22c55e"
+      : p.type === "database"
+      ? "#a855f7"
+      : p.type === "file"
+      ? "#f97316"
+      : p.type === "websocket"
+      ? "#06b6d4"
+      : "#6b7280"};
+`;
+
+const StatusIcon = styled.div<{ status?: string }>`
+  width: 1rem;
+  height: 1rem;
+  color: ${(p) =>
+    p.status === "active"
+      ? "#22c55e"
+      : p.status === "error"
+      ? "#ef4444"
+      : "#eab308"};
+`;
+
 export function DataPanel() {
-  // 使用全局store管理数据源
   const { dataSources, addDataSource, updateDataSource, deleteDataSource } =
     useDataStore();
 
-  // 更新缓存条目
+  const [cacheEntries, setCacheEntries] = useState<
+    Array<{ id: string; age: number; ttl: number }>
+  >([]);
+
   useEffect(() => {
     const updateCacheEntries = () => {
       const status = DataSourceService.getCacheStatus();
@@ -61,19 +291,15 @@ export function DataPanel() {
     };
 
     updateCacheEntries();
-    // 定期更新缓存状态（每 2 秒）
     const interval = setInterval(updateCacheEntries, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  // 初始化默认数据源（如果store为空）
   useEffect(() => {
-    // 检查是否已存在示例数据源，避免重复添加
     const hasStatic1 = dataSources.some((ds) => ds.id === "static-1");
     const hasApi1 = dataSources.some((ds) => ds.id === "api-1");
 
     if (dataSources.length === 0 || (!hasStatic1 && !hasApi1)) {
-      // 添加示例数据源（只在不存在时添加）
       if (!hasStatic1) {
         const exampleDataSource1: DataSource = {
           id: "static-1",
@@ -111,7 +337,6 @@ export function DataPanel() {
         addDataSource(exampleDataSource2);
       }
     }
-    // 只依赖 dataSources，不依赖 addDataSource（它是稳定的）
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSources.length]);
 
@@ -132,43 +357,24 @@ export function DataPanel() {
   );
   const [previewData, setPreviewData] = useState<any>(null);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
-  const [cacheEntries, setCacheEntries] = useState<
-    Array<{ id: string; age: number; ttl: number }>
-  >([]);
 
-  // 获取数据源图标
-  const getDataSourceIcon = (type: DataSource["type"]) => {
+  const getTypeText = (type: DataSource["type"]) => {
     switch (type) {
       case "static":
-        return <Database className="h-4 w-4 text-blue-500" />;
+        return "静态数据";
       case "api":
-        return <Globe className="h-4 w-4 text-green-500" />;
+        return "API接口";
       case "database":
-        return <Table2 className="h-4 w-4 text-purple-500" />;
+        return "数据库";
       case "file":
-        return <FileText className="h-4 w-4 text-orange-500" />;
+        return "文件数据";
       case "websocket":
-        return <Wifi className="h-4 w-4 text-cyan-500" />;
+        return "WebSocket";
       default:
-        return <Database className="h-4 w-4 text-gray-500" />;
+        return type;
     }
   };
 
-  // 获取状态图标
-  const getStatusIcon = (status: DataSource["status"]) => {
-    switch (status) {
-      case "active":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case "inactive":
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case "error":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
-  // 添加数据源
   const handleAddDataSource = async () => {
     if (!newDataSource.name.trim()) return;
 
@@ -226,14 +432,12 @@ export function DataPanel() {
         config
       );
 
-      // 验证数据源
       const validation = DataSourceService.validateDataSource(newSource);
       if (!validation.valid) {
         alert(`数据源配置错误: ${validation.errors.join(", ")}`);
         return;
       }
 
-      // 使用store的方法添加数据源
       addDataSource(newSource);
       setNewDataSource({
         name: "",
@@ -248,14 +452,12 @@ export function DataPanel() {
     }
   };
 
-  // 删除数据源
   const handleDeleteDataSource = (id: string) => {
     if (confirm("确定要删除这个数据源吗？")) {
       deleteDataSource(id);
     }
   };
 
-  // 刷新数据源
   const handleRefreshDataSource = async (dataSource: DataSource) => {
     setLoading((prev) => ({ ...prev, [dataSource.id]: true }));
 
@@ -280,7 +482,6 @@ export function DataPanel() {
     }
   };
 
-  // 预览数据源
   const handlePreviewDataSource = async (dataSource: DataSource) => {
     setLoading((prev) => ({ ...prev, [dataSource.id]: true }));
 
@@ -295,117 +496,115 @@ export function DataPanel() {
   };
 
   return (
-    <div className="flex w-80 flex-col border-r">
-      <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold">数据源管理</h2>
-        <p className="text-sm text-muted-foreground">管理数据源和绑定</p>
-      </div>
+    <Wrapper>
+      <PanelHeader>
+        <PanelTitle>数据源管理</PanelTitle>
+        <PanelSubtitle>管理数据源和绑定</PanelSubtitle>
+      </PanelHeader>
 
-      <Tabs defaultValue="sources" className="flex-1">
-        <TabsList className="grid w-full grid-cols-3">
+      <TabsStyled defaultValue="sources">
+        <TabsListStyled>
           <TabsTrigger value="sources">数据源</TabsTrigger>
           <TabsTrigger value="add">添加</TabsTrigger>
           <TabsTrigger value="cache">缓存</TabsTrigger>
-        </TabsList>
+        </TabsListStyled>
 
-        <TabsContent value="sources" className="flex-1 p-0">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="grid gap-3 p-4">
+        <TabsContentStyled value="sources">
+          <ContentArea>
+            <ContentGrid>
               {dataSources.map((source) => (
-                <Card key={source.id} className="border shadow-sm">
-                  <CardHeader className="p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          {getDataSourceIcon(source.type)}
-                          <CardTitle className="text-sm truncate">
-                            {source.name}
-                          </CardTitle>
-                          {getStatusIcon(source.status)}
-                        </div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs text-muted-foreground">
-                            {source.type === "static" && "静态数据"}
-                            {source.type === "api" && "API接口"}
-                            {source.type === "database" && "数据库"}
-                            {source.type === "file" && "文件数据"}
-                            {source.type === "websocket" && "WebSocket"}
-                          </span>
+                <SourceCard key={source.id}>
+                  <SourceHeader>
+                    <SourceHeaderRow>
+                      <SourceInfo>
+                        <SourceTitleRow>
+                          <DataSourceIcon type={source.type}>
+                            {source.type === "static" && <Database css={{ width: "1rem", height: "1rem" }} />}
+                            {source.type === "api" && <Globe css={{ width: "1rem", height: "1rem" }} />}
+                            {source.type === "database" && <Table2 css={{ width: "1rem", height: "1rem" }} />}
+                            {source.type === "file" && <FileText css={{ width: "1rem", height: "1rem" }} />}
+                            {source.type === "websocket" && <Wifi css={{ width: "1rem", height: "1rem" }} />}
+                          </DataSourceIcon>
+                          <SourceTitle>{source.name}</SourceTitle>
+                          <StatusIcon status={source.status}>
+                            {source.status === "active" && <CheckCircle css={{ width: "1rem", height: "1rem" }} />}
+                            {source.status === "inactive" && <Clock css={{ width: "1rem", height: "1rem" }} />}
+                            {source.status === "error" && <AlertCircle css={{ width: "1rem", height: "1rem" }} />}
+                          </StatusIcon>
+                        </SourceTitleRow>
+                        <SourceMeta>
+                          <SourceMetaText>{getTypeText(source.type)}</SourceMetaText>
                           {source.type === "static" && (
-                            <span className="text-xs text-muted-foreground">
+                            <SourceMetaText>
                               {Array.isArray(source.data)
                                 ? `· ${source.data.length} 条记录`
                                 : "· 对象数据"}
-                            </span>
+                            </SourceMetaText>
                           )}
                           {source.config?.cacheEnabled && (
-                            <Badge
-                              variant="outline"
-                              className="text-xs h-4 px-1.5"
-                            >
-                              缓存
-                            </Badge>
+                            <SmallBadge variant="outline">缓存</SmallBadge>
                           )}
-                        </div>
+                        </SourceMeta>
                         {source.error && (
-                          <div className="text-xs text-destructive mt-1">
-                            {source.error}
-                          </div>
+                          <ErrorText>{source.error}</ErrorText>
                         )}
-                      </div>
-                      <div className="flex items-center gap-0.5 flex-shrink-0">
-                        <Button
+                      </SourceInfo>
+                      <ActionButtons>
+                        <IconButton
                           variant="ghost"
                           size="sm"
-                          className="h-7 w-7 p-0"
                           onClick={() => handlePreviewDataSource(source)}
                           disabled={loading[source.id]}
                           title="预览"
                         >
                           {loading[source.id] ? (
-                            <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                            <RefreshCw css={{ width: "0.875rem", height: "0.875rem" }} />
                           ) : (
-                            <Eye className="h-3.5 w-3.5" />
+                            <Eye css={{ width: "0.875rem", height: "0.875rem" }} />
                           )}
-                        </Button>
-                        <Button
+                        </IconButton>
+                        <IconButton
                           variant="ghost"
                           size="sm"
-                          className="h-7 w-7 p-0"
                           onClick={() => handleRefreshDataSource(source)}
                           disabled={loading[source.id]}
                           title="刷新"
                         >
                           <RefreshCw
-                            className={`h-3.5 w-3.5 ${
-                              loading[source.id] ? "animate-spin" : ""
-                            }`}
+                            css={css`
+                              width: 0.875rem;
+                              height: 0.875rem;
+                              ${loading[source.id] ? "animation: spin 1s linear infinite;" : ""}
+                              @keyframes spin {
+                                from { transform: rotate(0deg); }
+                                to { transform: rotate(360deg); }
+                              }
+                            `}
                           />
-                        </Button>
-                        <Button
+                        </IconButton>
+                        <IconButton
                           variant="ghost"
                           size="sm"
-                          className="h-7 w-7 p-0"
                           onClick={() => setEditingDataSource(source)}
                           title="编辑"
                         >
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
+                          <Edit css={{ width: "0.875rem", height: "0.875rem" }} />
+                        </IconButton>
+                        <IconButton
                           variant="ghost"
                           size="sm"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
                           onClick={() => handleDeleteDataSource(source.id)}
                           title="删除"
+                          css={{ "&:hover": { color: "hsl(var(--destructive))" } }}
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="px-3 pb-3 pt-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
+                          <Trash2 css={{ width: "0.875rem", height: "0.875rem" }} />
+                        </IconButton>
+                      </ActionButtons>
+                    </SourceHeaderRow>
+                  </SourceHeader>
+                  <SourceContent>
+                    <SourceFooter>
+                      <Timestamp>
                         {new Date(source.lastUpdated || "").toLocaleString(
                           "zh-CN",
                           {
@@ -415,34 +614,30 @@ export function DataPanel() {
                             minute: "2-digit",
                           }
                         )}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-xs"
-                      >
+                      </Timestamp>
+                      <BindButton variant="outline" size="sm">
                         绑定到组件
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </BindButton>
+                    </SourceFooter>
+                  </SourceContent>
+                </SourceCard>
               ))}
 
               {dataSources.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Database className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">暂无数据源</p>
-                  <p className="text-xs">点击"添加"创建数据源</p>
-                </div>
+                <EmptyState>
+                  <EmptyIcon />
+                  <EmptySubtitle>暂无数据源</EmptySubtitle>
+                  <EmptyText>点击"添加"创建数据源</EmptyText>
+                </EmptyState>
               )}
-            </div>
-          </ScrollArea>
-        </TabsContent>
+            </ContentGrid>
+          </ContentArea>
+        </TabsContentStyled>
 
-        <TabsContent value="add" className="flex-1 p-0">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="grid gap-4 p-4">
-              <div className="grid gap-2">
+        <TabsContentStyled value="add">
+          <ContentArea>
+            <AddPanel>
+              <FormGroup>
                 <Label htmlFor="data-name">数据源名称</Label>
                 <Input
                   id="data-name"
@@ -452,9 +647,9 @@ export function DataPanel() {
                     setNewDataSource({ ...newDataSource, name: e.target.value })
                   }
                 />
-              </div>
+              </FormGroup>
 
-              <div className="grid gap-2">
+              <FormGroup>
                 <Label htmlFor="data-type">数据源类型</Label>
                 <Select
                   value={newDataSource.type}
@@ -472,40 +667,40 @@ export function DataPanel() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="static">
-                      <div className="flex items-center gap-2">
-                        <Database className="h-4 w-4 text-blue-500" />
+                      <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Database css={{ width: "1rem", height: "1rem", color: "#3b82f6" }} />
                         静态数据
                       </div>
                     </SelectItem>
                     <SelectItem value="api">
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-green-500" />
+                      <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Globe css={{ width: "1rem", height: "1rem", color: "#22c55e" }} />
                         API接口
                       </div>
                     </SelectItem>
                     <SelectItem value="database">
-                      <div className="flex items-center gap-2">
-                        <Table2 className="h-4 w-4 text-purple-500" />
+                      <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Table2 css={{ width: "1rem", height: "1rem", color: "#a855f7" }} />
                         数据库
                       </div>
                     </SelectItem>
                     <SelectItem value="file">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-orange-500" />
+                      <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <FileText css={{ width: "1rem", height: "1rem", color: "#f97316" }} />
                         文件数据
                       </div>
                     </SelectItem>
                     <SelectItem value="websocket">
-                      <div className="flex items-center gap-2">
-                        <Wifi className="h-4 w-4 text-cyan-500" />
+                      <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <Wifi css={{ width: "1rem", height: "1rem", color: "#06b6d4" }} />
                         WebSocket
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </FormGroup>
 
-              <div className="grid gap-2">
+              <FormGroup>
                 {newDataSource.type === "static" && (
                   <>
                     <Label htmlFor="static-data">JSON数据</Label>
@@ -521,7 +716,7 @@ export function DataPanel() {
                         })
                       }
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p css={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))" }}>
                       输入有效的JSON数据，例如数组或对象
                     </p>
                   </>
@@ -542,7 +737,7 @@ export function DataPanel() {
                       }
                     />
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <FormRow>
                       <div>
                         <Label htmlFor="api-method">请求方法</Label>
                         <Select
@@ -586,9 +781,9 @@ export function DataPanel() {
                           }
                         />
                       </div>
-                    </div>
+                    </FormRow>
 
-                    <div className="flex items-center space-x-2">
+                    <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <Switch
                         id="cache-enabled"
                         checked={newDataSource.config?.cacheEnabled || false}
@@ -604,10 +799,6 @@ export function DataPanel() {
                       />
                       <Label htmlFor="cache-enabled">启用缓存</Label>
                     </div>
-
-                    <p className="text-xs text-muted-foreground">
-                      输入有效的API地址，将在运行时获取数据
-                    </p>
                   </>
                 )}
 
@@ -642,10 +833,6 @@ export function DataPanel() {
                         })
                       }
                     />
-
-                    <p className="text-xs text-muted-foreground">
-                      输入数据库连接信息和查询语句
-                    </p>
                   </>
                 )}
 
@@ -686,10 +873,6 @@ export function DataPanel() {
                         <SelectItem value="xml">XML</SelectItem>
                       </SelectContent>
                     </Select>
-
-                    <p className="text-xs text-muted-foreground">
-                      输入文件路径和类型
-                    </p>
                   </>
                 )}
 
@@ -707,32 +890,27 @@ export function DataPanel() {
                         })
                       }
                     />
-
-                    <p className="text-xs text-muted-foreground">
-                      输入WebSocket连接地址
-                    </p>
                   </>
                 )}
-              </div>
+              </FormGroup>
 
-              <Button
+              <FullWidthButton
                 onClick={handleAddDataSource}
                 disabled={!newDataSource.name || !newDataSource.data}
-                className="w-full"
               >
-                <PlusCircle className="mr-2 h-4 w-4" />
+                <PlusCircle css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
                 添加数据源
-              </Button>
-            </div>
-          </ScrollArea>
-        </TabsContent>
+              </FullWidthButton>
+            </AddPanel>
+          </ContentArea>
+        </TabsContentStyled>
 
-        <TabsContent value="cache" className="flex-1 p-0">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="grid gap-4 p-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">缓存管理</h3>
+        <TabsContentStyled value="cache">
+          <ContentArea>
+            <ContentGrid>
+              <div css={{ display: "grid", gap: "1rem" }}>
+                <div css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <h3 css={{ fontSize: "0.875rem", fontWeight: 500 }}>缓存管理</h3>
                   <Button
                     variant="outline"
                     size="sm"
@@ -742,58 +920,63 @@ export function DataPanel() {
                   </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="text-sm text-muted-foreground">
+                <div css={{ display: "grid", gap: "0.5rem" }}>
+                  <div css={{ fontSize: "0.875rem", color: "hsl(var(--muted-foreground))" }}>
                     缓存状态: {cacheEntries.length} 个条目
                   </div>
 
                   {cacheEntries.length === 0 ? (
-                    <div className="text-center py-4 text-muted-foreground text-sm">
+                    <div css={{ textAlign: "center", padding: "1rem 0", color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }}>
                       暂无缓存条目
                     </div>
                   ) : (
                     cacheEntries.map((entry, index) => (
                       <div
                         key={`cache-${entry.id}-${index}`}
-                        className="flex items-center justify-between p-2 border rounded"
+                        css={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "0.5rem",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "calc(var(--radius))",
+                        }}
                       >
-                      <div className="text-sm">
-                        <div className="font-medium">{entry.id}</div>
-                        <div className="text-xs text-muted-foreground">
-                          年龄: {Math.round(entry.age / 1000)}s, TTL:{" "}
-                          {entry.ttl}s
+                        <div css={{ fontSize: "0.875rem" }}>
+                          <div css={{ fontWeight: 500 }}>{entry.id}</div>
+                          <div css={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))" }}>
+                            年龄: {Math.round(entry.age / 1000)}s, TTL: {entry.ttl}s
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            DataSourceService.clearDataSourceCache(entry.id)
+                          }
+                        >
+                          <Trash2 css={{ width: "0.75rem", height: "0.75rem" }} />
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          DataSourceService.clearDataSourceCache(entry.id)
-                        }
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
                     ))
                   )}
                 </div>
               </div>
-            </div>
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
+            </ContentGrid>
+          </ContentArea>
+        </TabsContentStyled>
+      </TabsStyled>
 
-      {/* 数据预览对话框 */}
       <Dialog open={!!previewData} onOpenChange={() => setPreviewData(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh]">
+        <DialogContent css={{ maxWidth: "36rem", maxHeight: "80vh" }}>
           <DialogHeader>
             <DialogTitle>数据预览</DialogTitle>
             <DialogDescription>预览数据源的内容</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="max-h-[60vh]">
-            <pre className="text-sm bg-muted p-4 rounded overflow-auto">
+          <ScrollArea css={{ maxHeight: "60vh" }}>
+            <PreviewPre>
               {JSON.stringify(previewData, null, 2)}
-            </pre>
+            </PreviewPre>
           </ScrollArea>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPreviewData(null)}>
@@ -803,19 +986,18 @@ export function DataPanel() {
         </DialogContent>
       </Dialog>
 
-      {/* 编辑数据源对话框 */}
       <Dialog
         open={!!editingDataSource}
         onOpenChange={() => setEditingDataSource(null)}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent css={{ maxWidth: "36rem" }}>
           <DialogHeader>
             <DialogTitle>编辑数据源</DialogTitle>
             <DialogDescription>修改数据源配置</DialogDescription>
           </DialogHeader>
           {editingDataSource && (
-            <div className="space-y-4">
-              <div className="grid gap-2">
+            <EditForm>
+              <FormGroup>
                 <Label htmlFor="edit-name">数据源名称</Label>
                 <Input
                   id="edit-name"
@@ -827,25 +1009,27 @@ export function DataPanel() {
                     })
                   }
                 />
-              </div>
+              </FormGroup>
 
-              <div className="grid gap-2">
+              <FormGroup>
                 <Label>数据源类型</Label>
-                <div className="flex items-center gap-2">
-                  {getDataSourceIcon(editingDataSource.type)}
-                  <span className="text-sm">
-                    {editingDataSource.type === "static" && "静态数据"}
-                    {editingDataSource.type === "api" && "API接口"}
-                    {editingDataSource.type === "database" && "数据库"}
-                    {editingDataSource.type === "file" && "文件数据"}
-                    {editingDataSource.type === "websocket" && "WebSocket"}
+                <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <DataSourceIcon type={editingDataSource.type}>
+                    {editingDataSource.type === "static" && <Database css={{ width: "1rem", height: "1rem" }} />}
+                    {editingDataSource.type === "api" && <Globe css={{ width: "1rem", height: "1rem" }} />}
+                    {editingDataSource.type === "database" && <Table2 css={{ width: "1rem", height: "1rem" }} />}
+                    {editingDataSource.type === "file" && <FileText css={{ width: "1rem", height: "1rem" }} />}
+                    {editingDataSource.type === "websocket" && <Wifi css={{ width: "1rem", height: "1rem" }} />}
+                  </DataSourceIcon>
+                  <span css={{ fontSize: "0.875rem" }}>
+                    {getTypeText(editingDataSource.type)}
                   </span>
                 </div>
-              </div>
+              </FormGroup>
 
               {editingDataSource.type === "api" && editingDataSource.config && (
-                <div className="space-y-4">
-                  <div className="grid gap-2">
+                <div css={{ display: "grid", gap: "1rem" }}>
+                  <FormGroup>
                     <Label htmlFor="edit-url">API地址</Label>
                     <Input
                       id="edit-url"
@@ -860,9 +1044,9 @@ export function DataPanel() {
                         })
                       }
                     />
-                  </div>
+                  </FormGroup>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <FormRow>
                     <div>
                       <Label htmlFor="edit-method">请求方法</Label>
                       <Select
@@ -906,9 +1090,9 @@ export function DataPanel() {
                         }
                       />
                     </div>
-                  </div>
+                  </FormRow>
 
-                  <div className="flex items-center space-x-2">
+                  <div css={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <Switch
                       id="edit-cache"
                       checked={editingDataSource.config.cacheEnabled || false}
@@ -926,7 +1110,7 @@ export function DataPanel() {
                   </div>
                 </div>
               )}
-            </div>
+            </EditForm>
           )}
           <DialogFooter>
             <Button
@@ -948,6 +1132,6 @@ export function DataPanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </Wrapper>
   );
 }

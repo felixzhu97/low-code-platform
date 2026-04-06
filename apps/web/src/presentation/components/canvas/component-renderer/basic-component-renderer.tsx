@@ -444,7 +444,7 @@ export function BasicComponentRenderer({
           className={cn(props.floating && "floating")}
           style={{ ...animationStyle }}
         >
-          <ImageFrame className="group">
+          <ImageFrame>
             <PreviewImg
               src={props.src || "/placeholder.svg?height=200&width=300"}
               alt={props.alt || "示例图片"}
@@ -497,7 +497,6 @@ export function BasicComponentRenderer({
               align: "start",
               loop: props.loop || false,
             }}
-            className="w-full"
           >
             <CarouselContent>
               {childComponents.length > 0 ? (

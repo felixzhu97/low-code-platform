@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import {
   AreaChart as RechartsAreaChart,
   Area,
@@ -26,7 +27,17 @@ interface AreaChartProps {
   stacked?: boolean;
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { name: "1月", uv: 8200, pv: 5400 },
   { name: "2月", uv: 12100, pv: 7800 },
@@ -47,8 +58,8 @@ export function AreaChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsAreaChart
           data={chartData}
@@ -92,7 +103,7 @@ export function AreaChart({
           />
         </RechartsAreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

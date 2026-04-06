@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Select,
   SelectContent,
@@ -33,8 +35,226 @@ interface DataSourceSelectorProps {
   selectedDataSourceId: string | null;
   onDataSourceChange: (dataSourceId: string | null) => void;
   onCreateDataSourceFromJson?: (dataSource: DataSource) => void;
-  componentType?: string; // 组件类型，用于推荐模板
+  componentType?: string;
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const SelectorCard = styled(Card)`
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const CardHeaderStyled = styled(CardHeader)`
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+`;
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+`;
+
+const IconWrapper = styled.div`
+  border-radius: calc(var(--radius) / 2);
+  background-color: hsl(var(--primary) / 0.1);
+  padding: 0.375rem;
+`;
+
+const DatabaseIcon = styled(Database)`
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--primary));
+`;
+
+const HeaderLabel = styled(Label)`
+  font-size: 0.875rem;
+  font-weight: 600;
+`;
+
+const HeaderButtonGroup = styled.div`
+  display: flex;
+  gap: 0.375rem;
+`;
+
+const SmallButton = styled(Button)`
+  height: 1.75rem;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+`;
+
+const ClearButton = styled(Button)`
+  height: 1.75rem;
+  width: 1.75rem;
+  padding: 0;
+`;
+
+const CardContentStyled = styled(CardContent)`
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  padding-top: 0;
+`;
+
+const EmptyState = styled.div`
+  border-radius: calc(var(--radius));
+  border: 1px dashed hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.3);
+  padding: 1.5rem;
+  text-align: center;
+`;
+
+const EmptyIcon = styled(Database)`
+  width: 2rem;
+  height: 2rem;
+  margin: 0 auto 0.5rem;
+  color: hsl(var(--muted-foreground) / 0.5);
+`;
+
+const EmptyTitle = styled.p`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 0.25rem;
+`;
+
+const EmptySubtitle = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground) / 0.7);
+`;
+
+const SelectTriggerStyled = styled(SelectTrigger)`
+  width: 100%;
+  height: 2.25rem;
+  font-size: 0.875rem;
+`;
+
+const SelectContentStyled = styled(SelectContent)`
+  max-height: 18.75rem;
+`;
+
+const SelectItemStyled = styled(SelectItem)`
+  padding-top: 0.5rem;
+`;
+
+const ItemContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-width: 0;
+`;
+
+const ItemTextWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const ItemTextRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+`;
+
+const ItemName = styled.span`
+  font-weight: 500;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+`;
+
+const StyledBadge = styled(Badge)`
+  font-size: 0.75rem;
+  height: 1rem;
+  padding: 0 0.375rem;
+  font-weight: 400;
+  flex-shrink: 0;
+`;
+
+const StatusIcon = styled.div<{ status: string }>`
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+`;
+
+const QuickInputCard = styled(Card)`
+  border-color: hsl(var(--primary) / 0.3);
+  background: linear-gradient(to bottom right, hsl(var(--primary) / 0.05), hsl(var(--primary) / 0.1));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const QuickInputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  padding: 0.375rem 0.25rem;
+`;
+
+const StatusDot = styled.div<{ status?: string }>`
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background-color: ${(p) =>
+    p.status === "active"
+      ? "hsl(142 76% 36%)"
+      : p.status === "error"
+      ? "hsl(var(--destructive))"
+      : "hsl(var(--muted-foreground))"};
+`;
+
+const StatusName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+`;
+
+const StatusTime = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground) / 0.7);
+  flex-shrink: 0;
+`;
+
+const CollapsibleContentStyled = styled(CollapsibleContent)`
+  animation: slideIn 0.2s ease-out;
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
 
 export function DataSourceSelector({
   dataSources,
@@ -68,11 +288,9 @@ export function DataSourceSelector({
   };
 
   const handleJsonConfirm = (data: any) => {
-    // 如果提供了回调，使用回调（会自动创建数据源并渲染）
     if (onCreateDataSourceFromJson) {
       onCreateDataSourceFromJson(data);
     } else {
-      // 如果没有回调，创建临时数据源并触发变化
       const tempDataSource = DataSourceService.createDataSource(
         `快速输入数据-${Date.now()}`,
         "static",
@@ -86,139 +304,139 @@ export function DataSourceSelector({
 
   const selectedDataSource = dataSources.find((ds) => ds.id === selectedId);
 
+  const getTypeText = (type: DataSource["type"]) => {
+    switch (type) {
+      case "static":
+        return "静态数据";
+      case "api":
+        return "API接口";
+      case "database":
+        return "数据库";
+      case "file":
+        return "文件数据";
+      case "websocket":
+        return "WebSocket";
+      default:
+        return type;
+    }
+  };
+
   return (
-    <div className="space-y-3">
-      <Card className="border shadow-sm">
-        <CardHeader className="pb-3 px-4 pt-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="rounded-md bg-primary/10 p-1.5">
-                <Database className="h-4 w-4 text-primary" />
-              </div>
-              <Label
-                htmlFor="data-source-select"
-                className="text-sm font-semibold"
-              >
-                数据源
-              </Label>
-            </div>
-            <div className="flex gap-1.5">
-              <Button
+    <Wrapper>
+      <SelectorCard>
+        <CardHeaderStyled>
+          <HeaderContent>
+            <HeaderLeft>
+              <IconWrapper>
+                <DatabaseIcon />
+              </IconWrapper>
+              <HeaderLabel htmlFor="data-source-select">数据源</HeaderLabel>
+            </HeaderLeft>
+            <HeaderButtonGroup>
+              <SmallButton
                 variant="outline"
                 size="sm"
                 onClick={() => setShowQuickInput(!showQuickInput)}
-                className="h-7 gap-1.5 text-xs"
               >
-                <Plus className="h-3 w-3" />
+                <Plus css={{ width: "0.75rem", height: "0.75rem" }} />
                 快速输入
-              </Button>
+              </SmallButton>
               {selectedId && (
-                <Button
+                <ClearButton
                   variant="ghost"
                   size="sm"
                   onClick={handleClear}
-                  className="h-7 w-7 p-0"
                   title="清除绑定"
                 >
-                  <X className="h-3.5 w-3.5" />
-                </Button>
+                  <X css={{ width: "0.875rem", height: "0.875rem" }} />
+                </ClearButton>
               )}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0 px-4 pb-4">
+            </HeaderButtonGroup>
+          </HeaderContent>
+        </CardHeaderStyled>
+        <CardContentStyled>
           {dataSources.length === 0 ? (
-            <div className="rounded-lg border border-dashed bg-muted/30 p-6 text-center">
-              <Database className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
-              <p className="text-sm font-medium text-muted-foreground mb-1">
-                暂无可用数据源
-              </p>
-              <p className="text-xs text-muted-foreground/70">
+            <EmptyState>
+              <EmptyIcon />
+              <EmptyTitle>暂无可用数据源</EmptyTitle>
+              <EmptySubtitle>
                 请在左侧"数据"面板中创建数据源，或使用快速输入功能
-              </p>
-            </div>
+              </EmptySubtitle>
+            </EmptyState>
           ) : (
             <Select value={selectedId || "none"} onValueChange={handleChange}>
-              <SelectTrigger
-                id="data-source-select"
-                className="w-full h-9 text-sm"
-              >
+              <SelectTriggerStyled id="data-source-select">
                 <SelectValue placeholder="选择数据源">
                   {selectedId && selectedDataSource ? (
-                    <span className="truncate">{selectedDataSource.name}</span>
+                    <span css={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {selectedDataSource.name}
+                    </span>
                   ) : (
                     "选择数据源"
                   )}
                 </SelectValue>
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <SelectItem value="none" className="text-muted-foreground">
-                  <span className="text-sm">无</span>
+              </SelectTriggerStyled>
+              <SelectContentStyled>
+                <SelectItem value="none">
+                  <span css={{ fontSize: "0.875rem", color: "hsl(var(--muted-foreground))" }}>
+                    无
+                  </span>
                 </SelectItem>
                 {dataSources.map((dataSource) => (
-                  <SelectItem
+                  <SelectItemStyled
                     key={dataSource.id}
                     value={dataSource.id}
-                    className="py-2"
                   >
-                    <div className="flex items-center gap-2.5 w-full min-w-0">
-                      <div className="flex-1 min-w-0 overflow-hidden">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="font-medium text-sm truncate block min-w-0">
-                            {dataSource.name}
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="text-xs h-4 px-1.5 font-normal shrink-0"
-                          >
+                    <ItemContent>
+                      <ItemTextWrapper>
+                        <ItemTextRow>
+                          <ItemName>{dataSource.name}</ItemName>
+                          <StyledBadge variant="outline">
                             {dataSource.type}
-                          </Badge>
-                        </div>
-                      </div>
+                          </StyledBadge>
+                        </ItemTextRow>
+                      </ItemTextWrapper>
                       {dataSource.status === "error" && (
-                        <AlertCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0" />
+                        <StatusIcon status="error">
+                          <AlertCircle css={{ width: "0.875rem", height: "0.875rem", color: "hsl(var(--destructive))" }} />
+                        </StatusIcon>
                       )}
                       {dataSource.status === "active" && (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                        <StatusIcon status="active">
+                          <CheckCircle2 css={{ width: "0.875rem", height: "0.875rem", color: "hsl(142 76% 36%)" }} />
+                        </StatusIcon>
                       )}
-                    </div>
-                  </SelectItem>
+                    </ItemContent>
+                  </SelectItemStyled>
                 ))}
-              </SelectContent>
+              </SelectContentStyled>
             </Select>
           )}
-        </CardContent>
-      </Card>
+        </CardContentStyled>
+      </SelectorCard>
 
-      {/* 快速输入JSON数据 */}
       <Collapsible open={showQuickInput} onOpenChange={setShowQuickInput}>
-        <CollapsibleContent className="animate-in slide-in-from-top-2 duration-200">
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
-            <JsonDataInput
-              onConfirm={handleJsonConfirm}
-              showTemplateSelector={true}
-              placeholder="输入JSON数据，或从模板中选择..."
-              minHeight="150px"
-              componentType={componentType}
-            />
-          </Card>
-        </CollapsibleContent>
+        <CollapsibleContentStyled>
+          <QuickInputCard>
+            <QuickInputContent>
+              <JsonDataInput
+                onConfirm={handleJsonConfirm}
+                showTemplateSelector={true}
+                placeholder="输入JSON数据，或从模板中选择..."
+                minHeight="150px"
+                componentType={componentType}
+              />
+            </QuickInputContent>
+          </QuickInputCard>
+        </CollapsibleContentStyled>
       </Collapsible>
 
       {selectedDataSource && (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground px-1 py-1.5">
-          <div
-            className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${
-              selectedDataSource.status === "active"
-                ? "bg-green-500"
-                : selectedDataSource.status === "error"
-                  ? "bg-destructive"
-                  : "bg-muted-foreground"
-            }`}
-          />
-          <span className="truncate flex-1">{selectedDataSource.name}</span>
+        <StatusIndicator>
+          <StatusDot status={selectedDataSource.status} />
+          <StatusName>{selectedDataSource.name}</StatusName>
           {selectedDataSource.lastUpdated && (
-            <span className="text-xs text-muted-foreground/70 flex-shrink-0">
+            <StatusTime>
               {new Date(selectedDataSource.lastUpdated).toLocaleTimeString(
                 "zh-CN",
                 {
@@ -226,10 +444,10 @@ export function DataSourceSelector({
                   minute: "2-digit",
                 }
               )}
-            </span>
+            </StatusTime>
           )}
-        </div>
+        </StatusIndicator>
       )}
-    </div>
+    </Wrapper>
   );
 }

@@ -9,7 +9,12 @@ import { ChevronDown } from "lucide-react"
 const Accordion = AccordionPrimitive.Root
 
 const StyledAccordionItem = styled(AccordionPrimitive.Item)`
-  border-bottom: 1px solid hsl(var(--border));
+  border: none;
+  border-radius: calc(var(--radius));
+
+  & + & {
+    margin-top: 0.125rem;
+  }
 `
 
 const AccordionItem = React.forwardRef<
@@ -27,15 +32,42 @@ const StyledAccordionHeader = styled(AccordionPrimitive.Header)`
 const StyledAccordionTrigger = styled(AccordionPrimitive.Trigger)`
   display: flex;
   flex: 1;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 0;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: color 0.2s ease-in-out;
+  gap: 0.5rem;
+  padding: 0.625rem 0.5rem;
+  margin: 0 -0.5rem;
+  border: none;
+  border-radius: calc(var(--radius));
+  background: transparent;
+  box-shadow: none;
+  appearance: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: hsl(var(--foreground));
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background-color: hsl(var(--muted) / 0.5);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  &[data-state="open"] {
+    background-color: hsl(var(--muted) / 0.35);
   }
 
   &[data-state="open"] > svg {
@@ -46,6 +78,7 @@ const StyledAccordionTrigger = styled(AccordionPrimitive.Trigger)`
     width: 1rem;
     height: 1rem;
     flex-shrink: 0;
+    color: hsl(var(--muted-foreground));
     transition: transform 0.2s ease-in-out;
   }
 `
@@ -80,8 +113,8 @@ const StyledAccordionContent = styled(AccordionPrimitive.Content)`
 `
 
 const StyledAccordionInner = styled.div`
-  padding: 1rem 0;
-  padding-top: 0;
+  padding: 0 0 0.875rem;
+  padding-top: 0.25rem;
 `
 
 const AccordionContent = React.forwardRef<

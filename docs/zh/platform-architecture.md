@@ -131,7 +131,7 @@ low-code-platform/
 - 文件：[c4-container.puml](./architecture/c4/c4-container.puml)
 - 描述：展示系统内部的主要容器和它们之间的关系
 - 核心容器：
-  - Web 应用 (`apps/web`)：Next.js 15 + React 19，编辑器与预览（Emotion + Tailwind + Radix）
+  - **Web 应用 (`apps/web`)**：Next.js 15 + React 19，编辑器与预览（Emotion + Radix UI）
   - API 服务 (`apps/server`)：Python FastAPI + Uvicorn
   - 可选：实时协作 (WebSocket/SSE)、Next.js 路由 / BFF
   - 数据存储：PostgreSQL / Redis（按部署启用）
@@ -147,7 +147,7 @@ low-code-platform/
 
 - **领域层**：组件实体、数据源实体、主题实体、组件工厂
 - **应用层**：组件管理服务、历史管理服务、工具服务
-- **表现层**（Emotion 承载画布与编辑器布局，Tailwind 与设计令牌、shadcn 并存）：
+- **表现层**（Emotion 承载画布与编辑器布局，Radix UI 提供基础组件与无障碍交互）：
   - 核心编辑器：画布、组件面板、属性面板、组件树
   - 组件渲染器：基础、布局、表单、图表、数据组件渲染器
   - 图表子系统：柱状图、折线图、饼图、面积图、仪表盘、雷达图
@@ -225,7 +225,7 @@ PlantUML 渲染工具：[PlantUML Online](http://www.plantuml.com/plantuml/) · 
 
 - **框架**：Next.js 15 + React 19
 - **语言**：TypeScript
-- **样式**：Emotion（画布与编辑器壳层）+ Tailwind CSS（设计令牌、shadcn 类名）+ Radix UI
+- **样式**：Emotion（画布与编辑器壳层）+ Radix UI（基础组件与无障碍）
 - **图表库**：Recharts
 - **拖拽功能**：react-dnd
 - **表单处理**：React Hook Form + Zod

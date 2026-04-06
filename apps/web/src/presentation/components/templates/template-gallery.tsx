@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -27,12 +29,105 @@ import {
   useThemeStore,
 } from "@/infrastructure/state-management/stores";
 
-interface TemplateGalleryProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface TemplateGalleryProps {}
+
+const SearchWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+`;
+
+const SearchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const SearchInputWrapper = styled.div`
+  position: relative;
+  flex: 1;
+`;
+
+const SearchIcon = styled(Search)`
+  position: absolute;
+  left: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const SearchInputStyled = styled(Input)`
+  padding-left: 2rem;
+  height: 2.25rem;
+`;
+
+const ClearButton = styled(Button)`
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 2.25rem;
+  width: 2.25rem;
+`;
+
+const TemplateGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+`;
+
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid hsl(var(--border));
+`;
+
+const PageInfo = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  padding: 0 0.5rem;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 2rem 0;
+  color: hsl(var(--muted-foreground));
+`;
+
+const FooterActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
+const FavoriteIcon = styled(Star)<{ isFavorite: boolean }>`
+  width: 1rem;
+  height: 1rem;
+  ${(p) =>
+    p.isFavorite
+      ? `
+    fill: #facc15;
+    color: #facc15;
+  `
+      : ""}
+`;
 
 export function TemplateGallery(_props: TemplateGalleryProps) {
-  // 从 store 获取状态
   const { addComponent } = useComponentStore();
   const { theme } = useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +139,6 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
     null
   );
 
-  // 使用自定义 hook 管理模板状态
   const {
     activeCategory,
     searchQuery,
@@ -65,7 +159,6 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
     handleTagSelect,
   } = useTemplateGallery();
 
-  // 分页设置
   const itemsPerPage = 8;
   const totalPages = Math.ceil(filteredTemplates.length / itemsPerPage);
   const paginatedTemplates = filteredTemplates.slice(
@@ -73,13 +166,11 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
     currentPage * itemsPerPage
   );
 
-  // 处理模板选择
   const handleSelectTemplate = (template: Template) => {
     setSelectedTemplate(template);
     setIsOpen(true);
   };
 
-  // 处理使用模板
   const handleUseTemplate = (components: Component[]) => {
     components.forEach((component) => {
       addComponent(component);
@@ -87,7 +178,6 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
     setIsOpen(false);
   };
 
-  // 处理增强预览
   const handleEnhancedPreview = (templateId: string) => {
     setPreviewTemplateId(templateId);
     setIsPreviewOpen(true);
@@ -100,32 +190,38 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
           浏览模板库
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent
+        css={css`
+          max-width: 80rem;
+          max-height: 90vh;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        `}
+      >
         <DialogHeader>
           <DialogTitle>模板库</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
+        <SearchWrapper>
+          <SearchRow>
+            <SearchInputWrapper>
+              <SearchIcon />
+              <SearchInputStyled
                 placeholder="搜索模板..."
-                className="pl-8 h-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <Button
+                <ClearButton
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 h-9 w-9"
                   onClick={() => setSearchQuery("")}
                 >
-                  <X className="h-3.5 w-3.5" />
-                </Button>
+                  <X css={{ width: "0.875rem", height: "0.875rem" }} />
+                </ClearButton>
               )}
-            </div>
+            </SearchInputWrapper>
             <TemplateFilters
               showFilters={showFilters}
               categories={categories}
@@ -137,21 +233,23 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
               onTagSelect={handleTagSelect}
               onResetFilters={resetFilters}
             />
-          </div>
-        </div>
+          </SearchRow>
+        </SearchWrapper>
 
         <Tabs defaultValue="all">
-          <TabsList className="mb-4">
+          <TabsList css={{ marginBottom: "1rem" }}>
             <TabsTrigger value="all">全部模板</TabsTrigger>
             <TabsTrigger value="favorites">我的收藏</TabsTrigger>
           </TabsList>
 
           <TabsContent
             value="all"
-            className="overflow-auto"
-            style={{ maxHeight: "60vh" }}
+            css={{
+              overflow: "auto",
+              maxHeight: "60vh",
+            }}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <TemplateGrid>
               {paginatedTemplates.map((template) => (
                 <TemplateCard
                   key={template.id}
@@ -162,10 +260,10 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
                   onPreview={handleEnhancedPreview}
                 />
               ))}
-            </div>
+            </TemplateGrid>
 
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-4 pt-4 border-t">
+              <PaginationWrapper>
                 <Button
                   variant="outline"
                   size="sm"
@@ -176,9 +274,9 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
                 >
                   上一页
                 </Button>
-                <span className="text-xs text-muted-foreground px-2">
+                <PageInfo>
                   {currentPage} / {totalPages}
-                </span>
+                </PageInfo>
                 <Button
                   variant="outline"
                   size="sm"
@@ -189,21 +287,23 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
                 >
                   下一页
                 </Button>
-              </div>
+              </PaginationWrapper>
             )}
           </TabsContent>
 
           <TabsContent
             value="favorites"
-            className="overflow-auto"
-            style={{ maxHeight: "60vh" }}
+            css={{
+              overflow: "auto",
+              maxHeight: "60vh",
+            }}
           >
             {favoriteTemplates.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <EmptyState>
                 <p>您还没有收藏任何模板</p>
-              </div>
+              </EmptyState>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <TemplateGrid>
                 {favoriteTemplates.map((template) => (
                   <TemplateCard
                     key={template.id}
@@ -214,13 +314,12 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
                     onPreview={handleEnhancedPreview}
                   />
                 ))}
-              </div>
+              </TemplateGrid>
             )}
           </TabsContent>
         </Tabs>
       </DialogContent>
 
-      {/* 模板预览对话框 */}
       <TemplatePreview
         template={selectedTemplate}
         isOpen={isOpen && !!selectedTemplate}
@@ -232,9 +331,8 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
         onToggleFavorite={handleToggleFavorite}
       />
 
-      {/* 增强预览对话框 */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="sm:max-w-5xl">
+        <DialogContent css={{ maxWidth: "80rem" }}>
           <DialogHeader>
             <DialogTitle>
               {previewTemplateId
@@ -250,7 +348,7 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
               theme={theme}
             />
           )}
-          <div className="flex justify-end gap-2 mt-4">
+          <FooterActions>
             <Button
               variant="outline"
               onClick={() => {
@@ -259,12 +357,12 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
                 }
               }}
             >
-              <Star
-                className={`mr-2 h-4 w-4 ${
-                  previewTemplateId && favorites.includes(previewTemplateId)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : ""
-                }`}
+              <FavoriteIcon
+                isFavorite={
+                  previewTemplateId
+                    ? favorites.includes(previewTemplateId)
+                    : false
+                }
               />
               {previewTemplateId && favorites.includes(previewTemplateId)
                 ? "取消收藏"
@@ -283,7 +381,7 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
             >
               使用此模板
             </Button>
-          </div>
+          </FooterActions>
         </DialogContent>
       </Dialog>
     </Dialog>

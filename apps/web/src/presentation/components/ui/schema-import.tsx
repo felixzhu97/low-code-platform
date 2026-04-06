@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +26,76 @@ interface SchemaImportProps {
   onImportSuccess?: () => void;
 }
 
+const DropZone = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 2px dashed #d1d5db;
+  padding: 2rem;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: #9ca3af;
+  }
+`;
+
+const DropZoneIcon = styled(FileJson)`
+  margin-bottom: 1rem;
+  height: 3rem;
+  width: 3rem;
+  color: #9ca3af;
+`;
+
+const DropZoneText = styled.p`
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
+`;
+
+const HintText = styled.p`
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+`;
+
+const HintBox = styled.div`
+  margin-top: 1rem;
+  border-radius: 0.375rem;
+  background-color: #eff6ff;
+  padding: 0.75rem;
+`;
+
+const HintBoxInner = styled.div`
+  display: flex;
+`;
+
+const HintIcon = styled(AlertCircle)`
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  color: #2563eb;
+`;
+
+const HintContent = styled.div`
+  font-size: 0.875rem;
+  color: #1e40af;
+`;
+
+const HintTitle = styled.p`
+  font-weight: 500;
+`;
+
+const HintDescription = styled.p`
+  margin-top: 0.25rem;
+`;
+
 export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +106,6 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 检查文件类型
     if (!file.name.endsWith(".json")) {
       toast({
         title: "文件格式错误",
@@ -47,18 +118,13 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
     setIsLoading(true);
 
     try {
-      // 使用 PersistenceManager 导入文件
       const projectData = await PersistenceManager.importFromFile(file);
-
-      // 导入项目数据到 stores
       PersistenceManager.importProjectData(projectData);
 
-      // 更新项目名称
       if (projectData.name) {
         setProjectName(projectData.name);
       }
 
-      // 生成新的项目ID并保存
       const newProjectId = `project-${Date.now()}`;
       PersistenceManager.saveCurrentProject(newProjectId, projectData.name);
 
@@ -86,7 +152,6 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
       });
     } finally {
       setIsLoading(false);
-      // 清空文件输入
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -158,11 +223,11 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Upload className="mr-1.5" aria-hidden="true" />
+          <Upload css={{ marginRight: "0.375rem" }} aria-hidden="true" />
           导入 Schema
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent css={{ maxWidth: "28rem" }}>
         <DialogHeader>
           <DialogTitle>导入 Schema JSON</DialogTitle>
           <DialogDescription>
@@ -170,21 +235,17 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div
-          className="mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 hover:border-gray-400"
+        <DropZone
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <FileJson className="mb-4 h-12 w-12 text-gray-400" />
-          <p className="mb-2 text-sm text-gray-600">
-            拖拽文件到此处，或
-          </p>
-          <input
+          <DropZoneIcon />
+          <DropZoneText>拖拽文件到此处，或</DropZoneText>
+          <HiddenFileInput
             ref={fileInputRef}
             type="file"
             accept=".json"
             onChange={handleFileSelect}
-            className="hidden"
             id="schema-import-input"
           />
           <Button
@@ -194,24 +255,21 @@ export function SchemaImport({ onImportSuccess }: SchemaImportProps) {
           >
             {isLoading ? "导入中..." : "选择文件"}
           </Button>
-          <p className="mt-4 text-xs text-gray-500">
-            支持 Schema JSON 和 ProjectData JSON 格式
-          </p>
-        </div>
+          <HintText>支持 Schema JSON 和 ProjectData JSON 格式</HintText>
+        </DropZone>
 
-        <div className="mt-4 rounded-md bg-blue-50 p-3">
-          <div className="flex">
-            <AlertCircle className="mr-2 h-4 w-4 text-blue-600" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium">提示</p>
-              <p className="mt-1">
+        <HintBox>
+          <HintBoxInner>
+            <HintIcon />
+            <HintContent>
+              <HintTitle>提示</HintTitle>
+              <HintDescription>
                 导入 Schema 将替换当前项目的所有组件、配置和主题设置。
-              </p>
-            </div>
-          </div>
-        </div>
+              </HintDescription>
+            </HintContent>
+          </HintBoxInner>
+        </HintBox>
       </DialogContent>
     </Dialog>
   );
 }
-

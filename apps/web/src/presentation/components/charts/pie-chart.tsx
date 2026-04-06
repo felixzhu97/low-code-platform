@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import styled from "@emotion/styled";
 import {
   PieChart as RechartsPieChart,
   Pie,
@@ -25,7 +26,21 @@ interface PieChartProps {
   paddingAngle?: number;
 }
 
-// 默认演示数据
+const ChartContainer = styled.div`
+  width: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+`;
+
+const ChartWrapper = styled.div`
+  width: ${(p) => p.style?.width || "100%"};
+  height: ${(p) => p.style?.height || 300}px;
+`;
+
 const defaultData = [
   { category: "移动端", value: 45 },
   { category: "桌面端", value: 32 },
@@ -47,12 +62,10 @@ export function PieChart({
   outerRadius = 80,
   paddingAngle = 0,
 }: PieChartProps) {
-  // 使用传入的数据或默认数据
   const chartData = useMemo(() => {
     return data && Array.isArray(data) && data.length > 0 ? data : defaultData;
   }, [data]);
 
-  // 处理数据，确保格式正确
   const processedData = useMemo(() => {
     if (!chartData || !Array.isArray(chartData)) {
       return [];
@@ -65,9 +78,9 @@ export function PieChart({
   }, [chartData, nameField, valueField]);
 
   return (
-    <div className="w-full">
-      {title && <h3 className="mb-2 text-lg font-medium">{title}</h3>}
-      <div style={{ width: width || "100%", height: height || 300 }}>
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
+      <ChartWrapper style={{ width: width || "100%", height: height || 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <RechartsPieChart>
             <Pie
@@ -95,7 +108,7 @@ export function PieChart({
             {showLegend && <Legend />}
           </RechartsPieChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </ChartWrapper>
+    </ChartContainer>
   );
 }

@@ -27,10 +27,16 @@ const StyledCommand = styled(CommandPrimitive)`
   color: hsl(var(--popover-foreground));
 `
 
+const CommandDialogContent = styled(DialogContent)`
+  overflow: hidden;
+  padding: 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+`
+
 const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0 shadow-lg">
+      <CommandDialogContent>
         <Command
           css={css`
             [cmdk-group-heading] {
@@ -63,7 +69,7 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
         >
           {children}
         </Command>
-      </DialogContent>
+      </CommandDialogContent>
     </Dialog>
   )
 }
@@ -80,6 +86,7 @@ const StyledInputWrapper = styled.div`
     height: 1rem;
     opacity: 0.5;
     flex-shrink: 0;
+    color: hsl(var(--muted-foreground));
   }
 `
 

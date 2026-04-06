@@ -24,7 +24,7 @@ A visual low-code development platform built with Next.js and React, supporting 
 
 ## 🛠 Tech Stack
 
-**Frontend**: Next.js 15 + React 19 + TypeScript + **Emotion** (styled / `css`) + Tailwind CSS (design tokens, shadcn/ui primitives) + Radix UI + React DnD + Recharts + Zustand
+**Frontend**: Next.js 15 + React 19 + TypeScript + **Emotion** (`@emotion/react` / `@emotion/styled`) + Radix UI + React DnD + Recharts + Zustand
 
 **Backend**: Python + FastAPI (`apps/server`)
 
@@ -158,5 +158,5 @@ Issues and Pull Requests are welcome.
 ## 🔗 Related Links
 
 - [Next.js](https://nextjs.org/docs) | [React](https://react.dev) | [FastAPI](https://fastapi.tiangolo.com/)
-- [Emotion](https://emotion.sh/docs/introduction) | [Tailwind CSS](https://tailwindcss.com) | [Radix UI](https://www.radix-ui.com)
+- [Emotion](https://emotion.sh/docs/introduction) | [Radix UI](https://www.radix-ui.com)
 - [Architecture (中文)](docs/zh/platform-architecture.md) | [Architecture (English)](docs/en/architecture.md) | [Local LLM (English)](docs/en/local-llm-setup.md) | [本地 LLM (中文)](docs/zh/local-llm-setup.md)

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +39,142 @@ interface TemplatePreviewProps {
   onToggleFavorite: (templateId: string) => void;
 }
 
+const DialogHeaderStyled = styled(DialogHeader)`
+  flex-shrink: 0;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+`;
+
+const FavoriteIconButton = styled(Button)`
+  height: 2rem;
+  width: 2rem;
+`;
+
+const TabsWrapper = styled(Tabs)`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+`;
+
+const TabsHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+`;
+
+const DeviceSwitcher = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+  padding: 0.25rem;
+`;
+
+const DeviceButton = styled(Button)`
+  height: 2rem;
+  width: 2rem;
+`;
+
+const TabsContentWrapper = styled.div`
+  flex: 1;
+  overflow: hidden;
+  margin-top: 1rem;
+`;
+
+const PreviewScrollArea = styled(ScrollArea)`
+  flex: 1;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+`;
+
+const PreviewContent = styled.div`
+  overflow: visible;
+  margin: 0 auto;
+`;
+
+const StructurePanel = styled.div`
+  flex: 1;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+  overflow: hidden;
+`;
+
+const StructureHeader = styled.div`
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.5rem 1rem;
+`;
+
+const StructureScrollArea = styled(ScrollArea)`
+  height: 25rem;
+`;
+
+const StructureContent = styled.div`
+  padding: 1rem;
+`;
+
+const Footer = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+`;
+
+const DescriptionText = styled.p`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const TagsWrapper = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+`;
+
+const Tag = styled.span`
+  border-radius: 9999px;
+  background-color: hsl(var(--muted));
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ComponentTreeItem = styled.div`
+  margin-bottom: 0.25rem;
+`;
+
+const ComponentRow = styled.div`
+  display: flex;
+  align-items: center;
+  border-radius: calc(var(--radius) / 2);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+
+  &:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+`;
+
+const TypeLabel = styled.span`
+  margin-right: 0.25rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const NameLabel = styled.span`
+  font-weight: 500;
+`;
+
 export function TemplatePreview({
   template,
   isOpen,
@@ -68,7 +206,6 @@ export function TemplatePreview({
     }
   };
 
-  // 递归构建组件树
   const buildComponentTree = (
     components: Component[],
     parentId: string | null = null,
@@ -77,160 +214,166 @@ export function TemplatePreview({
     return components
       .filter((component) => component.parentId === parentId)
       .map((component) => (
-        <div key={component.id} className="mb-1">
-          <div
-            className="flex items-center rounded px-2 py-1 text-sm hover:bg-muted/50"
+        <ComponentTreeItem key={component.id}>
+          <ComponentRow
             style={{ paddingLeft: `${level * 16 + 8}px` }}
           >
-            <span className="mr-1 text-xs text-muted-foreground">
-              {component.type}
-            </span>
-            <span className="font-medium">
+            <TypeLabel>{component.type}</TypeLabel>
+            <NameLabel>
               {component.name || component.type}
-            </span>
-          </div>
+            </NameLabel>
+          </ComponentRow>
           {buildComponentTree(components, component.id, level + 1)}
-        </div>
+        </ComponentTreeItem>
       ));
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center justify-between">
-            <span>{template.name}</span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onToggleFavorite(template.id)}
-                className="h-8 w-8"
-              >
-                <Star
-                  className={`h-4 w-4 ${
-                    isFavorite ? "fill-yellow-400 text-yellow-400" : ""
-                  }`}
-                />
-              </Button>
-            </div>
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        css={css`
+          max-width: 62rem;
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        `}
+      >
+        <DialogHeaderStyled>
+          <TitleWrapper>
+            <DialogTitle>{template.name}</DialogTitle>
+            <FavoriteIconButton
+              variant="ghost"
+              size="icon"
+              onClick={() => onToggleFavorite(template.id)}
+            >
+              <Star
+                css={isFavorite ? css`
+                  width: 1rem;
+                  height: 1rem;
+                  fill: #facc15;
+                  color: #facc15;
+                ` : css`
+                  width: 1rem;
+                  height: 1rem;
+                `}
+              />
+            </FavoriteIconButton>
+          </TitleWrapper>
+        </DialogHeaderStyled>
 
-        <Tabs
+        <TabsWrapper
           defaultValue="preview"
           value={activeTab}
           onValueChange={setActiveTab}
-          className="flex-1 flex flex-col min-h-0"
         >
-          <div className="flex items-center justify-between flex-shrink-0">
+          <TabsHeader>
             <TabsList>
-              <TabsTrigger value="preview" className="flex items-center gap-1">
-                <Layout className="h-4 w-4" />
+              <TabsTrigger value="preview" css={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                <Layout css={{ width: "1rem", height: "1rem" }} />
                 <span>预览</span>
               </TabsTrigger>
-              <TabsTrigger
-                value="structure"
-                className="flex items-center gap-1"
-              >
-                <Code className="h-4 w-4" />
+              <TabsTrigger value="structure" css={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                <Code css={{ width: "1rem", height: "1rem" }} />
                 <span>结构</span>
               </TabsTrigger>
             </TabsList>
 
             {activeTab === "preview" && (
-              <div className="flex items-center gap-1 rounded-md border p-1">
-                <Button
+              <DeviceSwitcher>
+                <DeviceButton
                   variant={activeDevice === "mobile" ? "secondary" : "ghost"}
                   size="icon"
-                  className="h-8 w-8"
                   onClick={() => setActiveDevice("mobile")}
                 >
-                  <Smartphone className="h-4 w-4" />
-                </Button>
-                <Button
+                  <Smartphone css={{ width: "1rem", height: "1rem" }} />
+                </DeviceButton>
+                <DeviceButton
                   variant={activeDevice === "tablet" ? "secondary" : "ghost"}
                   size="icon"
-                  className="h-8 w-8"
                   onClick={() => setActiveDevice("tablet")}
                 >
-                  <Tablet className="h-4 w-4" />
-                </Button>
-                <Button
+                  <Tablet css={{ width: "1rem", height: "1rem" }} />
+                </DeviceButton>
+                <DeviceButton
                   variant={activeDevice === "desktop" ? "secondary" : "ghost"}
                   size="icon"
-                  className="h-8 w-8"
                   onClick={() => setActiveDevice("desktop")}
                 >
-                  <Monitor className="h-4 w-4" />
-                </Button>
-              </div>
+                  <Monitor css={{ width: "1rem", height: "1rem" }} />
+                </DeviceButton>
+              </DeviceSwitcher>
             )}
-          </div>
+          </TabsHeader>
 
-          <div className="flex-1 overflow-hidden mt-4">
+          <TabsContentWrapper>
             <TabsContent
               value="preview"
-              className="h-full m-0 data-[state=active]:flex data-[state=active]:flex-col"
+              css={css`
+                height: 100%;
+                margin: 0;
+                &[data-state="active"] {
+                  display: flex;
+                  flex-direction: column;
+                }
+              `}
             >
-              <ScrollArea className="flex-1 rounded-md border">
-                <div
-                  className="overflow-visible"
+              <PreviewScrollArea>
+                <PreviewContent
                   style={{
                     width:
                       activeDevice === "desktop"
                         ? "100%"
                         : `${getDeviceWidth()}px`,
-                    margin: "0 auto",
                   }}
                 >
                   <PreviewCanvas
                     components={template.components}
                     width={getDeviceWidth()}
                   />
-                </div>
-              </ScrollArea>
+                </PreviewContent>
+              </PreviewScrollArea>
             </TabsContent>
 
             <TabsContent
               value="structure"
-              className="h-full m-0 data-[state=active]:flex data-[state=active]:flex-col"
+              css={css`
+                height: 100%;
+                margin: 0;
+                &[data-state="active"] {
+                  display: flex;
+                  flex-direction: column;
+                }
+              `}
             >
-              <div className="flex-1 rounded-md border overflow-hidden">
-                <div className="border-b bg-muted/50 px-4 py-2">
-                  <h3 className="text-sm font-medium">组件结构</h3>
-                  <p className="text-xs text-muted-foreground">
+              <StructurePanel>
+                <StructureHeader>
+                  <h3 css={{ fontSize: "0.875rem", fontWeight: 500 }}>组件结构</h3>
+                  <p css={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))" }}>
                     共 {template.components.length} 个组件
                   </p>
-                </div>
-                <ScrollArea className="h-[400px]">
-                  <div className="p-4">
+                </StructureHeader>
+                <StructureScrollArea>
+                  <StructureContent>
                     {buildComponentTree(template.components)}
-                  </div>
-                </ScrollArea>
-              </div>
+                  </StructureContent>
+                </StructureScrollArea>
+              </StructurePanel>
             </TabsContent>
-          </div>
-        </Tabs>
+          </TabsContentWrapper>
+        </TabsWrapper>
 
-        <div className="mt-4 flex justify-between flex-shrink-0">
+        <Footer>
           <div>
-            <p className="text-sm text-muted-foreground">
-              {template.description}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1">
+            <DescriptionText>{template.description}</DescriptionText>
+            <TagsWrapper>
               {template.tags?.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                >
-                  {tag}
-                </span>
+                <Tag key={tag}>{tag}</Tag>
               ))}
-            </div>
+            </TagsWrapper>
           </div>
           <Button onClick={handleUseTemplate}>使用此模板</Button>
-        </div>
+        </Footer>
       </DialogContent>
     </Dialog>
   );

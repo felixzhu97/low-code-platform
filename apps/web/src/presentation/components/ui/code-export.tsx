@@ -1,173 +1,225 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
   DialogTrigger,
-} from "./dialog";
-import { Button } from "./button";
-import { ScrollArea } from "./scroll-area";
-import { FileJson, Copy, Download } from "lucide-react";
+  Button,
+} from "@/presentation/components/ui";
+import { Code, Copy, Check, Download, Braces } from "lucide-react";
+import { useAllStores } from "@/presentation/hooks";
+import { Tabs, TabsList, TabsTrigger } from "./tabs";
+import { Label } from "./label";
 
-import {
-  useComponentStore,
-  useUIStore,
-} from "@/infrastructure/state-management/stores";
-import { PersistenceManager } from "@/infrastructure/state-management/stores/persistence.manager";
-import { projectDataToSchemaJson } from "@/domain/entities/schema.types";
+interface CodeExportProps {}
 
-interface CodeExportProps {
-  // 移除 props，现在从 store 获取状态
-}
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const CodePreview = styled.div`
+  background-color: hsl(var(--muted));
+  border-radius: calc(var(--radius));
+  padding: 1rem;
+  max-height: 24rem;
+  overflow: auto;
+`;
+
+const CodeText = styled.pre`
+  font-family: ui-monospace, monospace;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+`;
+
+const FormRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+`;
 
 export function CodeExport({}: CodeExportProps) {
-  // 从 store 获取状态
-  const { components } = useComponentStore();
-  const { projectName } = useUIStore();
+  const [code, setCode] = useState("");
+  const [exportFormat, setExportFormat] = useState<"json" | "jsx" | "html">("json");
   const [copied, setCopied] = useState(false);
-  const [schemaJson, setSchemaJson] = useState<string>("");
-  const [isGenerating, setIsGenerating] = useState(false);
 
-  const generateSchemaJson = async (): Promise<string> => {
-    if (components.length === 0) {
-      return JSON.stringify(
-        {
-          version: "1.0.0",
-          metadata: {
-            name: projectName || "未命名项目",
-            description: "",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            version: "1.0.0",
-          },
-          components: [],
-          canvas: {
-            showGrid: false,
-            snapToGrid: false,
-            viewportWidth: 1920,
-            activeDevice: "desktop",
-          },
-          theme: {},
-          dataSources: [],
-        },
-        null,
-        2
-      );
-    }
+  const store = useAllStores();
 
-    // 获取当前项目ID，如果没有则生成一个临时ID
-    const currentProjectId =
-      PersistenceManager.getCurrentProjectId() || `temp-${Date.now()}`;
-
-    // 导出项目数据
-    const projectData = PersistenceManager.exportProjectData(
-      currentProjectId,
-      projectName || "未命名项目"
-    );
-
-    return await projectDataToSchemaJson(projectData);
+  const handleFormatChange = (format: "json" | "jsx" | "html") => {
+    setExportFormat(format);
   };
 
-  // 在组件挂载时生成 Schema
-  const loadSchema = useCallback(async () => {
-    setIsGenerating(true);
-    try {
-      const json = await generateSchemaJson();
-      setSchemaJson(json);
-    } catch (error) {
-      console.error("Failed to generate schema:", error);
-      setSchemaJson("{}");
-    } finally {
-      setIsGenerating(false);
+  const handleExport = () => {
+    const generatedCode = generateCode(exportFormat);
+    setCode(generatedCode);
+  };
+
+  const generateCode = (format: "json" | "jsx" | "html"): string => {
+    const { components } = store;
+
+    switch (format) {
+      case "json":
+        return JSON.stringify({ components }, null, 2);
+      case "jsx":
+        return generateJSX(components);
+      case "html":
+        return generateHTML(components);
+      default:
+        return JSON.stringify({ components }, null, 2);
     }
-  }, [components, projectName]);
+  };
 
-  useEffect(() => {
-    loadSchema();
-  }, [loadSchema]);
+  const generateJSX = (components: any[]) => {
+    return components
+      .map((component) => {
+        switch (component.type) {
+          case "button":
+            return `<button>${component.properties?.text || "Button"}</button>`;
+          case "input":
+            return `<input type="text" placeholder="${component.properties?.placeholder || ""}" />`;
+          case "text":
+            return `<p>${component.properties?.content || ""}</p>`;
+          default:
+            return `<div>${component.name || component.type}</div>`;
+        }
+      })
+      .join("\n");
+  };
 
-  const handleCopyCode = (code: string) => {
+  const generateHTML = (components: any[]) => {
+    const bodyContent = components
+      .map((component) => {
+        switch (component.type) {
+          case "button":
+            return `  <button>${component.properties?.text || "Button"}</button>`;
+          case "input":
+            return `  <input type="text" placeholder="${component.properties?.placeholder || ""}" />`;
+          case "text":
+            return `  <p>${component.properties?.content || ""}</p>`;
+          default:
+            return `  <div>${component.name || component.type}</div>`;
+        }
+      })
+      .join("\n");
+
+    return `<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>低代码平台导出</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+${bodyContent}
+</body>
+</html>`;
+  };
+
+  const handleCopy = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownloadSchema = (schemaJson: string) => {
-    const blob = new Blob([schemaJson], { type: "application/json" });
+  const handleDownload = () => {
+    const blob = new Blob([code], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const filename = `${projectName || "schema"}.json`;
-    a.download = filename;
+    a.download = `export.${exportFormat === "jsx" ? "jsx" : exportFormat === "html" ? "html" : "json"}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  // schemaJson 现在通过 useEffect 异步生成
-
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <FileJson className="mr-1.5" aria-hidden="true" />
-          导出 Schema
+          <Code css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }} aria-hidden="true" />
+          导出代码
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent css={{ maxWidth: "36rem" }}>
         <DialogHeader>
-          <DialogTitle>导出 Schema JSON</DialogTitle>
-          <DialogDescription>
-            将设计导出为 Schema JSON 格式，可用于导入和渲染页面
-          </DialogDescription>
+          <DialogTitle>导出代码</DialogTitle>
+          <DialogDescription>将画布组件导出为可用的代码</DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4">
-          <div className="relative rounded-md bg-muted">
-            <ScrollArea className="h-[400px] w-full rounded-md">
-              {isGenerating ? (
-                <div className="flex h-full items-center justify-center p-4">
-                  <div className="text-sm text-muted-foreground">
-                    正在生成 Schema...
-                  </div>
-                </div>
-              ) : (
-                <pre className="p-4 text-sm">
-                  <code>{schemaJson || "{}"}</code>
-                </pre>
-              )}
-            </ScrollArea>
-            <div className="absolute right-2 top-2 flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleCopyCode(schemaJson)}
-                title="复制到剪贴板"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleDownloadSchema(schemaJson)}
-                title="下载 Schema JSON"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Wrapper>
+          <Section>
+            <Label htmlFor="export-format">导出格式</Label>
+            <Tabs defaultValue={exportFormat} onValueChange={(v) => handleFormatChange(v as any)}>
+              <TabsList css={{ display: "grid", width: "100%", gridTemplateColumns: "repeat(3, 1fr)" }}>
+                <TabsTrigger value="json">JSON</TabsTrigger>
+                <TabsTrigger value="jsx">JSX</TabsTrigger>
+                <TabsTrigger value="html">HTML</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </Section>
 
-        {copied && (
-          <div className="absolute bottom-4 right-4 rounded-md bg-green-100 px-4 py-2 text-sm text-green-800">
-            Schema 已复制到剪贴板
-          </div>
-        )}
+          <Section>
+            <Button onClick={handleExport}>
+              <Braces css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
+              生成代码
+            </Button>
+          </Section>
+
+          {code && (
+            <>
+              <Section>
+                <Label>预览</Label>
+                <CodePreview>
+                  <CodeText>{code}</CodeText>
+                </CodePreview>
+              </Section>
+
+              <FormRow>
+                <Button variant="outline" onClick={handleCopy}>
+                  {copied ? (
+                    <>
+                      <Check css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
+                      已复制
+                    </>
+                  ) : (
+                    <>
+                      <Copy css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
+                      复制代码
+                    </>
+                  )}
+                </Button>
+                <Button onClick={handleDownload}>
+                  <Download css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
+                  下载
+                </Button>
+              </FormRow>
+            </>
+          )}
+        </Wrapper>
+
+        <DialogFooter />
       </DialogContent>
     </Dialog>
   );

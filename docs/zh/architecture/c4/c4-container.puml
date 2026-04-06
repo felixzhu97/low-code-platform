@@ -8,7 +8,7 @@ title 容器图 — Felix 低代码平台
 Person(user, "设计师 / 开发者", "使用平台")
 
 System_Boundary(boundary, "Felix 低代码平台") {
-    Container(web, "Web 应用", "TypeScript、Next.js 15、React 19 — Emotion + Tailwind + Radix", "编辑器、预览、属性面板，`apps/web`")
+    Container(web, "Web 应用", "TypeScript、Next.js 15、React 19 — Emotion + Radix UI", "编辑器、预览、属性面板，`apps/web`")
     Container(api, "API 服务", "Python、FastAPI、Uvicorn、Pydantic", "REST API，`apps/server`")
     ContainerDb(db, "主数据库", "PostgreSQL / SQL", "项目、Schema、用户（按部署启用）")
     ContainerDb(cache, "缓存", "Redis", "会话、热点路径（按部署启用）")

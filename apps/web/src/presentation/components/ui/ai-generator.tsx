@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,32 @@ import { Alert, AlertDescription } from "./alert";
 interface AIGeneratorProps {
   onComponentsGenerated?: (components: Component[]) => void;
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const FormRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+`;
+
+const SpinningIcon = styled(Loader2)`
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
 
 export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -97,12 +125,10 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
         description: `Added ${appliedComponents.length} component(s) to the canvas`,
       });
 
-      // 调用回调
       if (onComponentsGenerated) {
         onComponentsGenerated(appliedComponents);
       }
 
-      // 关闭对话框
       setIsOpen(false);
       setDescription("");
     } catch (err) {
@@ -132,17 +158,17 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Sparkles className="mr-1.5" aria-hidden="true" />
+          <Sparkles css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }} aria-hidden="true" />
           AI Generate
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent css={{ maxWidth: "42rem" }}>
         <DialogHeader>
           <DialogTitle>AI Generate Page / Component</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <Wrapper>
+          <FormGroup>
             <Label htmlFor="provider">AI Provider</Label>
             <Select
               value={provider}
@@ -164,10 +190,10 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 <SelectItem value="siliconflow">SiliconFlow</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </FormGroup>
 
           {!isOllama && (
-            <div className="space-y-2">
+            <FormGroup>
               <Label htmlFor="api-key">API Key</Label>
               <Input
                 id="api-key"
@@ -177,12 +203,12 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 onChange={(e) => setApiKey(e.target.value)}
                 disabled={loading}
               />
-            </div>
+            </FormGroup>
           )}
 
           {isOllama && (
             <>
-              <div className="space-y-2">
+              <FormGroup>
                 <Label htmlFor="ollama-base-url">Base URL</Label>
                 <Input
                   id="ollama-base-url"
@@ -192,8 +218,8 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                   onChange={(e) => setBaseURL(e.target.value)}
                   disabled={loading}
                 />
-              </div>
-              <div className="space-y-2">
+              </FormGroup>
+              <FormGroup>
                 <Label htmlFor="ollama-model">Model</Label>
                 <Input
                   id="ollama-model"
@@ -202,11 +228,11 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                   onChange={(e) => setModel(e.target.value)}
                   disabled={loading}
                 />
-              </div>
+              </FormGroup>
             </>
           )}
 
-          <div className="space-y-2">
+          <FormGroup>
             <Label htmlFor="generation-type">Generate</Label>
             <Select
               value={generationType}
@@ -223,10 +249,10 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 <SelectItem value="component">Component</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </FormGroup>
 
           {generationType === "page" && (
-            <div className="space-y-2">
+            <FormGroup>
               <Label htmlFor="layout">Layout</Label>
               <Select
                 value={layout}
@@ -247,11 +273,11 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                   <SelectItem value="grid">Grid</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </FormGroup>
           )}
 
           {generationType === "component" && (
-            <div className="space-y-2">
+            <FormGroup>
               <Label htmlFor="component-type">Component type (optional)</Label>
               <Input
                 id="component-type"
@@ -260,10 +286,10 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
                 onChange={(e) => setComponentType(e.target.value)}
                 disabled={loading}
               />
-            </div>
+            </FormGroup>
           )}
 
-          <div className="space-y-2">
+          <FormGroup>
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -277,16 +303,16 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
               disabled={loading}
               rows={4}
             />
-          </div>
+          </FormGroup>
 
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle css={{ width: "1rem", height: "1rem" }} />
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
 
-          <div className="flex justify-end gap-2">
+          <FormRow>
             <Button
               variant="outline"
               onClick={() => setIsOpen(false)}
@@ -297,18 +323,18 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
             <Button onClick={handleGenerate} disabled={loading || !description.trim()}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <SpinningIcon css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
                   Generating...
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-4 w-4 mr-2" />
+                  <Sparkles css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }} />
                   Generate
                 </>
               )}
             </Button>
-          </div>
-        </div>
+          </FormRow>
+        </Wrapper>
       </DialogContent>
     </Dialog>
   );

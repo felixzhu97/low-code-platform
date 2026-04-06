@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import {
   BarChart as RechartsBarChart,
   Bar,
@@ -25,7 +26,17 @@ interface BarChartProps {
   yField?: string;
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { name: "1月", sales: 8500, revenue: 6200 },
   { name: "2月", sales: 9200, revenue: 7300 },
@@ -45,8 +56,8 @@ export function BarChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsBarChart
           data={chartData}
@@ -66,7 +77,7 @@ export function BarChart({
           <Bar dataKey="revenue" fill="#82ca9d" name="收入" />
         </RechartsBarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

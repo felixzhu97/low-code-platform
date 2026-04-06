@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -28,9 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import type { Component } from "@/domain/component";
 import { useComponentStore } from "@/infrastructure/state-management/stores";
 
-interface FormBuilderProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface FormBuilderProps {}
 
 type FormField = {
   id: string;
@@ -68,7 +68,6 @@ type FormField = {
   maxSize?: string;
 };
 
-// 字段类型配置
 const FIELD_TYPES = [
   { value: "text", label: "文本" },
   { value: "email", label: "邮箱" },
@@ -85,7 +84,6 @@ const FIELD_TYPES = [
   { value: "file-upload", label: "文件上传" },
 ];
 
-// 工具函数：创建基础组件
 const createBaseComponent = (
   id: string,
   type: string,
@@ -102,7 +100,6 @@ const createBaseComponent = (
   parentId,
 });
 
-// 工具函数：创建字段组件
 const createFieldComponent = (
   field: FormField,
   yPosition: number,
@@ -111,7 +108,6 @@ const createFieldComponent = (
   const components: Component[] = [];
   const yInputPosition = yPosition + 30;
 
-  // 创建标签组件（checkbox和switch除外）
   if (!["checkbox", "switch"].includes(field.type)) {
     const labelComponent = createBaseComponent(
       `label-${field.id}`,
@@ -130,7 +126,6 @@ const createFieldComponent = (
     components.push(labelComponent);
   }
 
-  // 创建输入组件
   let inputComponent: Component;
   const baseProps = {
     required: field.required || false,
@@ -300,8 +295,121 @@ const createFieldComponent = (
   return components;
 };
 
+const LeftPanel = styled.div`
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const RightPanel = styled.div`
+  grid-column: span 2;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+  padding: 1rem;
+`;
+
+const FormGroup = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const FieldList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 1rem;
+`;
+
+const FieldItem = styled.div<{ active: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  ${(p) =>
+    p.active
+      ? css`
+          border-color: hsl(var(--primary));
+          background-color: hsl(var(--primary) / 0.05);
+        `
+      : ""}
+`;
+
+const FieldItemContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const FieldLabel = styled.span`
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+
+const RequiredMark = styled.span`
+  font-size: 0.75rem;
+  color: hsl(var(--destructive));
+`;
+
+const DeleteButton = styled(Button)`
+  height: 1.5rem;
+  width: 1.5rem;
+`;
+
+const ConfigSection = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const ConfigRow = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const TextareaStyled = styled.textarea`
+  min-height: 6.25rem;
+  width: 100%;
+  border: 1px solid hsl(var(--input));
+  border-radius: calc(var(--radius));
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+
+  &:focus {
+    outline: none;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.3);
+  }
+`;
+
+const HelperText = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const SwitchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const Footer = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const FieldCount = styled.p`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
+
 export function FormBuilder({}: FormBuilderProps) {
-  // 从 store 获取状态
   const { addComponent } = useComponentStore();
   const [formName, setFormName] = useState("新建表单");
   const [fields, setFields] = useState<FormField[]>([
@@ -346,7 +454,6 @@ export function FormBuilder({}: FormBuilderProps) {
   };
 
   const generateFormComponents = (): Component[] => {
-    // 创建表单容器
     const formContainer: Component = {
       id: `form-container-${Date.now()}`,
       type: "container",
@@ -360,7 +467,6 @@ export function FormBuilder({}: FormBuilderProps) {
       children: [],
     };
 
-    // 添加表单标题
     const formTitle = createBaseComponent(
       `form-title-${Date.now()}`,
       "text",
@@ -376,12 +482,11 @@ export function FormBuilder({}: FormBuilderProps) {
       formContainer.id
     );
 
-    // 添加提交按钮
     const submitButton = createBaseComponent(
       `submit-button-${Date.now()}`,
       "button",
       "提交按钮",
-      { x: 0, y: 0 }, // 位置将在后面计算
+      { x: 0, y: 0 },
       {
         text: "提交",
         variant: "default",
@@ -393,7 +498,6 @@ export function FormBuilder({}: FormBuilderProps) {
 
     formContainer.children = [formTitle];
 
-    // 为每个字段创建组件
     let yPosition = 60;
     fields.forEach((field) => {
       const fieldComponents = createFieldComponent(
@@ -403,7 +507,6 @@ export function FormBuilder({}: FormBuilderProps) {
       );
       formContainer.children!.push(...fieldComponents);
 
-      // 更新y位置
       if (["checkbox", "switch"].includes(field.type)) {
         yPosition += 50;
       } else if (field.type === "textarea") {
@@ -413,7 +516,6 @@ export function FormBuilder({}: FormBuilderProps) {
       }
     });
 
-    // 设置提交按钮位置
     submitButton.position = { x: 0, y: yPosition };
     formContainer.children!.push(submitButton);
 
@@ -426,11 +528,11 @@ export function FormBuilder({}: FormBuilderProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <FormInput className="mr-1.5" aria-hidden="true" />
+          <FormInput css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }} aria-hidden="true" />
           表单构建器
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-4xl">
+      <DialogContent css={{ maxWidth: "56rem" }}>
         <DialogHeader>
           <DialogTitle>表单构建器</DialogTitle>
           <DialogDescription>
@@ -438,82 +540,66 @@ export function FormBuilder({}: FormBuilderProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-3 gap-4">
-          {/* 左侧：表单设置 */}
-          <div className="col-span-1 space-y-4">
-            <div className="space-y-2">
+        <div css={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1rem" }}>
+          <LeftPanel>
+            <FormGroup>
               <Label htmlFor="form-name">表单名称</Label>
               <Input
                 id="form-name"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                className="w-full"
               />
-            </div>
+            </FormGroup>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
+            <FormGroup>
+              <div css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Label>表单字段</Label>
                 <Button size="sm" variant="outline" onClick={addField}>
-                  <Plus className="mr-1 h-3 w-3" /> 添加字段
+                  <Plus css={{ marginRight: "0.25rem", width: "0.75rem", height: "0.75rem" }} />
+                  添加字段
                 </Button>
               </div>
 
-              <ScrollArea className="h-[300px]">
-                <div className="space-y-2 pr-4">
+              <ScrollArea css={{ height: "18.75rem" }}>
+                <FieldList>
                   {fields.map((field) => (
-                    <div
+                    <FieldItem
                       key={field.id}
-                      className={`flex items-center justify-between rounded-md border p-2 cursor-pointer ${
-                        activeFieldId === field.id
-                          ? "border-primary bg-primary/5"
-                          : ""
-                      }`}
+                      active={activeFieldId === field.id}
                       onClick={() => setActiveFieldId(field.id)}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
-                          {field.label}
-                        </span>
-                        {field.required && (
-                          <span className="text-xs text-red-500">*</span>
-                        )}
-                      </div>
-                      <Button
+                      <FieldItemContent>
+                        <FieldLabel>{field.label}</FieldLabel>
+                        {field.required && <RequiredMark>*</RequiredMark>}
+                      </FieldItemContent>
+                      <DeleteButton
                         size="icon"
                         variant="ghost"
-                        className="h-6 w-6"
                         onClick={(e) => {
                           e.stopPropagation();
                           removeField(field.id);
                         }}
                       >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
+                        <Trash2 css={{ width: "0.75rem", height: "0.75rem" }} />
+                      </DeleteButton>
+                    </FieldItem>
                   ))}
-                </div>
+                </FieldList>
               </ScrollArea>
-            </div>
-          </div>
+            </FormGroup>
+          </LeftPanel>
 
-          {/* 右侧：字段配置 */}
-          <div className="col-span-2 rounded-md border p-4">
+          <RightPanel>
             {activeField ? (
               <Tabs defaultValue="basic">
-                <TabsList className="w-full">
-                  <TabsTrigger value="basic" className="flex-1">
-                    基本设置
-                  </TabsTrigger>
-                  <TabsTrigger value="validation" className="flex-1">
-                    验证规则
-                  </TabsTrigger>
+                <TabsList css={{ width: "100%" }}>
+                  <TabsTrigger value="basic" css={{ flex: 1 }}>基本设置</TabsTrigger>
+                  <TabsTrigger value="validation" css={{ flex: 1 }}>验证规则</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="basic" className="space-y-4 py-4">
-                  <div className="grid gap-4">
-                    {/* 基本字段配置 */}
-                    <div className="grid gap-2">
+                <TabsContent value="basic" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+                  <ConfigSection>
+                    <FormGroup>
                       <Label htmlFor="field-label">字段标签</Label>
                       <Input
                         id="field-label"
@@ -522,9 +608,9 @@ export function FormBuilder({}: FormBuilderProps) {
                           updateField(activeField.id, { label: e.target.value })
                         }
                       />
-                    </div>
+                    </FormGroup>
 
-                    <div className="grid gap-2">
+                    <FormGroup>
                       <Label htmlFor="field-type">字段类型</Label>
                       <Select
                         value={activeField.type}
@@ -543,9 +629,8 @@ export function FormBuilder({}: FormBuilderProps) {
                           ))}
                         </SelectContent>
                       </Select>
-                    </div>
+                    </FormGroup>
 
-                    {/* 占位文本 */}
                     {[
                       "text",
                       "email",
@@ -553,7 +638,7 @@ export function FormBuilder({}: FormBuilderProps) {
                       "number",
                       "textarea",
                     ].includes(activeField.type) && (
-                      <div className="grid gap-2">
+                      <FormGroup>
                         <Label htmlFor="field-placeholder">占位文本</Label>
                         <Input
                           id="field-placeholder"
@@ -564,16 +649,14 @@ export function FormBuilder({}: FormBuilderProps) {
                             })
                           }
                         />
-                      </div>
+                      </FormGroup>
                     )}
 
-                    {/* 选项配置 */}
                     {["select", "radio"].includes(activeField.type) && (
-                      <div className="grid gap-2">
+                      <FormGroup>
                         <Label htmlFor="field-options">选项（每行一个）</Label>
-                        <textarea
+                        <TextareaStyled
                           id="field-options"
-                          className="min-h-[100px] w-full rounded-md border p-2"
                           value={(activeField.options || []).join("\n")}
                           onChange={(e) =>
                             updateField(activeField.id, {
@@ -583,12 +666,11 @@ export function FormBuilder({}: FormBuilderProps) {
                             })
                           }
                         />
-                      </div>
+                      </FormGroup>
                     )}
 
-                    {/* 开关默认状态 */}
                     {activeField.type === "switch" && (
-                      <div className="flex items-center gap-2">
+                      <SwitchRow>
                         <Checkbox
                           id="field-checked"
                           checked={activeField.checked || false}
@@ -597,13 +679,12 @@ export function FormBuilder({}: FormBuilderProps) {
                           }
                         />
                         <Label htmlFor="field-checked">默认开启</Label>
-                      </div>
+                      </SwitchRow>
                     )}
 
-                    {/* 滑块配置 */}
                     {activeField.type === "slider" && (
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="grid gap-2">
+                      <ConfigRow css={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+                        <FormGroup>
                           <Label htmlFor="field-min">最小值</Label>
                           <Input
                             id="field-min"
@@ -615,8 +696,8 @@ export function FormBuilder({}: FormBuilderProps) {
                               })
                             }
                           />
-                        </div>
-                        <div className="grid gap-2">
+                        </FormGroup>
+                        <FormGroup>
                           <Label htmlFor="field-max">最大值</Label>
                           <Input
                             id="field-max"
@@ -628,8 +709,8 @@ export function FormBuilder({}: FormBuilderProps) {
                               })
                             }
                           />
-                        </div>
-                        <div className="grid gap-2">
+                        </FormGroup>
+                        <FormGroup>
                           <Label htmlFor="field-step">步长</Label>
                           <Input
                             id="field-step"
@@ -641,14 +722,13 @@ export function FormBuilder({}: FormBuilderProps) {
                               })
                             }
                           />
-                        </div>
-                      </div>
+                        </FormGroup>
+                      </ConfigRow>
                     )}
 
-                    {/* 文件上传配置 */}
                     {activeField.type === "file-upload" && (
-                      <div className="grid gap-4">
-                        <div className="flex items-center gap-2">
+                      <ConfigSection>
+                        <SwitchRow>
                           <Checkbox
                             id="field-multiple"
                             checked={activeField.multiple || false}
@@ -659,8 +739,8 @@ export function FormBuilder({}: FormBuilderProps) {
                             }
                           />
                           <Label htmlFor="field-multiple">允许多文件</Label>
-                        </div>
-                        <div className="grid gap-2">
+                        </SwitchRow>
+                        <FormGroup>
                           <Label htmlFor="field-accept">文件类型</Label>
                           <Input
                             id="field-accept"
@@ -672,11 +752,11 @@ export function FormBuilder({}: FormBuilderProps) {
                             }
                             placeholder="例如: .jpg,.png,.pdf"
                           />
-                          <p className="text-xs text-muted-foreground">
+                          <HelperText>
                             用逗号分隔文件扩展名，* 表示所有类型
-                          </p>
-                        </div>
-                        <div className="grid gap-2">
+                          </HelperText>
+                        </FormGroup>
+                        <FormGroup>
                           <Label htmlFor="field-max-size">最大文件大小</Label>
                           <Input
                             id="field-max-size"
@@ -688,12 +768,11 @@ export function FormBuilder({}: FormBuilderProps) {
                             }
                             placeholder="例如: 10MB"
                           />
-                        </div>
-                      </div>
+                        </FormGroup>
+                      </ConfigSection>
                     )}
 
-                    {/* 必填字段 */}
-                    <div className="flex items-center gap-2">
+                    <SwitchRow>
                       <Checkbox
                         id="field-required"
                         checked={activeField.required || false}
@@ -702,18 +781,17 @@ export function FormBuilder({}: FormBuilderProps) {
                         }
                       />
                       <Label htmlFor="field-required">必填字段</Label>
-                    </div>
-                  </div>
+                    </SwitchRow>
+                  </ConfigSection>
                 </TabsContent>
 
-                <TabsContent value="validation" className="space-y-4 py-4">
-                  <div className="grid gap-4">
-                    {/* 文本验证 */}
+                <TabsContent value="validation" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+                  <ConfigSection>
                     {["text", "email", "password"].includes(
                       activeField.type
                     ) && (
                       <>
-                        <div className="grid gap-2">
+                        <FormGroup>
                           <Label htmlFor="field-pattern">正则表达式</Label>
                           <Input
                             id="field-pattern"
@@ -728,13 +806,13 @@ export function FormBuilder({}: FormBuilderProps) {
                             }
                             placeholder="例如: ^[A-Za-z0-9]+$"
                           />
-                          <p className="text-xs text-muted-foreground">
+                          <HelperText>
                             用于验证输入格式的正则表达式
-                          </p>
-                        </div>
+                          </HelperText>
+                        </FormGroup>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="grid gap-2">
+                        <ConfigRow css={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+                          <FormGroup>
                             <Label htmlFor="field-min-length">最小长度</Label>
                             <Input
                               id="field-min-length"
@@ -751,8 +829,8 @@ export function FormBuilder({}: FormBuilderProps) {
                                 })
                               }
                             />
-                          </div>
-                          <div className="grid gap-2">
+                          </FormGroup>
+                          <FormGroup>
                             <Label htmlFor="field-max-length">最大长度</Label>
                             <Input
                               id="field-max-length"
@@ -769,15 +847,14 @@ export function FormBuilder({}: FormBuilderProps) {
                                 })
                               }
                             />
-                          </div>
-                        </div>
+                          </FormGroup>
+                        </ConfigRow>
                       </>
                     )}
 
-                    {/* 数字验证 */}
                     {activeField.type === "number" && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
+                      <ConfigRow css={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+                        <FormGroup>
                           <Label htmlFor="field-min">最小值</Label>
                           <Input
                             id="field-min"
@@ -794,8 +871,8 @@ export function FormBuilder({}: FormBuilderProps) {
                               })
                             }
                           />
-                        </div>
-                        <div className="grid gap-2">
+                        </FormGroup>
+                        <FormGroup>
                           <Label htmlFor="field-max">最大值</Label>
                           <Input
                             id="field-max"
@@ -812,18 +889,17 @@ export function FormBuilder({}: FormBuilderProps) {
                               })
                             }
                           />
-                        </div>
-                      </div>
+                        </FormGroup>
+                      </ConfigRow>
                     )}
 
-                    {/* 内置验证提示 */}
                     {["email", "password"].includes(activeField.type) && (
                       <Card>
                         <CardHeader>
-                          <CardTitle className="text-sm">内置验证</CardTitle>
+                          <CardTitle css={{ fontSize: "0.875rem" }}>内置验证</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-muted-foreground">
+                          <p css={{ fontSize: "0.875rem", color: "hsl(var(--muted-foreground))" }}>
                             {activeField.type === "email" &&
                               "此字段将自动验证电子邮件格式"}
                             {activeField.type === "password" &&
@@ -832,24 +908,22 @@ export function FormBuilder({}: FormBuilderProps) {
                         </CardContent>
                       </Card>
                     )}
-                  </div>
+                  </ConfigSection>
                 </TabsContent>
               </Tabs>
             ) : (
-              <div className="flex h-full items-center justify-center">
-                <p className="text-muted-foreground">选择一个字段进行编辑</p>
+              <div css={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
+                <p css={{ color: "hsl(var(--muted-foreground))" }}>选择一个字段进行编辑</p>
               </div>
             )}
-          </div>
+          </RightPanel>
         </div>
 
-        <div className="mt-4 flex justify-between">
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">
-              {fields.length} 个字段 | {fields.filter((f) => f.required).length}{" "}
-              个必填
-            </p>
-          </div>
+        <Footer>
+          <FieldCount>
+            {fields.length} 个字段 | {fields.filter((f) => f.required).length}{" "}
+            个必填
+          </FieldCount>
           <Button
             onClick={() => {
               const formComponents = generateFormComponents();
@@ -860,7 +934,7 @@ export function FormBuilder({}: FormBuilderProps) {
           >
             添加到画布
           </Button>
-        </div>
+        </Footer>
       </DialogContent>
     </Dialog>
   );

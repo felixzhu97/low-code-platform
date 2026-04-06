@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import styled from "@emotion/styled";
 import {
   RadarChart as RechartsRadarChart,
   PolarGrid,
@@ -22,7 +23,17 @@ interface RadarChartProps {
   dataFields?: string[];
 }
 
-// 默认数据
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
 const defaultData = [
   { subject: "数学", A: 120, B: 110, fullMark: 150 },
   { subject: "语文", A: 98, B: 130, fullMark: 150 },
@@ -41,8 +52,8 @@ export function RadarChart({
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
-    <div className="w-full h-full">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
+    <ChartContainer>
+      {title && <ChartTitle>{title}</ChartTitle>}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsRadarChart
           data={chartData}
@@ -73,7 +84,7 @@ export function RadarChart({
           <Legend />
         </RechartsRadarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 }
 

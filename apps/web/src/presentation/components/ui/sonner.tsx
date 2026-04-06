@@ -1,17 +1,47 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
+import styled from "@emotion/styled";
+import { Toaster as SonnerToaster } from "sonner"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof SonnerToaster>
+
+const ToasterWrapper = styled(SonnerToaster)`
+  &.toaster {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  & .toast {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  & .description {
+    color: hsl(var(--muted-foreground));
+  }
+
+  & .actionButton {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  & .cancelButton {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+  }
+`
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
-    <Sonner
+    <ToasterWrapper
       theme={theme as ToasterProps["theme"]}
-      className="toaster group"
       toastOptions={{
         classNames: {
           toast:

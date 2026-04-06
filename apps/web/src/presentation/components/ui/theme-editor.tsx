@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -24,12 +26,70 @@ import {
 import type { ThemeConfig } from "@/domain/theme";
 import { useThemeStore } from "@/infrastructure/state-management/stores";
 
-interface ThemeEditorProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface ThemeEditorProps {}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const Section = styled.div`
+  display: grid;
+  gap: 1rem;
+`;
+
+const FormGroup = styled.div`
+  display: grid;
+  gap: 0.5rem;
+`;
+
+const PresetButtons = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const PreviewCard = styled.div`
+  border-radius: calc(var(--radius));
+  background-color: hsl(var(--muted));
+  padding: 1rem;
+`;
+
+const PreviewHeader = styled.h4`
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+`;
+
+const PreviewContent = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  border-radius: calc(var(--radius));
+  padding: 1rem;
+`;
+
+const PreviewButton = styled.div<{ bgColor: string; textColor?: string }>`
+  border-radius: calc(var(--radius));
+  padding: 0.25rem 0.75rem;
+  background-color: ${(p) => p.bgColor};
+  color: ${(p) => p.textColor || "#ffffff"};
+`;
+
+const PreviewOutlineButton = styled.div<{ borderColor: string; textColor: string }>`
+  border: 1px solid ${(p) => p.borderColor};
+  border-radius: calc(var(--radius));
+  padding: 0.25rem 0.75rem;
+  color: ${(p) => p.textColor};
+`;
+
+const Actions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
 
 export function ThemeEditor({}: ThemeEditorProps) {
-  // 从 store 获取状态
   const { theme, updateTheme } = useThemeStore();
   const [localTheme, setLocalTheme] = useState<ThemeConfig>(theme);
 
@@ -85,59 +145,59 @@ export function ThemeEditor({}: ThemeEditorProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Palette className="mr-1.5" aria-hidden="true" />
+          <Palette css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }} aria-hidden="true" />
           主题设置
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent css={{ maxWidth: "42rem" }}>
         <DialogHeader>
           <DialogTitle>主题设置</DialogTitle>
           <DialogDescription>自定义应用的视觉风格</DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="colors">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList css={{ display: "grid", width: "100%", gridTemplateColumns: "repeat(3, 1fr)" }}>
             <TabsTrigger value="colors">颜色</TabsTrigger>
             <TabsTrigger value="typography">排版</TabsTrigger>
             <TabsTrigger value="spacing">间距与圆角</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="colors" className="space-y-4 py-4">
-            <div className="grid gap-4">
-              <div className="grid gap-2">
+          <TabsContent value="colors" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+            <Section>
+              <FormGroup>
                 <Label htmlFor="primaryColor">主色调</Label>
                 <ColorPicker
                   color={localTheme.primaryColor}
                   onChange={(color) => handleChange("primaryColor", color)}
                 />
-              </div>
-              <div className="grid gap-2">
+              </FormGroup>
+              <FormGroup>
                 <Label htmlFor="secondaryColor">次要色调</Label>
                 <ColorPicker
                   color={localTheme.secondaryColor}
                   onChange={(color) => handleChange("secondaryColor", color)}
                 />
-              </div>
-              <div className="grid gap-2">
+              </FormGroup>
+              <FormGroup>
                 <Label htmlFor="backgroundColor">背景色</Label>
                 <ColorPicker
                   color={localTheme.backgroundColor}
                   onChange={(color) => handleChange("backgroundColor", color)}
                 />
-              </div>
-              <div className="grid gap-2">
+              </FormGroup>
+              <FormGroup>
                 <Label htmlFor="textColor">文本颜色</Label>
                 <ColorPicker
                   color={localTheme.textColor}
                   onChange={(color) => handleChange("textColor", color)}
                 />
-              </div>
-            </div>
+              </FormGroup>
+            </Section>
           </TabsContent>
 
-          <TabsContent value="typography" className="space-y-4 py-4">
-            <div className="grid gap-4">
-              <div className="grid gap-2">
+          <TabsContent value="typography" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+            <Section>
+              <FormGroup>
                 <Label htmlFor="fontFamily">字体</Label>
                 <Select
                   value={localTheme.fontFamily}
@@ -160,13 +220,13 @@ export function ThemeEditor({}: ThemeEditorProps) {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
+              </FormGroup>
+            </Section>
           </TabsContent>
 
-          <TabsContent value="spacing" className="space-y-4 py-4">
-            <div className="grid gap-4">
-              <div className="grid gap-2">
+          <TabsContent value="spacing" css={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+            <Section>
+              <FormGroup>
                 <Label htmlFor="borderRadius">圆角</Label>
                 <Select
                   value={localTheme.borderRadius}
@@ -185,8 +245,8 @@ export function ThemeEditor({}: ThemeEditorProps) {
                     <SelectItem value="9999px">圆形</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="grid gap-2">
+              </FormGroup>
+              <FormGroup>
                 <Label htmlFor="spacing">基础间距</Label>
                 <Select
                   value={localTheme.spacing}
@@ -203,14 +263,14 @@ export function ThemeEditor({}: ThemeEditorProps) {
                     <SelectItem value="1.5rem">较宽松 (24px)</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
+              </FormGroup>
+            </Section>
           </TabsContent>
         </Tabs>
 
-        <div className="mt-4 space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <Label className="w-full">预设主题</Label>
+        <Wrapper>
+          <PresetButtons>
+            <Label css={{ width: "100%", fontWeight: 500 }}>预设主题</Label>
             {presetThemes.map((presetTheme) => (
               <Button
                 key={presetTheme.name}
@@ -221,55 +281,36 @@ export function ThemeEditor({}: ThemeEditorProps) {
                 {presetTheme.name}
               </Button>
             ))}
-          </div>
+          </PresetButtons>
 
-          <div className="rounded-md bg-muted p-4">
-            <h4 className="mb-2 text-sm font-medium">预览</h4>
-            <div
-              className="flex gap-2 rounded p-4"
+          <PreviewCard>
+            <PreviewHeader>预览</PreviewHeader>
+            <PreviewContent
               style={{
                 backgroundColor: localTheme.backgroundColor,
                 color: localTheme.textColor,
                 fontFamily: localTheme.fontFamily,
               }}
             >
-              <div
-                className="rounded px-3 py-1"
-                style={{
-                  backgroundColor: localTheme.primaryColor,
-                  color: "#ffffff",
-                  borderRadius: localTheme.borderRadius,
-                }}
-              >
+              <PreviewButton bgColor={localTheme.primaryColor}>
                 主按钮
-              </div>
-              <div
-                className="rounded px-3 py-1"
-                style={{
-                  backgroundColor: localTheme.secondaryColor,
-                  color: "#ffffff",
-                  borderRadius: localTheme.borderRadius,
-                }}
-              >
+              </PreviewButton>
+              <PreviewButton bgColor={localTheme.secondaryColor}>
                 次要按钮
-              </div>
-              <div
-                className="rounded border px-3 py-1"
-                style={{
-                  borderColor: localTheme.primaryColor,
-                  color: localTheme.textColor,
-                  borderRadius: localTheme.borderRadius,
-                }}
+              </PreviewButton>
+              <PreviewOutlineButton
+                borderColor={localTheme.primaryColor}
+                textColor={localTheme.textColor}
               >
                 轮廓按钮
-              </div>
-            </div>
-          </div>
+              </PreviewOutlineButton>
+            </PreviewContent>
+          </PreviewCard>
 
-          <div className="flex justify-end">
+          <Actions>
             <Button onClick={handleApply}>应用主题</Button>
-          </div>
-        </div>
+          </Actions>
+        </Wrapper>
       </DialogContent>
     </Dialog>
   );

@@ -216,7 +216,7 @@ const StyledSelectItem = styled(SelectPrimitive.Item)`
     opacity: 0.5;
   }
 
-  > span:first-child {
+  > span:first-of-type {
     position: absolute;
     left: 0.5rem;
     display: flex;

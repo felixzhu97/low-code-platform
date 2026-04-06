@@ -1,8 +1,9 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Dialog,
   DialogContent,
@@ -31,29 +32,145 @@ import { CustomComponentBuilder } from "./custom-component-builder";
 import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
 
-interface ComponentLibraryManagerProps {
-  // 移除 props，现在从 store 获取状态
-}
+interface ComponentLibraryManagerProps {}
+
+const SearchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+`;
+
+const SearchInputWrapper = styled.div`
+  position: relative;
+  flex: 1;
+`;
+
+const SearchIcon = styled(Search)`
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const GridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 0.5rem;
+`;
+
+const ComponentCard = styled(Card)`
+  overflow: hidden;
+`;
+
+const ComponentCardContent = styled(CardContent)`
+  padding: 0.75rem;
+`;
+
+const CardHeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`;
+
+const ComponentName = styled.div`
+  font-weight: 500;
+`;
+
+const CardActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const IconButton = styled(Button)`
+  height: 1.5rem;
+  width: 1.5rem;
+`;
+
+const StarIcon = styled(Star)<{ isFavorite: boolean }>`
+  width: 1rem;
+  height: 1rem;
+  ${(p) =>
+    p.isFavorite
+      ? css`
+          fill: #facc15;
+          color: #facc15;
+        `
+      : ""}
+`;
+
+const ComponentType = styled.div`
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ChildCount = styled.div`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+`;
+
+const CardFooterStyled = styled(CardFooter)`
+  display: flex;
+  justify-content: space-between;
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.5rem;
+`;
+
+const CardButton = styled(Button)<{ destructive?: boolean }>`
+  ${(p) =>
+    p.destructive &&
+    css`
+      color: hsl(var(--destructive));
+      &:hover {
+        color: hsl(var(--destructive));
+      }
+    `}
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 8rem;
+  border: 1px dashed hsl(var(--border));
+  border-radius: calc(var(--radius));
+  grid-column: span 2;
+`;
+
+const EmptyText = styled.p`
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+`;
+
+const FileInputWrapper = styled.div`
+  position: relative;
+`;
+
+const HiddenFileInput = styled(Input)`
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  opacity: 0;
+`;
 
 export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
-  // 从 store 获取状态
   const {
     customComponents,
     favorites,
     searchTerm,
-    selectedCategory,
-    isBuilderOpen,
-    isLibraryOpen,
     addCustomComponent,
     removeCustomComponent,
     importCustomComponents,
     toggleFavorite,
     setSearchTerm,
-    setSelectedCategory,
-    setBuilderOpen,
-    setLibraryOpen,
     getFilteredComponents,
-    components: existingComponents,
   } = useAllStores();
 
   const filteredComponents = getFilteredComponents();
@@ -94,183 +211,210 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Library className="mr-1.5" aria-hidden="true" />
+          <Library
+            css={{ marginRight: "0.375rem", width: "1rem", height: "1rem" }}
+            aria-hidden="true"
+          />
           组件库管理
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent css={{ maxWidth: "48rem" }}>
         <DialogHeader>
           <DialogTitle>组件库管理</DialogTitle>
           <DialogDescription>管理您的自定义组件库</DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 py-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <SearchWrapper>
+          <SearchInputWrapper>
+            <SearchIcon />
             <Input
               placeholder="搜索组件..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
+              css={{ paddingLeft: "2rem" }}
             />
-          </div>
+          </SearchInputWrapper>
           <CustomComponentBuilder />
-          <div className="relative">
-            <Input
+          <FileInputWrapper>
+            <HiddenFileInput
               type="file"
               id="import-file"
-              className="absolute inset-0 cursor-pointer opacity-0"
               accept=".json"
               onChange={handleImport}
             />
             <Button variant="outline" size="sm">
-              <Import className="mr-2 h-4 w-4" />
+              <Import
+                css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }}
+              />
               导入
             </Button>
-          </div>
+          </FileInputWrapper>
           <Button
             variant="outline"
             size="sm"
             onClick={handleExport}
             disabled={customComponents.length === 0}
           >
-            <Export className="mr-2 h-4 w-4" />
+            <Export
+              css={{ marginRight: "0.5rem", width: "1rem", height: "1rem" }}
+            />
             导出
           </Button>
-        </div>
+        </SearchWrapper>
 
         <Tabs defaultValue="all">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList
+            css={{ display: "grid", width: "100%", gridTemplateColumns: "repeat(2, 1fr)" }}
+          >
             <TabsTrigger value="all">全部组件</TabsTrigger>
             <TabsTrigger value="favorites">收藏组件</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">
-            <ScrollArea className="h-[400px]">
-              <div className="grid grid-cols-2 gap-4 p-2">
+            <ScrollArea css={{ height: "25rem" }}>
+              <GridWrapper>
                 {filteredComponents.length > 0 ? (
                   filteredComponents.map((component: Component) => (
-                    <Card key={component.id} className="overflow-hidden">
-                      <CardContent className="p-3">
-                        <div className="mb-2 flex items-center justify-between">
-                          <div className="font-medium">{component.name}</div>
-                          <div className="flex items-center gap-1">
+                    <ComponentCard key={component.id}>
+                      <ComponentCardContent>
+                        <CardHeaderRow>
+                          <ComponentName>{component.name}</ComponentName>
+                          <CardActions>
                             <Badge variant="outline">
                               {component.properties?.category}
                             </Badge>
-                            <Button
+                            <IconButton
                               variant="ghost"
                               size="icon"
-                              className="h-6 w-6"
                               onClick={() => toggleFavorite(component.id)}
                             >
-                              <Star
-                                className={`h-4 w-4 ${
-                                  favorites.includes(component.id)
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : ""
-                                }`}
+                              <StarIcon
+                                isFavorite={favorites.includes(component.id)}
                               />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
+                            </IconButton>
+                          </CardActions>
+                        </CardHeaderRow>
+                        <ComponentType>
                           类型: {component.type}
                           {component.properties?.isContainer && " (容器)"}
-                        </div>
+                        </ComponentType>
                         {component.properties?.childComponents && (
-                          <div className="mt-1 text-xs text-muted-foreground">
-                            包含 {component.properties?.childComponents.length} 个子组件
-                          </div>
+                          <ChildCount>
+                            包含{" "}
+                            {component.properties?.childComponents.length} 个子组件
+                          </ChildCount>
                         )}
-                      </CardContent>
-                      <CardFooter className="flex justify-between bg-muted/50 p-2">
-                        <Button variant="ghost" size="sm">
-                          <Edit className="mr-1 h-3 w-3" />
+                      </ComponentCardContent>
+                      <CardFooterStyled>
+                        <CardButton variant="ghost" size="sm">
+                          <Edit
+                            css={{
+                              marginRight: "0.25rem",
+                              width: "0.75rem",
+                              height: "0.75rem",
+                            }}
+                          />
                           编辑
-                        </Button>
-                        <Button
+                        </CardButton>
+                        <CardButton
                           variant="ghost"
                           size="sm"
-                          className="text-destructive"
+                          destructive
                           onClick={() => removeCustomComponent(component.id)}
                         >
-                          <Trash2 className="mr-1 h-3 w-3" />
+                          <Trash2
+                            css={{
+                              marginRight: "0.25rem",
+                              width: "0.75rem",
+                              height: "0.75rem",
+                            }}
+                          />
                           删除
-                        </Button>
-                      </CardFooter>
-                    </Card>
+                        </CardButton>
+                      </CardFooterStyled>
+                    </ComponentCard>
                   ))
                 ) : (
-                  <div className="col-span-2 flex h-32 items-center justify-center rounded-md border border-dashed">
-                    <p className="text-center text-muted-foreground">
+                  <EmptyState>
+                    <EmptyText>
                       {searchTerm
                         ? "没有找到匹配的组件"
-                        : "暂无自定义组件，点击“创建自定义组件”按钮开始创建"}
-                    </p>
-                  </div>
+                        : '暂无自定义组件，点击"创建自定义组件"按钮开始创建'}
+                    </EmptyText>
+                  </EmptyState>
                 )}
-              </div>
+              </GridWrapper>
             </ScrollArea>
           </TabsContent>
 
           <TabsContent value="favorites">
-            <ScrollArea className="h-[400px]">
-              <div className="grid grid-cols-2 gap-4 p-2">
+            <ScrollArea css={{ height: "25rem" }}>
+              <GridWrapper>
                 {filteredComponents.filter((component: Component) =>
                   favorites.includes(component.id)
                 ).length > 0 ? (
                   filteredComponents
-                    .filter((component: Component) => favorites.includes(component.id))
+                    .filter((component: Component) =>
+                      favorites.includes(component.id)
+                    )
                     .map((component: Component) => (
-                      <Card key={component.id} className="overflow-hidden">
-                        <CardContent className="p-3">
-                          <div className="mb-2 flex items-center justify-between">
-                            <div className="font-medium">{component.name}</div>
-                            <div className="flex items-center gap-1">
+                      <ComponentCard key={component.id}>
+                        <ComponentCardContent>
+                          <CardHeaderRow>
+                            <ComponentName>{component.name}</ComponentName>
+                            <CardActions>
                               <Badge variant="outline">
                                 {component.properties?.category}
                               </Badge>
-                              <Button
+                              <IconButton
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6"
                                 onClick={() => toggleFavorite(component.id)}
                               >
-                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="text-sm text-muted-foreground">
+                                <StarIcon isFavorite={true} />
+                              </IconButton>
+                            </CardActions>
+                          </CardHeaderRow>
+                          <ComponentType>
                             类型: {component.type}
                             {component.properties?.isContainer && " (容器)"}
-                          </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-between bg-muted/50 p-2">
-                          <Button variant="ghost" size="sm">
-                            <Edit className="mr-1 h-3 w-3" />
+                          </ComponentType>
+                        </ComponentCardContent>
+                        <CardFooterStyled>
+                          <CardButton variant="ghost" size="sm">
+                            <Edit
+                              css={{
+                                marginRight: "0.25rem",
+                                width: "0.75rem",
+                                height: "0.75rem",
+                              }}
+                            />
                             编辑
-                          </Button>
-                          <Button
+                          </CardButton>
+                          <CardButton
                             variant="ghost"
                             size="sm"
-                            className="text-destructive"
+                            destructive
                             onClick={() => removeCustomComponent(component.id)}
                           >
-                            <Trash2 className="mr-1 h-3 w-3" />
+                            <Trash2
+                              css={{
+                                marginRight: "0.25rem",
+                                width: "0.75rem",
+                                height: "0.75rem",
+                              }}
+                            />
                             删除
-                          </Button>
-                        </CardFooter>
-                      </Card>
+                          </CardButton>
+                        </CardFooterStyled>
+                      </ComponentCard>
                     ))
                 ) : (
-                  <div className="col-span-2 flex h-32 items-center justify-center rounded-md border border-dashed">
-                    <p className="text-center text-muted-foreground">
-                      暂无收藏组件
-                    </p>
-                  </div>
+                  <EmptyState>
+                    <EmptyText>暂无收藏组件</EmptyText>
+                  </EmptyState>
                 )}
-              </div>
+              </GridWrapper>
             </ScrollArea>
           </TabsContent>
         </Tabs>

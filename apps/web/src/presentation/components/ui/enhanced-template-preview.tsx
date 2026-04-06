@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Tabs,
   TabsList,
@@ -27,6 +29,140 @@ interface EnhancedTemplatePreviewProps {
   theme: ThemeConfig;
 }
 
+const Wrapper = styled.div`
+  margin-top: 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 0.5rem;
+  flex-shrink: 0;
+`;
+
+const TabsStyled = styled(Tabs)`
+  width: auto;
+`;
+
+const TabsListStyled = styled(TabsList)`
+  display: grid;
+  width: auto;
+  grid-template-columns: repeat(3, 1fr);
+`;
+
+const TabsTriggerStyled = styled(TabsTrigger)`
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const DeviceSwitcher = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  padding: 0.25rem;
+`;
+
+const DeviceButton = styled(Button)`
+  height: 2rem;
+  width: 2rem;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
+
+const PreviewWrapper = styled.div`
+  margin: 0 auto;
+  background-color: white;
+`;
+
+const StructureSection = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StructureHeader = styled.div`
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.5rem 1rem;
+  flex-shrink: 0;
+`;
+
+const StructureTitle = styled.h3`
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+
+const StructureSubtitle = styled.p`
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const JsonSection = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const JsonHeader = styled.div`
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.5rem 1rem;
+  flex-shrink: 0;
+`;
+
+const JsonTitle = styled.h3`
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+
+const JsonContent = styled.pre`
+  padding: 1rem;
+  font-size: 0.75rem;
+`;
+
+const NotFoundText = styled.div`
+  padding: 1rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ComponentTreeItem = styled.div`
+  display: flex;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  &:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+`;
+
+const ComponentType = styled.span`
+  margin-right: 0.25rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+`;
+
+const ComponentName = styled.span`
+  font-weight: 500;
+`;
+
 export function EnhancedTemplatePreview({
   templateId,
   templates,
@@ -35,20 +171,17 @@ export function EnhancedTemplatePreview({
   const [activeTab, setActiveTab] = useState("preview");
   const [activeDevice, setActiveDevice] = useState("desktop");
 
-  // 查找模板
   const template = useMemo(
     () => templates.find((t) => t.id === templateId),
     [templateId, templates]
   );
 
   if (!template) {
-    return (
-      <div className="p-4 text-center text-muted-foreground">未找到模板</div>
-    );
+    return <NotFoundText>未找到模板</NotFoundText>;
   }
 
   const getDeviceWidth = () => {
-    if (activeTab !== "preview") return 1280; // Default width when not in preview
+    if (activeTab !== "preview") return 1280;
     switch (activeDevice) {
       case "mobile":
         return 375;
@@ -60,33 +193,6 @@ export function EnhancedTemplatePreview({
     }
   };
 
-  // 递归构建组件树
-  const buildComponentTree = (
-    components: Component[],
-    parentId: string | null = null,
-    level = 0
-  ): React.ReactElement[] => {
-    return components
-      .filter((component) => component.parentId === parentId)
-      .map((component) => (
-        <div key={component.id} className="mb-1">
-          <div
-            className="flex items-center rounded px-2 py-1 text-sm hover:bg-muted/50"
-            style={{ paddingLeft: `${level * 16 + 8}px` }}
-          >
-            <span className="mr-1 text-xs text-muted-foreground">
-              {component.type}
-            </span>
-            <span className="font-medium">
-              {component.name || component.type}
-            </span>
-          </div>
-          {buildComponentTree(components, component.id, level + 1)}
-        </div>
-      ));
-  };
-
-  // 扁平化组件树，用于虚拟列表
   const flattenComponentTree = (
     components: Component[],
     parentId: string | null = null,
@@ -112,69 +218,56 @@ export function EnhancedTemplatePreview({
   );
 
   return (
-    <div
-      className="mt-4 border rounded-md overflow-hidden flex flex-col"
-      style={{ height: "600px" }}
-    >
-      <div className="flex items-center justify-between border-b p-2 flex-shrink-0">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-          <TabsList className="grid w-auto grid-cols-3">
-            <TabsTrigger
-              value="preview"
-              className="px-2 flex items-center gap-1"
-            >
-              <Layout className="h-4 w-4" />
-              <span className="hidden sm:inline">预览</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="structure"
-              className="px-2 flex items-center gap-1"
-            >
-              <Code className="h-4 w-4" />
-              <span className="hidden sm:inline">结构</span>
-            </TabsTrigger>
-            <TabsTrigger value="json" className="px-2 flex items-center gap-1">
-              <FileJson className="h-4 w-4" />
-              <span className="hidden sm:inline">JSON</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+    <Wrapper>
+      <Header>
+        <TabsStyled value={activeTab} onValueChange={setActiveTab}>
+          <TabsListStyled>
+            <TabsTriggerStyled value="preview">
+              <Layout css={{ height: "1rem", width: "1rem" }} />
+              <span css={{ display: "none", "@media(min-width: 640px)": { display: "inline" } }}>预览</span>
+            </TabsTriggerStyled>
+            <TabsTriggerStyled value="structure">
+              <Code css={{ height: "1rem", width: "1rem" }} />
+              <span css={{ display: "none", "@media(min-width: 640px)": { display: "inline" } }}>结构</span>
+            </TabsTriggerStyled>
+            <TabsTriggerStyled value="json">
+              <FileJson css={{ height: "1rem", width: "1rem" }} />
+              <span css={{ display: "none", "@media(min-width: 640px)": { display: "inline" } }}>JSON</span>
+            </TabsTriggerStyled>
+          </TabsListStyled>
+        </TabsStyled>
 
         {activeTab === "preview" && (
-          <div className="flex items-center gap-1 rounded-md border p-1">
-            <Button
+          <DeviceSwitcher>
+            <DeviceButton
               variant={activeDevice === "mobile" ? "secondary" : "ghost"}
               size="icon"
-              className="h-8 w-8"
               onClick={() => setActiveDevice("mobile")}
             >
-              <Smartphone className="h-4 w-4" />
-            </Button>
-            <Button
+              <Smartphone css={{ height: "1rem", width: "1rem" }} />
+            </DeviceButton>
+            <DeviceButton
               variant={activeDevice === "tablet" ? "secondary" : "ghost"}
               size="icon"
-              className="h-8 w-8"
               onClick={() => setActiveDevice("tablet")}
             >
-              <Tablet className="h-4 w-4" />
-            </Button>
-            <Button
+              <Tablet css={{ height: "1rem", width: "1rem" }} />
+            </DeviceButton>
+            <DeviceButton
               variant={activeDevice === "desktop" ? "secondary" : "ghost"}
               size="icon"
-              className="h-8 w-8"
               onClick={() => setActiveDevice("desktop")}
             >
-              <Monitor className="h-4 w-4" />
-            </Button>
-          </div>
+              <Monitor css={{ height: "1rem", width: "1rem" }} />
+            </DeviceButton>
+          </DeviceSwitcher>
         )}
-      </div>
+      </Header>
 
-      <div className="flex-1 overflow-hidden">
+      <Content>
         {activeTab === "preview" && (
-          <ScrollArea className="h-full">
-            <div
-              className="mx-auto bg-white"
+          <ScrollArea css={{ height: "100%" }}>
+            <PreviewWrapper
               style={{
                 width:
                   activeDevice === "desktop" ? "100%" : `${getDeviceWidth()}px`,
@@ -187,19 +280,17 @@ export function EnhancedTemplatePreview({
                 theme={theme}
                 isAnimating={false}
               />
-            </div>
+            </PreviewWrapper>
           </ScrollArea>
         )}
 
         {activeTab === "structure" && (
-          <div className="h-full flex flex-col">
-            <div className="border-b bg-muted/50 px-4 py-2 flex-shrink-0">
-              <h3 className="text-sm font-medium">组件结构</h3>
-              <p className="text-xs text-muted-foreground">
-                共 {template?.components?.length || 0} 个组件
-              </p>
-            </div>
-            <ScrollArea className="flex-1">
+          <StructureSection>
+            <StructureHeader>
+              <StructureTitle>组件结构</StructureTitle>
+              <StructureSubtitle>共 {template?.components?.length || 0} 个组件</StructureSubtitle>
+            </StructureHeader>
+            <ScrollArea css={{ flex: 1 }}>
               <VirtualList
                 items={flattenedComponents}
                 height={500}
@@ -211,40 +302,33 @@ export function EnhancedTemplatePreview({
                   component: Component;
                   level: number;
                 }) => (
-                  <div
+                  <ComponentTreeItem
                     key={component.id}
-                    className="flex items-center rounded px-2 py-1 text-sm hover:bg-muted/50"
                     style={{
                       paddingLeft: `${level * 16 + 8}px`,
                       height: "32px",
                     }}
                   >
-                    <span className="mr-1 text-xs text-muted-foreground">
-                      {component.type}
-                    </span>
-                    <span className="font-medium">
-                      {component.name || component.type}
-                    </span>
-                  </div>
+                    <ComponentType>{component.type}</ComponentType>
+                    <ComponentName>{component.name || component.type}</ComponentName>
+                  </ComponentTreeItem>
                 )}
               />
             </ScrollArea>
-          </div>
+          </StructureSection>
         )}
 
         {activeTab === "json" && (
-          <div className="h-full flex flex-col">
-            <div className="border-b bg-muted/50 px-4 py-2 flex-shrink-0">
-              <h3 className="text-sm font-medium">JSON 数据</h3>
-            </div>
-            <ScrollArea className="flex-1">
-              <pre className="p-4 text-xs">
-                {template ? JSON.stringify(template.components, null, 2) : ""}
-              </pre>
+          <JsonSection>
+            <JsonHeader>
+              <JsonTitle>JSON 数据</JsonTitle>
+            </JsonHeader>
+            <ScrollArea css={{ flex: 1 }}>
+              <JsonContent>{template ? JSON.stringify(template.components, null, 2) : ""}</JsonContent>
             </ScrollArea>
-          </div>
+          </JsonSection>
         )}
-      </div>
-    </div>
+      </Content>
+    </Wrapper>
   );
 }
