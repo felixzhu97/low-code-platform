@@ -111,11 +111,10 @@ export function AIGenerator({ onComponentsGenerated }: AIGeneratorProps) {
       if (generationType === "page") {
         components = await generatePage(description, layout);
       } else {
-        const component = await generateComponent(
+        components = await generateComponent(
           description,
           componentType || undefined
         );
-        components = [component];
       }
 
       const appliedComponents = await applyComponentsToCanvas(components);

@@ -27,7 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/presentation/components/ui";
-import { Eye, Undo2, Redo2, MoreHorizontal } from "lucide-react";
+import { Eye, Undo2, Redo2, MoreHorizontal, LayoutGrid, Layers, Database, MessageSquare } from "lucide-react";
 import { useToolbarResponsive } from "@/presentation/hooks";
 import { useAllStores } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
@@ -101,6 +101,12 @@ const ComponentTree = lazy(() =>
 const DataPanel = lazy(() =>
   import("@/presentation/components/data").then((mod) => ({
     default: mod.DataPanel,
+  }))
+);
+
+const AIChat = lazy(() =>
+  import("@/presentation/components/ai").then((mod) => ({
+    default: mod.AIChat,
   }))
 );
 
@@ -219,16 +225,56 @@ const WorkArea = styled.div`
 
 const RailTabs = styled(Tabs)`
   width: 20rem;
+  min-width: 20rem;
+  flex-shrink: 0;
   border-right: 1px solid hsl(var(--border));
   display: flex;
   flex-direction: column;
+  min-height: 0;
 `;
 
 const RailTabsList = styled(TabsList)`
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  height: auto;
+  min-height: 3.25rem;
+  grid-template-columns: repeat(4, minmax(2.5rem, 1fr));
   flex-shrink: 0;
+  align-items: stretch;
+  box-sizing: border-box;
+`;
+
+const RailTabTrigger = styled(TabsTrigger)`
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.5rem 0.125rem;
+  font-size: 0.625rem;
+  line-height: 1;
+  min-height: 3rem;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  white-space: normal;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &[data-state="active"] {
+    background-color: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    box-shadow: none;
+    font-weight: 600;
+  }
+
+  &[data-state="inactive"] {
+    opacity: 0.72;
+  }
+
+  &[data-state="inactive"]:hover {
+    opacity: 1;
+    background-color: hsl(var(--muted-foreground) / 0.06);
+  }
 `;
 
 const RailTabPanel = styled(TabsContent)`
@@ -485,11 +531,61 @@ export default function LowCodePlatform() {
         </Header>
         <WorkArea>
           {!isPreviewMode && (
-            <RailTabs value={activeTab} onValueChange={setActiveTab}>
+            <TooltipProvider>
+              <RailTabs value={activeTab} onValueChange={setActiveTab}>
               <RailTabsList>
-                <TabsTrigger value="components">组件</TabsTrigger>
-                <TabsTrigger value="tree">组件树</TabsTrigger>
-                <TabsTrigger value="data">数据</TabsTrigger>
+                <RailTabTrigger value="components" aria-label="组件">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span style={{ display: "contents" }}>
+                        <LayoutGrid size={18} />
+                        <VisuallyHidden>组件</VisuallyHidden>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>组件</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </RailTabTrigger>
+                <RailTabTrigger value="tree" aria-label="组件树">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span style={{ display: "contents" }}>
+                        <Layers size={18} />
+                        <VisuallyHidden>组件树</VisuallyHidden>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>组件树</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </RailTabTrigger>
+                <RailTabTrigger value="data" aria-label="数据">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span style={{ display: "contents" }}>
+                        <Database size={18} />
+                        <VisuallyHidden>数据</VisuallyHidden>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>数据</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </RailTabTrigger>
+                <RailTabTrigger value="ai-chat" aria-label="AI 对话">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span style={{ display: "contents" }}>
+                        <MessageSquare size={18} />
+                        <VisuallyHidden>AI对话</VisuallyHidden>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>AI 对话</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </RailTabTrigger>
               </RailTabsList>
               <RailTabPanel value="components">
                 <Suspense fallback={<TabContentLoader />}>
@@ -506,7 +602,13 @@ export default function LowCodePlatform() {
                   <DataPanel />
                 </Suspense>
               </RailTabPanel>
+              <RailTabPanel value="ai-chat">
+                <Suspense fallback={<TabContentLoader />}>
+                  <AIChat />
+                </Suspense>
+              </RailTabPanel>
             </RailTabs>
+            </TooltipProvider>
           )}
           <CanvasWrap
             style={{

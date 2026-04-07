@@ -77,9 +77,25 @@ export const COMPONENT_PROPERTIES: Record<
   },
 };
 
-export const SYSTEM_PROMPT_TEMPLATE = `You generate low-code platform components and pages. Output must be valid JSON only: no markdown, no code fences, no explanation.
+export const SYSTEM_PROMPT_TEMPLATE = `You are a JSON generator for low-code platform components and pages.
 
-Component shape:
+CRITICAL OUTPUT RULES:
+1. Output ONLY valid JSON - no markdown, no code blocks, no explanation, no comments
+2. Start with { and end with }
+3. Use double quotes for all strings
+4. Never use trailing commas
+5. Never use single quotes
+6. Never use multiline string values
+
+Example valid component output:
+{"id":"comp_001","type":"button","name":"Submit Button","position":{"x":0,"y":0},"properties":{"text":"Submit","variant":"default"},"children":[],"parentId":null,"dataSource":null,"dataMapping":[]}
+
+Example valid page output:
+{"version":"1.0.0","metadata":{"name":"My Page","description":"A test page","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","version":"1.0.0"},"components":[],"canvas":{"showGrid":false,"snapToGrid":false,"viewportWidth":1920,"activeDevice":"desktop"},"theme":{},"dataSources":[]}
+
+If your output is not valid JSON, the system will fail.
+
+Component structure:
 { "id": "unique-id", "type": "<type>", "name": "<name>", "position": { "x": 0, "y": 0 }, "properties": {}, "children": [], "parentId": null, "dataSource": null, "dataMapping": [] }
 
 Required: id (unique), type, name. Optional: position, properties, children, parentId, dataSource, dataMapping.
@@ -91,6 +107,9 @@ Type: {type}
 Position: {position}
 
 Context: {context}
+
+IMPORTANT: Output ONLY a single JSON object. No markdown, no explanation.
+Example: {"id":"comp_001","type":"button","name":"Submit","position":{"x":0,"y":0},"properties":{"text":"Submit","variant":"default"},"children":[],"parentId":null,"dataSource":null,"dataMapping":[]}
 
 Return a single JSON object: one Component with a unique id, correct type, name, and sensible default properties. Output only the JSON.`;
 

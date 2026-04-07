@@ -3,27 +3,33 @@
 
 LAYOUT_WITH_LEGEND()
 
-title Component — web application (`apps/web`)
+title Component — Web Application (`apps/web`)
 
-Container_Boundary(web, "Web application") {
-    Component(shell, "Editor shell", "React, Emotion", "`page.tsx`, rails, loaders, toolbar")
-    Component(canvas, "Canvas & panels", "React, Emotion, React DnD", "`canvas`, `component-panel`, `properties-panel`")
-    Component(renderers, "Component renderers", "React, Emotion", "basic, layout, form, data, chart, schema")
-    Component(app, "Application layer", "TypeScript", "use-cases, application services, ports")
-    Component(domain, "Domain layer", "TypeScript", "entities, value objects, domain services")
-    Component(infra, "Infrastructure adapters", "TypeScript", "Zustand stores, repository impls, external I/O")
-    Component(packages, "Monorepo packages", "TypeScript", "`packages/*` — shared utils and contracts")
+Container_Boundary(web, "Web Application") {
+    Component(shell, "Editor shell", "React, Emotion", "`page.tsx`, Header, side Tabs, loading skeletons")
+    Component(canvas, "Canvas & panels", "React, Emotion, React DnD", "`canvas/`, `component-panel/`, `properties-panel/`")
+    Component(renderers, "Component renderers", "React, Emotion", "basic, layout, form, data, chart renderers + schema renderer")
+    Component(ai, "AI chat & generation", "React", "`presentation/components/ai/`, `use-ai-chat.ts`")
+    Component(app, "Application layer", "TypeScript", "`application/` — use-cases, services, ports")
+    Component(domain, "Domain layer", "TypeScript", "`domain/` — entities, VOs, domain services")
+    Component(infra, "Infrastructure adapters", "TypeScript", "`infrastructure/` — Zustand stores, repositories, external I/O")
+    Component(packages, "Monorepo packages", "TypeScript", "`packages/*` shared utilities and contracts (schema, component-utils, utils)")
+    Component(lib_ai, "AI generator library", "TypeScript", "`apps/web/src/lib/ai-generator/` — multi-model clients, generators, validators, parsers, prompt builders")
 }
 
 Rel(shell, canvas, "Hosts")
-Rel(canvas, app, "Dispatches actions, uses cases")
-Rel(renderers, app, "Reads schema and bindings")
-Rel(shell, app, "Coordinates editor state")
+Rel(canvas, app, "Dispatches actions, calls use-cases")
+Rel(shell, ai, "AI chat & generation")
+Rel(ai, app, "Applies results to canvas")
+Rel(ai, lib_ai, "Invokes")
+Rel(renderers, app, "Reads schema & bindings")
+Rel(shell, app, "Orchestrates editor state")
 Rel(app, domain, "Uses")
-Rel(app, infra, "Uses ports implemented by")
-Rel(infra, domain, "Maps persistence to")
-Rel(infra, packages, "Imports")
-Rel(shell, packages, "Imports")
-Rel(renderers, packages, "Imports")
+Rel(app, infra, "Depends via ports")
+Rel(infra, domain, "Persistence mapping")
+Rel(infra, packages, "References")
+Rel(shell, packages, "References")
+Rel(renderers, packages, "References")
+Rel(lib_ai, packages, "References")
 
 @enduml

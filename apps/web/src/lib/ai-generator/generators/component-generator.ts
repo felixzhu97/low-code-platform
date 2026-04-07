@@ -21,9 +21,9 @@ export class ComponentGenerator {
   }
 
   /**
-   * 生成组件
+   * 生成组件（可能含嵌套子树，返回扁平 Component 列表）
    */
-  async generate(options: GenerateComponentOptions): Promise<Component> {
+  async generate(options: GenerateComponentOptions): Promise<Component[]> {
     const messages = this.buildMessages(options);
     const response = await this.client.generateJSON<Component>(messages, {
       type: "object",
@@ -63,7 +63,8 @@ export class ComponentGenerator {
       response.id = this.generateId();
     }
 
-    return response;
+    // 与页面生成一致：嵌套 children 对象需展平为扁平列表
+    return this.parser.flattenPageComponents([response as Component]);
   }
 
   /**
@@ -90,8 +91,11 @@ export class ComponentGenerator {
 
     // 最终解析完整响应
     try {
-      const final = this.parser.parseComponent(accumulatedResponse);
-      yield final;
+      const data = this.parser.parseJSON<Component>(accumulatedResponse);
+      const flat = this.parser.flattenPageComponents([data]);
+      for (const c of flat) {
+        yield c;
+      }
     } catch (error) {
       // 如果最终解析也失败，返回已累积的内容
       yield { type: "error", name: String(error) } as Partial<Component>;

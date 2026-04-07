@@ -4,10 +4,6 @@ skinparam linetype ortho
 
 title TOGAF 业务架构 - Felix 低代码平台
 
-' ============================================
-' 业务角色定义
-' ============================================
-
 package "业务角色 (Business Roles)" {
   actor "页面设计师\n(Page Designer)" as Designer
   actor "开发者\n(Developer)" as Developer
@@ -15,77 +11,70 @@ package "业务角色 (Business Roles)" {
   actor "终端用户\n(End User)" as EndUser
 }
 
-' ============================================
-' 业务能力组件
-' ============================================
-
 package "业务能力 (Business Capabilities)" {
-  
+
   component [可视化编辑能力] as VisualEditCapability
   component [组件拖拽] as ComponentDrag
   component [实时预览] as RealTimePreview
   component [属性配置] as PropertyConfig
   component [布局管理] as LayoutManagement
-  
+
   component [组件管理能力] as ComponentMgmtCapability
   component [组件库管理] as ComponentLibraryMgmt
   component [自定义组件] as CustomComponent
   component [组件导入导出] as ComponentImportExport
   component [组件分组] as ComponentGrouping
-  
+
   component [数据绑定能力] as DataBindingCapability
   component [数据源管理] as DataSourceMgmt
   component [数据映射] as DataMapping
   component [实时数据更新] as RealTimeDataUpdate
   component [数据验证] as DataValidation
   component [JSON快速输入] as JsonQuickInput
-  component [模板推荐] as TemplateRecommendation
-  component [智能渲染] as IntelligentRender
   component [数据结构解析] as DataStructureParse
-  
+
   component [协作能力] as CollaborationCapability
   component [多人实时编辑] as MultiUserEdit
   component [操作同步] as OperationSync
   component [冲突解决] as ConflictResolution
   component [版本管理] as VersionManagement
-  
+
   component [代码生成能力] as CodeGenCapability
   component [代码导出] as CodeExport
   component [格式转换] as FormatConversion
   component [Git集成] as GitIntegration
   component [部署支持] as DeploymentSupport
-  
+
   component [Schema管理能力] as SchemaMgmtCapability
   component [Schema导出] as SchemaExport
   component [Schema导入] as SchemaImport
   component [Schema渲染] as SchemaRender
   component [Schema验证] as SchemaValidation
   component [Schema版本管理] as SchemaVersionMgmt
-  
+
   component [模板管理能力] as TemplateMgmtCapability
   component [模板库] as TemplateLibrary
   component [模板应用] as TemplateApply
   component [模板定制] as TemplateCustomization
   component [模板分享] as TemplateSharing
-  
+
   component [国际化能力] as InternationalizationCapability
   component [多语言支持] as MultiLanguageSupport
   component [语言切换] as LanguageSwitch
-  component [本地化内容管理] as LocalizationContentMgmt
   component [日期数字格式化] as DateNumberFormat
-  
+
   component [认证能力] as AuthenticationCapability
   component [用户认证] as UserAuthentication
   component [权限管理] as PermissionManagement
   component [会话管理] as SessionManagement
   component [单点登录] as SingleSignOn
-  
+
   component [图表可视化能力] as ChartVisualizationCapability
   component [多种图表类型支持] as MultipleChartTypes
   component [数据可视化] as DataVisualization
   component [图表配置] as ChartConfiguration
   component [实时数据更新] as ChartRealTimeUpdate
-  
+
   component [AI生成能力] as AIGenerationCapability
   component [自然语言生成] as NaturalLanguageGeneration
   component [组件AI生成] as ComponentAIGeneration
@@ -93,285 +82,180 @@ package "业务能力 (Business Capabilities)" {
   component [多AI提供商支持] as MultiAIProviderSupport
   component [生成结果验证] as GenerationValidation
   component [流式生成] as StreamingGeneration
-  
+  component [嵌套组件展平] as NestedComponentFlatten
+
   VisualEditCapability --> ComponentDrag
   VisualEditCapability --> RealTimePreview
   VisualEditCapability --> PropertyConfig
   VisualEditCapability --> LayoutManagement
-  
+
   ComponentMgmtCapability --> ComponentLibraryMgmt
   ComponentMgmtCapability --> CustomComponent
   ComponentMgmtCapability --> ComponentImportExport
   ComponentMgmtCapability --> ComponentGrouping
-  
+
   DataBindingCapability --> DataSourceMgmt
   DataBindingCapability --> DataMapping
   DataBindingCapability --> RealTimeDataUpdate
   DataBindingCapability --> DataValidation
   DataBindingCapability --> JsonQuickInput
-  DataBindingCapability --> TemplateRecommendation
-  DataBindingCapability --> IntelligentRender
   DataBindingCapability --> DataStructureParse
-  
+
   CollaborationCapability --> MultiUserEdit
   CollaborationCapability --> OperationSync
   CollaborationCapability --> ConflictResolution
   CollaborationCapability --> VersionManagement
-  
+
   CodeGenCapability --> CodeExport
   CodeGenCapability --> FormatConversion
   CodeGenCapability --> GitIntegration
   CodeGenCapability --> DeploymentSupport
-  
+
   SchemaMgmtCapability --> SchemaExport
   SchemaMgmtCapability --> SchemaImport
   SchemaMgmtCapability --> SchemaRender
   SchemaMgmtCapability --> SchemaValidation
   SchemaMgmtCapability --> SchemaVersionMgmt
-  
+
   TemplateMgmtCapability --> TemplateLibrary
   TemplateMgmtCapability --> TemplateApply
   TemplateMgmtCapability --> TemplateCustomization
   TemplateMgmtCapability --> TemplateSharing
-  
+
   InternationalizationCapability --> MultiLanguageSupport
   InternationalizationCapability --> LanguageSwitch
-  InternationalizationCapability --> LocalizationContentMgmt
   InternationalizationCapability --> DateNumberFormat
-  
+
   AuthenticationCapability --> UserAuthentication
   AuthenticationCapability --> PermissionManagement
   AuthenticationCapability --> SessionManagement
   AuthenticationCapability --> SingleSignOn
-  
+
   ChartVisualizationCapability --> MultipleChartTypes
   ChartVisualizationCapability --> DataVisualization
   ChartVisualizationCapability --> ChartConfiguration
   ChartVisualizationCapability --> ChartRealTimeUpdate
-  
+
   AIGenerationCapability --> NaturalLanguageGeneration
   AIGenerationCapability --> ComponentAIGeneration
   AIGenerationCapability --> PageAIGeneration
   AIGenerationCapability --> MultiAIProviderSupport
   AIGenerationCapability --> GenerationValidation
   AIGenerationCapability --> StreamingGeneration
+  AIGenerationCapability --> NestedComponentFlatten
 }
 
-' ============================================
-' 核心业务流程组件
-' ============================================
-
 package "核心业务流程 (Core Business Processes)" {
-  
+
   component [页面设计与构建流程] as PageDesignProcess
   component [设计师登录平台] as DesignerLogin
-  component [浏览模板库或创建空白项目] as BrowseOrCreate
-  component [进入可视化编辑器] as EnterEditor
   component [拖拽组件到画布] as DragComponent
   component [配置组件属性和样式] as ConfigComponent
   component [绑定数据源] as BindDataSource
   component [实时预览效果] as PreviewEffect
-  component [调整布局和样式] as AdjustLayout
-  component [保存项目] as SaveProject
-  component [发布页面] as PublishPage
-  
+  component [保存并发布页面] as SaveAndPublish
+
   component [模板管理流程] as TemplateProcess
   component [浏览模板库] as BrowseTemplate
-  component [选择合适模板] as SelectTemplate
-  component [预览模板效果] as PreviewTemplate
+  component [选择并应用模板] as SelectAndApplyTemplate
   component [在模板基础上编辑] as EditTemplate
-  component [直接应用模板] as ApplyTemplate
-  component [保存为项目] as SaveAsProject
-  
+
   component [协作编辑流程] as CollaborationProcess
   component [创建协作项目] as CreateCollaborationProject
   component [邀请团队成员] as InviteMembers
-  component [成员加入编辑] as MembersJoin
   component [多人实时编辑] as MultiUserEditing
   component [操作同步和冲突处理] as SyncAndConflict
-  component [版本历史管理] as VersionHistoryMgmt
-  component [合并更改] as MergeChanges
-  
+
   component [代码导出流程] as CodeExportProcess
-  component [开发者选择项目] as SelectProject
-  component [预览页面效果] as PreviewPageEffect
   component [选择导出格式] as SelectExportFormat
-  component [生成代码] as GenerateCode
-  component [下载代码包或推送到Git] as DownloadOrPush
-  component [在本地环境配置] as LocalConfig
-  component [进行二次开发] as SecondaryDevelopment
-  component [部署到生产环境] as DeployToProduction
-  
+  component [生成并下载代码] as GenerateAndDownloadCode
+
   component [Schema导出流程] as SchemaExportProcess
-  component [用户选择导出Schema] as SelectExportSchema
-  component [系统生成Schema JSON] as GenerateSchemaJSON
-  component [验证Schema格式] as ValidateSchemaFormat
-  component [下载Schema文件] as DownloadSchemaFile
-  component [分享Schema给其他用户] as ShareSchema
-  
+  component [生成并下载Schema JSON] as GenerateAndDownloadSchema
+
   component [Schema导入流程] as SchemaImportProcess
-  component [用户选择导入Schema] as SelectImportSchema
-  component [上传Schema文件] as UploadSchemaFile
-  component [验证Schema版本] as ValidateSchemaVersion
-  component [迁移旧版本Schema] as MigrateSchema
-  component [导入到画布] as ImportToCanvas
-  component [渲染页面] as RenderPage
-  
+  component [上传并验证Schema] as UploadAndValidateSchema
+  component [渲染到画布] as RenderToCanvas
+
   component [数据管理流程] as DataMgmtProcess
   component [创建数据源] as CreateDataSource
   component [配置数据连接] as ConfigDataConnection
-  component [测试数据连接] as TestDataConnection
-  component [创建数据映射] as CreateDataMapping
   component [绑定到组件] as BindToComponent
-  component [实时数据更新] as RealTimeUpdate
-  component [监控数据状态] as MonitorDataStatus
-  
-  component [JSON快速输入流程] as JsonInputProcess
-  component [选择组件类型] as SelectComponentType
-  component [选择JSON模板] as SelectJsonTemplate
-  component [输入或编辑JSON数据] as InputJsonData
-  component [验证JSON格式] as ValidateJsonFormat
-  component [创建临时数据源] as CreateTempDataSource
-  component [自动渲染到组件] as AutoRenderToComponent
-  
+
+  component [国际化配置流程] as I18nConfigProcess
+  component [选择界面语言] as SelectInterfaceLanguage
+  component [加载语言资源] as LoadLanguageResources
+
+  component [用户认证流程] as UserAuthProcess
+  component [用户登录] as UserLogin
+  component [生成访问令牌] as GenerateAccessToken
+
+  component [AI生成流程] as AIGenerationProcess
+  component [用户输入自然语言描述] as InputNaturalLanguage
+  component [选择AI提供商] as SelectAIProvider
+  component [AI生成组件或页面] as AIGenerateComponentOrPage
+  component [验证并展平嵌套组件] as ValidateAndFlatten
+  component [应用到画布] as ApplyToCanvas
+
   PageDesignProcess --> DesignerLogin
-  PageDesignProcess --> BrowseOrCreate
-  PageDesignProcess --> EnterEditor
   PageDesignProcess --> DragComponent
   PageDesignProcess --> ConfigComponent
   PageDesignProcess --> BindDataSource
   PageDesignProcess --> PreviewEffect
-  PageDesignProcess --> AdjustLayout
-  PageDesignProcess --> SaveProject
-  PageDesignProcess --> PublishPage
-  
+  PageDesignProcess --> SaveAndPublish
+
   TemplateProcess --> BrowseTemplate
-  TemplateProcess --> SelectTemplate
-  TemplateProcess --> PreviewTemplate
+  TemplateProcess --> SelectAndApplyTemplate
   TemplateProcess --> EditTemplate
-  TemplateProcess --> ApplyTemplate
-  TemplateProcess --> SaveAsProject
-  
+
   CollaborationProcess --> CreateCollaborationProject
   CollaborationProcess --> InviteMembers
-  CollaborationProcess --> MembersJoin
   CollaborationProcess --> MultiUserEditing
   CollaborationProcess --> SyncAndConflict
-  CollaborationProcess --> VersionHistoryMgmt
-  CollaborationProcess --> MergeChanges
-  
-  CodeExportProcess --> SelectProject
-  CodeExportProcess --> PreviewPageEffect
+
   CodeExportProcess --> SelectExportFormat
-  CodeExportProcess --> GenerateCode
-  CodeExportProcess --> DownloadOrPush
-  CodeExportProcess --> LocalConfig
-  CodeExportProcess --> SecondaryDevelopment
-  CodeExportProcess --> DeployToProduction
-  
-  SchemaExportProcess --> SelectExportSchema
-  SchemaExportProcess --> GenerateSchemaJSON
-  SchemaExportProcess --> ValidateSchemaFormat
-  SchemaExportProcess --> DownloadSchemaFile
-  SchemaExportProcess --> ShareSchema
-  
-  SchemaImportProcess --> SelectImportSchema
-  SchemaImportProcess --> UploadSchemaFile
-  SchemaImportProcess --> ValidateSchemaVersion
-  SchemaImportProcess --> MigrateSchema
-  SchemaImportProcess --> ImportToCanvas
-  SchemaImportProcess --> RenderPage
-  
+  CodeExportProcess --> GenerateAndDownloadCode
+
+  SchemaExportProcess --> GenerateAndDownloadSchema
+
+  SchemaImportProcess --> UploadAndValidateSchema
+  SchemaImportProcess --> RenderToCanvas
+
   DataMgmtProcess --> CreateDataSource
   DataMgmtProcess --> ConfigDataConnection
-  DataMgmtProcess --> TestDataConnection
-  DataMgmtProcess --> CreateDataMapping
   DataMgmtProcess --> BindToComponent
-  DataMgmtProcess --> RealTimeUpdate
-  DataMgmtProcess --> MonitorDataStatus
-  
-  JsonInputProcess --> SelectComponentType
-  JsonInputProcess --> SelectJsonTemplate
-  JsonInputProcess --> InputJsonData
-  JsonInputProcess --> ValidateJsonFormat
-  JsonInputProcess --> CreateTempDataSource
-  JsonInputProcess --> AutoRenderToComponent
-  
-  component [国际化配置流程] as I18nConfigProcess
-  component [检测浏览器语言] as DetectBrowserLanguage
-  component [选择界面语言] as SelectInterfaceLanguage
-  component [加载语言资源] as LoadLanguageResources
-  component [应用语言设置] as ApplyLanguageSettings
-  component [保存语言偏好] as SaveLanguagePreference
-  
-  component [用户认证流程] as UserAuthProcess
-  component [用户登录] as UserLogin
-  component [校验凭证] as VerifyCredentials
-  component [生成访问令牌] as GenerateAccessToken
-  component [建立会话] as EstablishSession
-  component [授权访问] as AuthorizeAccess
-  component [用户登出] as UserLogout
-  
-  I18nConfigProcess --> DetectBrowserLanguage
+
   I18nConfigProcess --> SelectInterfaceLanguage
   I18nConfigProcess --> LoadLanguageResources
-  I18nConfigProcess --> ApplyLanguageSettings
-  I18nConfigProcess --> SaveLanguagePreference
-  
+
   UserAuthProcess --> UserLogin
-  UserAuthProcess --> VerifyCredentials
   UserAuthProcess --> GenerateAccessToken
-  UserAuthProcess --> EstablishSession
-  UserAuthProcess --> AuthorizeAccess
-  UserAuthProcess --> UserLogout
-  
-  component [AI生成流程] as AIGenerationProcess
-  component [用户输入自然语言描述] as InputNaturalLanguage
-  component [选择AI提供商] as SelectAIProvider
-  component [配置API Key] as ConfigAPIKey
-  component [选择生成类型] as SelectGenerationType
-  component [AI生成组件或页面] as AIGenerateComponentOrPage
-  component [验证生成结果] as ValidateGenerationResult
-  component [应用到画布] as ApplyToCanvas
-  component [预览和调整] as PreviewAndAdjust
-  
+
   AIGenerationProcess --> InputNaturalLanguage
   AIGenerationProcess --> SelectAIProvider
-  AIGenerationProcess --> ConfigAPIKey
-  AIGenerationProcess --> SelectGenerationType
   AIGenerationProcess --> AIGenerateComponentOrPage
-  AIGenerationProcess --> ValidateGenerationResult
+  AIGenerationProcess --> ValidateAndFlatten
   AIGenerationProcess --> ApplyToCanvas
-  AIGenerationProcess --> PreviewAndAdjust
 }
 
-' ============================================
-' 价值流组件
-' ============================================
-
 package "价值流 (Value Stream)" {
-  
   component [需求识别] as Step1
-  component [方案设计] as Step2
-  component [可视化构建] as Step3
-  component [数据集成] as Step4
-  component [预览验证] as Step5
+  component [可视化构建] as Step2
+  component [数据集成] as Step3
+  component [效果验证] as Step4
+  component [AI辅助生成（可选）] as Step5
   component [协作优化] as Step6
-  component [代码生成] as Step7
+  component [代码导出] as Step7
   component [部署交付] as Step8
-  
-  Step1 --> Step2 : 需求分析
-  Step2 --> Step3 : 页面设计
-  Step3 --> Step4 : 数据绑定
-  Step4 --> Step5 : 效果验证
+
+  Step1 --> Step2 : 页面设计
+  Step2 --> Step3 : 数据绑定
+  Step3 --> Step4 : 预览验证
+  Step4 --> Step5 : AI 生成
   Step5 --> Step6 : 团队协作
   Step6 --> Step7 : 代码导出
   Step7 --> Step8 : 部署上线
 }
-
-' ============================================
-' 业务关系
-' ============================================
 
 Designer --> VisualEditCapability : 使用
 Designer --> ComponentMgmtCapability : 使用
@@ -384,7 +268,6 @@ Designer --> ChartVisualizationCapability : 使用
 Designer --> AIGenerationCapability : 使用
 
 Developer --> CodeGenCapability : 使用
-Developer --> VisualEditCapability : 使用
 Developer --> SchemaMgmtCapability : 使用
 Developer --> ChartVisualizationCapability : 使用
 
@@ -392,13 +275,11 @@ Admin --> ComponentMgmtCapability : 管理
 Admin --> TemplateMgmtCapability : 管理
 Admin --> CollaborationCapability : 配置
 Admin --> AuthenticationCapability : 管理
-Admin --> InternationalizationCapability : 配置
 
 EndUser --> Step8 : 访问
 
 PageDesignProcess --> VisualEditCapability : 依赖
 PageDesignProcess --> ComponentMgmtCapability : 依赖
-PageDesignProcess --> DataBindingCapability : 依赖
 
 TemplateProcess --> TemplateMgmtCapability : 依赖
 TemplateProcess --> ComponentMgmtCapability : 依赖
@@ -411,16 +292,8 @@ SchemaExportProcess --> SchemaMgmtCapability : 依赖
 SchemaImportProcess --> SchemaMgmtCapability : 依赖
 
 DataMgmtProcess --> DataBindingCapability : 依赖
-JsonInputProcess --> DataBindingCapability : 依赖
-
-I18nConfigProcess --> InternationalizationCapability : 依赖
-UserAuthProcess --> AuthenticationCapability : 依赖
-
-PageDesignProcess --> ChartVisualizationCapability : 依赖
-DataMgmtProcess --> ChartVisualizationCapability : 依赖
 
 AIGenerationProcess --> AIGenerationCapability : 依赖
-AIGenerationProcess --> ComponentMgmtCapability : 依赖
 AIGenerationProcess --> VisualEditCapability : 依赖
 
 @enduml

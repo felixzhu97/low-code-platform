@@ -4,333 +4,185 @@ skinparam linetype ortho
 
 title TOGAF 技术架构 - Felix 低代码平台
 
-' ============================================
-' 技术栈分层
-' ============================================
-
 package "前端技术栈 (Frontend Technology Stack)" {
-  
-  component [Web浏览器\nWeb Browser] as Browser
-  component [React 19\nUI框架] as React
+
+  component [Web 浏览器\nWeb Browser] as Browser
+  component [React 19\nUI 框架] as React
   component [Next.js 15\n全栈框架] as NextJS
   component [TypeScript\n类型系统] as TypeScript
-  component [Emotion\nCSS-in-JS 样式] as Emotion
-  component [Radix UI\n组件库] as RadixUI
+
+  component [Emotion\nCSS-in-JS] as Emotion
+  component [Radix UI\n无障碍组件库] as RadixUI
   component [React DnD\n拖拽库] as ReactDnD
   component [Recharts\n图表库] as Recharts
   component [Zustand\n状态管理] as Zustand
-  
-  component [i18n\n国际化] as I18n
+
   component [react-i18next\n国际化库] as ReactI18Next
-  component [语言切换功能] as LanguageSwitch
-  
-  component [工具包\nUtils Packages] as UtilsPackages
-  component [Component Utils\n组件工具] as ComponentUtils
-  component [Data Binding Utils\n数据绑定工具] as DataBindingUtils
-  component [Layout Utils\n布局工具] as LayoutUtils
-  component [Performance Utils\n性能工具] as PerformanceUtils
-  component [Schema Utils\nSchema工具] as SchemaUtils
-  component [Utils\n通用工具] as Utils
-  
-  component [Local Storage\n本地存储] as LocalStorageBrowser
-  
-  component [AI生成器包\nAI Generator Package] as AIGeneratorPackage
-  component [OpenAI客户端\nOpenAI Client] as OpenAIClientTech
-  component [Claude客户端\nClaude Client] as ClaudeClientTech
-  component [DeepSeek客户端\nDeepSeek Client] as DeepSeekClientTech
-  
+
+  component [Monorepo 共享包\npackages/] as SharedPackages
+  component [@lowcode-platform/schema\nSchema 类型] as SchemaPkg
+  component [@lowcode-platform/component-utils\n组件树工具] as ComponentUtilsPkg
+  component [@lowcode-platform/utils\n通用工具] as UtilsPkg
+
+  component [浏览器 Local Storage\n本地存储] as BrowserLocalStorage
+
+  component [AI 生成器内部库\napps/web/src/lib/ai-generator] as AIGeneratorLib
+  component [BaseAIClient\n基础客户端] as BaseAIClient
+  component [OllamaClient] as OllamaClientTech
+  component [OpenAIClient] as OpenAIClientTech
+  component [ClaudeClient] as ClaudeClientTech
+  component [DeepSeekClient] as DeepSeekClientTech
+  component [GeminiClient] as GeminiClientTech
+  component [GroqClient] as GroqClientTech
+  component [MistralClient] as MistralClientTech
+  component [SiliconFlowClient] as SiliconFlowClientTech
+  component [AzureOpenAIClient] as AzureOpenAIClientTech
+  component [AIClientFactory\n客户端工厂] as AIClientFactoryTech
+  component [ComponentGenerator\n组件生成器] as ComponentGeneratorTech
+  component [PageGenerator\n页面生成器] as PageGeneratorTech
+  component [JSONParser\nJSON 解析器] as JSONParserTech
+  component [ComponentPromptBuilder\n组件提示构建器] as ComponentPromptBuilderTech
+  component [PagePromptBuilder\n页面提示构建器] as PagePromptBuilderTech
+
   Browser --> React
   Browser --> NextJS
-  Browser --> TypeScript
   Browser --> Emotion
   Browser --> RadixUI
   Browser --> ReactDnD
   Browser --> Recharts
   Browser --> Zustand
-  Browser --> I18n
-  Browser --> LocalStorageBrowser
-  
-  I18n --> ReactI18Next
-  ReactI18Next --> LanguageSwitch
-  
-  UtilsPackages --> ComponentUtils
-  UtilsPackages --> DataBindingUtils
-  UtilsPackages --> LayoutUtils
-  UtilsPackages --> PerformanceUtils
-  UtilsPackages --> SchemaUtils
-  UtilsPackages --> Utils
-  
-  AIGeneratorPackage --> OpenAIClientTech
-  AIGeneratorPackage --> ClaudeClientTech
-  AIGeneratorPackage --> DeepSeekClientTech
+  Browser --> ReactI18Next
+
+  SharedPackages --> SchemaPkg
+  SharedPackages --> ComponentUtilsPkg
+  SharedPackages --> UtilsPkg
+
+  AIGeneratorLib --> BaseAIClient
+  BaseAIClient --> OllamaClientTech
+  BaseAIClient --> OpenAIClientTech
+  BaseAIClient --> ClaudeClientTech
+  BaseAIClient --> DeepSeekClientTech
+  BaseAIClient --> GeminiClientTech
+  BaseAIClient --> GroqClientTech
+  BaseAIClient --> MistralClientTech
+  BaseAIClient --> SiliconFlowClientTech
+  BaseAIClient --> AzureOpenAIClientTech
+
+  AIGeneratorLib --> AIClientFactoryTech
+  AIClientFactoryTech --> OllamaClientTech
+  AIClientFactoryTech --> OpenAIClientTech
+  AIClientFactoryTech --> ClaudeClientTech
+  AIClientFactoryTech --> DeepSeekClientTech
+  AIClientFactoryTech --> GeminiClientTech
+  AIClientFactoryTech --> GroqClientTech
+  AIClientFactoryTech --> MistralClientTech
+  AIClientFactoryTech --> SiliconFlowClientTech
+  AIClientFactoryTech --> AzureOpenAIClientTech
+
+  AIGeneratorLib --> ComponentGeneratorTech
+  AIGeneratorLib --> PageGeneratorTech
+  AIGeneratorLib --> JSONParserTech
+  AIGeneratorLib --> ComponentPromptBuilderTech
+  AIGeneratorLib --> PagePromptBuilderTech
 }
 
 package "后端技术栈 (Backend Technology Stack)" {
-  
-  component [应用服务器\nApplication Server] as AppServer
   component [FastAPI\nPython Web 框架] as FastAPI
   component [Python 3\n运行时] as PythonRT
   component [Uvicorn\nASGI 服务器] as Uvicorn
   component [Pydantic\n数据校验] as Pydantic
-  
-  AppServer --> FastAPI
-  AppServer --> PythonRT
+
   FastAPI --> Uvicorn
   FastAPI --> Pydantic
 }
 
 package "数据存储层 (Data Storage Layer)" {
-  
-  component [PostgreSQL\n关系数据库] as PostgreSQL
-  component [主数据库\nPrimary DB] as PrimaryDB
-  component [从数据库\nReplica DB] as ReplicaDB
-  
-  component [Redis\n缓存数据库] as Redis
-  component [缓存集群\nCache Cluster] as CacheCluster
-  component [会话存储\nSession Store] as SessionStore
-  component [消息队列\nMessage Queue] as MessageQueue
-  
-  component [对象存储\nObject Storage] as ObjectStorage
-  component [S3/OSS兼容\n文件存储] as FileStorage
-  
-  component [Local Storage\n浏览器本地存储] as LocalStorageTech
-  
-  PostgreSQL --> PrimaryDB
-  PostgreSQL --> ReplicaDB
-  Redis --> CacheCluster
-  Redis --> SessionStore
-  Redis --> MessageQueue
-  ObjectStorage --> FileStorage
-  LocalStorageTech --> Browser
+
+  component [PostgreSQL\n关系型数据库（按部署）] as PostgreSQL
+  component [Redis\n缓存（按部署）] as Redis
+  component [对象存储\nS3 兼容（按部署）] as ObjectStorage
+  component [浏览器 Local Storage\n本地存储] as LocalStorage
+
+  PostgreSQL --> Redis
+  ObjectStorage --> LocalStorage
 }
 
 package "基础设施层 (Infrastructure Layer)" {
-  
+
   component [云平台\nCloud Platform] as CloudPlatform
-  component [负载均衡器\nLoad Balancer] as LoadBalancer
-  
-  component [Web服务器集群\nWeb Server Cluster] as WebCluster
-  component [Next.js SSR\n服务器端渲染] as NextSSR
-  component [静态资源服务\nStatic Assets] as StaticAssets
-  
-  component [API服务器集群\nAPI Server Cluster] as APICluster
-  component [RESTful API\nREST API] as RESTAPI
-  component [GraphQL API\nGraphQL] as GraphQL
-  
-  component [WebSocket服务器\nWebSocket Server] as WSServer
-  component [实时协作服务\nCollaboration] as CollaborationWS
-  component [消息广播\nMessage Broadcast] as MessageBroadcast
-  
-  component [任务队列\nTask Queue] as TaskQueue
-  component [代码生成任务\nCode Generation] as CodeGenTask
-  component [数据同步任务\nData Sync] as DataSyncTask
-  
-  component [AWS集成\nAWS Integration] as AWSIntegration
-  component [S3操作\nS3 Operations] as S3Ops
-  component [CloudFormation\n云编排] as CloudFormation
-  component [Lambda\n函数服务] as Lambda
-  component [API Gateway\nAPI网关] as APIGatewayAWS
-  component [CloudFront\nCDN服务] as CloudFront
-  component [IAM\n身份管理] as IAM
-  
-  component [协作工具包\nCollaboration Package] as CollaborationPackage
-  component [WebSocket管理\nWebSocket Mgmt] as WebSocketMgmt
-  component [实时同步\nReal-time Sync] as RealTimeSync
-  component [冲突解决\nConflict Resolution] as ConflictResolution
-  
-  CloudPlatform --> LoadBalancer
-  CloudPlatform --> WebCluster
-  CloudPlatform --> APICluster
-  CloudPlatform --> WSServer
-  CloudPlatform --> TaskQueue
-  
-  WebCluster --> NextSSR
-  WebCluster --> StaticAssets
-  
-  APICluster --> RESTAPI
-  APICluster --> GraphQL
-  
-  WSServer --> CollaborationWS
-  WSServer --> MessageBroadcast
-  
-  TaskQueue --> CodeGenTask
-  TaskQueue --> DataSyncTask
-  
-  AWSIntegration --> S3Ops
-  AWSIntegration --> CloudFormation
-  AWSIntegration --> Lambda
-  AWSIntegration --> APIGatewayAWS
-  AWSIntegration --> CloudFront
-  AWSIntegration --> IAM
-  
-  CollaborationPackage --> WebSocketMgmt
-  CollaborationPackage --> RealTimeSync
-  CollaborationPackage --> ConflictResolution
+  component [负载均衡器] as LoadBalancer
+  component [Web 服务器集群] as WebCluster
+  component [API 服务器集群\n（按部署）] as APICluster
+  component [WebSocket 服务器\n（按部署）] as WSServer
+  component [AWS 集成\nS3、Lambda、CloudFront（可选）] as AWSIntegration
+  component [CI/CD 流水线] as CICD
+  component [Kubernetes\n容器编排（可选）] as K8s
+  component [Docker\n容器化] as Docker
 }
 
 package "网络与安全 (Network & Security)" {
-  
-  component [CDN\n内容分发网络] as CDN
-  component [WAF\nWeb应用防火墙] as WAF
-  component [SSL/TLS\n加密传输] as SSL
-  component [认证服务\nAuth Service] as AuthService
-  component [API网关\nAPI Gateway] as APIGateway
+  component [CDN] as CDN
+  component [WAF] as WAF
+  component [SSL/TLS] as SSL
+  component [API 网关\n（按部署）] as APIGateway
 }
 
 package "监控与运维 (Monitoring & Operations)" {
-  
-  component [Prometheus\n指标监控] as Prometheus
-  component [Grafana\n可视化面板] as Grafana
-  component [ELK Stack\n日志分析] as ELK
-  component [Sentry\n错误追踪] as Sentry
-  component [健康检查\nHealth Check] as HealthCheck
+  component [Prometheus\n指标监控（可选）] as Prometheus
+  component [Grafana\n可视化（可选）] as Grafana
+  component [ELK Stack\n日志分析（可选）] as ELK
+  component [Sentry\n错误追踪（可选）] as Sentry
 }
 
-package "CI/CD与部署 (CI/CD & Deployment)" {
-  
-  component [Git仓库\nGit Repository] as GitRepo
-  component [CI/CD流水线\nCI/CD Pipeline] as CICD
-  component [容器编排\nKubernetes] as K8s
-  component [Docker容器\nDocker Container] as Docker
-}
-
-' ============================================
-' 技术架构连接关系
-' ============================================
+' ============ 连接关系 ============
 
 Browser --> CDN : HTTPS
-CDN --> LoadBalancer : HTTPS
-LoadBalancer --> WAF : 安全检查
-WAF --> WebCluster : 路由
-WAF --> APIGateway : API路由
+CDN --> WebCluster : 路由
+WebCluster --> APIGateway : API 路由（按部署）
 
-WebCluster --> APICluster : 内部调用
-APIGateway --> APICluster : API请求
-APIGateway --> AuthService : 身份验证
+Browser --> AIGeneratorLib : AI 生成（浏览器直连）
+AIGeneratorLib --> OllamaClientTech : localhost 本地推理
+AIGeneratorLib --> OpenAIClientTech : OpenAI API
+AIGeneratorLib --> ClaudeClientTech : Anthropic API
+AIGeneratorLib --> DeepSeekClientTech : DeepSeek API
+AIGeneratorLib --> SiliconFlowClientTech : SiliconFlow API
 
-APICluster --> PostgreSQL : SQL连接
-APICluster --> Redis : 缓存访问
-APICluster --> ObjectStorage : 文件操作
-APICluster --> TaskQueue : 异步任务
-APICluster --> AWSIntegration : AWS服务调用
+WebCluster --> PostgreSQL : SQL（按部署）
+WebCluster --> Redis : 缓存（按部署）
+WebCluster --> ObjectStorage : 文件（按部署）
 
-Browser <--> WSServer : WebSocket连接
-Browser --> LocalStorageTech : 本地存储
-WSServer --> Redis : 消息队列
-WSServer --> PostgreSQL : 状态持久化
-WSServer --> CollaborationPackage : 协作服务
-
-TaskQueue --> ObjectStorage : 结果存储
-TaskQueue --> GitRepo : 代码推送
-AWSIntegration --> ObjectStorage : S3存储
-AWSIntegration --> CDN : CloudFront分发
-Browser --> UtilsPackages : 工具包使用
-Browser --> I18n : 国际化支持
-Browser --> AIGeneratorPackage : AI生成器使用
-AIGeneratorPackage --> OpenAIClientTech : 调用
-AIGeneratorPackage --> ClaudeClientTech : 调用
-AIGeneratorPackage --> DeepSeekClientTech : 调用
-
-OpenAIClientTech --> APIGateway : HTTPS API调用
-ClaudeClientTech --> APIGateway : HTTPS API调用
-DeepSeekClientTech --> APIGateway : HTTPS API调用
-
-' ============================================
-' 部署架构
-' ============================================
-
-component [生产环境\nProduction] as ProdEnv
-component [开发环境\nDevelopment] as DevEnv
-component [开发服务器\nDev Server] as DevServer
-component [本地数据库\nLocal DB] as LocalDB
-component [测试环境\nTesting] as TestEnv
-component [测试服务器\nTest Server] as TestServer
-component [测试数据库\nTest DB] as TestDB
-
-DevEnv --> DevServer
-DevEnv --> LocalDB
-TestEnv --> TestServer
-TestEnv --> TestDB
-
-CICD --> ProdEnv : 自动部署
-CICD --> TestEnv : 测试部署
-Docker --> K8s : 容器编排
-K8s --> ProdEnv : 资源调度
-
-' ============================================
-' 监控连接
-' ============================================
-
-WebCluster --> Prometheus : 指标上报
-APICluster --> Prometheus : 指标上报
-WSServer --> Prometheus : 指标上报
-PostgreSQL --> Prometheus : 指标上报
-Redis --> Prometheus : 指标上报
-
-Prometheus --> Grafana : 数据可视化
-WebCluster --> ELK : 日志收集
-APICluster --> ELK : 日志收集
-WebCluster --> Sentry : 错误上报
-APICluster --> Sentry : 错误上报
-
-APICluster --> HealthCheck : 健康检查
-WSServer --> HealthCheck : 健康检查
-
-' ============================================
-' 技术选型说明
-' ============================================
+Browser <--> WSServer : WebSocket（按部署）
+WSServer --> Redis : 协作消息（按部署）
 
 note right of Browser
   **前端技术选型：**
-  - Next.js: SSR/SSG、App Router
+  - Next.js 15: SSR/SSG、App Router
   - React 19: UI 运行时
   - TypeScript: 类型安全
-  - Emotion: 画布与编辑器区域 CSS-in-JS
-  - Zustand: 状态管理
+  - Emotion: 画布与编辑器 CSS-in-JS
+  - Zustand: 组件、画布、主题、UI 状态
+  - Radix UI: 无障碍交互
   - react-i18next: 国际化
-  - 工作区工具包: 组件/数据绑定/布局/性能/Schema
-  - Local Storage: 浏览器存储
-  - AI 生成器包: 多模型提供方（含 Ollama）
+  - Local Storage: 临时数据缓存
+  - AI 生成器: 多模型支持（含 Ollama 本地）
 end note
 
-note right of AppServer
-  **后端技术选型（当前仓库）：**
-  - FastAPI: REST API
-  - Python + Pydantic: 校验与模型
-  - Uvicorn: ASGI 宿主
+note right of AIGeneratorLib
+  **AI 生成器内部库结构：**
+  - AIClientFactory: 根据 provider 创建对应客户端
+  - BaseAIClient: fetchWithTimeout、withRetry、parseJSONResponse
+  - OllamaClient: 默认 10 分钟超时，支持本地推理
+  - ComponentGenerator / PageGenerator: 生成组件或页面
+  - JSONParser.flattenPageComponents(): 将嵌套 children 展平为扁平列表
+  - ComponentPromptBuilder / PagePromptBuilder: 构建提示词
 end note
 
-note right of PostgreSQL
-  **数据存储选型：**
-  - PostgreSQL: 关系型数据
-  - Redis: 缓存和会话
-  - 对象存储: 文件和媒体（S3/OSS兼容）
-  - Local Storage: 浏览器本地存储（临时数据和用户偏好）
-end note
-
-note right of AWSIntegration
-  **AWS集成：**
-  - S3: 对象存储服务
-  - CloudFormation: 基础设施即代码
-  - Lambda: 无服务器函数
-  - API Gateway: API管理
-  - CloudFront: CDN分发
-  - IAM: 身份和访问管理
-end note
-
-note right of CollaborationPackage
-  **协作工具包：**
-  - WebSocket管理: 实时连接管理
-  - 实时同步: 多人协作同步
-  - 冲突解决: 操作冲突处理
-end note
-
-note right of CloudPlatform
-  **部署架构：**
-  - 微服务架构
-  - 水平扩展
-  - 负载均衡
-  - 高可用设计
+note right of WebCluster
+  **开发模式（无需后端）：**
+  - Next.js 独立运行
+  - AI 直连浏览器（Ollama localhost 或云 API）
+  - Zustand 状态存 Local Storage
+  - 按部署可启用 FastAPI + PostgreSQL + Redis
 end note
 
 @enduml

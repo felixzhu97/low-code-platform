@@ -5,17 +5,29 @@ LAYOUT_WITH_LEGEND()
 
 title Clean Architecture — dependency rule (`apps/web/src`)
 
-Container_Boundary(web, "Web application (clean architecture)") {
-    Component(presentation, "Presentation", "React, Emotion, Radix UI", "`presentation/` — UI, controlled views")
-    Component(application, "Application", "TypeScript", "`application/` — use-cases, DTOs, orchestration")
+Container_Boundary(web, "Web Application (Clean Architecture)") {
+    Component(presentation, "Presentation", "React, Emotion, Radix UI, React DnD", "`presentation/` — controlled views, hooks, editor components")
+    Component(application, "Application", "TypeScript", "`application/` — use-cases, DTOs, orchestration, port interfaces")
     Component(domain, "Domain", "TypeScript", "`domain/` — entities, VOs, domain services, repository interfaces")
-    Component(infrastructure, "Infrastructure", "TypeScript", "`infrastructure/` — store, HTTP, persistence implementations")
+    Component(infrastructure, "Infrastructure", "TypeScript", "`infrastructure/` — Zustand stores, repository implementations, HTTP clients, LocalStorage")
+    Component(lib, "Internal library", "TypeScript", "`lib/` — AI generator (ai-generator) and other app-specific libs")
 }
 
 Rel(presentation, application, "Calls use-cases and services")
-Rel(application, domain, "Depends on")
+Rel(application, domain, "Depends on (interfaces)")
 Rel(infrastructure, application, "Implements ports")
 Rel(infrastructure, domain, "Uses types and interfaces")
 Rel(presentation, domain, "May import types only — no infrastructure")
+Rel(lib, domain, "May import types only")
+
+note right of presentation
+  Presentation layer only communicates with domain via domain types.
+  Application layer orchestrates use-cases and exposes port interfaces.
+end note
+
+note right of infrastructure
+  Infrastructure layer implements ports defined by application layer.
+  Zustand stores manage component, canvas, theme, UI state.
+end note
 
 @enduml

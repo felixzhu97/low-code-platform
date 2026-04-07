@@ -6,17 +6,22 @@ LAYOUT_WITH_LEGEND()
 title 组件图 — Web 应用（`apps/web`）
 
 Container_Boundary(web, "Web 应用") {
-    Component(shell, "编辑器外壳", "React、Emotion", "`page.tsx`、侧栏、加载器、工具栏")
-    Component(canvas, "画布与面板", "React、Emotion、React DnD", "`canvas`、`component-panel`、`properties-panel`")
-    Component(renderers, "组件渲染器", "React、Emotion", "基础、布局、表单、数据、图表、schema")
-    Component(app, "应用层", "TypeScript", "用例、应用服务、端口")
-    Component(domain, "领域层", "TypeScript", "实体、值对象、领域服务")
-    Component(infra, "基础设施适配", "TypeScript", "Zustand、仓储实现、外部 I/O")
-    Component(packages, "Monorepo 包", "TypeScript", "`packages/*` 共享工具与契约")
+    Component(shell, "编辑器外壳", "React、Emotion", "`page.tsx`、Header、侧栏 Tabs、加载骨架")
+    Component(canvas, "画布与面板", "React、Emotion、React DnD", "`canvas/`、`component-panel/`、`properties-panel/`")
+    Component(renderers, "组件渲染器", "React、Emotion", "基础、布局、表单、数据、图表渲染器 + Schema 渲染器")
+    Component(ai, "AI 对话与生成", "React", "`presentation/components/ai/`、`presentation/hooks/use-ai-chat.ts`")
+    Component(app, "应用层", "TypeScript", "`application/` — 用例、应用服务、端口")
+    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务")
+    Component(infra, "基础设施适配", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现、外部 I/O")
+    Component(packages, "Monorepo 包", "TypeScript", "`packages/*` 共享工具与契约（schema、component-utils、utils）")
+    Component(lib_ai, "AI 生成器内部库", "TypeScript", "`apps/web/src/lib/ai-generator/` — 多模型客户端、生成器、验证器、解析器、提示构建器")
 }
 
 Rel(shell, canvas, "承载")
 Rel(canvas, app, "调度动作、调用用例")
+Rel(shell, ai, "AI 对话与生成")
+Rel(ai, app, "生成后应用到画布")
+Rel(ai, lib_ai, "调用")
 Rel(renderers, app, "读取 Schema 与绑定")
 Rel(shell, app, "协调编辑状态")
 Rel(app, domain, "使用")
@@ -25,5 +30,6 @@ Rel(infra, domain, "持久化映射")
 Rel(infra, packages, "引用")
 Rel(shell, packages, "引用")
 Rel(renderers, packages, "引用")
+Rel(lib_ai, packages, "引用")
 
 @enduml

@@ -1,19 +1,107 @@
-# TOGAF architecture views (English labels)
+# TOGAF Architecture Views
 
-PlantUML in this folder is produced from `docs/zh/architecture/togaf/*.puml` by `docs/scripts/togaf_zh_to_en_puml.py` (repo root).
+**中文文档：** [../../../zh/architecture/togaf/togaf-overview.md](../../../zh/architecture/togaf/togaf-overview.md)
 
-**Chinese narrative:** [../../../zh/architecture/togaf/togaf-overview.md](../../../zh/architecture/togaf/togaf-overview.md)
+This folder contains the Felix Low-Code Platform's TOGAF (The Open Group Architecture Framework) enterprise architecture documentation, written in PlantUML, covering four core views: Business, Application, Data, and Technology Architecture.
 
-| File | Topic |
-|------|--------|
-| [business-architecture.puml](business-architecture.puml) | Business capabilities & flows |
-| [application-architecture.puml](application-architecture.puml) | Application / clean layers |
-| [data-architecture.puml](data-architecture.puml) | Entities, storage, flows |
-| [technology-architecture.puml](technology-architecture.puml) | Stack & infrastructure |
+## Overview
+
+TOGAF provides a complete architecture development method. This project's TOGAF documentation describes the low-code platform's architecture across four dimensions:
+
+- **Business Architecture**: Business roles, processes, capabilities, and value streams
+- **Application Architecture**: Application systems, components, and their interactions
+- **Data Architecture**: Data entities, data flows, and storage
+- **Technology Architecture**: Technology stack, infrastructure, and deployment
+
+## File Index
+
+### 1. business-architecture.puml — Business Architecture
+
+Describes the platform's business design:
+
+- **Business Roles**: Page Designer, Developer, Administrator, End User
+- **Core Business Processes**: Page design & build, template management, collaboration, code export, Schema management, data management, i18n, auth, AI generation
+- **Business Capabilities**: Visual editing, component management, data binding, collaboration, code generation, Schema, templates, i18n, auth, charts, AI generation
+- **Value Stream**: From requirements to deployment
+
+Key update (2026-04): Added **Nested Component Flattening** as a new AI generation sub-capability, reflecting the fix for AI-generated nested JSON (`children` with full objects) being flattened into a flat `components` array with `parentId` links.
+
+### 2. application-architecture.puml — Application Architecture
+
+Describes the application system structure using Clean Architecture:
+
+- **Presentation Layer**: Visual editor, component panel, property panel, template library, data panel, AI Chat (`use-ai-chat.ts`), AI Generator UI, form builder, theme editor
+- **Application Layer**: ComponentManagementService, TemplateManagementService, DataBindingService, **AIGeneratorAdapter**, ApplyTemplateUseCase, JSONHelperService, HistoryService, SchemaManagementService
+- **Domain Layer**: Component, Template, Project, DataSource, DataMapping entities; ComponentFactory
+- **Infrastructure Layer**: Zustand stores (Canvas/Component/Data/History/Theme/UI), LocalStorage persistence, **AI Generator internal lib** (`apps/web/src/lib/ai-generator`)
+
+### 3. data-architecture.puml — Data Architecture
+
+Describes the platform's data model, flows, and storage:
+
+- **Core Data Entities**: Component (`children: string[]` + `parentId` for flat array), Template, Project, DataSource, DataMapping, ThemeConfig, HistoryRecord, PageSchema
+- **Data Storage**: PostgreSQL (optional), Redis (optional), Object Storage (optional), LocalStorage (browser)
+- **Key Data Flows**:
+  - **AI Generation**: user input → AI returns nested JSON → `JSONParser.flattenPageComponents()` flattens → ApplyTemplateUseCase → Zustand stores → canvas renders
+  - **Schema Import**: upload JSON → parse → flatten nested children → render to canvas
+  - Data binding, component editing, collaboration sync
+
+**Key Design**: Component uses a **flat `components` array + `parentId`** for parent-child relationships. AI-generated nested `children` (with full objects) are flattened by `JSONParser.flattenPageComponents()` to ensure Zustand stores render correctly.
+
+### 4. technology-architecture.puml — Technology Architecture
+
+Describes the tech stack, infrastructure, and deployment:
+
+- **Frontend**: Next.js 15 + React 19 + TypeScript + Emotion + Radix UI + React DnD + Recharts + Zustand + react-i18next
+- **AI Generator Internal Lib** (`apps/web/src/lib/ai-generator`): Multi-model client factory, BaseAIClient with retry and timeout, JSONParser, Component/Page generators, OllamaClient (10-min default timeout)
+- **Backend**: FastAPI + Python 3 + Uvicorn + Pydantic (optional deployment)
+- **Storage**: PostgreSQL, Redis, Object Storage, LocalStorage (browser)
+- **Dev Mode**: Frontend runs standalone without backend; AI connects directly from browser (Ollama localhost or cloud API); Zustand state stored in LocalStorage
+
+## How to View
+
+PlantUML files can be rendered with:
+
+- **Online**: [PlantUML Online](http://www.plantuml.com/plantuml/)
+- **VS Code**: PlantUML extension
+- **CLI**: PlantUML CLI
 
 ```bash
-python3 docs/scripts/togaf_zh_to_en_puml.py
 plantuml -tpng docs/en/architecture/togaf/business-architecture.puml
+plantuml -tpng docs/en/architecture/togaf/application-architecture.puml
+plantuml -tpng docs/en/architecture/togaf/data-architecture.puml
+plantuml -tpng docs/en/architecture/togaf/technology-architecture.puml
 ```
 
-**C4:** English [../c4/](../c4/), Chinese [../../../zh/architecture/c4/](../../../zh/architecture/c4/).
+## Architecture View Relationships
+
+1. **Business Architecture** defines "what and why" — provides business goals
+2. **Application Architecture** converts business capabilities into application functions
+3. **Data Architecture** defines how data is organized and flows
+4. **Technology Architecture** provides the technical infrastructure
+
+## Relationship with C4 Model
+
+- **C4 Model** (in [../c4/](../c4/)): Hierarchical view from system context to code-level design
+- **TOGAF** (this folder): Enterprise architecture views covering business, application, data, and technology dimensions
+
+## Latest Updates
+
+### 2026-04-07: AI Nested Component Flattening Fix
+
+- **Problem**: AI (e.g. Ollama qwen3-coder) returned nested JSON (`children` with full child objects), but the flattening logic was missing, causing only root nodes to be saved
+- **Fix**: Added `JSONParser.flattenPageComponents()` method that flattens nested `children` into a flat `components` array with `parentId` links; called by both `PageGenerator.generate()` and `ComponentGenerator.generate()`
+- **Ollama Timeout**: Default timeout raised from 30s to 10 minutes
+- **Files Changed**: `json-parser.ts`, `page-generator.ts`, `component-generator.ts`, `generator.ts`, adapters and hooks
+
+### 2026-01: AI Generator Integration
+
+- Multi-provider support: OpenAI, Claude, DeepSeek, Gemini, Azure OpenAI, Groq, Mistral, Ollama, SiliconFlow
+- Component and page generation, auto-validation, streaming responses
+- Separated AI Chat (AIChat) from AI Generator UI (AIGenerator)
+
+## References
+
+- [TOGAF](https://www.opengroup.org/togaf)
+- [PlantUML](https://plantuml.com/)
+- [C4 Model](https://c4model.com/)

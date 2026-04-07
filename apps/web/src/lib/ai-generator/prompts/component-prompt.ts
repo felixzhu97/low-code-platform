@@ -14,6 +14,8 @@ export class ComponentPromptBuilder {
   buildComponentPrompt(options: GenerateComponentOptions): string {
     const { description, type, position, context } = options;
 
+    const exampleComponent = '{"id":"comp_ex","type":"button","name":"Example Button","position":{"x":0,"y":0},"properties":{"text":"Click me","variant":"default"},"children":[],"parentId":null,"dataSource":null,"dataMapping":[]}';
+
     let prompt = COMPONENT_GENERATION_PROMPT.replace("{description}", description)
       .replace("{type}", type || "infer from description")
       .replace(
@@ -29,7 +31,9 @@ export class ComponentPromptBuilder {
       }
     }
 
-    prompt += "\n\nRules: unique id; descriptive name; valid defaults for the type. Output only JSON.";
+    prompt += `\n\nRules: unique id; descriptive name; valid defaults for the type.`;
+    prompt += `\n\nOutput Example: ${exampleComponent}`;
+    prompt += `\n\nOutput only valid JSON, no markdown, no explanation.`;
 
     return prompt;
   }

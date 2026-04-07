@@ -1,14 +1,42 @@
 @startuml c4-code-felix-zh
 skinparam classAttributeIconSize 0
-title 代码级示意 — 协作关系（`apps/web`）
+title 代码级示意 — 协作关系（`apps/web/src`）
 
-class "画布（表现层）" as Canvas
-class "创建组件用例（应用层）" as UC
-class "组件存储（基础设施）" as Store
-class "组件实体（领域）" as Comp
+package "表现层 presentation/" {
+  class Canvas
+  class ComponentPanel
+  class PropertiesPanel
+  class ComponentRenderer
+  class AIChat
+}
 
-Canvas --> UC : 调用
-UC --> Store : 经端口
+package "应用层 application/" {
+  class "ApplyTemplateUseCase" as UC1
+  class "ComponentManagementService" as CMS
+}
+
+package "基础设施层 infrastructure/" {
+  class "ComponentStore" as Store
+  class "LocalStorageAdapter" as Repo
+}
+
+package "领域层 domain/" {
+  class "Component" as Comp
+  class "ComponentFactoryService" as Factory
+}
+
+package "lib/ai-generator/" {
+  class AIGenerator
+  class OllamaClient
+}
+
+Canvas --> UC1 : 调用用例
+UC1 --> CMS : 调用服务
+CMS --> Store : 经 Zustand 端口
 Store --> Comp : 持有状态
+UC1 --> Repo : 持久化
+CMS --> Factory : 创建组件
+AIChat --> AIGenerator : 调用
+AIGenerator --> OllamaClient : HTTP 请求（本地 Ollama）
 
 @enduml

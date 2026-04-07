@@ -8,20 +8,23 @@ title 容器图 — Felix 低代码平台
 Person(user, "设计师 / 开发者", "使用平台")
 
 System_Boundary(boundary, "Felix 低代码平台") {
-    Container(web, "Web 应用", "TypeScript、Next.js 15、React 19 — Emotion + Radix UI", "编辑器、预览、属性面板，`apps/web`")
-    Container(api, "API 服务", "Python、FastAPI、Uvicorn、Pydantic", "REST API，`apps/server`")
-    ContainerDb(db, "主数据库", "PostgreSQL / SQL", "项目、Schema、用户（按部署启用）")
-    ContainerDb(cache, "缓存", "Redis", "会话、热点路径（按部署启用）")
+    Container(web, "Web 应用", "TypeScript、Next.js 15、React 19 — Emotion + Radix UI + Zustand", "可视化编辑器、AI 生成、模板库、数据绑定、属性配置，`apps/web`")
+    Container(api, "API 服务", "Python、FastAPI、Uvicorn、Pydantic", "REST API，`apps/server`（按部署启用）")
+    ContainerDb(db, "主数据库", "PostgreSQL（按部署启用）", "项目、Schema、用户")
+    ContainerDb(cache, "缓存", "Redis（按部署启用）", "会话、热点路径")
 }
 
-System_Ext(llm, "大模型 API", "AI 能力外部模型")
-System_Ext(object_store, "对象存储", "文件与导出包")
+System_Ext(llm, "大模型 API", "AI 能力（OpenAI、Claude、DeepSeek、Gemini、Ollama 等）")
+System_Ext(sf, "SiliconFlow", "SiliconFlow API")
+System_Ext(object_store, "对象存储", "文件与导出包（S3 兼容）")
+System_Ext(aws, "AWS 云服务", "S3、Lambda、CloudFront（可选）")
 
-Rel(user, web, "使用", "HTTPS/WSS")
-Rel(web, api, "JSON / REST", "HTTPS")
-Rel(api, db, "读写", "SQL/TCP")
-Rel(api, cache, "读写", "TCP")
+Rel(user, web, "使用", "HTTPS / WSS")
+Rel(web, api, "JSON / REST（按部署）", "HTTPS")
+Rel(api, db, "读写（按部署）", "SQL / TCP")
+Rel(api, cache, "读写（按部署）", "TCP")
 Rel(api, object_store, "可选文件 I/O", "HTTPS")
-Rel(web, llm, "可选浏览器侧 AI", "HTTPS")
+Rel(web, llm, "AI 生成（浏览器直连或经 API）", "HTTPS / 本地")
+Rel(web, sf, "AI 生成", "HTTPS")
 
 @enduml

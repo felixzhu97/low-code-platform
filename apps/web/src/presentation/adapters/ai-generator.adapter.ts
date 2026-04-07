@@ -79,7 +79,7 @@ export class AIGeneratorAdapter {
     description: string,
     type?: string,
     position?: { x: number; y: number }
-  ): Promise<Component> {
+  ): Promise<Component[]> {
     if (!this.generator) {
       throw new Error("AI generator not initialized. Call initialize() first.");
     }
@@ -91,7 +91,7 @@ export class AIGeneratorAdapter {
         position: position || { x: 0, y: 0 },
       });
 
-      return result.result as Component;
+      return result.result as Component[];
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -126,6 +126,23 @@ export class AIGeneratorAdapter {
       return [];
     }
     return await this.templateAdapter.applyTemplateFromComponents(components);
+  }
+
+  /**
+   * 追加组件到现有画布
+   * 用于 AI 生成时追加新组件而不替换现有组件
+   */
+  async appendComponentsToCanvas(
+    components: Component[],
+    existingComponents?: Component[]
+  ): Promise<Component[]> {
+    if (components.length === 0) {
+      return existingComponents || [];
+    }
+    return await this.templateAdapter.appendTemplateFromComponents(
+      components,
+      existingComponents
+    );
   }
 
   private handleError(error: unknown): void {

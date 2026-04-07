@@ -54,6 +54,31 @@ export class ApplyTemplateUseCase {
   }
 
   /**
+   * 追加组件到现有画布
+   * 用于 AI 生成时追加新组件而不替换现有组件
+   */
+  async appendComponents(
+    newComponents: Component[],
+    existingComponents?: Component[]
+  ): Promise<Component[]> {
+    // 处理新组件
+    const processedNew = this.processTemplateComponents(newComponents);
+
+    // 获取现有组件
+    const existing =
+      existingComponents ??
+      this.stateManagement.getComponentState().components;
+
+    // 追加到现有组件后面
+    const merged = [...existing, ...processedNew];
+
+    // 更新状态管理
+    this.stateManagement.setComponents(merged);
+
+    return merged;
+  }
+
+  /**
    * 处理模板组件：生成新ID并更新引用
    */
   private processTemplateComponents(

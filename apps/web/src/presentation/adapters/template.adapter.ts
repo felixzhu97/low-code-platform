@@ -39,4 +39,18 @@ export class TemplateAdapter {
       templateComponents
     );
   }
+
+  /**
+   * 追加组件到现有画布
+   * 用于 AI 生成时追加新组件而不替换现有组件
+   */
+  async appendTemplateFromComponents(
+    newComponents: Component[],
+    existingComponents?: Component[]
+  ): Promise<Component[]> {
+    return await this.applyTemplateUseCase.appendComponents(
+      newComponents,
+      existingComponents
+    );
+  }
 }

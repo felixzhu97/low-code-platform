@@ -6,12 +6,12 @@ LAYOUT_WITH_LEGEND()
 title Deployment — reference topology (dev / prod may vary)
 
 Deployment_Node(client, "Client", "macOS, Windows, Linux, mobile browsers") {
-    Deployment_Node(browser, "Browser", " Chromium / WebKit / Firefox ") {
+    Deployment_Node(browser, "Browser", "Chromium / WebKit / Firefox") {
         Container(webui, "SPA / SSR", "Next.js bundle — Emotion + static assets")
     }
 }
 
-Deployment_Node(hoster, "Application hosting", "Kubernetes, VM, or PaaS") {
+Deployment_Node(hoster, "Application hosting (optional)", "Kubernetes, VM, or PaaS") {
     Deployment_Node(compute, "Compute") {
         Container(next_runtime, "Next.js server", "Node.js — SSR and routes")
         Container(fastapi_runtime, "FastAPI", "Uvicorn — REST API")
@@ -19,12 +19,19 @@ Deployment_Node(hoster, "Application hosting", "Kubernetes, VM, or PaaS") {
     Deployment_Node(data, "Data tier (optional)") {
         ContainerDb(postgres, "PostgreSQL")
         ContainerDb(redis, "Redis")
+        ContainerDb(object, "Object storage (S3-compatible)")
     }
 }
 
+Deployment_Node(ollama, "Local inference (optional)", "User's local machine") {
+    ContainerDb(ollama_svc, "Ollama service", "localhost:11434 — no public network required")
+}
+
 Rel(browser, next_runtime, "HTTPS", "SSR and app routes")
-Rel(browser, fastapi_runtime, "HTTPS", "REST API")
+Rel(browser, fastapi_runtime, "HTTPS", "REST API (when enabled)")
+Rel(browser, ollama_svc, "Local HTTP", "AI generation (Ollama mode)")
 Rel(fastapi_runtime, postgres, "SQL", "")
 Rel(fastapi_runtime, redis, "TCP", "")
+Rel(fastapi_runtime, object, "HTTPS", "File upload/download")
 
 @enduml

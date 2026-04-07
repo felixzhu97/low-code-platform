@@ -4,258 +4,140 @@ skinparam linetype ortho
 
 title TOGAF 应用架构 - Felix 低代码平台
 
-' ============================================
-' 应用系统边界
-' ============================================
-
 package "Felix 低代码平台应用系统" {
-  
-  ' ============================================
-  ' 表现层应用组件
-  ' ============================================
+
   package "表现层 (Presentation Layer)" {
-    
-    component [可视化编辑器\nVisual Editor] as VisualEditor
-    interface "编辑器接口" as VisualEditorInterface
-    
-    component [组件面板\nComponent Panel] as ComponentPanel
-    interface "组件选择接口" as ComponentPanelInterface
-    
-    component [属性面板\nProperty Panel] as PropertyPanel
-    interface "属性配置接口" as PropertyPanelInterface
-    
-    component [模板库\nTemplate Library] as TemplateLibrary
-    interface "模板管理接口" as TemplateLibraryInterface
-    
-    component [数据面板\nData Panel] as DataPanel
-    interface "数据管理接口" as DataPanelInterface
-    
-    component [数据源选择器\nDataSource Selector] as DataSourceSelector
-    interface "数据源选择接口" as DataSourceSelectorInterface
-    
-    component [JSON数据输入\nJSON Data Input] as JsonDataInput
-    interface "JSON输入接口" as JsonDataInputInterface
-    
-    component [Schema导出组件\nSchema Export] as SchemaExport
-    interface "Schema导出接口" as SchemaExportUIInterface
-    
-    component [Schema导入组件\nSchema Import] as SchemaImport
-    interface "Schema导入接口" as SchemaImportUIInterface
-    
-    component [组件渲染器\nComponent Renderers] as ComponentRenderers
-    component [基础组件渲染器\nBasic Component Renderer] as BasicRenderer
-    component [图表组件渲染器\nChart Component Renderer] as ChartRenderer
-    component [数据组件渲染器\nData Component Renderer] as DataRenderer
-    component [表单组件渲染器\nForm Component Renderer] as FormRenderer
-    component [布局组件渲染器\nLayout Component Renderer] as LayoutRenderer
-    
-    component [认证组件\nAuth Components] as AuthComponents
-    
-    component [项目组件\nProjects Components] as ProjectsComponents
-    
-    component [表单构建器\nForm Builder] as FormBuilder
-    interface "表单构建接口" as FormBuilderInterface
-    
-    component [AI生成器组件\nAI Generator] as AIGeneratorUI
-    interface "AI生成接口" as AIGeneratorUIInterface
-    
-    VisualEditor --> VisualEditorInterface
-    ComponentPanel --> ComponentPanelInterface
-    PropertyPanel --> PropertyPanelInterface
-    TemplateLibrary --> TemplateLibraryInterface
-    DataPanel --> DataPanelInterface
-    DataSourceSelector --> DataSourceSelectorInterface
-    JsonDataInput --> JsonDataInputInterface
-    SchemaExport --> SchemaExportUIInterface
-    SchemaImport --> SchemaImportUIInterface
-    FormBuilder --> FormBuilderInterface
-    AIGeneratorUI --> AIGeneratorUIInterface
-    
+
+    component [可视化编辑器] as VisualEditor
+    component [组件面板] as ComponentPanel
+    component [属性面板] as PropertyPanel
+    component [模板库] as TemplateLibrary
+    component [数据面板] as DataPanel
+    component [数据源选择器] as DataSourceSelector
+    component [JSON数据输入] as JsonDataInput
+
+    component [组件渲染器] as ComponentRenderers
+    component [基础组件渲染器\nBasicRenderer] as BasicRenderer
+    component [图表组件渲染器\nChartRenderer] as ChartRenderer
+    component [数据组件渲染器\nDataRenderer] as DataRenderer
+    component [表单组件渲染器\nFormRenderer] as FormRenderer
+    component [布局组件渲染器\nLayoutRenderer] as LayoutRenderer
+
+    component [AI对话组件\nAIChat] as AIChat
+    component [AI生成器UI\nAIGenerator] as AIGeneratorUI
+    component [表单构建器\nFormBuilder] as FormBuilder
+    component [主题编辑器\nThemeEditor] as ThemeEditor
+    component [动画编辑器\nAnimationEditor] as AnimationEditor
+
     ComponentRenderers --> BasicRenderer
     ComponentRenderers --> ChartRenderer
     ComponentRenderers --> DataRenderer
     ComponentRenderers --> FormRenderer
     ComponentRenderers --> LayoutRenderer
   }
-  
-  ' ============================================
-  ' 应用层组件
-  ' ============================================
+
   package "应用层 (Application Layer)" {
-    
-    component [组件管理服务\nComponent Management Service] as ComponentService
-    interface "组件操作接口" as ComponentServiceInterface
-    
-    component [模板管理服务\nTemplate Management Service] as TemplateService
-    interface "模板操作接口" as TemplateServiceInterface
-    
-    component [数据绑定服务\nData Binding Service] as DataBindingService
-    interface "数据绑定接口" as DataBindingServiceInterface
-    
-    component [数据源服务\nDataSource Service] as DataSourceService
-    interface "数据源操作接口" as DataSourceServiceInterface
-    
-    component [数据源结构服务\nDataSource Structure Service] as DataSourceStructureService
-    interface "结构解析接口" as DataSourceStructureServiceInterface
-    
-    component [JSON工具服务\nJSON Helper Service] as JsonHelperService
-    interface "JSON操作接口" as JsonHelperServiceInterface
-    
-    component [画布管理服务\nCanvas Management Service] as CanvasService
-    interface "画布操作接口" as CanvasServiceInterface
-    
-    component [历史记录服务\nHistory Service] as HistoryService
-    interface "历史操作接口" as HistoryServiceInterface
-    
-    component [Schema管理服务\nSchema Management Service] as SchemaService
-    interface "Schema操作接口" as SchemaServiceInterface
-    
-    component [模板命令服务\nTemplate Command Service] as TemplateCommandService
-    interface "模板命令接口" as TemplateCommandServiceInterface
-    
-    component [AI生成器适配器\nAI Generator Adapter] as AIGeneratorAdapter
-    interface "AI生成适配接口" as AIGeneratorAdapterInterface
-    
-    ComponentService --> ComponentServiceInterface
-    TemplateService --> TemplateServiceInterface
-    DataBindingService --> DataBindingServiceInterface
-    DataSourceService --> DataSourceServiceInterface
-    DataSourceStructureService --> DataSourceStructureServiceInterface
-    JsonHelperService --> JsonHelperServiceInterface
-    CanvasService --> CanvasServiceInterface
-    HistoryService --> HistoryServiceInterface
-    SchemaService --> SchemaServiceInterface
-    TemplateCommandService --> TemplateCommandServiceInterface
-    AIGeneratorAdapter --> AIGeneratorAdapterInterface
+
+    component [组件管理服务\nComponentManagementService] as ComponentService
+    component [模板管理服务\nTemplateManagementService] as TemplateService
+    component [数据绑定服务\nDataBindingService] as DataBindingService
+    component [数据源服务\nDataSourceService] as DataSourceService
+    component [JSON工具服务\nJsonHelperService] as JsonHelperService
+    component [画布管理服务\nCanvasManagementService] as CanvasService
+    component [历史记录服务\nHistoryService] as HistoryService
+    component [Schema管理服务\nSchemaManagementService] as SchemaService
+    component [AI生成器适配器\nAIGeneratorAdapter] as AIGeneratorAdapter
+    component [应用模板用例\nApplyTemplateUseCase] as ApplyTemplateUseCase
   }
-  
-  ' ============================================
-  ' 领域层组件
-  ' ============================================
+
   package "领域层 (Domain Layer)" {
-    
-    component [组件实体\nComponent Entity] as ComponentEntity
-    component [模板实体\nTemplate Entity] as TemplateEntity
-    component [项目实体\nProject Entity] as ProjectEntity
-    component [数据源实体\nDataSource Entity] as DataSourceEntity
-    component [Schema实体\nPageSchema Entity] as SchemaEntity
-    component [组件工厂\nComponent Factory] as ComponentFactory
+    component [Component 组件实体] as ComponentEntity
+    component [Template 模板实体] as TemplateEntity
+    component [Project 项目实体] as ProjectEntity
+    component [DataSource 数据源实体] as DataSourceEntity
+    component [DataMapping 数据映射实体] as DataMappingEntity
+    component [PageSchema 页面Schema实体] as PageSchemaEntity
+    component [ComponentFactory 组件工厂] as ComponentFactory
   }
-  
-  ' ============================================
-  ' 基础设施层组件
-  ' ============================================
+
   package "基础设施层 (Infrastructure Layer)" {
-    
-    component [组件仓储\nComponent Repository] as ComponentRepo
-    interface "仓储接口" as ComponentRepoInterface
-    
-    component [模板仓储\nTemplate Repository] as TemplateRepo
-    interface "仓储接口" as TemplateRepoInterface
-    
-    component [数据源仓储\nDataSource Repository] as DataSourceRepo
-    interface "仓储接口" as DataSourceRepoInterface
-    
+
     component [状态管理\nState Management] as StateManagement
-    interface "状态接口" as StateManagementInterface
-    component [画布状态\nCanvas Store] as CanvasStore
-    component [组件状态\nComponent Store] as ComponentStore
-    component [数据状态\nData Store] as DataStore
-    component [历史状态\nHistory Store] as HistoryStore
-    component [主题状态\nTheme Store] as ThemeStore
-    component [UI状态\nUI Store] as UIStore
-    
-    component [持久化层\nPersistence Layer] as PersistenceLayer
-    component [本地存储适配器\nLocal Storage Adapter] as LocalStorageAdapter
-    component [数据库适配器\nDatabase Adapter] as DatabaseAdapter
-    
-    component [协作服务\nCollaboration Service] as CollaborationService
-    interface "协作接口" as CollaborationServiceInterface
-    
-    component [Schema导出服务\nSchema Export Service] as SchemaExportService
-    interface "Schema导出接口" as SchemaExportInterface
-    
-    component [Schema导入服务\nSchema Import Service] as SchemaImportService
-    interface "Schema导入接口" as SchemaImportInterface
-    
-    component [Schema渲染器\nSchema Renderer] as SchemaRenderer
-    interface "Schema渲染接口" as SchemaRendererInterface
-    
-    component [持久化管理器\nPersistence Manager] as PersistenceManager
-    interface "持久化接口" as PersistenceManagerInterface
-    
-    component [数据解析适配器\nData Parser Adapter] as DataParserAdapter
-    component [Schema处理适配器\nSchema Processor Adapter] as SchemaProcessorAdapter
-    component [数据映射适配器\nData Mapper Adapter] as DataMapperAdapter
-    component [布局计算适配器\nLayout Calculator Adapter] as LayoutCalculatorAdapter
-    
-    component [AI生成器包\nAI Generator Package] as AIGeneratorPackage
-    interface "AI生成器接口" as AIGeneratorPackageInterface
-    component [AI客户端\nAI Clients] as AIClients
-    component [OpenAI客户端\nOpenAI Client] as OpenAIClient
-    component [Claude客户端\nClaude Client] as ClaudeClient
-    component [DeepSeek客户端\nDeepSeek Client] as DeepSeekClient
-    component [组件生成器\nComponent Generator] as ComponentGenerator
-    component [页面生成器\nPage Generator] as PageGenerator
-    component [组件验证器\nComponent Validator] as ComponentValidator
-    component [页面验证器\nPage Validator] as PageValidator
-    component [提示构建器\nPrompt Builders] as PromptBuilders
-    component [JSON解析器\nJSON Parser] as JsonParser
-    
-    ComponentRepo --> ComponentRepoInterface
-    TemplateRepo --> TemplateRepoInterface
-    DataSourceRepo --> DataSourceRepoInterface
-    StateManagement --> StateManagementInterface
+    component [画布状态\nCanvasStore] as CanvasStore
+    component [组件状态\nComponentStore] as ComponentStore
+    component [数据状态\nDataStore] as DataStore
+    component [历史状态\nHistoryStore] as HistoryStore
+    component [主题状态\nThemeStore] as ThemeStore
+    component [UI状态\nUIStore] as UIStore
+
+    component [持久化管理器\nPersistenceManager] as PersistenceManager
+    component [本地存储适配器\nLocalStorageAdapter] as LocalStorageAdapter
+    component [持久化管理器\nPersistenceManager] as DBAdapter
+
+    component [Schema导出服务\nSchemaExportService] as SchemaExportService
+    component [Schema导入服务\nSchemaImportService] as SchemaImportService
+    component [Schema渲染器\nSchemaRenderer] as SchemaRenderer
+
+    component [AI生成器内部库\napps/web/src/lib/ai-generator] as AIGeneratorLib
+    component [AI客户端工厂\nAIClientFactory] as AIClientFactory
+    component [OpenAI客户端] as OpenAIClient
+    component [Claude客户端] as ClaudeClient
+    component [DeepSeek客户端] as DeepSeekClient
+    component [Gemini客户端] as GeminiClient
+    component [Ollama客户端] as OllamaClient
+    component [Groq客户端] as GroqClient
+    component [Mistral客户端] as MistralClient
+    component [SiliconFlow客户端] as SiliconFlowClient
+    component [AzureOpenAI客户端] as AzureOpenAIClient
+    component [组件生成器\nComponentGenerator] as ComponentGenerator
+    component [页面生成器\nPageGenerator] as PageGenerator
+    component [组件验证器\nComponentValidator] as ComponentValidator
+    component [页面验证器\nPageValidator] as PageValidator
+    component [JSON解析器\nJSONParser] as JsonParser
+    component [组件提示构建器\nComponentPromptBuilder] as ComponentPromptBuilder
+    component [页面提示构建器\nPagePromptBuilder] as PagePromptBuilder
+
     StateManagement --> CanvasStore
     StateManagement --> ComponentStore
     StateManagement --> DataStore
     StateManagement --> HistoryStore
     StateManagement --> ThemeStore
     StateManagement --> UIStore
-    
-    PersistenceLayer --> LocalStorageAdapter
-    PersistenceLayer --> DatabaseAdapter
-    PersistenceManager --> PersistenceLayer : 使用
-    
-    CollaborationService --> CollaborationServiceInterface
-    SchemaExportService --> SchemaExportInterface
-    SchemaImportService --> SchemaImportInterface
-    SchemaRenderer --> SchemaRendererInterface
-    PersistenceManager --> PersistenceManagerInterface
-    
-    AIGeneratorPackage --> AIGeneratorPackageInterface
-    AIGeneratorPackage --> AIClients
-    AIClients --> OpenAIClient
-    AIClients --> ClaudeClient
-    AIClients --> DeepSeekClient
-    AIGeneratorPackage --> ComponentGenerator
-    AIGeneratorPackage --> PageGenerator
-    AIGeneratorPackage --> ComponentValidator
-    AIGeneratorPackage --> PageValidator
-    AIGeneratorPackage --> PromptBuilders
-    AIGeneratorPackage --> JsonParser
+
+    PersistenceManager --> LocalStorageAdapter
+    PersistenceManager --> DBAdapter
+
+    AIGeneratorLib --> AIClientFactory
+    AIClientFactory --> OpenAIClient
+    AIClientFactory --> ClaudeClient
+    AIClientFactory --> DeepSeekClient
+    AIClientFactory --> GeminiClient
+    AIClientFactory --> OllamaClient
+    AIClientFactory --> GroqClient
+    AIClientFactory --> MistralClient
+    AIClientFactory --> SiliconFlowClient
+    AIClientFactory --> AzureOpenAIClient
+    AIGeneratorLib --> ComponentGenerator
+    AIGeneratorLib --> PageGenerator
+    AIGeneratorLib --> ComponentValidator
+    AIGeneratorLib --> PageValidator
+    AIGeneratorLib --> JsonParser
+    AIGeneratorLib --> ComponentPromptBuilder
+    AIGeneratorLib --> PagePromptBuilder
   }
 }
 
-' ============================================
-' 外部系统
-' ============================================
-
 package "外部系统 (External Systems)" {
-  component [认证服务\nAuthentication Service] as AuthService
+  component [AI API\nOpenAI / Claude / DeepSeek / Gemini] as AIServices
+  component [Ollama\n本地大模型] as OllamaLocal
+  component [SiliconFlow API] as SiliconFlowAPI
+  component [认证服务\nAuth Service] as AuthService
   component [数据库\nDatabase] as Database
-  component [缓存服务\nCache Service] as CacheService
+  component [缓存服务\nCache] as CacheService
   component [对象存储\nObject Storage] as ObjectStorage
-  component [Git仓库\nGit Repository] as GitRepo
-  component [CDN服务\nCDN Service] as CDNService
-  component [OpenAI API\nOpenAI API] as OpenAIService
-  component [Claude API\nClaude API] as ClaudeService
-  component [DeepSeek API\nDeepSeek API] as DeepSeekService
 }
 
-' ============================================
-' 应用交互关系
-' ============================================
+' ========== 交互关系 ==========
 
 VisualEditor --> ComponentService : 调用
 VisualEditor --> CanvasService : 调用
@@ -267,105 +149,55 @@ TemplateLibrary --> TemplateService : 调用
 DataPanel --> DataBindingService : 调用
 DataPanel --> DataSourceService : 调用
 DataSourceSelector --> DataSourceService : 调用
-DataSourceSelector --> DataBindingService : 调用
 JsonDataInput --> JsonHelperService : 调用
-JsonDataInput --> DataSourceStructureService : 调用
-SchemaExport --> SchemaExportService : 调用
-SchemaImport --> SchemaImportService : 调用
-FormBuilder --> TemplateCommandService : 调用
 AIGeneratorUI --> AIGeneratorAdapter : 调用
-ComponentRenderers --> ComponentService : 调用
+AIGeneratorAdapter --> AIGeneratorLib : 调用
+AIGeneratorAdapter --> ApplyTemplateUseCase : 应用生成结果
+AIChat --> AIGeneratorAdapter : 对话调用
+FormBuilder --> ApplyTemplateUseCase : 应用表单
 VisualEditor --> ComponentRenderers : 使用
+ComponentRenderers --> ComponentService : 调用
 
 ComponentService --> ComponentEntity : 使用
-ComponentService --> ComponentRepo : 使用
 TemplateService --> TemplateEntity : 使用
-TemplateService --> TemplateRepo : 使用
-TemplateCommandService --> TemplateEntity : 使用
-TemplateCommandService --> TemplateRepo : 使用
+ApplyTemplateUseCase --> TemplateService : 调用
 DataBindingService --> DataSourceEntity : 使用
-DataBindingService --> DataSourceRepo : 使用
 DataSourceService --> DataSourceEntity : 使用
-DataSourceService --> DataSourceRepo : 使用
-DataSourceStructureService --> DataSourceEntity : 使用
-JsonHelperService --> DataSourceEntity : 处理
 CanvasService --> ComponentFactory : 使用
-SchemaExportService --> SchemaEntity : 使用
-SchemaExportService --> PersistenceManager : 使用
-SchemaImportService --> SchemaEntity : 使用
-SchemaImportService --> PersistenceManager : 使用
-SchemaRenderer --> SchemaEntity : 使用
-SchemaRenderer --> ComponentService : 使用
+SchemaExportService --> PageSchemaEntity : 使用
+SchemaImportService --> PageSchemaEntity : 使用
+SchemaRenderer --> PageSchemaEntity : 使用
 
-AIGeneratorAdapter --> AIGeneratorPackage : 使用
-AIGeneratorAdapter --> TemplateService : 使用（应用生成的组件）
+AIGeneratorLib --> ComponentGenerator : 使用
+AIGeneratorLib --> PageGenerator : 使用
+ComponentGenerator --> AIClientFactory : 调用
+PageGenerator --> AIClientFactory : 调用
+JsonParser --> ComponentGenerator : 解析嵌套组件
 
-AIGeneratorPackage --> ComponentGenerator : 使用
-AIGeneratorPackage --> PageGenerator : 使用
-AIGeneratorPackage --> ComponentValidator : 使用
-AIGeneratorPackage --> PageValidator : 使用
-AIGeneratorPackage --> PromptBuilders : 使用
-AIGeneratorPackage --> JsonParser : 使用
-ComponentGenerator --> AIClients : 调用
-PageGenerator --> AIClients : 调用
-AIClients --> OpenAIClient : 使用
-AIClients --> ClaudeClient : 使用
-AIClients --> DeepSeekClient : 使用
+AIGeneratorLib --> OllamaClient : 本地推理
+AIGeneratorLib --> OpenAIClient : 云服务
+AIGeneratorLib --> SiliconFlowAPI : SiliconFlow
 
-DataSourceService --> DataParserAdapter : 使用（CSV/XML解析、JSON验证）
-SchemaExportService --> SchemaProcessorAdapter : 使用（Schema序列化）
-SchemaImportService --> SchemaProcessorAdapter : 使用（Schema反序列化、验证、迁移）
-DataBindingService --> DataMapperAdapter : 使用（数据映射生成和应用）
-CanvasService --> LayoutCalculatorAdapter : 使用（布局计算、网格对齐、碰撞检测）
+ComponentStore --> PersistenceManager : 持久化
+ComponentService --> StateManagement : 更新状态
 
-OpenAIClient --> OpenAIService : API调用
-ClaudeClient --> ClaudeService : API调用
-DeepSeekClient --> DeepSeekService : API调用
+note right of AIGeneratorAdapter
+  **AI 生成关键流程：**
+  1. 用户自然语言输入 → AIChat / AIGeneratorUI
+  2. AIGeneratorAdapter → AIGeneratorLib
+  3. AIClientFactory 选择客户端（Ollama/OpenAI/Claude 等）
+  4. ComponentGenerator / PageGenerator 生成
+  5. JSONParser.flattenPageComponents() 将嵌套 children 展平为扁平列表
+  6. ApplyTemplateUseCase 应用到 Zustand stores → 画布渲染
+end note
 
-ComponentRepo --> Database : 读写
-TemplateRepo --> Database : 读写
-DataSourceRepo --> Database : 读写
-StateManagement --> CacheService : 读写
-PersistenceManager --> PersistenceLayer : 使用
-PersistenceLayer --> DatabaseAdapter : 使用
-PersistenceLayer --> LocalStorageAdapter : 使用
-DatabaseAdapter --> Database : 读写
-LocalStorageAdapter --> CacheService : 本地存储
-
-CollaborationService --> StateManagement : 同步状态
-CollaborationService --> CacheService : 消息队列
-
-ComponentService ..> AuthService : 验证权限
-TemplateService ..> AuthService : 验证权限
-SchemaExportService ..> AuthService : 验证权限
-SchemaImportService ..> AuthService : 验证权限
-
-SchemaExportService --> ObjectStorage : 存储Schema文件
-SchemaImportService --> ObjectStorage : 读取Schema文件
-VisualEditor --> CDNService : 加载静态资源
-SchemaRenderer --> CDNService : 加载静态资源
-
-' ============================================
-' 数据流
-' ============================================
-
-note right of VisualEditor
-  **主要数据流：**
-  1. 组件操作 → 应用服务 → 领域实体 → 状态管理stores → 本地存储/数据库
-  2. 数据变更 → 状态管理 → 协作服务
-  3. JSON输入 → JSON工具服务 → 数据源服务 → 数据绑定服务 → 组件渲染器 → 组件渲染
-  4. 数据源选择 → 数据源服务 → 数据结构解析 → 自动渲染
-  5. Schema导出 → Schema导出服务 → Schema处理适配器（序列化） → 持久化管理器 → 文件存储
-  6. Schema导入 → Schema导入服务 → Schema处理适配器（反序列化/验证/迁移） → 持久化管理器 → 状态管理
-  7. Schema渲染 → Schema渲染器 → 组件服务 → 组件渲染器 → 画布渲染
-  8. CSV/XML解析 → 数据源服务 → 数据解析适配器 → 数据绑定服务
-  9. 数据映射 → 数据绑定服务 → 数据映射适配器（映射生成/应用） → 组件渲染器 → 组件渲染
-  10. 布局计算 → 画布服务 → 布局计算适配器（布局计算/网格对齐） → 组件位置更新
-  11. 表单构建 → 模板命令服务 → 模板服务 → 组件渲染器 → 表单渲染
-  12. 状态持久化 → 持久化管理器 → 本地存储适配器/数据库适配器 → 本地存储/数据库
-  13. AI生成组件 → AI生成器组件 → AI生成器适配器 → AI生成器包 → AI客户端 → AI API → 组件生成器 → 组件验证器 → 模板服务 → 组件渲染器 → 画布渲染
-  14. AI生成页面 → AI生成器组件 → AI生成器适配器 → AI生成器包 → AI客户端 → AI API → 页面生成器 → 页面验证器 → 模板服务 → 组件渲染器 → 画布渲染
+note right of ComponentRenderers
+  **组件渲染分工：**
+  - BasicRenderer: text, button, image, divider, avatar, badge, tag, progress, carousel
+  - LayoutRenderer: container, grid-layout, flex-layout, card, collapse, tabs, modal, drawer
+  - FormRenderer: input, textarea, select, checkbox, radio, switch, slider, date-picker, form
+  - ChartRenderer: 各种图表类型
+  - DataRenderer: data-* 类型组件
 end note
 
 @enduml
-

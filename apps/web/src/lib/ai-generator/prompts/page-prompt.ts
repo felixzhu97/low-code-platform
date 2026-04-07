@@ -11,6 +11,8 @@ You can also generate full page schemas: multiple components in a logical layout
   buildPagePrompt(options: GeneratePageOptions): string {
     const { description, layout, context } = options;
 
+    const examplePage = '{"version":"1.0.0","metadata":{"name":"Example Page","description":"A test page","createdAt":"2024-01-01T00:00:00.000Z","updatedAt":"2024-01-01T00:00:00.000Z","version":"1.0.0"},"components":[],"canvas":{"showGrid":false,"snapToGrid":false,"viewportWidth":1920,"activeDevice":"desktop"},"theme":{},"dataSources":[]}';
+
     let prompt = PAGE_GENERATION_PROMPT.replace("{description}", description).replace(
       "{layout}",
       this.getLayoutDescription(layout)
@@ -20,7 +22,9 @@ You can also generate full page schemas: multiple components in a logical layout
     if (contextStr) prompt += `\n\nContext:\n${contextStr}`;
 
     prompt += `\n\nLayout:\n${this.getLayoutGuidelines(layout)}`;
-    prompt += `\n\nRequirements: clear hierarchy; use container/layout components; sensible positions and spacing; complete metadata (name, createdAt, updatedAt, version). Output only JSON.`;
+    prompt += `\n\nRequirements: clear hierarchy; use container/layout components; sensible positions and spacing; complete metadata (name, createdAt, updatedAt, version).`;
+    prompt += `\n\nOutput Example: ${examplePage}`;
+    prompt += `\n\nOutput only valid JSON, no markdown, no explanation.`;
 
     return prompt;
   }

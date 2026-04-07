@@ -4,494 +4,186 @@ skinparam linetype ortho
 
 title TOGAF 数据架构 - Felix 低代码平台
 
-' ============================================
-' 数据实体组件
-' ============================================
-
 package "核心数据实体 (Core Data Entities)" {
-  
+
   component [Component\n组件实体] as Component
-  component [id: String] as ComponentId
-  component [name: String] as ComponentName
-  component [type: String] as ComponentType
-  component [props: Object] as ComponentProps
-  component [style: Object] as ComponentStyle
-  component [position: Position] as ComponentPosition
-  component [children: List] as ComponentChildren
-  component [parentId: String] as ComponentParentId
-  component [dataBinding: Object] as ComponentDataBinding
-  
+  component [id: string] as CompId
+  component [type: string] as CompType
+  component [name: string] as CompName
+  component [properties: object] as CompProps
+  component [position: {x, y}] as CompPosition
+  component [children: string[]] as CompChildren
+  component [parentId: string | null] as CompParentId
+  component [dataSource: string | null] as CompDataSource
+  component [dataMapping: DataMapping[]] as CompDataMapping
+
   component [Template\n模板实体] as Template
-  component [Template_id: String] as TemplateId
-  component [Template_name: String] as TemplateName
-  component [Template_description: String] as TemplateDescription
-  component [Template_category: String] as TemplateCategory
-  component [rootComponent: Component] as TemplateRootComponent
-  component [Template_preview: Object] as TemplatePreview
-  component [Template_authorId: String] as TemplateAuthorId
-  component [Template_isPublic: Boolean] as TemplateIsPublic
-  
+  component [id: string] as TplId
+  component [name: string] as TplName
+  component [category: string] as TplCategory
+  component [rootComponentId: string] as TplRoot
+  component [preview: string] as TplPreview
+  component [isPublic: boolean] as TplPublic
+
   component [Project\n项目实体] as Project
-  component [Project_id: String] as ProjectId
-  component [Project_name: String] as ProjectName
-  component [Project_description: String] as ProjectDescription
-  component [Project_rootComponent: Component] as ProjectRootComponent
-  component [Project_theme: ThemeConfig] as ProjectTheme
-  component [Project_dataSources: List] as ProjectDataSources
-  component [Project_ownerId: String] as ProjectOwnerId
-  component [Project_collaborators: List] as ProjectCollaborators
-  component [Project_status: ProjectStatus] as ProjectStatus
-  
+  component [id: string] as ProjId
+  component [name: string] as ProjName
+  component [theme: ThemeConfig] as ProjTheme
+  component [ownerId: string] as ProjOwner
+  component [collaborators: string[]] as ProjCollaborators
+  component [status: string] as ProjStatus
+
   component [DataSource\n数据源实体] as DataSource
-  component [DataSource_id: String] as DataSourceId
-  component [DataSource_name: String] as DataSourceName
-  component [DataSource_type: DataSourceType] as DataSourceType
-  component [DataSource_config: Object] as DataSourceConfig
-  component [DataSource_data: Object] as DataSourceData
-  component [DataSource_status: DataSourceStatus] as DataSourceStatus
-  component [DataSource_errorMessage: String] as DataSourceErrorMessage
-  component [DataSource_lastUpdated: DateTime] as DataSourceLastUpdated
-  
-  component [JsonDataTemplate\nJSON数据模板] as JsonDataTemplate
-  component [JsonTemplate_id: String] as JsonTemplateId
-  component [JsonTemplate_name: String] as JsonTemplateName
-  component [JsonTemplate_description: String] as JsonTemplateDescription
-  component [JsonTemplate_data: Object] as JsonTemplateData
-  component [JsonTemplate_componentTypes: List<String>] as JsonTemplateComponentTypes
-  component [JsonTemplate_preview: String] as JsonTemplatePreview
-  
-  component [DataMapping\n数据映射实体] as DataMapping
-  component [DataMapping_id: String] as DataMappingId
-  component [DataMapping_componentId: String] as DataMappingComponentId
-  component [DataMapping_dataSourceId: String] as DataMappingDataSourceId
-  component [DataMapping_field: String] as DataMappingField
-  component [DataMapping_sourcePath: String] as DataMappingSourcePath
-  component [DataMapping_targetPath: String] as DataMappingTargetPath
-  component [DataMapping_transform: TransformType] as DataMappingTransform
-  component [DataMapping_defaultValue: Any] as DataMappingDefaultValue
-  
-  component [User\n用户实体] as User
-  component [User_id: String] as UserId
-  component [User_username: String] as UserUsername
-  component [User_email: String] as UserEmail
-  component [User_role: String] as UserRole
-  component [User_preferences: UserPreferences] as UserPreferences
-  
+  component [id: string] as DSId
+  component [name: string] as DSName
+  component [type: 'static' | 'api' | 'database'] as DSType
+  component [config: object] as DSConfig
+  component [data: any] as DSData
+  component [status: string] as DSStatus
+  component [errorMessage: string] as DSError
+  component [lastUpdated: DateTime] as DSUpdated
+
+  component [DataMapping\n数据映射实体] as DataMappingEntity
+  component [id: string] as DMId
+  component [componentId: string] as DMCompId
+  component [dataSourceId: string] as DMDSId
+  component [field: string] as DMField
+  component [sourcePath: string] as DMSourcePath
+  component [targetPath: string] as DM_targetPath
+  component [transform: TransformType] as DMTransform
+  component [defaultValue: any] as DMDefault
+
   component [ThemeConfig\n主题配置实体] as ThemeConfig
-  component [ThemeConfig_id: String] as ThemeConfigId
-  component [ThemeConfig_name: String] as ThemeConfigName
-  component [ThemeConfig_colors: ColorPalette] as ThemeConfigColors
-  component [ThemeConfig_typography: TypographyConfig] as ThemeConfigTypography
-  component [ThemeConfig_spacing: SpacingConfig] as ThemeConfigSpacing
-  component [ThemeConfig_isDarkMode: Boolean] as ThemeConfigIsDarkMode
-  
+  component [primaryColor: string] as TCPrimary
+  component [secondaryColor: string] as TCSecondary
+  component [backgroundColor: string] as TCBackground
+  component [fontFamily: string] as TCFont
+  component [isDarkMode: boolean] as TCDark
+
   component [HistoryRecord\n历史记录实体] as HistoryRecord
-  component [HistoryRecord_id: String] as HistoryRecordId
-  component [HistoryRecord_projectId: String] as HistoryRecordProjectId
-  component [HistoryRecord_userId: String] as HistoryRecordUserId
-  component [HistoryRecord_operation: OperationType] as HistoryRecordOperation
-  component [HistoryRecord_data: Object] as HistoryRecordData
-  component [HistoryRecord_timestamp: DateTime] as HistoryRecordTimestamp
-  
-  component [PageSchema\n页面Schema实体] as PageSchema
-  component [PageSchema_version: String] as PageSchemaVersion
-  component [PageSchema_metadata: SchemaMetadata] as PageSchemaMetadata
-  component [PageSchema_components: List<Component>] as PageSchemaComponents
-  component [PageSchema_canvas: CanvasConfig] as PageSchemaCanvas
-  component [PageSchema_theme: ThemeConfig] as PageSchemaTheme
-  component [PageSchema_dataSources: List<DataSource>] as PageSchemaDataSources
-  component [PageSchema_settings: ProjectSettings] as PageSchemaSettings
-  
-  component [ChartConfig\n图表配置实体] as ChartConfig
-  component [ChartConfig_type: ChartType] as ChartConfigType
-  component [ChartConfig_xField: String] as ChartConfigXField
-  component [ChartConfig_yField: String] as ChartConfigYField
-  component [ChartConfig_seriesField: String] as ChartConfigSeriesField
-  component [ChartConfig_colorField: String] as ChartConfigColorField
-  component [ChartConfig_annotations: List] as ChartConfigAnnotations
-  
-  component [TableColumn\n表格列实体] as TableColumn
-  component [TableColumn_key: String] as TableColumnKey
-  component [TableColumn_title: String] as TableColumnTitle
-  component [TableColumn_dataIndex: String] as TableColumnDataIndex
-  component [TableColumn_width: Number] as TableColumnWidth
-  component [TableColumn_render: String] as TableColumnRender
-  
-  component [PaginationConfig\n分页配置实体] as PaginationConfig
-  component [PaginationConfig_current: Number] as PaginationConfigCurrent
-  component [PaginationConfig_pageSize: Number] as PaginationConfigPageSize
-  component [PaginationConfig_total: Number] as PaginationConfigTotal
-  component [PaginationConfig_showTotal: Boolean] as PaginationConfigShowTotal
-  
-  component [TreeNode\n树节点实体] as TreeNode
-  component [TreeNode_id: String] as TreeNodeId
-  component [TreeNode_title: String] as TreeNodeTitle
-  component [TreeNode_children: List<TreeNode>] as TreeNodeChildren
-  component [TreeNode_icon: String] as TreeNodeIcon
-  component [TreeNode_expanded: Boolean] as TreeNodeExpanded
-  component [TreeNode_selected: Boolean] as TreeNodeSelected
-  component [TreeNode_disabled: Boolean] as TreeNodeDisabled
+  component [id: string] as HRId
+  component [projectId: string] as HRProjId
+  component [components: Component[]] as HRComponents
+  component [timestamp: DateTime] as HRTime
+
+  component [PageSchema\n页面Schema] as PageSchema
+  component [version: string] as PSVersion
+  component [metadata: object] as PSMetadata
+  component [components: Component[]] as PSComponents
+  component [canvas: object] as PSCanvas
+  component [theme: ThemeConfig] as PSTheme
+  component [dataSources: DataSource[]] as PSDataSources
 }
 
-' ============================================
-' 实体关系
-' ============================================
-
-Component "1" *-- "0..*" Component : 父子关系
-Project "1" *-- "1" Component : 根组件
-Project "1" *-- "0..*" DataSource : 数据源
-Project "1" *-- "1" ThemeConfig : 主题配置
-Template "1" *-- "1" Component : 根组件
-DataSource "1" *-- "0..*" DataMapping : 数据映射
-Component "1" *-- "0..*" DataMapping : 数据绑定
-Component "1" *-- "0..1" DataSource : 直接绑定
-Component "1" *-- "0..1" DataSource : 直接绑定
-Project "1" *-- "1" User : 所有者
-Project "1" *-- "0..*" User : 协作者
-HistoryRecord "1" *-- "1" Project : 历史记录
-PageSchema "1" *-- "1" Project : 基于项目
-PageSchema "1" *-- "0..*" Component : 包含组件
-PageSchema "1" *-- "0..*" DataSource : 包含数据源
-PageSchema "1" *-- "1" ThemeConfig : 包含主题
-Component "1" *-- "0..1" ChartConfig : 图表配置
-Component "1" *-- "0..*" TableColumn : 表格列配置
-Component "1" *-- "0..1" PaginationConfig : 分页配置
-Component "1" *-- "0..*" TreeNode : 树节点配置
-
-' ============================================
-' 数据存储组件
-' ============================================
-
 package "数据存储层 (Data Storage Layer)" {
-  
-  component [PostgreSQL\n关系型数据库] as PostgreSQL
-  component [components表] as ComponentsTable
+
+  component [Local Storage\n浏览器本地存储] as LocalStorage
+  component [组件状态缓存] as CompStateCache
+  component [临时数据缓存] as TempDataCache
+  component [用户偏好设置] as UserPrefs
+
+  component [PostgreSQL\n关系型数据库（按部署）] as PostgreSQL
   component [projects表] as ProjectsTable
   component [templates表] as TemplatesTable
   component [data_sources表] as DataSourcesTable
   component [users表] as UsersTable
-  component [history_records表] as HistoryRecordsTable
-  
-  component [Redis\n缓存数据库] as Redis
-  component [session_cache] as SessionCache
-  component [project_cache] as ProjectCache
-  component [collaboration_state] as CollaborationState
-  
-  component [对象存储\nObject Storage] as ObjectStorage
-  component [user_files桶] as UserFilesBucket
-  component [exported_code桶] as ExportedCodeBucket
-  component [template_previews桶] as TemplatePreviewsBucket
-  component [schema_files桶] as SchemaFilesBucket
-  
-  component [Local Storage\n本地存储] as LocalStorage
-  component [临时数据缓存] as TempDataCache
-  component [用户偏好设置] as UserPreferencesStorage
-  component [组件状态缓存] as ComponentStateCache
-  component [表单草稿数据] as FormDraftStorage
-  
-  PostgreSQL --> ComponentsTable
-  PostgreSQL --> ProjectsTable
-  PostgreSQL --> TemplatesTable
-  PostgreSQL --> DataSourcesTable
-  PostgreSQL --> DataMappingsTable
-  PostgreSQL --> UsersTable
-  PostgreSQL --> HistoryRecordsTable
-  
-  Redis --> SessionCache
-  Redis --> ProjectCache
-  Redis --> CollaborationState
-  
-  ObjectStorage --> UserFilesBucket
-  ObjectStorage --> ExportedCodeBucket
-  ObjectStorage --> TemplatePreviewsBucket
-  ObjectStorage --> SchemaFilesBucket
-  
-  LocalStorage --> TempDataCache
-  LocalStorage --> UserPreferencesStorage
-  LocalStorage --> ComponentStateCache
-  LocalStorage --> FormDraftStorage
+
+  component [Redis\n缓存（按部署）] as Redis
+  component [会话缓存] as SessionCache
+  component [协作状态] as CollabState
+
+  component [对象存储\nS3 兼容（按部署）] as ObjectStorage
+  component [user_files桶] as UserFiles
+  component [exported_code桶] as ExportedCode
 }
 
-' ============================================
-' 数据流组件
-' ============================================
+' ============ 关系 ============
 
-package "关键数据流场景 (Key Data Flow Scenarios)" {
-  
-  component [组件编辑数据流] as ComponentEditFlow
-  component [用户拖拽组件] as UserDragComponent
-  component [编辑器创建Component实体] as EditorCreateComponent
-  component [应用服务验证数据] as ServiceValidateData
-  component [状态管理更新本地状态] as StateUpdateLocal
-  component [协作服务广播操作] as CollaborationBroadcast
-  component [仓储持久化到数据库] as RepositoryPersist
-  component [缓存更新] as CacheUpdate
-  
-  component [数据绑定数据流] as DataBindingFlow
-  component [用户配置数据源] as UserConfigDataSource
-  component [创建DataSource实体] as CreateDataSourceEntity
-  component [测试数据连接] as TestDataConnection
-  component [创建DataMapping映射] as CreateDataMappingEntity
-  component [绑定到Component] as BindToComponentEntity
-  component [实时数据获取] as RealTimeDataFetch
-  component [组件渲染更新] as ComponentRenderUpdate
-  
-  component [JSON快速输入数据流] as JsonQuickInputFlow
-  component [用户选择组件] as UserSelectComponent
-  component [系统推荐JSON模板] as SystemRecommendTemplate
-  component [用户选择或输入JSON] as UserInputJson
-  component [验证JSON格式] as ValidateJsonFormat
-  component [解析数据结构] as ParseDataStructure
-  component [创建静态数据源] as CreateStaticDataSource
-  component [自动渲染到组件属性] as AutoRenderToProperties
-  
-  component [协作同步数据流] as CollaborationFlow
-  component [用户操作] as UserOperation
-  component [生成操作事件] as GenerateOperationEvent
-  component [协作服务接收] as CollaborationReceive
-  component [广播给其他用户] as BroadcastToUsers
-  component [状态合并] as StateMerge
-  component [冲突解决] as ConflictResolve
-  component [状态持久化] as StatePersist
-  
-  component [代码生成数据流] as CodeGenFlow
-  component [用户触发导出] as UserTriggerExport
-  component [读取Project和Component数据] as ReadProjectData
-  component [代码生成器处理] as CodeGeneratorProcess
-  component [生成React组件代码] as GenerateReactCode
-  component [打包为项目文件] as PackageProject
-  component [上传到对象存储] as UploadToStorage
-  component [推送到Git仓库] as PushToGit
-  
-  component [Schema导出数据流] as SchemaExportFlow
-  component [用户触发Schema导出] as UserTriggerSchemaExport
-  component [读取Project完整数据] as ReadFullProjectData
-  component [转换为PageSchema实体] as ConvertToPageSchema
-  component [验证Schema格式] as ValidateSchemaFormat
-  component [序列化为JSON] as SerializeToJSON
-  component [下载Schema文件] as DownloadSchemaFile
-  component [存储到对象存储] as StoreToObjectStorage
-  
+Component "1" o-- "0..*" Component : parentId / children
+Project "1" *-- "0..*" Component : 包含
+Project "1" *-- "1" ThemeConfig : 主题
+DataSource "1" *-- "0..*" DataMappingEntity : 映射
+Component "1" *-- "0..*" DataMappingEntity : 数据绑定
+Component "1" *-- "0..1" DataSource : 直接绑定
+Project "1" *-- "0..*" HistoryRecord : 历史
+
+PageSchema "1" *-- "0..*" Component : 包含（扁平数组）
+PageSchema "1" *-- "0..*" DataSource : 包含
+PageSchema "1" *-- "1" ThemeConfig : 主题
+PageSchema "1" *-- "1" PSCanvas : 画布配置
+
+' ============ 数据流 ============
+
+package "关键数据流 (Key Data Flows)" {
+
+  component [AI生成组件数据流] as AIGenFlow
+  component [用户输入描述] as AIUserInput
+  component [AI生成嵌套JSON] as AIGenJSON
+  component [JSONParser展平嵌套children] as AIFlatten
+  component [ApplyTemplateUseCase应用] as AIApply
+  component [Zustand状态更新] as AIStoreUpdate
+  component [画布渲染] as AIRender
+
+  component [数据绑定数据流] as DBFlow
+  component [创建DataSource] as DBCreate
+  component [绑定到Component] as DBBind
+  component [DataBindingService获取数据] as DBService
+  component [实时渲染更新] as DBRender
+
   component [Schema导入数据流] as SchemaImportFlow
-  component [用户上传Schema文件] as UserUploadSchemaFile
-  component [解析JSON数据] as ParseJSONData
-  component [验证Schema版本] as ValidateSchemaVersion
-  component [迁移旧版本Schema] as MigrateOldSchema
-  component [转换为Project数据] as ConvertToProjectData
-  component [导入到状态管理] as ImportToStateManagement
-  component [渲染到画布] as RenderToCanvas
-  
-  component [数据解析数据流] as DataParseFlow
-  component [CSV解析] as CsvParse
-  component [XML解析] as XmlParse
-  component [JSON验证] as JsonValidate
-  
-  component [数据映射数据流] as DataMappingFlow
-  component [映射生成] as MappingGenerate
-  component [映射应用] as MappingApply
-  component [数据转换] as DataTransform
-  
-  component [布局计算数据流] as LayoutFlow
-  component [布局计算] as LayoutCalculate
-  component [网格对齐] as GridSnap
-  component [碰撞检测] as CollisionDetect
-  
-  component [本地存储数据流] as LocalStorageFlow
-  component [读取本地数据] as ReadLocalData
-  component [写入本地数据] as WriteLocalData
-  component [清理过期数据] as CleanExpiredData
-  component [同步到服务器] as SyncToServer
-  
-  component [状态管理数据流] as StateManagementFlow
-  component [状态初始化] as StateInit
-  component [状态更新] as StateUpdate
-  component [状态持久化] as StatePersist
-  component [状态恢复] as StateRestore
-  
-  ComponentEditFlow --> UserDragComponent
-  ComponentEditFlow --> EditorCreateComponent
-  ComponentEditFlow --> ServiceValidateData
-  ComponentEditFlow --> StateUpdateLocal
-  ComponentEditFlow --> CollaborationBroadcast
-  ComponentEditFlow --> RepositoryPersist
-  ComponentEditFlow --> CacheUpdate
-  
-  DataBindingFlow --> UserConfigDataSource
-  DataBindingFlow --> CreateDataSourceEntity
-  DataBindingFlow --> TestDataConnection
-  DataBindingFlow --> CreateDataMappingEntity
-  DataBindingFlow --> BindToComponentEntity
-  DataBindingFlow --> RealTimeDataFetch
-  DataBindingFlow --> ComponentRenderUpdate
-  
-  JsonQuickInputFlow --> UserSelectComponent
-  JsonQuickInputFlow --> SystemRecommendTemplate
-  JsonQuickInputFlow --> UserInputJson
-  JsonQuickInputFlow --> ValidateJsonFormat
-  JsonQuickInputFlow --> ParseDataStructure
-  JsonQuickInputFlow --> CreateStaticDataSource
-  JsonQuickInputFlow --> AutoRenderToProperties
-  
-  CollaborationFlow --> UserOperation
-  CollaborationFlow --> GenerateOperationEvent
-  CollaborationFlow --> CollaborationReceive
-  CollaborationFlow --> BroadcastToUsers
-  CollaborationFlow --> StateMerge
-  CollaborationFlow --> ConflictResolve
-  CollaborationFlow --> StatePersist
-  
-  CodeGenFlow --> UserTriggerExport
-  CodeGenFlow --> ReadProjectData
-  CodeGenFlow --> CodeGeneratorProcess
-  CodeGenFlow --> GenerateReactCode
-  CodeGenFlow --> PackageProject
-  CodeGenFlow --> UploadToStorage
-  CodeGenFlow --> PushToGit
-  
-  SchemaExportFlow --> UserTriggerSchemaExport
-  SchemaExportFlow --> ReadFullProjectData
-  SchemaExportFlow --> ConvertToPageSchema
-  SchemaExportFlow --> ValidateSchemaFormat
-  SchemaExportFlow --> SerializeToJSON
-  SchemaExportFlow --> DownloadSchemaFile
-  SchemaExportFlow --> StoreToObjectStorage
-  
-  SchemaImportFlow --> UserUploadSchemaFile
-  SchemaImportFlow --> ParseJSONData
-  SchemaImportFlow --> ValidateSchemaVersion
-  SchemaImportFlow --> MigrateOldSchema
-  SchemaImportFlow --> ConvertToProjectData
-  SchemaImportFlow --> ImportToStateManagement
-  SchemaImportFlow --> RenderToCanvas
-  
-  DataParseFlow --> CsvParse
-  DataParseFlow --> XmlParse
-  DataParseFlow --> JsonValidate
-  
-  DataMappingFlow --> MappingGenerate
-  DataMappingFlow --> MappingApply
-  DataMappingFlow --> DataTransform
-  
-  LayoutFlow --> LayoutCalculate
-  LayoutFlow --> GridSnap
-  LayoutFlow --> CollisionDetect
-  
-  LocalStorageFlow --> ReadLocalData
-  LocalStorageFlow --> WriteLocalData
-  LocalStorageFlow --> CleanExpiredData
-  LocalStorageFlow --> SyncToServer
-  
-  StateManagementFlow --> StateInit
-  StateManagementFlow --> StateUpdate
-  StateManagementFlow --> StatePersist
-  StateManagementFlow --> StateRestore
+  component [上传Schema JSON] as SchemaUpload
+  component [JSONParser解析] as SchemaParse
+  component [扁平嵌套children] as SchemaFlatten
+  component [渲染到画布] as SchemaRender
+
+  AIGenFlow --> AIUserInput
+  AIGenFlow --> AIGenJSON
+  AIGenFlow --> AIFlatten
+  AIFlatten ..> "JSONParser\n.flattenPageComponents()" as JSONParserNote : 调用
+  AIGenFlow --> AIApply
+  AIApply --> AIStoreUpdate
+  AIStoreUpdate --> AIRender
+
+  DBFlow --> DBCreate
+  DBFlow --> DBBind
+  DBFlow --> DBService
+  DBFlow --> DBRender
+
+  SchemaImportFlow --> SchemaUpload
+  SchemaImportFlow --> SchemaParse
+  SchemaParse --> SchemaFlatten
+  SchemaFlatten ..> "JSONParser\n.flattenPageComponents()" as JSONParserNote2 : 调用
+  SchemaImportFlow --> SchemaRender
 }
 
-' ============================================
-' 数据访问关系
-' ============================================
-
-Component ..> PostgreSQL : 持久化
-Template ..> PostgreSQL : 持久化
-Project ..> PostgreSQL : 持久化
-DataSource ..> PostgreSQL : 持久化
-DataMapping ..> PostgreSQL : 持久化
-User ..> PostgreSQL : 持久化
-HistoryRecord ..> PostgreSQL : 持久化
-PageSchema ..> ObjectStorage : 文件存储
-JsonDataTemplate ..> PostgreSQL : 持久化（可选）
-ChartConfig ..> PostgreSQL : 持久化（可选）
-TableColumn ..> PostgreSQL : 持久化（可选）
-PaginationConfig ..> PostgreSQL : 持久化（可选）
-TreeNode ..> PostgreSQL : 持久化（可选）
-
-Component ..> Redis : 缓存
-Project ..> Redis : 缓存
-Project ..> ObjectStorage : 文件存储
-PageSchema ..> Redis : 缓存
+' ============ 数据访问 ============
 
 Component ..> LocalStorage : 临时缓存
 Project ..> LocalStorage : 临时缓存
-User ..> LocalStorage : 偏好设置
+UserPrefs ..> LocalStorage : 偏好
 
-ComponentEditFlow --> PostgreSQL : 数据持久化
-ComponentEditFlow --> Redis : 缓存更新
+Component ..> PostgreSQL : 持久化（按部署）
+Project ..> PostgreSQL : 持久化（按部署）
+Template ..> PostgreSQL : 持久化（按部署）
 
-DataBindingFlow --> DataSource : 使用
-DataBindingFlow --> DataMapping : 使用
-DataBindingFlow --> Component : 绑定
+Project ..> Redis : 会话（按部署）
+CollabState ..> Redis : 协作（按部署）
 
-JsonQuickInputFlow --> JsonDataTemplate : 使用
-JsonQuickInputFlow --> DataSource : 创建
-JsonQuickInputFlow --> Component : 更新属性
+Project ..> ObjectStorage : 文件存储（按部署）
 
-CollaborationFlow --> Redis : 消息队列
-CollaborationFlow --> PostgreSQL : 状态持久化
-
-CodeGenFlow --> Project : 读取
-CodeGenFlow --> Component : 读取
-CodeGenFlow --> ObjectStorage : 存储
-
-SchemaExportFlow --> Project : 读取
-SchemaExportFlow --> Component : 读取
-SchemaExportFlow --> DataSource : 读取
-SchemaExportFlow --> ThemeConfig : 读取
-SchemaExportFlow --> PageSchema : 创建
-SchemaExportFlow --> ObjectStorage : 存储
-
-SchemaImportFlow --> PageSchema : 读取
-SchemaImportFlow --> ValidateSchemaVersion : 使用
-SchemaImportFlow --> MigrateOldSchema : 使用
-SchemaImportFlow --> ConvertToProjectData : 使用
-SchemaImportFlow --> Project : 创建
-SchemaImportFlow --> Component : 创建
-SchemaImportFlow --> DataSource : 创建
-SchemaImportFlow --> ThemeConfig : 创建
-SchemaImportFlow --> Redis : 状态更新
-
-DataParseFlow --> DataSource : 创建/更新
-DataMappingFlow --> DataMapping : 创建/使用
-LayoutFlow --> Component : 更新位置
-
-JsonQuickInputFlow --> JsonDataTemplate : 使用
-JsonQuickInputFlow --> DataSource : 创建
-JsonQuickInputFlow --> Component : 更新属性
-
-LocalStorageFlow --> LocalStorage : 读写
-LocalStorageFlow --> TempDataCache : 临时数据
-LocalStorageFlow --> UserPreferencesStorage : 用户偏好
-LocalStorageFlow --> ComponentStateCache : 组件状态
-LocalStorageFlow --> FormDraftStorage : 表单草稿
-LocalStorageFlow --> PostgreSQL : 同步到服务器
-
-StateManagementFlow --> LocalStorage : 状态缓存
-StateManagementFlow --> Redis : 状态同步
-StateManagementFlow --> PostgreSQL : 状态持久化
-StateManagementFlow --> Component : 状态绑定
-
-note right of PostgreSQL
-  **数据访问模式：**
-  - 读写分离
-  - 主从复制
-  - 分片策略（按项目ID）
-  - 索引优化
+note right of Component
+  **关键设计：扁平 components 数组 + parentId**
+  AI 生成的嵌套 children（完整对象）在 JSONParser.flattenPageComponents()
+  中被展平为 parentId 关联的扁平列表，确保 Zustand stores 正确渲染。
 end note
 
-note right of Redis
-  **缓存策略：**
-  - 热点数据缓存
-  - 会话数据存储
-  - 协作状态同步
-  - TTL过期策略
-end note
-
-note right of LocalStorage
-  **本地存储策略：**
-  - 临时数据缓存（自动清理）
-  - 用户偏好设置（持久化）
-  - 组件状态缓存（会话级）
-  - 表单草稿数据（定时清理）
-  - 同步策略：增量同步到服务器
+note right of AIGenFlow
+  **AI 生成数据流：**
+  1. 用户自然语言输入
+  2. AI 返回嵌套 JSON（children 含完整对象）
+  3. JSONParser.flattenPageComponents() 展平为扁平列表
+  4. ApplyTemplateUseCase 应用到 Zustand stores
+  5. 画布正确渲染完整组件树
 end note
 
 @enduml

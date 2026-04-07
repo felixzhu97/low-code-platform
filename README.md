@@ -1,83 +1,86 @@
 # Low-Code Platform
 
-A visual low-code development platform built with Next.js and React, supporting drag-and-drop page building, component management, theme customization, and code export.
+可视化低代码开发平台，基于 Next.js 和 React 构建，支持拖拽页面搭建、组件管理、主题定制和代码导出。
 
-## ✨ Features
+## ✨ 功能特性
 
-- **🎨 Visual Editing**: Drag-and-drop canvas, real-time preview, component tree view, property panel
-- **🧩 Component System**: Built-in component library based on Radix UI, supports custom components and component import/export
-- **🤖 AI Generation**: Generate components and pages through natural language; supports cloud providers (OpenAI, Claude, DeepSeek, etc.) and **local LLM via Ollama** (no API key required)
-- **📊 Data & Charts**: Data binding tools, chart components (Recharts), form builder (React Hook Form + Zod)
-- **🎭 Themes & Animations**: Theme editor, animation editor, responsive design, dark mode
-- **🌐 Internationalization**: Multi-language support (Chinese/English), language switcher component, localization tools
-- **🤝 Real-time Collaboration**: WebSocket real-time synchronization, conflict resolution, collaborative cursors, history merging
-- **☁️ Cloud Service Integration**: AWS integration (S3, Lambda, API Gateway, etc.), one-click deployment
-- **⚡ Performance Optimization**: Performance toolset, optimized data parsing and Schema processing
+- **🎨 可视化编辑**：拖拽画布、实时预览、组件树视图、属性面板
+- **🧩 组件系统**：基于 Radix UI 的内置组件库，支持自定义组件和组件导入导出
+- **🤖 AI 生成**：通过自然语言描述生成组件和页面；支持云服务商（OpenAI、Claude、DeepSeek 等）和 **本地 Ollama**（无需 API Key）
+- **📊 数据与图表**：数据绑定工具、图表组件（Recharts）、表单构建器
+- **🎭 主题与动画**：主题编辑器、动画编辑器、响应式设计、暗色模式
+- **🌐 国际化**：多语言支持（中文/英文）、语言切换器
+- **🤝 实时协作**：WebSocket 实时同步、冲突解决、协作者光标、历史合并
+- **☁️ 云服务集成**：AWS 集成（S3、Lambda、API Gateway 等），一键部署
+- **⚡ 性能优化**：性能工具集、优化数据解析和 Schema 处理
 
-## 📸 Screenshots
+## 📸 截图
 
-### Editor
+### 编辑器
 
 <p align="center">
-  <img src="./screenshots/platform-editor-overview.png" width="600" alt="Platform Editor Overview" />
+  <img src="./screenshots/platform-editor-overview.png" width="600" alt="平台编辑器概览" />
 </p>
 
-## 🛠 Tech Stack
+## 🛠 技术栈
 
-**Frontend**: Next.js 15 + React 19 + TypeScript + **Emotion** (`@emotion/react` / `@emotion/styled`) + Radix UI + React DnD + Recharts + Zustand
+**前端**：Next.js 15 + React 19 + TypeScript + **Emotion**（`@emotion/react` / `@emotion/styled`） + Radix UI + React DnD + Recharts + Zustand + react-i18next
 
-**Backend**: Python + FastAPI (`apps/server`)
+**后端**：Python + FastAPI（`apps/server`）
 
-**Monorepo**: pnpm 10 workspaces + Vitest/Jest + ESLint/Prettier
+**Monorepo**：pnpm 10 workspaces + Vitest/Jest + ESLint/Prettier
 
-## 📦 Project Structure
+## 📦 项目结构
 
 ```text
 low-code-platform/
 ├── apps/
-│   ├── web/          # Next.js frontend application (Clean Architecture)
-│   │   └── src/lib/  # Internal libraries (ai-generator)
-│   └── server/       # FastAPI backend application
-└── packages/         # Shared packages for data structures
-    ├── schema/       # Schema types and validation
-    ├── component-utils/ # Component tree utilities
-    └── utils/        # General utility functions
+│   ├── web/           # Next.js 前端应用（整洁架构）
+│   │   └── src/
+│   │       ├── domain/              # 领域层：实体、值对象、领域服务
+│   │       ├── application/         # 应用层：用例、DTO、端口
+│   │       ├── infrastructure/      # 基础设施层：状态、HTTP、持久化
+│   │       ├── presentation/        # 表现层：React 组件、受控视图
+│   │       └── lib/                 # 内部库（如 ai-generator）
+│   └── server/        # FastAPI 后端应用
+└── packages/          # Monorepo 共享包
+    ├── schema/        # Schema 类型定义与校验
+    ├── component-utils/ # 组件树工具函数
+    └── utils/         # 通用工具函数
 ```
 
-> **Note**: `packages/` contains shared data structures used by both frontend and backend. `apps/web/src/lib/` contains application-specific code (ai-generator).
+## 🚀 快速开始
 
-## 🚀 Quick Start
-
-### Requirements
+### 环境要求
 
 - Node.js >= 18.0.0
 - pnpm >= 10.0.0
 
-### Installation & Running
+### 安装与运行
 
 ```bash
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Start development server
-pnpm dev              # Start both frontend and backend
-pnpm dev:web          # Frontend only (http://localhost:3000)
-pnpm dev:server       # Backend only (http://localhost:8000)
+# 启动开发服务器
+pnpm dev               # 启动前端和后端
+pnpm dev:web           # 仅启动前端（http://localhost:3000）
+pnpm dev:server        # 仅启动后端（http://localhost:8000）
 
-# Build for production
+# 生产构建
 pnpm build
 
-# Run tests
-pnpm test             # Frontend tests
-pnpm test:server       # Backend tests
+# 运行测试
+pnpm test              # 前端测试
+pnpm test:server       # 后端测试
 ```
 
-### Environment Variables
+### 环境变量
 
-Create a `.env.local` file (optional):
+创建 `.env.local` 文件（可选）：
 
 ```env
-# AI Services
+# AI 服务
 OPENAI_API_KEY=your_key
 ANTHROPIC_API_KEY=your_key
 DEEPSEEK_API_KEY=your_key
@@ -88,75 +91,60 @@ AWS_SECRET_ACCESS_KEY=your_key
 AWS_REGION=us-east-1
 ```
 
-### Local LLM (Ollama)
+### 本地大模型（Ollama）
 
-To generate pages with a **local model** (no API key):
+使用 **本地模型** 生成页面（无需 API Key）：
 
-1. Install [Ollama](https://ollama.com) and run `ollama serve`
-2. Pull a model: `ollama pull codellama`
-3. In the editor, open **AI Generate** → choose **Ollama (Local)** → leave API Key empty → enter a description and generate
+1. 安装 [Ollama](https://ollama.com) 并运行 `ollama serve`
+2. 拉取模型：`ollama pull codellama`（或 `ollama pull qwen2.5-coder:32b` 等）
+3. 在编辑器中打开 **AI 生成** → 选择 **Ollama (本地)** → API Key 留空 → 输入描述并生成
 
-See [docs/en/local-llm-setup.md](docs/en/local-llm-setup.md) (English) or [docs/zh/local-llm-setup.md](docs/zh/local-llm-setup.md) (中文) for setup and troubleshooting.
+详细说明请参阅 [docs/zh/local-llm-setup.md](docs/zh/local-llm-setup.md)。
 
-## 🎯 Usage Guide
+## 🎯 使用指南
 
-1. **Add Components**: Drag components from the left component panel to the canvas
-2. **Configure Properties**: Modify component properties in the right property panel
-3. **Use Templates**: Select pre-built templates from the template library to get started quickly
-4. **AI Generation**: Generate components or pages through natural language descriptions (cloud or local Ollama)
-5. **Export Code**: Convert designs into deployable frontend code
+1. **添加组件**：将组件从左侧组件面板拖拽到画布
+2. **配置属性**：在右侧属性面板中修改组件属性
+3. **使用模板**：从模板库中选择预构建模板快速开始
+4. **AI 生成**：通过自然语言描述生成组件或页面（云服务或本地 Ollama）
+5. **导出代码**：将设计转换为可部署的前端代码
 
-## 🔧 Development
+## 🔧 架构设计
 
-### Architecture
+采用 **整洁架构（Clean Architecture）** 设计：
 
-Adopts **Clean Architecture** design:
+- **领域层（Domain）**：核心业务逻辑、实体与值对象
+- **应用层（Application）**：用例编排、业务流程
+- **基础设施层（Infrastructure）**：技术实现（状态管理、持久化、外部接口）
+- **表现层（Presentation）**：React 组件、受控视图
 
-- **Domain Layer**: Core business logic
-- **Application Layer**: Application use cases and business processes
-- **Infrastructure Layer**: Technical implementations (repositories, adapters, etc.)
-- **Presentation Layer**: UI components and user interactions
+### 共享包（`packages/`）
 
-### Shared Packages (`packages/`)
+前端与后端共享的数据结构包：
 
-Packages for data structures shared between frontend and backend:
+- `@lowcode-platform/schema` — Schema 类型定义（Component、PageSchema 等）
+- `@lowcode-platform/component-utils` — 组件树操作工具
+- `@lowcode-platform/utils` — 通用工具函数
 
-- `@lowcode-platform/schema` - Schema types and validation (Component, PageSchema, etc.)
-- `@lowcode-platform/component-utils` - Component tree manipulation utilities
-- `@lowcode-platform/utils` - General utility functions
+### 内部库（`apps/web/src/lib/`）
 
-### Internal Libraries (`apps/web/src/lib/`)
+应用特定的代码：
 
-Application-specific code:
+- `ai-generator/` — AI 驱动的组件和页面生成（支持 OpenAI、Claude、DeepSeek、Gemini、Azure OpenAI、Groq、Mistral、Ollama、SiliconFlow）
 
-- `ai-generator/` - AI-powered component and page generation
+## 📝 相关文档
 
-## 📝 Todo
+- [平台架构总览](docs/zh/platform-architecture.md)
+- [TOGAF 架构文档](docs/zh/architecture/togaf/togaf-overview.md)（业务、应用、数据、技术四视图）
+- [C4 模型](docs/zh/architecture/c4/c4-context.puml)（系统上下文 → 容器 → 组件 → 代码）
+- [本地大模型配置](docs/zh/local-llm-setup.md)
+- [English: Architecture Overview](docs/en/architecture.md) · [TOGAF Overview](docs/en/architecture/togaf/togaf-overview.md) · [Local LLM Setup](docs/en/local-llm-setup.md)
 
-**In Progress**: Improve backend API, add more chart types, add page templates
-
-**Planned**: Database connections, mobile component library, custom CSS, project management and version control
-
-## 🤝 Contributing
-
-Issues and Pull Requests are welcome.
-
-1. Fork the project
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Create a Pull Request
-
-**Code Standards**: TypeScript + ESLint/Prettier + Unit tests + Clean Architecture principles
-
-**Commit Standards**: Follow [Conventional Commits](https://www.conventionalcommits.org/)
-
-## 📄 License
+## 📄 协议
 
 [MIT License](LICENSE)
 
-## 🔗 Related Links
+## 🔗 相关链接
 
 - [Next.js](https://nextjs.org/docs) | [React](https://react.dev) | [FastAPI](https://fastapi.tiangolo.com/)
 - [Emotion](https://emotion.sh/docs/introduction) | [Radix UI](https://www.radix-ui.com)
-- [Architecture (中文)](docs/zh/platform-architecture.md) | [Architecture (English)](docs/en/architecture.md) | [Local LLM (English)](docs/en/local-llm-setup.md) | [本地 LLM (中文)](docs/zh/local-llm-setup.md)

@@ -41,20 +41,19 @@ export class AIGenerator {
   async generateComponent(
     options: GenerateComponentOptions,
     generatorOptions?: GeneratorOptions
-  ): Promise<GenerateResult<Component>> {
+  ): Promise<GenerateResult<Component[]>> {
     const opts = { ...this.defaultOptions, ...generatorOptions };
     const startTime = Date.now();
 
     try {
-      const component = await this.componentGenerator.generate(options);
+      const components = await this.componentGenerator.generate(options);
 
-      // 验证组件
       if (opts.validate) {
-        this.componentValidator.validate(component);
+        this.componentValidator.validateArray(components);
       }
 
       return {
-        result: component,
+        result: components,
         metadata: {
           duration: Date.now() - startTime,
         },

@@ -59,6 +59,11 @@ export class PageGenerator {
       required: ["version", "metadata", "components", "canvas", "theme", "dataSources"],
     });
 
+    // AI 常返回嵌套 children 对象；平台 store 需要扁平列表 + parentId
+    response.components = this.parser.flattenPageComponents(
+      Array.isArray(response.components) ? response.components : []
+    );
+
     // 确保版本正确
     response.version = SCHEMA_VERSION;
 

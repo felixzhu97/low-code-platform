@@ -85,6 +85,7 @@ package "Business Capabilities" {
   component [Multi AI provider] as MultiAIProviderSupport
   component [Validate output] as GenerationValidation
   component [Streaming] as StreamingGeneration
+  component [Flatten nested children] as NestedComponentFlatten
   
   VisualEditCapability --> ComponentDrag
   VisualEditCapability --> RealTimePreview
@@ -147,6 +148,7 @@ package "Business Capabilities" {
   AIGenerationCapability --> MultiAIProviderSupport
   AIGenerationCapability --> GenerationValidation
   AIGenerationCapability --> StreamingGeneration
+  AIGenerationCapability --> NestedComponentFlatten
 }
 
 package "Core Business Processes" {
@@ -320,6 +322,7 @@ package "Core Business Processes" {
   component [Generation type] as SelectGenerationType
   component [AI build] as AIGenerateComponentOrPage
   component [Validate gen] as ValidateGenerationResult
+  component [Flatten nested children] as FlattenNestedChildren
   component [Apply canvas] as ApplyToCanvas
   component [Preview tune] as PreviewAndAdjust
   
@@ -329,6 +332,7 @@ package "Core Business Processes" {
   AIGenerationProcess --> SelectGenerationType
   AIGenerationProcess --> AIGenerateComponentOrPage
   AIGenerationProcess --> ValidateGenerationResult
+  AIGenerationProcess --> FlattenNestedChildren
   AIGenerationProcess --> ApplyToCanvas
   AIGenerationProcess --> PreviewAndAdjust
 }
@@ -338,6 +342,7 @@ package "Value Stream" {
   component [Discover needs] as Step1
   component [Solution design] as Step2
   component [Visual build] as Step3
+  component [AI generation (optional)] as StepAIGen
   component [Data integration] as Step4
   component [Verify] as Step5
   component [Collab refine] as Step6
@@ -346,7 +351,8 @@ package "Value Stream" {
   
   Step1 --> Step2 : requirements
   Step2 --> Step3 : page design
-  Step3 --> Step4 : data binding
+  Step3 --> StepAIGen : AI assist
+  StepAIGen --> Step4 : data binding
   Step4 --> Step5 : validation
   Step5 --> Step6 : collaboration
   Step6 --> Step7 : export code

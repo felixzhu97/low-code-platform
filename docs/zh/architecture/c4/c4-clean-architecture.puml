@@ -6,16 +6,28 @@ LAYOUT_WITH_LEGEND()
 title 整洁架构 — 依赖规则（`apps/web/src`）
 
 Container_Boundary(web, "Web 应用（整洁架构）") {
-    Component(presentation, "表现层", "React、Emotion、Radix UI", "`presentation/` — 受控视图")
-    Component(application, "应用层", "TypeScript", "`application/` — 用例、DTO、编排")
+    Component(presentation, "表现层", "React、Emotion、Radix UI、React DnD", "`presentation/` — 受控视图、Hook、编辑器组件")
+    Component(application, "应用层", "TypeScript", "`application/` — 用例、DTO、编排、端口接口")
     Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务、仓储接口")
-    Component(infrastructure, "基础设施层", "TypeScript", "`infrastructure/` — 状态、HTTP、持久化实现")
+    Component(infrastructure, "基础设施层", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现、HTTP 客户端、LocalStorage")
+    Component(lib, "内部库", "TypeScript", "`lib/` — AI 生成器（ai-generator）等应用特定库")
 }
 
 Rel(presentation, application, "调用用例与服务")
-Rel(application, domain, "依赖")
+Rel(application, domain, "依赖（接口）")
 Rel(infrastructure, application, "实现端口")
 Rel(infrastructure, domain, "使用类型与接口")
-Rel(presentation, domain, "仅可引用类型 — 不依赖基础设施")
+Rel(presentation, domain, "仅可引用领域类型 — 不直接依赖基础设施")
+Rel(lib, domain, "仅可引用领域类型")
+
+note right of presentation
+  表现层只通过 domain 类型与领域层通信。
+  应用层编排用例，对外暴露端口接口。
+end note
+
+note right of infrastructure
+  基础设施层实现应用层定义的端口。
+  Zustand stores 管理组件、画布、主题、UI 等状态。
+end note
 
 @enduml

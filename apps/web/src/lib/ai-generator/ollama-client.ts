@@ -2,6 +2,9 @@ import { BaseAIClient } from "./base-client";
 import type { AIMessage, AIClientConfig } from "./types";
 import { AIClientError } from "./types";
 
+/** 本地推理较慢，整页 JSON 生成常超过 30s；未显式指定时使用更长超时 */
+export const OLLAMA_DEFAULT_TIMEOUT_MS = 600_000;
+
 export interface OllamaConfig extends Omit<AIClientConfig, "apiKey"> {
   apiKey?: string;
   baseURL?: string;
@@ -14,7 +17,11 @@ export class OllamaClient extends BaseAIClient {
   protected readonly ollamaConfig: OllamaConfig;
 
   constructor(config: OllamaConfig) {
-    super({ ...config, apiKey: config.apiKey ?? "" });
+    super({
+      ...config,
+      apiKey: config.apiKey ?? "",
+      timeout: config.timeout ?? OLLAMA_DEFAULT_TIMEOUT_MS,
+    });
     this.ollamaConfig = {
       ...config,
       baseURL: config.baseURL || "http://localhost:11434",
@@ -174,4 +181,42 @@ export class OllamaClient extends BaseAIClient {
       return error;
     }
   }
+}
+
+/** 规范化 baseURL，移除末尾斜杠 */
+function normalizeOllamaBaseURL(baseURL: string): string {
+  return baseURL.replace(/\/$/, "");
+}
+
+/**
+ * 从本地 Ollama 实例拉取模型列表。
+ * 若直接请求 localhost:11434 遇到 CORS，可以改用 /api/ollama/tags 代理。
+ */
+export async function fetchOllamaModelNames(
+  baseURL: string,
+  signal?: AbortSignal
+): Promise<string[]> {
+  const normalized = normalizeOllamaBaseURL(baseURL);
+  const useProxy = typeof window !== "undefined";
+
+  const response = await fetch(
+    useProxy
+      ? `/api/ollama/tags?baseURL=${encodeURIComponent(normalized)}`
+      : `${normalized}/api/tags`,
+    signal ? { signal } : undefined
+  );
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => response.statusText);
+    throw new Error(`无法获取 Ollama 模型列表 (${response.status}): ${text}`);
+  }
+
+  const data = (await response.json()) as { models?: Array<{ name: string }> };
+
+  if (!Array.isArray(data.models)) {
+    // 代理返回的可能不是标准格式，直接返回空列表
+    return [];
+  }
+
+  return data.models.map((m) => m.name).filter(Boolean);
 }

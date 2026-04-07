@@ -134,6 +134,7 @@ export function ComponentRenderer({
         "date-picker",
         "time-picker",
         "file-upload",
+        "form",
       ].includes(component.type)
     ) {
       return (
@@ -142,6 +143,13 @@ export function ComponentRenderer({
           props={props}
           themeStyle={themeStyle}
           animationStyle={animationStyle}
+          childComponents={childComponents}
+          components={components}
+          isPreviewMode={isPreviewMode}
+          selectedId={selectedId}
+          dropTargetId={dropTargetId}
+          onSelectComponent={onSelectComponent}
+          onMouseDown={onMouseDown}
         />
       );
     }

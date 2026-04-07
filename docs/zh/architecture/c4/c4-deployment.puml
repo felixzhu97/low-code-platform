@@ -3,28 +3,35 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 部署 — 参考拓扑（开发 / 生产可不同）
+title 部署图 — 参考拓扑（开发 / 生产可不同）
 
 Deployment_Node(client, "客户端", "macOS、Windows、Linux、移动浏览器") {
-    Deployment_Node(browser, "浏览器", " Chromium / WebKit / Firefox ") {
+    Deployment_Node(browser, "浏览器", "Chromium / WebKit / Firefox") {
         Container(webui, "SPA / SSR", "Next.js 产物 — Emotion + 静态资源")
     }
 }
 
-Deployment_Node(hoster, "应用托管", "Kubernetes、虚拟机或 PaaS") {
+Deployment_Node(hoster, "应用托管（可选）", "Kubernetes、虚拟机或 PaaS") {
     Deployment_Node(compute, "计算") {
         Container(next_runtime, "Next.js 运行时", "Node.js — SSR 与路由")
         Container(fastapi_runtime, "FastAPI", "Uvicorn — REST API")
     }
-    Deployment_Node(data, "数据层（可选）") {
+    Deployment_Node(data, "数据层（按部署）") {
         ContainerDb(postgres, "PostgreSQL")
         ContainerDb(redis, "Redis")
+        ContainerDb(object, "对象存储（S3 兼容）")
     }
 }
 
+Deployment_Node(ollama, "本地推理（可选）", "用户本地机器") {
+    ContainerDb(ollama_svc, "Ollama 服务", "localhost:11434 — 无需公网")
+}
+
 Rel(browser, next_runtime, "HTTPS", "SSR 与应用路由")
-Rel(browser, fastapi_runtime, "HTTPS", "REST API")
+Rel(browser, fastapi_runtime, "HTTPS", "REST API（按部署）")
+Rel(browser, ollama_svc, "本地 HTTP", "AI 生成（Ollama 模式）")
 Rel(fastapi_runtime, postgres, "SQL", "")
 Rel(fastapi_runtime, redis, "TCP", "")
+Rel(fastapi_runtime, object, "HTTPS", "文件上传下载")
 
 @enduml

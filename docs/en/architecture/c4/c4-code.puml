@@ -1,14 +1,47 @@
 @startuml c4-code-felix-low-code
 skinparam classAttributeIconSize 0
-title Code level — illustrative collaborators (`apps/web`)
+title Code level — illustrative collaborators (`apps/web/src`)
 
-class "Canvas (presentation)" as Canvas
-class "Create component use case (application)" as UC
-class "Component store (infrastructure)" as Store
-class "Component entity (domain)" as Comp
+package "presentation/" {
+  class Canvas
+  class ComponentPanel
+  class PropertiesPanel
+  class ComponentRenderer
+  class AIChat
+}
 
-Canvas --> UC : invokes
-UC --> Store : via port
+package "application/" {
+  class "ApplyTemplateUseCase" as UC1
+  class "ComponentManagementService" as CMS
+}
+
+package "infrastructure/" {
+  class "ComponentStore" as Store
+  class "LocalStorageAdapter" as Repo
+}
+
+package "domain/" {
+  class "Component" as Comp
+  class "ComponentFactoryService" as Factory
+}
+
+package "lib/ai-generator/" {
+  class AIGenerator
+  class OllamaClient
+}
+
+Canvas --> UC1 : invokes
+UC1 --> CMS : calls
+CMS --> Store : via Zustand port
 Store --> Comp : holds state
+UC1 --> Repo : persists
+CMS --> Factory : creates components
+AIChat --> AIGenerator : invokes
+AIGenerator --> OllamaClient : HTTP (local Ollama)
+
+note bottom of OllamaClient
+  OllamaClient default timeout: 600 s (10 min).
+  JSONParser.flattenPageComponents() flattens nested children.
+end note
 
 @enduml

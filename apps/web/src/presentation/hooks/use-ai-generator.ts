@@ -37,7 +37,7 @@ export interface UseAIGeneratorReturn {
     description: string,
     type?: string,
     position?: { x: number; y: number }
-  ) => Promise<Component>;
+  ) => Promise<Component[]>;
   generatePage: (
     description: string,
     layout?: "centered" | "full-width" | "sidebar" | "grid"
@@ -107,7 +107,7 @@ export function useAIGenerator(
       description: string,
       type?: string,
       position?: { x: number; y: number }
-    ): Promise<Component> => {
+    ): Promise<Component[]> => {
       if (!isInitialized) {
         initialize();
       }
@@ -116,12 +116,11 @@ export function useAIGenerator(
       setError(null);
 
       try {
-        const component = await adapter.generateComponent(
+        return await adapter.generateComponent(
           description,
           type,
           position
         );
-        return component;
       } catch (err) {
         const error =
           err instanceof Error ? err : new Error(String(err));
