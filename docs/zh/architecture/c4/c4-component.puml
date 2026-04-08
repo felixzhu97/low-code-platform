@@ -5,31 +5,68 @@ LAYOUT_WITH_LEGEND()
 
 title 组件图 — Web 应用（`apps/web`）
 
-Container_Boundary(web, "Web 应用") {
+Container_Boundary(web, "Web 应用（整洁架构）") {
     Component(shell, "编辑器外壳", "React、Emotion", "`page.tsx`、Header、侧栏 Tabs、加载骨架")
-    Component(canvas, "画布与面板", "React、Emotion、React DnD", "`canvas/`、`component-panel/`、`properties-panel/`")
-    Component(renderers, "组件渲染器", "React、Emotion", "基础、布局、表单、数据、图表渲染器 + Schema 渲染器")
-    Component(ai, "AI 对话与生成", "React", "`presentation/components/ai/`、`presentation/hooks/use-ai-chat.ts`")
-    Component(app, "应用层", "TypeScript", "`application/` — 用例、应用服务、端口")
-    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务")
-    Component(infra, "基础设施适配", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现、外部 I/O")
-    Component(packages, "Monorepo 包", "TypeScript", "`packages/*` 共享工具与契约（schema、component-utils、utils）")
-    Component(lib_ai, "AI 生成器内部库", "TypeScript", "`apps/web/src/lib/ai-generator/` — 多模型客户端、生成器、验证器、解析器、提示构建器")
+    Component(canvas, "画布与面板", "React、Emotion、React DnD", "`canvas/` — 主画布、组件树、预览、属性面板")
+    Component(renderers, "组件渲染器", "React、Emotion", "basic / layout / form / data 渲染器 + Schema 渲染器")
+    Component(ui, "UI 组件库", "React、Emotion、Radix UI", "70+ shadcn/ui 风格组件：`button`、`dialog`、`input` 等")
+    Component(templates, "模板库", "React、Emotion", "`templates/` — gallery、preview、card、filters + `data/templates/` 模板数据")
+    Component(charts, "图表组件", "React、Recharts", "`charts/` — bar、line、pie、area、radar 图表")
+    Component(data_binding, "数据绑定", "React", "`data-binding/` — selector、mapping-editor、bound-data-editor")
+    Component(ai, "AI 对话与生成", "React", "`presentation/components/ai/`、`use-ai-chat.ts`")
+    Component(hooks, "Hook 层", "React", "`hooks/` — use-template-gallery（筛选/搜索/分页）")
+    Component(adapters, "表现层适配器", "TypeScript", "`adapters/` — template.adapter、ai-generator.adapter")
+    Component(app, "应用层", "TypeScript", "`application/` — 用例、应用服务、端口接口")
+    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、仓储接口、值对象、领域服务")
+    Component(infra, "基础设施层", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现、状态适配器")
+    Component(packages, "Monorepo 包", "TypeScript", "`packages/*` — schema、component-utils、utils")
+    Component(lib_ai, "AI 生成器内部库", "TypeScript", "`lib/ai-generator/` — 多模型客户端工厂、生成器、验证器、解析器、提示构建器")
 }
 
 Rel(shell, canvas, "承载")
 Rel(canvas, app, "调度动作、调用用例")
+Rel(shell, templates, "模板库")
+Rel(templates, hooks, "搜索筛选")
+Rel(hooks, adapters, "适配器调用")
+Rel(shell, charts, "图表")
+Rel(shell, data_binding, "数据绑定")
 Rel(shell, ai, "AI 对话与生成")
-Rel(ai, app, "生成后应用到画布")
+Rel(ai, adapters, "生成后适配")
 Rel(ai, lib_ai, "调用")
+Rel(adapters, app, "用例编排")
 Rel(renderers, app, "读取 Schema 与绑定")
+Rel(shell, ui, "UI 组件")
 Rel(shell, app, "协调编辑状态")
-Rel(app, domain, "使用")
+Rel(app, domain, "使用（接口）")
 Rel(app, infra, "经端口依赖")
 Rel(infra, domain, "持久化映射")
 Rel(infra, packages, "引用")
 Rel(shell, packages, "引用")
 Rel(renderers, packages, "引用")
 Rel(lib_ai, packages, "引用")
+
+note right of app
+  **应用层（Application）：**
+  - use-cases/：组件 CRUD、模板应用、画布更新
+  - ports/：仓储与状态管理抽象接口
+  - services/：组件管理、数据源、数据绑定、JSON 工具、历史记录
+end note
+
+note right of domain
+  **领域层（Domain）：**
+  - component/：实体、工厂、仓储接口
+  - template/：实体、仓储接口
+  - datasource/：数据源、映射实体
+  - theme/：主题配置实体
+  - chart/：图表、表格、树配置
+  - value-objects/：位置等值对象
+end note
+
+note right of infra
+  **基础设施层（Infrastructure）：**
+  - state-management/：Zustand stores（component、canvas、theme、data、ui、history、custom-components）
+  - persistence/：仓储实现（component、template、data-source）
+  - adapters/：Zustand 状态适配器
+end note
 
 @enduml

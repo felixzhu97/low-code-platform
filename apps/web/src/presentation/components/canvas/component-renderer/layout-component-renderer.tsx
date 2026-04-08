@@ -259,6 +259,8 @@ export function LayoutComponentRenderer({
         !isPreviewMode && "cursor-move component-hover"
       )}
       style={{
+        position: "relative",
+        zIndex: 1,
         width: child.properties?.width || "auto",
         height: child.properties?.height || "auto",
         margin: child.properties?.margin || "0",
@@ -294,6 +296,9 @@ export function LayoutComponentRenderer({
             props.floating && "floating"
           )}
           style={{
+            position: "relative",
+            zIndex: 0,
+            overflow: "visible",
             padding: props.padding || "1rem",
             background: props.gradient ? undefined : props.backgroundColor,
             borderRadius: props.borderRadius || "0.5rem",

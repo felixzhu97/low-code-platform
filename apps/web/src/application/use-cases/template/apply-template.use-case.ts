@@ -124,10 +124,13 @@ export class ApplyTemplateUseCase {
   }
 
   /**
-   * 生成唯一ID
+   * 生成唯一ID（避免与画布上已有组件或同批模板实例冲突）
    */
   private generateUniqueId(type: string): string {
-    return `${type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      return `${type}-${crypto.randomUUID()}`;
+    }
+    return `${type}-${Date.now()}-${Math.floor(Math.random() * 1e9)}`;
   }
 
   /**

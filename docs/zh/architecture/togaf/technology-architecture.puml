@@ -26,8 +26,9 @@ package "前端技术栈 (Frontend Technology Stack)" {
 
   component [浏览器 Local Storage\n本地存储] as BrowserLocalStorage
 
-  component [AI 生成器内部库\napps/web/src/lib/ai-generator] as AIGeneratorLib
+  component [AI 生成器内部库\nlib/ai-generator] as AIGeneratorLib
   component [BaseAIClient\n基础客户端] as BaseAIClient
+  component [AIClientFactory\n客户端工厂] as AIClientFactoryTech
   component [OllamaClient] as OllamaClientTech
   component [OpenAIClient] as OpenAIClientTech
   component [ClaudeClient] as ClaudeClientTech
@@ -37,12 +38,13 @@ package "前端技术栈 (Frontend Technology Stack)" {
   component [MistralClient] as MistralClientTech
   component [SiliconFlowClient] as SiliconFlowClientTech
   component [AzureOpenAIClient] as AzureOpenAIClientTech
-  component [AIClientFactory\n客户端工厂] as AIClientFactoryTech
   component [ComponentGenerator\n组件生成器] as ComponentGeneratorTech
   component [PageGenerator\n页面生成器] as PageGeneratorTech
   component [JSONParser\nJSON 解析器] as JSONParserTech
-  component [ComponentPromptBuilder\n组件提示构建器] as ComponentPromptBuilderTech
-  component [PagePromptBuilder\n页面提示构建器] as PagePromptBuilderTech
+  component [ComponentPromptBuilder] as ComponentPromptBuilderTech
+  component [PagePromptBuilder] as PagePromptBuilderTech
+  component [ComponentValidator] as ComponentValidator
+  component [PageValidator] as PageValidator
 
   Browser --> React
   Browser --> NextJS
@@ -84,6 +86,8 @@ package "前端技术栈 (Frontend Technology Stack)" {
   AIGeneratorLib --> JSONParserTech
   AIGeneratorLib --> ComponentPromptBuilderTech
   AIGeneratorLib --> PagePromptBuilderTech
+  AIGeneratorLib --> ComponentValidator
+  AIGeneratorLib --> PageValidator
 }
 
 package "后端技术栈 (Backend Technology Stack)" {
@@ -98,10 +102,11 @@ package "后端技术栈 (Backend Technology Stack)" {
 
 package "数据存储层 (Data Storage Layer)" {
 
+  component [Local Storage\n浏览器本地存储] as LocalStorage
+  component [模板数据\npresentation/data/templates/] as TemplateData
   component [PostgreSQL\n关系型数据库（按部署）] as PostgreSQL
   component [Redis\n缓存（按部署）] as Redis
   component [对象存储\nS3 兼容（按部署）] as ObjectStorage
-  component [浏览器 Local Storage\n本地存储] as LocalStorage
 
   PostgreSQL --> Redis
   ObjectStorage --> LocalStorage
@@ -160,21 +165,22 @@ note right of Browser
   - React 19: UI 运行时
   - TypeScript: 类型安全
   - Emotion: 画布与编辑器 CSS-in-JS
-  - Zustand: 组件、画布、主题、UI 状态
+  - Zustand: 组件、画布、主题、UI、历史、自定义组件���态
   - Radix UI: 无障碍交互
   - react-i18next: 国际化
-  - Local Storage: 临时数据缓存
-  - AI 生成器: 多模型支持（含 Ollama 本地）
+  - Local Storage: 临时数据与项目缓存
+  - 模板数据（presentation/data/templates/）: 按类别分文件
 end note
 
 note right of AIGeneratorLib
-  **AI 生成器内部库结构：**
+  **AI 生成器内部库结构（lib/ai-generator/）：**
   - AIClientFactory: 根据 provider 创建对应客户端
   - BaseAIClient: fetchWithTimeout、withRetry、parseJSONResponse
   - OllamaClient: 默认 10 分钟超时，支持本地推理
   - ComponentGenerator / PageGenerator: 生成组件或页面
   - JSONParser.flattenPageComponents(): 将嵌套 children 展平为扁平列表
   - ComponentPromptBuilder / PagePromptBuilder: 构建提示词
+  - ComponentValidator / PageValidator: 验证生成结果
 end note
 
 note right of WebCluster
@@ -182,6 +188,7 @@ note right of WebCluster
   - Next.js 独立运行
   - AI 直连浏览器（Ollama localhost 或云 API）
   - Zustand 状态存 Local Storage
+  - 模板数据本地加载（presentation/data/templates/）
   - 按部署可启用 FastAPI + PostgreSQL + Redis
 end note
 

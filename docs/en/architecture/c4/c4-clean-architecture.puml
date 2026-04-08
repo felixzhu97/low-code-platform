@@ -6,28 +6,41 @@ LAYOUT_WITH_LEGEND()
 title Clean Architecture — dependency rule (`apps/web/src`)
 
 Container_Boundary(web, "Web Application (Clean Architecture)") {
-    Component(presentation, "Presentation", "React, Emotion, Radix UI, React DnD", "`presentation/` — controlled views, hooks, editor components")
-    Component(application, "Application", "TypeScript", "`application/` — use-cases, DTOs, orchestration, port interfaces")
-    Component(domain, "Domain", "TypeScript", "`domain/` — entities, VOs, domain services, repository interfaces")
-    Component(infrastructure, "Infrastructure", "TypeScript", "`infrastructure/` — Zustand stores, repository implementations, HTTP clients, LocalStorage")
+    Component(presentation, "Presentation Layer", "React, Emotion, Radix UI, React DnD", "`presentation/` — controlled views, hooks, editor components, template data")
+    Component(application, "Application Layer", "TypeScript", "`application/` — use-cases, DTOs, orchestration, port interfaces (abstract)")
+    Component(domain, "Domain Layer", "TypeScript", "`domain/` — entities, VOs, domain services, repository interfaces (definitions)")
+    Component(infrastructure, "Infrastructure Layer", "TypeScript", "`infrastructure/` — Zustand stores, repository implementations (implement ports), LocalStorage, HTTP clients")
     Component(lib, "Internal library", "TypeScript", "`lib/` — AI generator (ai-generator) and other app-specific libs")
 }
 
 Rel(presentation, application, "Calls use-cases and services")
-Rel(application, domain, "Depends on (interfaces)")
-Rel(infrastructure, application, "Implements ports")
-Rel(infrastructure, domain, "Uses types and interfaces")
-Rel(presentation, domain, "May import types only — no infrastructure")
-Rel(lib, domain, "May import types only")
+Rel(presentation, domain, "References domain types only — no infrastructure dependency")
+Rel(application, domain, "Depends on interfaces (definitions)")
+Rel(infrastructure, application, "Implements ports (application layer interfaces)")
+Rel(infrastructure, domain, "Uses domain types and interfaces (implements)")
+Rel(lib, domain, "References domain types only")
+Rel(lib, application, "Optional calls")
 
 note right of presentation
-  Presentation layer only communicates with domain via domain types.
-  Application layer orchestrates use-cases and exposes port interfaces.
+  **Presentation Layer:**
+  - `components/` — canvas, ui, templates, charts, data-binding, ai
+  - `hooks/` — use-template-gallery (filter/search/pagination)
+  - `adapters/` — template.adapter, ai-generator.adapter
+  - `data/templates/` — per-category template data files
+end note
+
+note right of application
+  **Application Layer:**
+  - `use-cases/` — component CRUD, template apply, canvas update
+  - `ports/` — abstract repository & state management ports
+  - `services/` — component, data source, data binding, JSON tools, history
 end note
 
 note right of infrastructure
-  Infrastructure layer implements ports defined by application layer.
-  Zustand stores manage component, canvas, theme, UI state.
+  **Infrastructure Layer:**
+  - `state-management/` — Zustand stores (component, canvas, theme, data, ui, history, custom-components)
+  - `persistence/` — repository implementations (component, template, data-source)
+  - `adapters/` — Zustand state adapter
 end note
 
 @enduml

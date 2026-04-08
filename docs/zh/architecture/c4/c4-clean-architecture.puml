@@ -6,28 +6,41 @@ LAYOUT_WITH_LEGEND()
 title 整洁架构 — 依赖规则（`apps/web/src`）
 
 Container_Boundary(web, "Web 应用（整洁架构）") {
-    Component(presentation, "表现层", "React、Emotion、Radix UI、React DnD", "`presentation/` — 受控视图、Hook、编辑器组件")
-    Component(application, "应用层", "TypeScript", "`application/` — 用例、DTO、编排、端口接口")
-    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务、仓储接口")
-    Component(infrastructure, "基础设施层", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现、HTTP 客户端、LocalStorage")
+    Component(presentation, "表现层", "React、Emotion、Radix UI、React DnD", "`presentation/` — 受控视图、Hook、编辑器组件、模板数据")
+    Component(application, "应用层", "TypeScript", "`application/` — 用例、DTO、编排、端口接口（抽象）")
+    Component(domain, "领域层", "TypeScript", "`domain/` — 实体、值对象、领域服务、仓储接口（定义）")
+    Component(infrastructure, "基础设施层", "TypeScript", "`infrastructure/` — Zustand stores、仓储实现（实现端口）、LocalStorage、HTTP 客户端")
     Component(lib, "内部库", "TypeScript", "`lib/` — AI 生成器（ai-generator）等应用特定库")
 }
 
 Rel(presentation, application, "调用用例与服务")
-Rel(application, domain, "依赖（接口）")
-Rel(infrastructure, application, "实现端口")
-Rel(infrastructure, domain, "使用类型与接口")
-Rel(presentation, domain, "仅可引用领域类型 — 不直接依赖基础设施")
-Rel(lib, domain, "仅可引用领域类型")
+Rel(presentation, domain, "仅引用领域类型 — 不直接依赖基础设施")
+Rel(application, domain, "依赖接口（定义）")
+Rel(infrastructure, application, "实现端口（应用层接口）")
+Rel(infrastructure, domain, "使用领域类型与接口（实现）")
+Rel(lib, domain, "仅引用领域类型")
+Rel(lib, application, "可选调用")
 
 note right of presentation
-  表现层只通过 domain 类型与领域层通信。
-  应用层编排用例，对外暴露端口接口。
+  **表现层（Presentation）：**
+  - `components/` — canvas、ui、templates、charts、data-binding、ai
+  - `hooks/` — use-template-gallery（筛选/搜索/分页）
+  - `adapters/` — template.adapter、ai-generator.adapter
+  - `data/templates/` — 按类别分文件的模板数据
+end note
+
+note right of application
+  **应用层（Application）：**
+  - `use-cases/` — 组件 CRUD、模板应用、画布更新
+  - `ports/` — 仓储与状态管理抽象端口
+  - `services/` — 组件管理、数据源、数据绑定、JSON工具、历史记录
 end note
 
 note right of infrastructure
-  基础设施层实现应用层定义的端口。
-  Zustand stores 管理组件、画布、主题、UI 等状态。
+  **基础设施层（Infrastructure）：**
+  - `state-management/` — Zustand stores（component、canvas、theme、data、ui、history、custom-components）
+  - `persistence/` — 仓储实现（component、template、data-source）
+  - `adapters/` — Zustand 状态适配器
 end note
 
 @enduml

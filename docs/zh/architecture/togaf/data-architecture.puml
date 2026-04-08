@@ -10,8 +10,8 @@ package "核心数据实体 (Core Data Entities)" {
   component [id: string] as CompId
   component [type: string] as CompType
   component [name: string] as CompName
-  component [properties: object] as CompProps
-  component [position: {x, y}] as CompPosition
+  component [properties: Record<string, any>] as CompProps
+  component [position: {x, y, width, height}] as CompPosition
   component [children: string[]] as CompChildren
   component [parentId: string | null] as CompParentId
   component [dataSource: string | null] as CompDataSource
@@ -21,6 +21,9 @@ package "核心数据实体 (Core Data Entities)" {
   component [id: string] as TplId
   component [name: string] as TplName
   component [category: string] as TplCategory
+  component [tags: string[]] as TplTags
+  component [description?: string] as TplDesc
+  component [thumbnail: string] as TplThumbnail
   component [rootComponentId: string] as TplRoot
   component [preview: string] as TplPreview
   component [isPublic: boolean] as TplPublic
@@ -65,6 +68,7 @@ package "核心数据实体 (Core Data Entities)" {
   component [projectId: string] as HRProjId
   component [components: Component[]] as HRComponents
   component [timestamp: DateTime] as HRTime
+  component [description: string] as HRDesc
 
   component [PageSchema\n页面Schema] as PageSchema
   component [version: string] as PSVersion
@@ -73,12 +77,15 @@ package "核心数据实体 (Core Data Entities)" {
   component [canvas: object] as PSCanvas
   component [theme: ThemeConfig] as PSTheme
   component [dataSources: DataSource[]] as PSDataSources
+
+  component [ChartConfig\n图表配置] as ChartConfig
 }
 
 package "数据存储层 (Data Storage Layer)" {
 
   component [Local Storage\n浏览器本地存储] as LocalStorage
   component [组件状态缓存] as CompStateCache
+  component [项目数据缓存] as ProjectCache
   component [临时数据缓存] as TempDataCache
   component [用户偏好设置] as UserPrefs
 
@@ -112,6 +119,8 @@ PageSchema "1" *-- "0..*" DataSource : 包含
 PageSchema "1" *-- "1" ThemeConfig : 主题
 PageSchema "1" *-- "1" PSCanvas : 画布配置
 
+Template "1" *-- "1" Component : rootComponent（模板根组件）
+
 ' ============ 数据流 ============
 
 package "关键数据流 (Key Data Flows)" {
@@ -136,6 +145,13 @@ package "关键数据流 (Key Data Flows)" {
   component [扁平嵌套children] as SchemaFlatten
   component [渲染到画布] as SchemaRender
 
+  component [模板应用数据流] as TemplateApplyFlow
+  component [浏览模板库] as TplBrowse
+  component [选择模板] as TplSelect
+  component [ApplyTemplateUseCase执行] as TplApply
+  component [ComponentFactory创建组件] as TplCreate
+  component [状态更新] as TplUpdate
+
   AIGenFlow --> AIUserInput
   AIGenFlow --> AIGenJSON
   AIGenFlow --> AIFlatten
@@ -154,6 +170,12 @@ package "关键数据流 (Key Data Flows)" {
   SchemaParse --> SchemaFlatten
   SchemaFlatten ..> "JSONParser\n.flattenPageComponents()" as JSONParserNote2 : 调用
   SchemaImportFlow --> SchemaRender
+
+  TemplateApplyFlow --> TplBrowse
+  TemplateApplyFlow --> TplSelect
+  TemplateApplyFlow --> TplApply
+  TplApply --> TplCreate
+  TplCreate --> TplUpdate
 }
 
 ' ============ 数据访问 ============
@@ -161,6 +183,7 @@ package "关键数据流 (Key Data Flows)" {
 Component ..> LocalStorage : 临时缓存
 Project ..> LocalStorage : 临时缓存
 UserPrefs ..> LocalStorage : 偏好
+Template ..> LocalStorage : 模板数据（presentation/data/templates/）
 
 Component ..> PostgreSQL : 持久化（按部署）
 Project ..> PostgreSQL : 持久化（按部署）
@@ -184,6 +207,15 @@ note right of AIGenFlow
   3. JSONParser.flattenPageComponents() 展平为扁平列表
   4. ApplyTemplateUseCase 应用到 Zustand stores
   5. 画布正确渲染完整组件树
+end note
+
+note right of TemplateApplyFlow
+  **模板应用数据流（appendTemplateFromComponents）：**
+  1. 用户浏览 TemplateGallery，选择模板
+  2. ApplyTemplateUseCase 调用 TemplateService.getTemplateById()
+  3. ComponentFactory.createComponent() 创建所有组件（带 parentId）
+  4. ComponentStore.addComponents() 批量添加
+  5. 画布渲染完整组件树
 end note
 
 @enduml

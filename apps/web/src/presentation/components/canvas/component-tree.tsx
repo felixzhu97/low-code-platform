@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
@@ -206,6 +206,40 @@ export function ComponentTree() {
   const componentsArray = Array.isArray(components) ? components : [];
   const componentTree = buildComponentTree(componentsArray);
 
+  useEffect(() => {
+    if (!selectedComponentId || componentsArray.length === 0) {
+      return;
+    }
+
+    const byId = new Map(componentsArray.map((c) => [c.id, c]));
+    const parentIdsToExpand = new Set<string>();
+    let walker = byId.get(selectedComponentId);
+    while (walker?.parentId) {
+      parentIdsToExpand.add(walker.parentId);
+      walker = byId.get(walker.parentId);
+    }
+
+    setExpandedNodes((prev) => {
+      const next = { ...prev };
+      for (const id of parentIdsToExpand) {
+        next[id] = true;
+      }
+      return next;
+    });
+
+    const timer = window.setTimeout(() => {
+      const safeId =
+        typeof CSS !== "undefined" && typeof CSS.escape === "function"
+          ? CSS.escape(selectedComponentId)
+          : selectedComponentId.replace(/["\\]/g, "");
+      document
+        .querySelector(`[data-tree-node-id="${safeId}"]`)
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }, 50);
+
+    return () => window.clearTimeout(timer);
+  }, [selectedComponentId, components]);
+
   const toggleExpand = (id: string) => {
     setExpandedNodes((prev) => ({
       ...prev,
@@ -282,12 +316,15 @@ export function ComponentTree() {
     const levelPadding = level * 12 + 8;
 
     return (
-      <NodeOuter key={component.id}>
+      <NodeOuter key={component.id} data-tree-node-id={component.id}>
         <NodeRow
           $levelPadding={levelPadding}
           $selected={isSelected}
           $dropHighlight={dropTargetId === component.id && asContainer}
-          onClick={() => selectComponent(component)}
+          onClick={() => {
+            const flat = componentsArray.find((c) => c.id === component.id);
+            selectComponent(flat ?? component);
+          }}
           draggable
           onDragStart={(e) => handleDragStart(e, component)}
           onDragOver={(e) => handleDragOver(e, component)}

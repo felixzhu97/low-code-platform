@@ -17,18 +17,10 @@ import {
 } from "@/presentation/components/ui";
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react";
 import { PreviewCanvas } from "@/presentation/components/canvas/preview-canvas";
+import { useThemeStore } from "@/infrastructure/state-management/stores";
 
 import type { Component } from "@/domain/component";
-
-interface Template {
-  id: string;
-  name: string;
-  description: string;
-  thumbnail: string;
-  category: string;
-  tags?: string[];
-  components: Component[];
-}
+import type { Template } from "@/domain/template";
 
 interface TemplatePreviewProps {
   template: Template | null;
@@ -184,6 +176,7 @@ export function TemplatePreview({
   onToggleFavorite,
 }: TemplatePreviewProps) {
   const [activeTab, setActiveTab] = useState("preview");
+  const { theme } = useThemeStore();
   const [activeDevice, setActiveDevice] = useState("desktop");
 
   if (!template) return null;
@@ -330,6 +323,7 @@ export function TemplatePreview({
                   <PreviewCanvas
                     components={template.components}
                     width={getDeviceWidth()}
+                    theme={theme}
                   />
                 </PreviewContent>
               </PreviewScrollArea>
@@ -365,7 +359,7 @@ export function TemplatePreview({
 
         <Footer>
           <div>
-            <DescriptionText>{template.description}</DescriptionText>
+            <DescriptionText>{template.description ?? ""}</DescriptionText>
             <TagsWrapper>
               {template.tags?.map((tag) => (
                 <Tag key={tag}>{tag}</Tag>

@@ -15,7 +15,7 @@ System_Boundary(boundary, "Felix Low-Code Platform") {
 }
 
 System_Ext(llm, "LLM APIs", "OpenAI, Claude, DeepSeek, Gemini, Ollama, SiliconFlow …")
-System_Ext(sf, "SiliconFlow", "SiliconFlow API")
+System_Ext(sf, "SiliconFlow", "SiliconFlow API — SiliconFlow proxy")
 System_Ext(object_store, "Object storage", "Files and export bundles (S3-compatible)")
 System_Ext(aws, "AWS services", "S3, Lambda, CloudFront (optional)")
 
@@ -24,7 +24,14 @@ Rel(web, api, "JSON / REST (when enabled)", "HTTPS")
 Rel(api, db, "Reads and writes (optional)", "SQL / TCP")
 Rel(api, cache, "Reads and writes (optional)", "TCP")
 Rel(api, object_store, "Optional file I/O", "HTTPS")
-Rel(web, llm, "AI generation (browser direct or via API)", "HTTPS / local")
-Rel(web, sf, "AI generation", "HTTPS")
+Rel(web, llm, "AI generation (browser direct)", "HTTPS / local")
+Rel(web, sf, "AI generation (SiliconFlow proxy)", "HTTPS")
+
+note right of web
+  **Frontend runs standalone — no backend required:**
+  - AI connects directly from browser (Ollama localhost or cloud API)
+  - Zustand state stored in LocalStorage
+  - Template data is local (`presentation/data/templates/`)
+end note
 
 @enduml

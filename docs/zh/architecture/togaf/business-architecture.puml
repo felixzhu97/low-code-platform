@@ -54,9 +54,12 @@ package "业务能力 (Business Capabilities)" {
 
   component [模板管理能力] as TemplateMgmtCapability
   component [模板库] as TemplateLibrary
+  component [模板分类浏览] as TemplateCategoryBrowse
+  component [模板筛选搜索] as TemplateSearch
   component [模板应用] as TemplateApply
   component [模板定制] as TemplateCustomization
   component [模板分享] as TemplateSharing
+  component [模板预览] as TemplatePreview
 
   component [国际化能力] as InternationalizationCapability
   component [多语言支持] as MultiLanguageSupport
@@ -118,9 +121,12 @@ package "业务能力 (Business Capabilities)" {
   SchemaMgmtCapability --> SchemaVersionMgmt
 
   TemplateMgmtCapability --> TemplateLibrary
+  TemplateMgmtCapability --> TemplateCategoryBrowse
+  TemplateMgmtCapability --> TemplateSearch
   TemplateMgmtCapability --> TemplateApply
   TemplateMgmtCapability --> TemplateCustomization
   TemplateMgmtCapability --> TemplateSharing
+  TemplateMgmtCapability --> TemplatePreview
 
   InternationalizationCapability --> MultiLanguageSupport
   InternationalizationCapability --> LanguageSwitch
@@ -157,6 +163,9 @@ package "核心业务流程 (Core Business Processes)" {
 
   component [模板管理流程] as TemplateProcess
   component [浏览模板库] as BrowseTemplate
+  component [按分类筛选模板] as FilterByCategory
+  component [搜索模板] as SearchTemplate
+  component [选择并预览模板] as PreviewTemplate
   component [选择并应用模板] as SelectAndApplyTemplate
   component [在模板基础上编辑] as EditTemplate
 
@@ -175,6 +184,7 @@ package "核心业务流程 (Core Business Processes)" {
 
   component [Schema导入流程] as SchemaImportProcess
   component [上传并验证Schema] as UploadAndValidateSchema
+  component [JSONParser展平嵌套children] as FlattenNestedChildren
   component [渲染到画布] as RenderToCanvas
 
   component [数据管理流程] as DataMgmtProcess
@@ -205,6 +215,9 @@ package "核心业务流程 (Core Business Processes)" {
   PageDesignProcess --> SaveAndPublish
 
   TemplateProcess --> BrowseTemplate
+  TemplateProcess --> FilterByCategory
+  TemplateProcess --> SearchTemplate
+  TemplateProcess --> PreviewTemplate
   TemplateProcess --> SelectAndApplyTemplate
   TemplateProcess --> EditTemplate
 
@@ -219,6 +232,7 @@ package "核心业务流程 (Core Business Processes)" {
   SchemaExportProcess --> GenerateAndDownloadSchema
 
   SchemaImportProcess --> UploadAndValidateSchema
+  SchemaImportProcess --> FlattenNestedChildren
   SchemaImportProcess --> RenderToCanvas
 
   DataMgmtProcess --> CreateDataSource

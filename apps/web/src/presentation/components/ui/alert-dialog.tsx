@@ -18,7 +18,7 @@ const fadeIn = keyframes`
 const StyledAlertOverlay = styled(AlertDialogPrimitive.Overlay)`
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.8);
   animation: ${fadeIn} 0.15s ease-out;
 
@@ -49,7 +49,7 @@ const AlertDialogContent = React.forwardRef<
         position: fixed;
         left: 50%;
         top: 50%;
-        z-index: 50;
+        z-index: 1001;
         display: grid;
         width: 100%;
         max-width: 32rem;

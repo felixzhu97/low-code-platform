@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { ScrollArea } from "@/presentation";
 import { Button } from "../ui/button";
@@ -87,6 +86,8 @@ const CanvasScroll = styled(ScrollArea)`
 
 const CanvasArea = styled.div`
   position: relative;
+  z-index: 0;
+  isolation: isolate;
   min-height: calc(100vh - 7.5rem);
   padding: 1rem;
 `;
@@ -228,8 +229,13 @@ export const Canvas = React.memo<CanvasProps>(() => {
     ]
   );
 
-  const rootComponents =
-    ComponentManagementService.getRootComponents(components);
+  const rootComponentsSorted = useMemo(
+    () =>
+      [...ComponentManagementService.getRootComponents(components)].sort(
+        (a, b) => (a.position?.y ?? 0) - (b.position?.y ?? 0)
+      ),
+    [components]
+  );
 
   const gridBackground =
     showGrid && !isPreviewMode
@@ -350,14 +356,14 @@ export const Canvas = React.memo<CanvasProps>(() => {
             </DeviceBanner>
           )}
 
-          {rootComponents.length === 0 ? (
+          {rootComponentsSorted.length === 0 ? (
             <EmptyDropZone>
               <EmptyDropText>
                 <p>将组件拖拽到此处或选择一个模板开始</p>
               </EmptyDropText>
             </EmptyDropZone>
           ) : (
-            rootComponents.map((component) => renderComponent(component))
+            rootComponentsSorted.map((component) => renderComponent(component))
           )}
         </CanvasArea>
       </CanvasScroll>

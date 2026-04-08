@@ -9,9 +9,9 @@ export interface Template {
   name: string;
   description?: string;
   thumbnail?: string;
-  components: Component[];
   category?: string;
   tags?: string[];
+  components: Component[];
   createdAt?: string;
   updatedAt?: string;
 }

@@ -15,7 +15,7 @@ System_Boundary(boundary, "Felix 低代码平台") {
 }
 
 System_Ext(llm, "大模型 API", "AI 能力（OpenAI、Claude、DeepSeek、Gemini、Ollama 等）")
-System_Ext(sf, "SiliconFlow", "SiliconFlow API")
+System_Ext(sf, "SiliconFlow", "SiliconFlow API — SiliconFlow 代理")
 System_Ext(object_store, "对象存储", "文件与导出包（S3 兼容）")
 System_Ext(aws, "AWS 云服务", "S3、Lambda、CloudFront（可选）")
 
@@ -24,7 +24,14 @@ Rel(web, api, "JSON / REST（按部署）", "HTTPS")
 Rel(api, db, "读写（按部署）", "SQL / TCP")
 Rel(api, cache, "读写（按部署）", "TCP")
 Rel(api, object_store, "可选文件 I/O", "HTTPS")
-Rel(web, llm, "AI 生成（浏览器直连或经 API）", "HTTPS / 本地")
-Rel(web, sf, "AI 生成", "HTTPS")
+Rel(web, llm, "AI 生成（浏览器直连）", "HTTPS / 本地")
+Rel(web, sf, "AI 生成（SiliconFlow 代理）", "HTTPS")
+
+note right of web
+  **前端独立运行，无需后端：**
+  - AI 直连浏览器（Ollama localhost 或云 API）
+  - Zustand 状态存 LocalStorage
+  - 模板数据本地（`presentation/data/templates/`）
+end note
 
 @enduml

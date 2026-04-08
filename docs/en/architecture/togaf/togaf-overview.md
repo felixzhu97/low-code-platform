@@ -9,7 +9,7 @@ This folder contains the Felix Low-Code Platform's TOGAF (The Open Group Archite
 TOGAF provides a complete architecture development method. This project's TOGAF documentation describes the low-code platform's architecture across four dimensions:
 
 - **Business Architecture**: Business roles, processes, capabilities, and value streams
-- **Application Architecture**: Application systems, components, and their interactions
+- **Application Architecture**: Application systems, components, and their interactions (Clean Architecture)
 - **Data Architecture**: Data entities, data flows, and storage
 - **Technology Architecture**: Technology stack, infrastructure, and deployment
 
@@ -20,8 +20,8 @@ TOGAF provides a complete architecture development method. This project's TOGAF 
 Describes the platform's business design:
 
 - **Business Roles**: Page Designer, Developer, Administrator, End User
-- **Core Business Processes**: Page design & build, template management, collaboration, code export, Schema management, data management, i18n, auth, AI generation
-- **Business Capabilities**: Visual editing, component management, data binding, collaboration, code generation, Schema, templates, i18n, auth, charts, AI generation
+- **Core Business Processes**: Page design & build, **template management** (browse/category/search/preview/apply), collaboration, code export, **Schema management** (import/export), data management, i18n, auth, AI generation
+- **Business Capabilities**: Visual editing, component management, data binding, collaboration, code generation, **Schema management**, **template management** (browse/category/search/preview/apply/customize/share), i18n, auth, charts, AI generation
 - **Value Stream**: From requirements to deployment
 
 Key update (2026-04): Added **Nested Component Flattening** as a new AI generation sub-capability, reflecting the fix for AI-generated nested JSON (`children` with full objects) being flattened into a flat `components` array with `parentId` links.
@@ -30,20 +30,21 @@ Key update (2026-04): Added **Nested Component Flattening** as a new AI generati
 
 Describes the application system structure using Clean Architecture:
 
-- **Presentation Layer**: Visual editor, component panel, property panel, template library, data panel, AI Chat (`use-ai-chat.ts`), AI Generator UI, form builder, theme editor
-- **Application Layer**: ComponentManagementService, TemplateManagementService, DataBindingService, **AIGeneratorAdapter**, ApplyTemplateUseCase, JSONHelperService, HistoryService, SchemaManagementService
-- **Domain Layer**: Component, Template, Project, DataSource, DataMapping entities; ComponentFactory
-- **Infrastructure Layer**: Zustand stores (Canvas/Component/Data/History/Theme/UI), LocalStorage persistence, **AI Generator internal lib** (`apps/web/src/lib/ai-generator`)
+- **Presentation Layer**: Visual editor, component panel, property panel, **TemplateGallery**, **TemplatePreview**, data panel, data source selector, JSON input, AI Chat, AI Generator UI, form builder, theme editor, **Hook layer** (use-template-gallery), **adapters** (template.adapter, ai-generator.adapter)
+- **Application Layer**: ComponentManagementService, **TemplateManagementService**, DataBindingService, DataSourceService, JsonHelperService, CanvasManagementService, HistoryService, SchemaManagementService, **AIGeneratorAdapter**, **ApplyTemplateUseCase**, **CreateComponentUseCase**, **UpdateComponentUseCase**, **DeleteComponentUseCase**, **UpdateCanvasStateUseCase**
+- **Domain Layer**: Component, Template, Project, DataSource, DataMapping, ThemeConfig, ChartConfig entities; **ComponentFactoryService** component factory; **Repository interfaces** (ComponentRepository, TemplateRepository, DataSourceRepository)
+- **Infrastructure Layer**: Zustand stores (Canvas/Component/**Data**/History/Theme/UI/**CustomComponents**), persistence (ComponentRepositoryImpl, TemplateRepositoryImpl, DataSourceRepositoryImpl, LocalStorageAdapter), **AI Generator internal lib** (`lib/ai-generator`)
 
 ### 3. data-architecture.puml — Data Architecture
 
 Describes the platform's data model, flows, and storage:
 
-- **Core Data Entities**: Component (`children: string[]` + `parentId` for flat array), Template, Project, DataSource, DataMapping, ThemeConfig, HistoryRecord, PageSchema
-- **Data Storage**: PostgreSQL (optional), Redis (optional), Object Storage (optional), LocalStorage (browser)
+- **Core Data Entities**: Component (`children: string[]` + `parentId` for flat array), **Template** (with `category`, `tags`, `description`, `thumbnail`), Project, DataSource, DataMapping, ThemeConfig, HistoryRecord, PageSchema, ChartConfig
+- **Data Storage**: **LocalStorage (browser)** with **template data** in `presentation/data/templates/` (per-category files), PostgreSQL (optional), Redis (optional), Object Storage (optional)
 - **Key Data Flows**:
   - **AI Generation**: user input → AI returns nested JSON → `JSONParser.flattenPageComponents()` flattens → ApplyTemplateUseCase → Zustand stores → canvas renders
   - **Schema Import**: upload JSON → parse → flatten nested children → render to canvas
+  - **Template Application** (`appendTemplateFromComponents`): browse → select → ApplyTemplateUseCase → ComponentFactory → batch add → canvas renders
   - Data binding, component editing, collaboration sync
 
 **Key Design**: Component uses a **flat `components` array + `parentId`** for parent-child relationships. AI-generated nested `children` (with full objects) are flattened by `JSONParser.flattenPageComponents()` to ensure Zustand stores render correctly.
@@ -53,10 +54,9 @@ Describes the platform's data model, flows, and storage:
 Describes the tech stack, infrastructure, and deployment:
 
 - **Frontend**: Next.js 15 + React 19 + TypeScript + Emotion + Radix UI + React DnD + Recharts + Zustand + react-i18next
-- **AI Generator Internal Lib** (`apps/web/src/lib/ai-generator`): Multi-model client factory, BaseAIClient with retry and timeout, JSONParser, Component/Page generators, OllamaClient (10-min default timeout)
+- **AI Generator Internal Lib** (`lib/ai-generator`): Multi-model client factory, BaseAIClient with retry and timeout, **JSONParser** (with `flattenPageComponents`), **ComponentGenerator / PageGenerator**, **ComponentPromptBuilder / PagePromptBuilder**, **ComponentValidator / PageValidator**, OllamaClient (10-min default timeout)
 - **Backend**: FastAPI + Python 3 + Uvicorn + Pydantic (optional deployment)
-- **Storage**: PostgreSQL, Redis, Object Storage, LocalStorage (browser)
-- **Dev Mode**: Frontend runs standalone without backend; AI connects directly from browser (Ollama localhost or cloud API); Zustand state stored in LocalStorage
+- **Dev Mode**: Frontend runs standalone without backend; AI connects directly from browser (Ollama localhost or cloud API); Zustand state stored in LocalStorage; **template data loaded locally** (`presentation/data/templates/`)
 
 ## How to View
 
@@ -86,6 +86,12 @@ plantuml -tpng docs/en/architecture/togaf/technology-architecture.puml
 - **TOGAF** (this folder): Enterprise architecture views covering business, application, data, and technology dimensions
 
 ## Latest Updates
+
+### 2026-04-08: Documentation and Architecture Sync
+
+- **README.md**: Updated project structure with precise descriptions of domain (component/template/datasource/theme/chart/shared/value-objects/repositories/entities), application (use-cases/ports/services), infrastructure (state-management/persistence), presentation (components/hooks/adapters/data), lib (ai-generator)
+- **C4 diagrams**: Updated c4-component (new UI library, template library, chart components, data binding, Hook layer), c4-container (added standalone frontend explanation), c4-context (distinguished cloud vs. local LLM), c4-clean-architecture (detailed layer responsibility annotations)
+- **TOGAF diagrams**: Fully updated business architecture (template management split into browse/category/search/preview/apply), application architecture (new use cases, application layer ports), data architecture (new template application data flow), technology architecture (added local template data loading notes)
 
 ### 2026-04-07: AI Nested Component Flattening Fix
 

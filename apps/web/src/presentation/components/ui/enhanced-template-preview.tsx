@@ -295,15 +295,18 @@ export function EnhancedTemplatePreview({
                 items={flattenedComponents}
                 height={500}
                 itemHeight={32}
-                renderItem={({
-                  component,
-                  level,
-                }: {
-                  component: Component;
-                  level: number;
-                }) => (
+                renderItem={(
+                  {
+                    component,
+                    level,
+                  }: {
+                    component: Component;
+                    level: number;
+                  },
+                  index: number
+                ) => (
                   <ComponentTreeItem
-                    key={component.id}
+                    key={`${index}-${component.id}`}
                     style={{
                       paddingLeft: `${level * 16 + 8}px`,
                       height: "32px",

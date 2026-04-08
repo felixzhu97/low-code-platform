@@ -8,7 +8,7 @@ interface VirtualListProps<T> {
   items: T[]
   height: number
   itemHeight: number
-  renderItem: (item: T, index: number) => React.ReactNode
+  renderItem: (item: T, globalIndex: number) => React.ReactNode
   overscan?: number
 }
 

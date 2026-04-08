@@ -11,6 +11,17 @@ import { css } from "@emotion/react";
 import { cn } from "@/application/services/utils";
 import { fallbackBox } from "./renderer-emotion";
 
+/** 根组件层叠：y 越小层级越高，避免下方绝对定位的根块盖住上方块的延伸内容；选中时置顶便于编辑。 */
+function rootComponentStackZIndex(
+  component: Component,
+  isSelected: boolean
+): number {
+  const y = Math.round(component.position?.y ?? 0);
+  const cappedY = Math.min(Math.max(y, 0), 5000);
+  const base = Math.max(1, 10_000 - cappedY);
+  return isSelected ? base + 50_000 : base;
+}
+
 interface ComponentRendererProps {
   component: Component;
   parentComponent?: Component | null;
@@ -204,7 +215,7 @@ export function ComponentRenderer({
       <div
         key={component.id}
         css={css`
-          position: absolute;
+          ${props.position === "absolute" ? "position: absolute;" : "position: relative;"}
           ${!isPreviewMode ? "cursor: grab;" : ""}
           ${selectedId === component.id ? "cursor: grabbing;" : ""}
         `}
@@ -220,7 +231,7 @@ export function ComponentRenderer({
           margin: props.margin || "0",
           padding: props.padding || "0",
           backgroundColor: props.bgColor || "transparent",
-          zIndex: 1,
+          zIndex: rootComponentStackZIndex(component, isSelected),
           borderRadius: props.borderRadius || "0.5rem",
           border: props.border
             ? `1px solid ${props.borderColor || "rgb(229 231 235)"}`

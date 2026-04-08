@@ -5,31 +5,68 @@ LAYOUT_WITH_LEGEND()
 
 title Component — Web Application (`apps/web`)
 
-Container_Boundary(web, "Web Application") {
+Container_Boundary(web, "Web Application (Clean Architecture)") {
     Component(shell, "Editor shell", "React, Emotion", "`page.tsx`, Header, side Tabs, loading skeletons")
-    Component(canvas, "Canvas & panels", "React, Emotion, React DnD", "`canvas/`, `component-panel/`, `properties-panel/`")
-    Component(renderers, "Component renderers", "React, Emotion", "basic, layout, form, data, chart renderers + schema renderer")
+    Component(canvas, "Canvas & panels", "React, Emotion, React DnD", "`canvas/` — main canvas, component tree, preview, property panel")
+    Component(renderers, "Component renderers", "React, Emotion", "basic / layout / form / data renderers + schema renderer")
+    Component(ui, "UI component library", "React, Emotion, Radix UI", "70+ shadcn/ui-style components: `button`, `dialog`, `input`, …")
+    Component(templates, "Template library", "React, Emotion", "`templates/` — gallery, preview, card, filters + `data/templates/` template data")
+    Component(charts, "Chart components", "React, Recharts", "`charts/` — bar, line, pie, area, radar charts")
+    Component(data_binding, "Data binding", "React", "`data-binding/` — selector, mapping-editor, bound-data-editor")
     Component(ai, "AI chat & generation", "React", "`presentation/components/ai/`, `use-ai-chat.ts`")
-    Component(app, "Application layer", "TypeScript", "`application/` — use-cases, services, ports")
-    Component(domain, "Domain layer", "TypeScript", "`domain/` — entities, VOs, domain services")
-    Component(infra, "Infrastructure adapters", "TypeScript", "`infrastructure/` — Zustand stores, repositories, external I/O")
-    Component(packages, "Monorepo packages", "TypeScript", "`packages/*` shared utilities and contracts (schema, component-utils, utils)")
-    Component(lib_ai, "AI generator library", "TypeScript", "`apps/web/src/lib/ai-generator/` — multi-model clients, generators, validators, parsers, prompt builders")
+    Component(hooks, "Hook layer", "React", "`hooks/` — use-template-gallery (filter/search/pagination)")
+    Component(adapters, "Presentation adapters", "TypeScript", "`adapters/` — template.adapter, ai-generator.adapter")
+    Component(app, "Application layer", "TypeScript", "`application/` — use-cases, services, port interfaces")
+    Component(domain, "Domain layer", "TypeScript", "`domain/` — entities, repository interfaces, VOs, domain services")
+    Component(infra, "Infrastructure layer", "TypeScript", "`infrastructure/` — Zustand stores, repository implementations, state adapters")
+    Component(packages, "Monorepo packages", "TypeScript", "`packages/*` — schema, component-utils, utils")
+    Component(lib_ai, "AI generator library", "TypeScript", "`lib/ai-generator/` — multi-model client factory, generators, validators, parsers, prompt builders")
 }
 
 Rel(shell, canvas, "Hosts")
 Rel(canvas, app, "Dispatches actions, calls use-cases")
+Rel(shell, templates, "Template library")
+Rel(templates, hooks, "Search & filter")
+Rel(hooks, adapters, "Adapter calls")
+Rel(shell, charts, "Charts")
+Rel(shell, data_binding, "Data binding")
 Rel(shell, ai, "AI chat & generation")
-Rel(ai, app, "Applies results to canvas")
+Rel(ai, adapters, "Results via adapter")
 Rel(ai, lib_ai, "Invokes")
+Rel(adapters, app, "Use-case orchestration")
 Rel(renderers, app, "Reads schema & bindings")
+Rel(shell, ui, "UI components")
 Rel(shell, app, "Orchestrates editor state")
-Rel(app, domain, "Uses")
+Rel(app, domain, "Uses (interfaces)")
 Rel(app, infra, "Depends via ports")
 Rel(infra, domain, "Persistence mapping")
 Rel(infra, packages, "References")
 Rel(shell, packages, "References")
 Rel(renderers, packages, "References")
 Rel(lib_ai, packages, "References")
+
+note right of app
+  **Application Layer:**
+  - use-cases/ — component CRUD, template apply, canvas update
+  - ports/ — abstract repository & state management ports
+  - services/ — component, data source, data binding, JSON tools, history
+end note
+
+note right of domain
+  **Domain Layer:**
+  - component/ — entities, factory, repository interfaces
+  - template/ — entities, repository interfaces
+  - datasource/ — data source, mapping entities
+  - theme/ — theme config entity
+  - chart/ — chart, table, tree configs
+  - value-objects/ — position, etc.
+end note
+
+note right of infra
+  **Infrastructure Layer:**
+  - state-management/ — Zustand stores (component, canvas, theme, data, ui, history, custom-components)
+  - persistence/ — repository implementations (component, template, data-source)
+  - adapters/ — Zustand state adapter
+end note
 
 @enduml

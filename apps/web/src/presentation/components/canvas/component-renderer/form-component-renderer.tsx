@@ -80,6 +80,8 @@ function ChildWrapper({
         ${!isPreviewMode ? "cursor: grab;" : ""}
       `}
       style={{
+        position: "relative",
+        zIndex: 1,
         width: child.properties?.width || "auto",
         height: child.properties?.height || "auto",
         margin: child.properties?.margin || "0",

@@ -39,7 +39,7 @@ const SheetPortal = SheetPrimitive.Portal
 const StyledSheetOverlay = styled(SheetPrimitive.Overlay)`
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.8);
   animation: ${fadeIn} 0.2s ease-out;
 
@@ -62,7 +62,7 @@ type SheetSide = "top" | "bottom" | "left" | "right"
 const getSideStyles = (side: SheetSide) => {
   const base = css`
     position: fixed;
-    z-index: 50;
+    z-index: 1001;
     gap: 1rem;
     background-color: hsl(var(--background));
     padding: 1.5rem;
