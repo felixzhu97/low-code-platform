@@ -11,6 +11,9 @@ export class ComponentFactoryService {
     "grid-layout",
     "flex-layout",
     "split-layout",
+    "two-column-layout",
+    "sidebar",
+    "main-panel",
     "tab-layout",
     "card-group",
     "responsive-container",
@@ -66,6 +69,15 @@ export class ComponentFactoryService {
           iconPosition: "left",
           fullWidth: false,
           onClick: "none",
+        };
+      case "svg":
+        return {
+          ...baseProperties,
+          src: "/icons/users.svg",
+          alt: "图标",
+          width: 24,
+          height: 24,
+          color: "currentColor",
         };
       case "image":
         return {
@@ -362,6 +374,37 @@ export class ComponentFactoryService {
           width: "100%",
           height: "300px",
         };
+      case "two-column-layout":
+        return {
+          ...baseProperties,
+          sidebarWidth: 260,
+          mainBackgroundColor: "#f9fafb",
+          minHeight: "100vh",
+          width: "100%",
+        };
+      case "sidebar":
+        return {
+          ...baseProperties,
+          backgroundColor: "#ffffff",
+          borderRight: "1px solid #e5e7eb",
+          padding: "1.5rem 1rem",
+          gap: "0.25rem",
+          width: "100%",
+          height: "100%",
+        };
+      case "main-panel":
+        return {
+          ...baseProperties,
+          display: "flex",
+          flexDirection: "column",
+          padding: "1.5rem",
+          gap: "1.25rem",
+          overflow: "auto",
+          flex: 1,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "transparent",
+        };
       case "tab-layout":
         return {
           ...baseProperties,
@@ -502,6 +545,17 @@ export class ComponentFactoryService {
           variant: "default",
           showClose: false,
           width: "auto",
+          height: "auto",
+        };
+      case "nav-item":
+        return {
+          ...baseProperties,
+          label: "导航项",
+          active: false,
+          iconSrc: "",
+          iconSize: 18,
+          fontSize: 14,
+          width: "100%",
           height: "auto",
         };
       case "tag":

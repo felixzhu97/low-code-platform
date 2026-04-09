@@ -100,6 +100,8 @@ export function ComponentRenderer({
         "tag",
         "timeline",
         "rating",
+        "nav-item",
+        "svg",
       ].includes(component.type)
     ) {
       return (

@@ -39,6 +39,46 @@ import { cn } from "@/application/services/utils";
 import { ComponentRenderer } from "./index";
 import { fallbackBox, mutedCenter } from "./renderer-emotion";
 
+/** 从 properties 提取可作用于布局容器的样式（解决 container 曾忽略 flex/bg 等问题） */
+function pickLayoutSurfaceStyles(p: Record<string, any>): React.CSSProperties {
+  const s: React.CSSProperties = {};
+  if (p.display) s.display = p.display;
+  if (p.flexDirection) s.flexDirection = p.flexDirection;
+  if (p.flex !== undefined && p.flex !== "") s.flex = p.flex;
+  if (p.flexGrow !== undefined) s.flexGrow = Number(p.flexGrow);
+  if (p.flexShrink !== undefined) s.flexShrink = Number(p.flexShrink);
+  if (p.justifyContent) s.justifyContent = p.justifyContent;
+  if (p.alignItems) s.alignItems = p.alignItems;
+  if (p.alignContent) s.alignContent = p.alignContent;
+  if (p.alignSelf) s.alignSelf = p.alignSelf;
+  if (p.gap !== undefined && p.gap !== "") s.gap = p.gap;
+  if (p.width !== undefined && p.width !== "") s.width = p.width;
+  if (p.height !== undefined && p.height !== "") s.height = p.height;
+  if (p.minHeight) s.minHeight = p.minHeight;
+  if (p.maxHeight) s.maxHeight = p.maxHeight;
+  if (p.minWidth) s.minWidth = p.minWidth;
+  if (p.maxWidth) s.maxWidth = p.maxWidth;
+  if (p.padding !== undefined && p.padding !== "") s.padding = p.padding;
+  if (p.margin !== undefined && p.margin !== "") s.margin = p.margin;
+  const bg = p.backgroundColor || p.bgColor;
+  if (bg) s.backgroundColor = bg;
+  if (p.borderRadius) s.borderRadius = p.borderRadius;
+  if (typeof p.border === "string" && p.border) s.border = p.border;
+  if (p.borderRight) s.borderRight = p.borderRight;
+  if (p.borderLeft) s.borderLeft = p.borderLeft;
+  if (p.borderTop) s.borderTop = p.borderTop;
+  if (p.borderBottom) s.borderBottom = p.borderBottom;
+  if (p.overflow) s.overflow = p.overflow;
+  if (p.overflowX) s.overflowX = p.overflowX;
+  if (p.overflowY) s.overflowY = p.overflowY;
+  if (p.position) s.position = p.position;
+  if (p.cursor) s.cursor = p.cursor;
+  if (p.boxSizing) s.boxSizing = p.boxSizing;
+  if (p.gridTemplateColumns) s.gridTemplateColumns = p.gridTemplateColumns;
+  if (p.gridTemplateRows) s.gridTemplateRows = p.gridTemplateRows;
+  return s;
+}
+
 const LayoutTabsList = styled(TabsList)`
   width: 100%;
 `;
@@ -300,11 +340,23 @@ export function LayoutComponentRenderer({
             zIndex: 0,
             overflow: "visible",
             padding: props.padding || "1rem",
-            background: props.gradient ? undefined : props.backgroundColor,
+            background:
+              props.gradient ? undefined : props.backgroundColor || props.bgColor,
             borderRadius: props.borderRadius || "0.5rem",
             border: props.border
               ? `2px solid ${props.borderColor || "rgb(229 231 235)"}`
               : "none",
+            ...(props.display ? { display: props.display } : {}),
+            ...(props.flexDirection
+              ? { flexDirection: props.flexDirection }
+              : {}),
+            ...(props.alignItems ? { alignItems: props.alignItems } : {}),
+            ...(props.justifyContent
+              ? { justifyContent: props.justifyContent }
+              : {}),
+            ...(props.gap !== undefined && props.gap !== ""
+              ? { gap: props.gap }
+              : {}),
             ...themeStyle,
             ...animationStyle,
           }}
@@ -464,6 +516,157 @@ export function LayoutComponentRenderer({
         </div>
       );
 
+    case "two-column-layout": {
+      const sidebarW = props.sidebarWidth ?? 260;
+      const sidebarWidthCss =
+        typeof sidebarW === "number" ? `${sidebarW}px` : String(sidebarW);
+      const mainBg =
+        props.mainBackgroundColor ?? props.mainBgColor ?? "#f9fafb";
+      const minH = props.minHeight ?? "100vh";
+      return (
+        <div
+          className={cn(
+            !isPreviewMode && "component-hover",
+            isDropTarget && "component-drag-over"
+          )}
+          style={{
+            // 项目未接入 Tailwind，勿依赖 className 的 flex 工具类
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            alignItems: "stretch",
+            width: "100%",
+            minWidth: 0,
+            minHeight: minH,
+            height: props.height,
+            maxHeight: props.maxHeight,
+            boxSizing: "border-box",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: sidebarWidthCss,
+              flexShrink: 0,
+              minWidth: 0,
+              minHeight: 0,
+              alignSelf: "stretch",
+              boxSizing: "border-box",
+            }}
+          >
+            {childComponents.length > 0 && childComponents[0] ? (
+              renderChildWrapper(childComponents[0], {
+                width: "100%",
+                height: "100%",
+                minHeight: "100%",
+              })
+            ) : (
+              <SplitPlaceholder>左侧：侧栏</SplitPlaceholder>
+            )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: "1 1 0%",
+              minWidth: 0,
+              minHeight: 0,
+              alignSelf: "stretch",
+              boxSizing: "border-box",
+              backgroundColor: mainBg,
+            }}
+          >
+            {childComponents.length > 1 && childComponents[1] ? (
+              renderChildWrapper(childComponents[1], {
+                width: "100%",
+                height: "100%",
+                minHeight: "100%",
+                flex: 1,
+              })
+            ) : (
+              <SplitPlaceholder>右侧：主内容</SplitPlaceholder>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    case "sidebar":
+      return (
+        <aside
+          className={cn(
+            "box-border",
+            !isPreviewMode && "component-hover rounded-sm"
+          )}
+          style={{
+            ...pickLayoutSurfaceStyles(props),
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            height: "100%",
+            minHeight: "100%",
+            boxSizing: "border-box",
+            backgroundColor: props.backgroundColor ?? props.bgColor ?? "#ffffff",
+            borderRight:
+              props.borderRight !== undefined
+                ? props.borderRight
+                : "1px solid #e5e7eb",
+            padding: props.padding ?? "1.5rem 1rem",
+            gap: props.gap ?? "0.25rem",
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          {childComponents.length > 0 ? (
+            childComponents.map((child) => renderChildWrapper(child))
+          ) : (
+            <div css={mutedCenter}>侧栏</div>
+          )}
+        </aside>
+      );
+
+    case "main-panel":
+      return (
+        <div
+          className={cn(
+            "box-border",
+            !isPreviewMode && "component-hover rounded-sm"
+          )}
+          style={{
+            ...pickLayoutSurfaceStyles(props),
+            display: props.display ?? "flex",
+            flexDirection: props.flexDirection ?? "column",
+            width: "100%",
+            height: "100%",
+            minHeight: "100%",
+            minWidth: 0,
+            flex: props.flex ?? 1,
+            boxSizing: "border-box",
+            backgroundColor:
+              props.backgroundColor ?? props.bgColor ?? "transparent",
+            padding: props.padding ?? "1.5rem",
+            gap: props.gap ?? "1.25rem",
+            overflow: props.overflow ?? "auto",
+            overflowX: props.overflowX,
+            overflowY: props.overflowY,
+            ...themeStyle,
+            ...animationStyle,
+          }}
+          data-component-id={component.id}
+        >
+          {childComponents.length > 0 ? (
+            childComponents.map((child) => renderChildWrapper(child))
+          ) : (
+            <div css={mutedCenter}>主内容区</div>
+          )}
+        </div>
+      );
+
     case "tab-layout":
       return (
         <div
@@ -598,25 +801,35 @@ export function LayoutComponentRenderer({
         </div>
       );
 
-    case "container":
+    case "container": {
+      const ghost =
+        props.variant === "ghost" ||
+        props.chromeless === true ||
+        props.layoutVariant === "ghost";
       return (
         <div
           className={cn(
-            "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 relative",
-            isDropTarget && "border-primary bg-primary/5"
+            ghost
+              ? "relative box-border min-h-0"
+              : "min-h-20 min-w-40 rounded border-2 border-dashed border-gray-300 p-4 relative",
+            !ghost && isDropTarget && "border-primary bg-primary/5",
+            ghost && isDropTarget && "ring-2 ring-primary/40"
           )}
-          style={{ ...themeStyle, ...animationStyle }}
+          style={{
+            ...pickLayoutSurfaceStyles(props),
+            ...themeStyle,
+            ...animationStyle,
+          }}
           data-component-id={component.id}
         >
           {childComponents.length > 0 ? (
             childComponents.map((child) => renderChildWrapper(child))
-          ) : (
-            <div css={mutedCenter}>
-              容器
-            </div>
-          )}
+          ) : !ghost ? (
+            <div css={mutedCenter}>容器</div>
+          ) : null}
         </div>
       );
+    }
 
     case "row":
       return (

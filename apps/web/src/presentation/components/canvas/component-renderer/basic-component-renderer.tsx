@@ -28,6 +28,17 @@ const textPad = css`
   padding: 0.5rem;
 `;
 
+const NavItemRow = styled.div<{ $active?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: ${(p) => (p.$active ? "#eff6ff" : "transparent")};
+`;
+
 const StyledButton = styled(Button)<{ $fullWidth?: boolean }>`
   ${(p) => p.$fullWidth && "width: 100%;"}
 `;
@@ -393,6 +404,9 @@ export function BasicComponentRenderer({
             letterSpacing: props.letterSpacing,
             textTransform: props.textTransform as React.CSSProperties["textTransform"],
             textDecoration: props.textDecoration as React.CSSProperties["textDecoration"],
+            ...(props.alignSelf
+              ? { alignSelf: props.alignSelf as React.CSSProperties["alignSelf"] }
+              : {}),
             ...themeStyle,
             ...animationStyle,
           }}
@@ -435,6 +449,64 @@ export function BasicComponentRenderer({
             <span css={css({ marginLeft: "0.5rem" })}>{renderIcon(props.icon)}</span>
           )}
         </StyledButton>
+      );
+
+    case "nav-item":
+      return (
+        <NavItemRow
+          $active={!!props.active}
+          className={cn("component-hover")}
+          style={{ ...themeStyle, ...animationStyle }}
+        >
+          {props.iconSrc ? (
+            <img
+              src={props.iconSrc}
+              alt=""
+              width={Number(props.iconSize) || 18}
+              height={Number(props.iconSize) || 18}
+              style={{
+                objectFit: "contain",
+                flexShrink: 0,
+                filter: props.active ? "none" : "grayscale(1) opacity(0.7)",
+              }}
+            />
+          ) : null}
+          <span
+            style={{
+              fontSize: props.fontSize ?? 14,
+              fontWeight: props.active ? 600 : 400,
+              color: props.active ? "#3b82f6" : "#6b7280",
+              lineHeight: 1.2,
+            }}
+          >
+            {props.label ?? "导航项"}
+          </span>
+        </NavItemRow>
+      );
+
+    case "svg":
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: props.width || 24,
+            height: props.height || 24,
+            color: props.color || "currentColor",
+            ...animationStyle,
+          }}
+        >
+          <img
+            src={props.src || "/icons/users.svg"}
+            alt={props.alt || "svg icon"}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </div>
       );
 
     case "image":

@@ -157,11 +157,22 @@ function isContainerType(type: string): boolean {
     "grid-layout",
     "flex-layout",
     "split-layout",
+    "two-column-layout",
+    "sidebar",
+    "main-panel",
     "tab-layout",
     "card-group",
     "responsive-container",
     "row",
     "column",
+    "card",
+    "collapse",
+    "tabs",
+    "modal",
+    "drawer",
+    "popover",
+    "tooltip",
+    "carousel",
   ].includes(type);
 }
 

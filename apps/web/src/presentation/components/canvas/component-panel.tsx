@@ -187,6 +187,24 @@ export function ComponentPanel() {
           isContainer: true,
         },
         {
+          id: "two-column-layout",
+          name: "双栏布局",
+          type: "two-column-layout",
+          isContainer: true,
+        },
+        {
+          id: "sidebar",
+          name: "侧栏",
+          type: "sidebar",
+          isContainer: true,
+        },
+        {
+          id: "main-panel",
+          name: "主内容区",
+          type: "main-panel",
+          isContainer: true,
+        },
+        {
           id: "tab-layout",
           name: "标签页布局",
           type: "tab-layout",
@@ -285,6 +303,7 @@ export function ComponentPanel() {
         { id: "tag", name: "标签", type: "tag" },
         { id: "timeline", name: "时间线", type: "timeline" },
         { id: "rating", name: "评分", type: "rating" },
+        { id: "nav-item", name: "导航项", type: "nav-item" },
       ],
     },
   ];

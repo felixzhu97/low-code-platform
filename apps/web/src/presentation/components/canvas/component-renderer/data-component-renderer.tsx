@@ -127,10 +127,11 @@ export function DataComponentRenderer({
   componentData,
   animationStyle,
 }: DataComponentRendererProps) {
-  // 优先使用 componentData，如果没有则使用 props.data（用户直接编辑的数据）
-  const data = componentData !== null && componentData !== undefined 
-    ? componentData 
-    : props.data;
+  // 优先使用 componentData，其次 props.data / props.dataSource（模板与属性面板可能用不同字段）
+  const data =
+    componentData !== null && componentData !== undefined
+      ? componentData
+      : props.data ?? props.dataSource;
 
   switch (component.type) {
     case "data-table":
