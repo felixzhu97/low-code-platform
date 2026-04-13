@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   Button,
   Header,
@@ -15,6 +16,8 @@ import { Eye, Undo2, Redo2 } from "lucide-react";
 
 import type { Component } from "@/domain/component";
 import type { ThemeConfig } from "@/domain/theme";
+import { TemplateGallery } from "../templates";
+import { FormBuilder } from "../forms";
 
 interface PlatformHeaderProps {
   canUndo: boolean;
@@ -29,6 +32,8 @@ interface PlatformHeaderProps {
   onRedo: () => void;
   onTogglePreview: () => void;
   onViewportChange: (width: number, device: string) => void;
+  onSelectTemplate: (templateComponents: Component[]) => void;
+  onAddForm: (formComponents: Component[]) => void;
   onGroupComponents: (componentIds: string[], groupName: string) => void;
   onApplyAnimation: (componentId: string, animation: any) => void;
   onThemeChange: (theme: ThemeConfig) => void;
@@ -63,6 +68,8 @@ export function PlatformHeader({
   onRedo,
   onTogglePreview,
   onViewportChange,
+  onSelectTemplate,
+  onAddForm,
   onGroupComponents,
   onApplyAnimation,
   onThemeChange,
@@ -102,6 +109,8 @@ export function PlatformHeader({
           {previewMode ? "退出预览" : "预览"}
         </Button>
         <ResponsiveControls />
+        <TemplateGallery />
+        <FormBuilder />
         <ComponentGrouping />
         <AnimationEditor />
         <ThemeEditor />

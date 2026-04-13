@@ -37,6 +37,11 @@ const ResponsiveControls = lazy(() =>
     default: mod.ResponsiveControls,
   }))
 );
+const TemplateGallery = lazy(() =>
+  import("@/presentation/components/templates").then((mod) => ({
+    default: mod.TemplateGallery,
+  }))
+);
 const ComponentGrouping = lazy(() =>
   import("@/presentation/components/ui").then((mod) => ({
     default: mod.ComponentGrouping,
@@ -406,6 +411,9 @@ export default function LowCodePlatform() {
                 <ToolbarGroup aria-label="核心功能">
                   <Suspense fallback={<ComponentLoader />}>
                     <ResponsiveControls />
+                  </Suspense>
+                  <Suspense fallback={<ComponentLoader />}>
+                    <TemplateGallery />
                   </Suspense>
                 </ToolbarGroup>
 

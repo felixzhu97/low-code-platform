@@ -141,8 +141,8 @@ export function SchemaRenderer({
   const canvasStyle: React.CSSProperties = {
     width: parsedSchema.canvas.viewportWidth || 1920,
     position: "relative",
-    minHeight: "100vh",
-    backgroundColor: parsedSchema.theme?.backgroundColor || "#ffffff",
+    minHeight: 0,
+    backgroundColor: "transparent",
   };
 
   return (

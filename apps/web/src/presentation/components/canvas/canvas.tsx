@@ -88,7 +88,7 @@ const CanvasArea = styled.div`
   position: relative;
   z-index: 0;
   isolation: isolate;
-  min-height: calc(100vh - 7.5rem);
+  min-height: 0;
   padding: 1rem;
 `;
 

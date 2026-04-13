@@ -15,11 +15,15 @@ import { NOTIFICATIONS_TEMPLATES } from "./notifications";
 import { PROFILE_TEMPLATES } from "./profile";
 import { TEAM_TEMPLATES } from "./team";
 import { API_TEMPLATES } from "./api";
+import { LANDING_TEMPLATES } from "./landing";
 
 /**
- * 所有内置模板
+ * 所有内置模板（按优先级排序）
+ * 注意：前两个模板（Engagement Hotel Dashboard 和 Apple 风格落地页）优先级最高
  */
-export const ALL_TEMPLATES: Template[] = [
+
+// 先聚合所有模板到临时数组
+const _allTemplates: Template[] = [
   ...DASHBOARD_TEMPLATES,
   ...USER_MANAGEMENT_TEMPLATES,
   ...SETTINGS_TEMPLATES,
@@ -30,7 +34,17 @@ export const ALL_TEMPLATES: Template[] = [
   ...PROFILE_TEMPLATES,
   ...TEAM_TEMPLATES,
   ...API_TEMPLATES,
+  ...LANDING_TEMPLATES,
 ];
+
+// 优先级模板
+const PRIORITY_IDS = ["engagement-hotel-dashboard", "apple-landing-page"];
+
+// 按优先级排序：priority 模板放前面，其余按原顺序
+const priorityTemplates = _allTemplates.filter((t) => PRIORITY_IDS.includes(t.id));
+const otherTemplates = _allTemplates.filter((t) => !PRIORITY_IDS.includes(t.id));
+
+export const ALL_TEMPLATES: Template[] = [...priorityTemplates, ...otherTemplates];
 
 /**
  * 获取所有模板类别
@@ -99,4 +113,5 @@ export {
   PROFILE_TEMPLATES,
   TEAM_TEMPLATES,
   API_TEMPLATES,
+  LANDING_TEMPLATES,
 };

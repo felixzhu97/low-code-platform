@@ -11,6 +11,13 @@ interface UseComponentInteractionProps {
   snapToGrid: boolean;
 }
 
+interface DragState {
+  mouseStartX: number;
+  mouseStartY: number;
+  componentStartX: number;
+  componentStartY: number;
+}
+
 export function useComponentInteraction({
   components,
   onUpdateComponents,
@@ -29,6 +36,7 @@ export function useComponentInteraction({
   } = useComponentStore();
 
   const canvasRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<DragState | null>(null);
 
   // 选择组件
   const handleSelectComponent = useCallback(
@@ -62,6 +70,14 @@ export function useComponentInteraction({
         y: e.clientY - rect.top,
       });
 
+      // 记录拖拽初始状态，用于计算相对位移
+      dragStateRef.current = {
+        mouseStartX: e.clientX,
+        mouseStartY: e.clientY,
+        componentStartX: component.position?.x || 0,
+        componentStartY: component.position?.y || 0,
+      };
+
       setDragging(true);
     },
     [
@@ -77,13 +93,15 @@ export function useComponentInteraction({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!isDragging || !selectedComponentId || isPreviewMode) return;
+      if (!dragStateRef.current) return;
 
-      const canvasRect = canvasRef.current?.getBoundingClientRect();
-      if (!canvasRect) return;
+      // 使用相对位移计算新位置，避免因页面滚动导致的位置跳动
+      const deltaX = e.clientX - dragStateRef.current.mouseStartX;
+      const deltaY = e.clientY - dragStateRef.current.mouseStartY;
 
       let position = {
-        x: e.clientX - canvasRect.left - dragOffset.x,
-        y: e.clientY - canvasRect.top - dragOffset.y,
+        x: dragStateRef.current.componentStartX + deltaX,
+        y: dragStateRef.current.componentStartY + deltaY,
       };
 
       // 应用网格对齐
@@ -105,7 +123,6 @@ export function useComponentInteraction({
       isDragging,
       selectedComponentId,
       isPreviewMode,
-      dragOffset,
       snapToGrid,
       components,
       onUpdateComponents,
@@ -114,6 +131,7 @@ export function useComponentInteraction({
 
   // 鼠标抬起结束拖拽
   const handleMouseUp = useCallback(() => {
+    dragStateRef.current = null;
     setDragging(false);
   }, [setDragging]);
 
