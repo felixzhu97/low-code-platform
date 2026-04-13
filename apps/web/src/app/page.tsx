@@ -37,16 +37,6 @@ const ResponsiveControls = lazy(() =>
     default: mod.ResponsiveControls,
   }))
 );
-const TemplateGallery = lazy(() =>
-  import("@/presentation/components/templates").then((mod) => ({
-    default: mod.TemplateGallery,
-  }))
-);
-const FormBuilder = lazy(() =>
-  import("@/presentation/components/forms").then((mod) => ({
-    default: mod.FormBuilder,
-  }))
-);
 const ComponentGrouping = lazy(() =>
   import("@/presentation/components/ui").then((mod) => ({
     default: mod.ComponentGrouping,
@@ -80,11 +70,6 @@ const SchemaImport = lazy(() =>
 const CodeExport = lazy(() =>
   import("@/presentation/components/ui").then((mod) => ({
     default: mod.CodeExport,
-  }))
-);
-const AIGenerator = lazy(() =>
-  import("@/presentation/components/ui").then((mod) => ({
-    default: mod.AIGenerator,
   }))
 );
 
@@ -422,21 +407,12 @@ export default function LowCodePlatform() {
                   <Suspense fallback={<ComponentLoader />}>
                     <ResponsiveControls />
                   </Suspense>
-                  <Suspense fallback={<ComponentLoader />}>
-                    <TemplateGallery />
-                  </Suspense>
-                  <Suspense fallback={<ComponentLoader />}>
-                    <AIGenerator />
-                  </Suspense>
                 </ToolbarGroup>
 
                 {!shouldCollapse && (
                   <>
                     <ToolbarSeparator />
                     <ToolbarGroup aria-label="编辑功能">
-                      <Suspense fallback={<ComponentLoader />}>
-                        <FormBuilder />
-                      </Suspense>
                       <Suspense fallback={<ComponentLoader />}>
                         <ComponentGrouping />
                       </Suspense>
@@ -489,9 +465,6 @@ export default function LowCodePlatform() {
                           <SheetSection>
                             <SheetSectionTitle>编辑功能</SheetSectionTitle>
                             <SheetButtonStack>
-                              <Suspense fallback={<ComponentLoader />}>
-                                <FormBuilder />
-                              </Suspense>
                               <Suspense fallback={<ComponentLoader />}>
                                 <ComponentGrouping />
                               </Suspense>
