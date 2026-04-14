@@ -35,6 +35,9 @@ export class ApplyTemplateUseCase {
     // 更新状态管理
     this.stateManagement.setComponents(components);
 
+    // 保存历史记录
+    this.stateManagement.addToHistory(components);
+
     return components;
   }
 
@@ -49,6 +52,9 @@ export class ApplyTemplateUseCase {
 
     // 更新状态管理
     this.stateManagement.setComponents(components);
+
+    // 保存历史记录
+    this.stateManagement.addToHistory(components);
 
     return components;
   }
@@ -74,6 +80,9 @@ export class ApplyTemplateUseCase {
 
     // 更新状态管理
     this.stateManagement.setComponents(merged);
+
+    // 保存历史记录
+    this.stateManagement.addToHistory(merged);
 
     return merged;
   }

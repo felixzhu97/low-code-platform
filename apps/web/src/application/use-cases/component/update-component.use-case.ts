@@ -33,6 +33,10 @@ export class UpdateComponentUseCase {
     // 更新状态管理
     this.stateManagement.updateComponent(id, updates);
 
+    // 保存历史记录
+    const allComponents = await this.componentRepository.findAll();
+    this.stateManagement.addToHistory(allComponents);
+
     return savedComponent;
   }
 }

@@ -10,6 +10,7 @@ interface UseCanvasDragProps {
   isPreviewMode: boolean;
   snapToGrid: boolean;
   theme?: any;
+  addToHistory?: (components: Component[]) => void;
 }
 
 export function useCanvasDrag({
@@ -18,6 +19,7 @@ export function useCanvasDrag({
   isPreviewMode,
   snapToGrid,
   theme,
+  addToHistory,
 }: UseCanvasDragProps) {
   const { dropTargetId, setDropTarget, addComponent } = useComponentStore();
 
@@ -44,6 +46,8 @@ export function useCanvasDrag({
             position = ComponentManagementService.snapToGrid(position);
           }
 
+          let newComponent: Component | null = null;
+
           // 如果有目标容器，则将组件添加到容器中
           if (dropTargetId) {
             const targetComponent = components.find(
@@ -53,7 +57,7 @@ export function useCanvasDrag({
               targetComponent &&
               ComponentManagementService.isContainer(targetComponent.type)
             ) {
-              const newComponent = ComponentManagementService.createComponent(
+              newComponent = ComponentManagementService.createComponent(
                 item.type,
                 { x: 0, y: 0 }, // 相对于容器的位置
                 dropTargetId,
@@ -62,19 +66,27 @@ export function useCanvasDrag({
 
               addComponent(newComponent);
               setDropTarget(null);
-              return newComponent;
             }
           }
 
           // 否则添加到画布根级别
-          const newComponent = ComponentManagementService.createComponent(
-            item.type,
-            position,
-            null,
-            theme
-          );
+          if (!newComponent) {
+            newComponent = ComponentManagementService.createComponent(
+              item.type,
+              position,
+              null,
+              theme
+            );
 
-          addComponent(newComponent);
+            addComponent(newComponent);
+          }
+
+          // 创建组件后保存历史记录
+          if (newComponent && addToHistory) {
+            const updatedComponents = [...components, newComponent];
+            addToHistory(updatedComponents);
+          }
+
           return newComponent;
         }
       },

@@ -17,7 +17,7 @@ export class DeleteComponentUseCase {
    * 执行删除组件用例（包括子组件）
    */
   async execute(id: string, includeChildren: boolean = true): Promise<void> {
-    // 获取所有组件
+    // 获取所有组件（删除前）
     const allComponents = await this.componentRepository.findAll();
 
     if (includeChildren) {
@@ -37,6 +37,10 @@ export class DeleteComponentUseCase {
       await this.componentRepository.delete(id);
       this.stateManagement.deleteComponent(id);
     }
+
+    // 保存历史记录（保存删除后的剩余组件）
+    const remainingComponents = await this.componentRepository.findAll();
+    this.stateManagement.addToHistory(remainingComponents);
   }
 
   /**

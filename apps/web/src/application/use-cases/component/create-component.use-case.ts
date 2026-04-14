@@ -38,6 +38,10 @@ export class CreateComponentUseCase {
     // 更新状态管理
     this.stateManagement.addComponent(savedComponent);
 
+    // 保存历史记录
+    const allComponents = await this.componentRepository.findAll();
+    this.stateManagement.addToHistory(allComponents);
+
     return savedComponent;
   }
 }

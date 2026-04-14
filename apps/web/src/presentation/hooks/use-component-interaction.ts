@@ -9,6 +9,7 @@ interface UseComponentInteractionProps {
   onSelectComponent: (component: Component | null) => void;
   isPreviewMode: boolean;
   snapToGrid: boolean;
+  addToHistory?: (components: Component[]) => void;
 }
 
 interface DragState {
@@ -24,6 +25,7 @@ export function useComponentInteraction({
   onSelectComponent,
   isPreviewMode,
   snapToGrid,
+  addToHistory,
 }: UseComponentInteractionProps) {
   // 从 store 获取状态
   const {
@@ -37,6 +39,7 @@ export function useComponentInteraction({
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<DragState | null>(null);
+  const lastUpdateRef = useRef<Component[]>(components); // 追踪上次更新状态，避免重复保存
 
   // 选择组件
   const handleSelectComponent = useCallback(
@@ -133,7 +136,12 @@ export function useComponentInteraction({
   const handleMouseUp = useCallback(() => {
     dragStateRef.current = null;
     setDragging(false);
-  }, [setDragging]);
+    // 拖拽结束后保存历史记录
+    if (addToHistory && components !== lastUpdateRef.current) {
+      addToHistory(components);
+      lastUpdateRef.current = components;
+    }
+  }, [setDragging, addToHistory, components]);
 
   // 键盘操作
   const handleKeyDown = useCallback(
@@ -178,6 +186,11 @@ export function useComponentInteraction({
         });
 
         onUpdateComponents(updatedComponents);
+        // 键盘移动后保存历史记录
+        if (addToHistory) {
+          addToHistory(updatedComponents);
+          lastUpdateRef.current = updatedComponents;
+        }
       }
     },
     [
@@ -186,6 +199,7 @@ export function useComponentInteraction({
       snapToGrid,
       components,
       onUpdateComponents,
+      addToHistory,
     ]
   );
 
@@ -200,12 +214,18 @@ export function useComponentInteraction({
     onUpdateComponents(newComponents);
     selectComponent(null);
     onSelectComponent(null);
+    // 删除后保存历史记录
+    if (addToHistory) {
+      addToHistory(newComponents);
+      lastUpdateRef.current = newComponents;
+    }
   }, [
     selectedComponentId,
     components,
     onUpdateComponents,
     onSelectComponent,
     selectComponent,
+    addToHistory,
   ]);
 
   // 清空所有组件
@@ -213,7 +233,12 @@ export function useComponentInteraction({
     onUpdateComponents([]);
     selectComponent(null);
     onSelectComponent(null);
-  }, [onUpdateComponents, onSelectComponent, selectComponent]);
+    // 清空后保存历史记录
+    if (addToHistory) {
+      addToHistory([]);
+      lastUpdateRef.current = [];
+    }
+  }, [onUpdateComponents, onSelectComponent, selectComponent, addToHistory]);
 
   // 键盘事件监听
   useEffect(() => {

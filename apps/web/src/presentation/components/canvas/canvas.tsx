@@ -147,6 +147,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
     toggleGrid,
     toggleSnapToGrid,
     dataSources,
+    addToHistory, // 获取历史记录方法
   } = useAllStores();
 
   const {
@@ -167,7 +168,17 @@ export const Canvas = React.memo<CanvasProps>(() => {
     onSelectComponent: selectComponent,
     isPreviewMode,
     snapToGrid,
+    addToHistory, // 传递历史记录方法
   });
+
+  // 清空画布并记录历史
+  const handleClearWithHistory = useCallback(() => {
+    clearAllComponents();
+    if (addToHistory) {
+      addToHistory([]);
+    }
+    selectComponent(null);
+  }, [clearAllComponents, addToHistory, selectComponent]);
 
   const { drop, isOver, dropTargetId } = useCanvasDrag({
     components,
@@ -177,6 +188,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
     isPreviewMode,
     snapToGrid,
     theme,
+    addToHistory, // 传递历史记录方法
   });
 
   const getComponentData = useCallback(
@@ -304,7 +316,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={clearAllComponents}
+                      onClick={handleClearWithHistory}
                       disabled={components.length === 0}
                       aria-label="清空画布"
                     >

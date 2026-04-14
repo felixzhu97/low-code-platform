@@ -10,6 +10,7 @@ import {
   canRedo,
   type HistoryState,
 } from "@/application/services/history";
+import { useComponentStore } from "./component.store";
 
 interface HistoryStateStore {
   // 历史状态
@@ -60,6 +61,9 @@ export const useHistoryStore = create<HistoryStateStore>()(
         const newHistory = undo(componentsHistory);
         set({ componentsHistory: newHistory }, false, "undo");
 
+        // 同步更新组件状态
+        useComponentStore.getState().updateComponents(newHistory.present);
+
         return newHistory.present;
       },
 
@@ -70,6 +74,9 @@ export const useHistoryStore = create<HistoryStateStore>()(
 
         const newHistory = redo(componentsHistory);
         set({ componentsHistory: newHistory }, false, "redo");
+
+        // 同步更新组件状态
+        useComponentStore.getState().updateComponents(newHistory.present);
 
         return newHistory.present;
       },

@@ -50,6 +50,10 @@ export class UpdateComponentPositionUseCase {
 
     // 更新状态管理
     this.stateManagement.setComponents(updatedComponents);
+
+    // 保存历史记录
+    const componentsAfterUpdate = await this.componentRepository.findAll();
+    this.stateManagement.addToHistory(componentsAfterUpdate);
   }
 }
 
