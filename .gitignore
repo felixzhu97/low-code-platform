@@ -77,4 +77,4 @@ __pycache__/
 *.py[cod]
 .venv/
 
-.doc
+TODO.md
