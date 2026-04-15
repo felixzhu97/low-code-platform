@@ -20,8 +20,7 @@ import { useCanvasDrag } from "@/presentation";
 import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
 import { useAllStores } from "@/presentation/hooks";
-import { useComponentStore } from "@/infrastructure/state-management/stores";
-import type { Component } from "@/domain/component";
+import type { Component } from "@/domain/component/entities/component.entity";
 
 const CanvasRoot = styled.div`
   flex: 1;
@@ -136,6 +135,7 @@ type CanvasProps = Record<string, never>;
 export const Canvas = React.memo<CanvasProps>(() => {
   const {
     components,
+    updateComponents,
     selectComponent,
     clearAllComponents,
     isPreviewMode,
@@ -147,7 +147,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
     toggleGrid,
     toggleSnapToGrid,
     dataSources,
-    addToHistory, // 获取历史记录方法
+    addToHistory,
   } = useAllStores();
 
   const {
@@ -163,12 +163,12 @@ export const Canvas = React.memo<CanvasProps>(() => {
   } = useComponentInteraction({
     components,
     onUpdateComponents: (newComponents) => {
-      useComponentStore.getState().updateComponents(newComponents);
+      updateComponents(newComponents);
     },
     onSelectComponent: selectComponent,
     isPreviewMode,
     snapToGrid,
-    addToHistory, // 传递历史记录方法
+    addToHistory,
   });
 
   // 清空画布并记录历史
@@ -183,7 +183,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
   const { drop, isOver, dropTargetId } = useCanvasDrag({
     components,
     onUpdateComponents: (newComponents) => {
-      useComponentStore.getState().updateComponents(newComponents);
+      updateComponents(newComponents);
     },
     isPreviewMode,
     snapToGrid,

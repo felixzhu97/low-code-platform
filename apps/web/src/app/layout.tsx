@@ -3,6 +3,7 @@ import "./globals.css";
 import { DEFAULT_THEME_MODE } from "../presentation/styles/theme";
 import { ThemeProvider } from "../presentation/styles/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "lowcode App",
@@ -22,9 +23,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>

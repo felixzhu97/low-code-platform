@@ -7,24 +7,24 @@ import type {
   UIState,
   HistoryState,
 } from "@/application/ports/state-management.port";
-import type { Component } from "@/domain/component";
-import type { DataSource } from "@/domain/datasource";
-import type { ThemeConfig } from "@/domain/theme";
-import { useComponentStore } from "../stores/component.store";
-import { useCanvasStore } from "../stores/canvas.store";
-import { useThemeStore } from "../stores/theme.store";
-import { useDataStore } from "../stores/data.store";
-import { useUIStore } from "../stores/ui.store";
-import { useHistoryStore } from "../stores/history.store";
+import type { Component } from "@/domain/component/entities/component.entity";
+import type { DataSource } from "@/domain/datasource/entities/data-source.entity";
+import type { ThemeConfig } from "@/domain/theme/entities/theme-config.entity";
+import { store } from "../store";
+import * as componentActions from "../store/slices/component.slice";
+import * as canvasActions from "../store/slices/canvas.slice";
+import * as themeActions from "../store/slices/theme.slice";
+import * as dataActions from "../store/slices/data.slice";
+import * as uiActions from "../store/slices/ui.slice";
+import * as historyActions from "../store/slices/history.slice";
 
-/**
- * Zustand 状态管理适配器
- * 实现 IStateManagementPort 接口，将 Zustand stores 适配为应用层端口
- */
 export class ZustandStateAdapter implements IStateManagementPort {
-  // 组件状态操作
+  private getState() {
+    return store.getState();
+  }
+
   getComponentState(): ComponentState {
-    const state = useComponentStore.getState();
+    const state = this.getState().component;
     return {
       components: state.components,
       selectedComponent: state.selectedComponent,
@@ -36,44 +36,43 @@ export class ZustandStateAdapter implements IStateManagementPort {
   }
 
   setComponents(components: Component[]): void {
-    useComponentStore.getState().updateComponents(components);
+    store.dispatch(componentActions.updateComponents(components));
   }
 
   addComponent(component: Component): void {
-    useComponentStore.getState().addComponent(component);
+    store.dispatch(componentActions.addComponent(component));
   }
 
   updateComponent(id: string, updates: Partial<Component>): void {
-    useComponentStore.getState().updateComponent(id, updates);
+    store.dispatch(componentActions.updateComponent({ id, updates }));
   }
 
   deleteComponent(id: string): void {
-    useComponentStore.getState().deleteComponent(id);
+    store.dispatch(componentActions.deleteComponent(id));
   }
 
   selectComponent(component: Component | null): void {
-    useComponentStore.getState().selectComponent(component);
+    store.dispatch(componentActions.selectComponent(component));
   }
 
   clearSelection(): void {
-    useComponentStore.getState().clearSelection();
+    store.dispatch(componentActions.clearSelection());
   }
 
   setDragging(isDragging: boolean): void {
-    useComponentStore.getState().setDragging(isDragging);
+    store.dispatch(componentActions.setDragging(isDragging));
   }
 
   setDragOffset(offset: { x: number; y: number }): void {
-    useComponentStore.getState().setDragOffset(offset);
+    store.dispatch(componentActions.setDragOffset(offset));
   }
 
   setDropTarget(targetId: string | null): void {
-    useComponentStore.getState().setDropTarget(targetId);
+    store.dispatch(componentActions.setDropTarget(targetId));
   }
 
-  // 画布状态操作
   getCanvasState(): CanvasState {
-    const state = useCanvasStore.getState();
+    const state = this.getState().canvas;
     return {
       isPreviewMode: state.isPreviewMode,
       showGrid: state.showGrid,
@@ -84,28 +83,27 @@ export class ZustandStateAdapter implements IStateManagementPort {
   }
 
   setPreviewMode(preview: boolean): void {
-    useCanvasStore.getState().setPreviewMode(preview);
+    store.dispatch(canvasActions.setPreviewMode(preview));
   }
 
   toggleGrid(): void {
-    useCanvasStore.getState().toggleGrid();
+    store.dispatch(canvasActions.toggleGrid());
   }
 
   toggleSnapToGrid(): void {
-    useCanvasStore.getState().toggleSnapToGrid();
+    store.dispatch(canvasActions.toggleSnapToGrid());
   }
 
   setViewportWidth(width: number): void {
-    useCanvasStore.getState().setViewportWidth(width);
+    store.dispatch(canvasActions.setViewportWidth(width));
   }
 
   setActiveDevice(device: string): void {
-    useCanvasStore.getState().setActiveDevice(device);
+    store.dispatch(canvasActions.setActiveDevice(device));
   }
 
-  // 主题状态操作
   getThemeState(): ThemeState {
-    const state = useThemeStore.getState();
+    const state = this.getState().theme;
     return {
       theme: state.theme,
       isDarkMode: state.isDarkMode,
@@ -114,24 +112,23 @@ export class ZustandStateAdapter implements IStateManagementPort {
   }
 
   updateTheme(updates: Partial<ThemeConfig>): void {
-    useThemeStore.getState().updateTheme(updates);
+    store.dispatch(themeActions.updateTheme(updates));
   }
 
   setTheme(theme: ThemeConfig): void {
-    useThemeStore.getState().setTheme(theme);
+    store.dispatch(themeActions.setTheme(theme));
   }
 
   toggleDarkMode(): void {
-    useThemeStore.getState().toggleDarkMode();
+    store.dispatch(themeActions.toggleDarkMode());
   }
 
   resetTheme(): void {
-    useThemeStore.getState().resetTheme();
+    store.dispatch(themeActions.resetTheme());
   }
 
-  // 数据源状态操作
   getDataSourceState(): DataSourceState {
-    const state = useDataStore.getState();
+    const state = this.getState().data;
     return {
       dataSources: state.dataSources,
       activeDataSource: state.activeDataSource,
@@ -140,24 +137,23 @@ export class ZustandStateAdapter implements IStateManagementPort {
   }
 
   addDataSource(dataSource: DataSource): void {
-    useDataStore.getState().addDataSource(dataSource);
+    store.dispatch(dataActions.addDataSource(dataSource));
   }
 
   updateDataSource(id: string, updates: Partial<DataSource>): void {
-    useDataStore.getState().updateDataSource(id, updates);
+    store.dispatch(dataActions.updateDataSource({ id, updates }));
   }
 
   deleteDataSource(id: string): void {
-    useDataStore.getState().deleteDataSource(id);
+    store.dispatch(dataActions.deleteDataSource(id));
   }
 
   setActiveDataSource(id: string | null): void {
-    useDataStore.getState().setActiveDataSource(id);
+    store.dispatch(dataActions.setActiveDataSource(id));
   }
 
-  // UI状态操作
   getUIState(): UIState {
-    const state = useUIStore.getState();
+    const state = this.getState().ui;
     return {
       activeTab: state.activeTab,
       sidebarCollapsed: state.sidebarCollapsed,
@@ -170,58 +166,64 @@ export class ZustandStateAdapter implements IStateManagementPort {
   }
 
   setActiveTab(tab: string): void {
-    useUIStore.getState().setActiveTab(tab);
+    store.dispatch(uiActions.setActiveTab(tab));
   }
 
   toggleSidebar(): void {
-    useUIStore.getState().toggleSidebar();
+    store.dispatch(uiActions.toggleSidebar());
   }
 
   toggleRightPanel(): void {
-    useUIStore.getState().toggleRightPanel();
+    store.dispatch(uiActions.toggleRightPanel());
   }
 
   toggleLeftPanel(): void {
-    useUIStore.getState().toggleLeftPanel();
+    store.dispatch(uiActions.toggleLeftPanel());
   }
 
   setProjectName(name: string): void {
-    useUIStore.getState().setProjectName(name);
+    store.dispatch(uiActions.setProjectName(name));
   }
 
   setLoading(loading: boolean): void {
-    useUIStore.getState().setLoading(loading);
+    store.dispatch(uiActions.setLoading(loading));
   }
 
-  // 历史状态操作
   getHistoryState(): HistoryState {
-    const info = useHistoryStore.getState().getHistoryInfo();
+    const history = this.getState().history.componentsHistory;
     return {
-      canUndo: info.canUndo,
-      canRedo: info.canRedo,
-      currentIndex: info.currentIndex,
-      totalSteps: info.totalSteps,
+      canUndo: history.past.length > 0,
+      canRedo: history.future.length > 0,
+      currentIndex: history.past.length,
+      totalSteps: history.past.length + history.future.length + 1,
     };
   }
 
   addToHistory(components: Component[]): void {
-    useHistoryStore.getState().addToHistory(components);
+    store.dispatch(historyActions.addToComponentsHistory(components));
   }
 
   undo(): Component[] | null {
-    return useHistoryStore.getState().undo();
+    const state = this.getState().history.componentsHistory;
+    if (state.past.length === 0) return null;
+    const previous = state.past[state.past.length - 1];
+    store.dispatch(historyActions.undoComponents());
+    return previous;
   }
 
   redo(): Component[] | null {
-    return useHistoryStore.getState().redo();
+    const state = this.getState().history.componentsHistory;
+    if (state.future.length === 0) return null;
+    const next = state.future[0];
+    store.dispatch(historyActions.redoComponents());
+    return next;
   }
 
   canUndo(): boolean {
-    return useHistoryStore.getState().canUndo();
+    return this.getState().history.componentsHistory.past.length > 0;
   }
 
   canRedo(): boolean {
-    return useHistoryStore.getState().canRedo();
+    return this.getState().history.componentsHistory.future.length > 0;
   }
 }
-

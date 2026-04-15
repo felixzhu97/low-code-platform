@@ -1,30 +1,5 @@
-import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-
-interface CanvasState {
-  // 画布状态
-  isPreviewMode: boolean;
-  showGrid: boolean;
-  snapToGrid: boolean;
-  viewportWidth: number;
-  activeDevice: string;
-
-  // 画布操作
-  setPreviewMode: (preview: boolean) => void;
-  toggleGrid: () => void;
-  toggleSnapToGrid: () => void;
-  setViewportWidth: (width: number) => void;
-  setActiveDevice: (device: string) => void;
-
-  // 响应式断点
-  getResponsiveBreakpoints: () => {
-    sm: number;
-    md: number;
-    lg: number;
-    xl: number;
-  };
-  getCurrentBreakpoint: () => string;
-}
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import * as canvasActions from "../store/slices/canvas.slice";
 
 const BREAKPOINTS = {
   sm: 640,
@@ -33,71 +8,27 @@ const BREAKPOINTS = {
   xl: 1280,
 };
 
-export const useCanvasStore = create<CanvasState>()(
-  devtools(
-    persist(
-      (set, get) => ({
-        // 初始状态
-        isPreviewMode: false,
-        showGrid: false,
-        snapToGrid: false,
-        viewportWidth: 1280,
-        activeDevice: "desktop",
+export const useCanvasStore = () => {
+  const dispatch = useAppDispatch();
+  const state = useAppSelector((s) => s.canvas);
 
-        // 设置预览模式
-        setPreviewMode: (preview: boolean) => {
-          set({ isPreviewMode: preview }, false, "setPreviewMode");
-        },
-
-        // 切换网格显示
-        toggleGrid: () => {
-          set((state) => ({ showGrid: !state.showGrid }), false, "toggleGrid");
-        },
-
-        // 切换网格对齐
-        toggleSnapToGrid: () => {
-          set(
-            (state) => ({ snapToGrid: !state.snapToGrid }),
-            false,
-            "toggleSnapToGrid"
-          );
-        },
-
-        // 设置视口宽度
-        setViewportWidth: (width: number) => {
-          set({ viewportWidth: width }, false, "setViewportWidth");
-        },
-
-        // 设置活动设备
-        setActiveDevice: (device: string) => {
-          set({ activeDevice: device }, false, "setActiveDevice");
-        },
-
-        // 获取响应式断点
-        getResponsiveBreakpoints: () => BREAKPOINTS,
-
-        // 获取当前断点
-        getCurrentBreakpoint: () => {
-          const { viewportWidth } = get();
-          if (viewportWidth >= BREAKPOINTS.xl) return "xl";
-          if (viewportWidth >= BREAKPOINTS.lg) return "lg";
-          if (viewportWidth >= BREAKPOINTS.md) return "md";
-          if (viewportWidth >= BREAKPOINTS.sm) return "sm";
-          return "xs";
-        },
-      }),
-      {
-        name: "canvas-store",
-        partialize: (state) => ({
-          showGrid: state.showGrid,
-          snapToGrid: state.snapToGrid,
-          viewportWidth: state.viewportWidth,
-          activeDevice: state.activeDevice,
-        }),
-      }
-    ),
-    {
-      name: "canvas-store",
-    }
-  )
-);
+  return {
+    ...state,
+    setPreviewMode: (preview: boolean) =>
+      dispatch(canvasActions.setPreviewMode(preview)),
+    toggleGrid: () => dispatch(canvasActions.toggleGrid()),
+    toggleSnapToGrid: () => dispatch(canvasActions.toggleSnapToGrid()),
+    setViewportWidth: (width: number) =>
+      dispatch(canvasActions.setViewportWidth(width)),
+    setActiveDevice: (device: string) =>
+      dispatch(canvasActions.setActiveDevice(device)),
+    getResponsiveBreakpoints: () => BREAKPOINTS,
+    getCurrentBreakpoint: () => {
+      if (state.viewportWidth >= BREAKPOINTS.xl) return "xl";
+      if (state.viewportWidth >= BREAKPOINTS.lg) return "lg";
+      if (state.viewportWidth >= BREAKPOINTS.md) return "md";
+      if (state.viewportWidth >= BREAKPOINTS.sm) return "sm";
+      return "xs";
+    },
+  };
+};

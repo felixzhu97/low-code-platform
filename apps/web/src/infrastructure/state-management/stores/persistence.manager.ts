@@ -1,9 +1,10 @@
-import { useComponentStore } from "./component.store";
-import { useCanvasStore } from "./canvas.store";
-import { useThemeStore } from "./theme.store";
-import { useDataStore } from "./data.store";
-import { useUIStore } from "./ui.store";
-import type { Component } from "@/domain/component";
+import { store } from "../store";
+import * as componentActions from "../store/slices/component.slice";
+import * as canvasActions from "../store/slices/canvas.slice";
+import * as themeActions from "../store/slices/theme.slice";
+import * as dataActions from "../store/slices/data.slice";
+import * as uiActions from "../store/slices/ui.slice";
+import type { Component } from "@/domain/component/entities/component.entity";
 import {
   PageSchema,
   validateSchema,
@@ -41,27 +42,21 @@ class PersistenceManager {
   private static readonly STORAGE_KEY = "lowcode-projects";
   private static readonly CURRENT_PROJECT_KEY = "lowcode-current-project";
 
-  /**
-   * 保存当前项目
-   */
+  private static getState() {
+    return store.getState();
+  }
+
   static saveCurrentProject(projectId: string, projectName: string): void {
     const projectData = this.exportProjectData(projectId, projectName);
     this.saveProject(projectData);
     this.setCurrentProjectId(projectId);
   }
 
-  /**
-   * 导出当前项目数据
-   */
   static exportProjectData(
     projectId: string,
     projectName: string
   ): ProjectData {
-    const componentStore = useComponentStore.getState();
-    const canvasStore = useCanvasStore.getState();
-    const themeStore = useThemeStore.getState();
-    const dataStore = useDataStore.getState();
-    const uiStore = useUIStore.getState();
+    const state = this.getState();
 
     return {
       id: projectId,
@@ -69,27 +64,24 @@ class PersistenceManager {
       description: "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      components: componentStore.components,
+      components: state.component.components,
       canvas: {
-        showGrid: canvasStore.showGrid,
-        snapToGrid: canvasStore.snapToGrid,
-        viewportWidth: canvasStore.viewportWidth,
-        activeDevice: canvasStore.activeDevice,
+        showGrid: state.canvas.showGrid,
+        snapToGrid: state.canvas.snapToGrid,
+        viewportWidth: state.canvas.viewportWidth,
+        activeDevice: state.canvas.activeDevice,
       },
-      theme: themeStore.theme,
-      dataSources: dataStore.dataSources,
+      theme: state.theme.theme,
+      dataSources: state.data.dataSources,
       settings: {
-        activeTab: uiStore.activeTab,
-        sidebarCollapsed: uiStore.sidebarCollapsed,
-        rightPanelCollapsed: uiStore.rightPanelCollapsed,
-        leftPanelCollapsed: uiStore.leftPanelCollapsed,
+        activeTab: state.ui.activeTab,
+        sidebarCollapsed: state.ui.sidebarCollapsed,
+        rightPanelCollapsed: state.ui.rightPanelCollapsed,
+        leftPanelCollapsed: state.ui.leftPanelCollapsed,
       },
     };
   }
 
-  /**
-   * 保存项目到本地存储
-   */
   static saveProject(projectData: ProjectData): void {
     try {
       const projects = this.getAllProjects();
@@ -111,9 +103,6 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 加载项目
-   */
   static loadProject(projectId: string): ProjectData | null {
     try {
       const projects = this.getAllProjects();
@@ -125,13 +114,8 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 导入项目数据到stores
-   * 支持 ProjectData 和 PageSchema 两种格式
-   */
   static importProjectData(projectData: ProjectData | PageSchema): void {
     try {
-      // 如果是 Schema 格式，转换为 ProjectData
       let data: ProjectData;
       if (this.isSchemaFormat(projectData)) {
         const migratedSchema = migrateSchema(projectData);
@@ -140,78 +124,61 @@ class PersistenceManager {
         data = projectData as ProjectData;
       }
 
-      // 导入组件数据
       if (data.components && Array.isArray(data.components)) {
-        useComponentStore.getState().updateComponents(data.components);
+        store.dispatch(componentActions.updateComponents(data.components));
       } else {
-        useComponentStore.getState().updateComponents([]);
+        store.dispatch(componentActions.updateComponents([]));
       }
 
-      // 导入画布设置
-      const canvasStore = useCanvasStore.getState();
       if (data.canvas) {
         if (data.canvas.showGrid !== undefined) {
-          canvasStore.showGrid = data.canvas.showGrid;
+          store.dispatch(canvasActions.toggleGrid());
         }
         if (data.canvas.snapToGrid !== undefined) {
-          canvasStore.snapToGrid = data.canvas.snapToGrid;
+          store.dispatch(canvasActions.toggleSnapToGrid());
         }
         if (data.canvas.viewportWidth !== undefined) {
-          canvasStore.viewportWidth = data.canvas.viewportWidth;
+          store.dispatch(canvasActions.setViewportWidth(data.canvas.viewportWidth));
         }
         if (data.canvas.activeDevice !== undefined) {
-          canvasStore.activeDevice = data.canvas.activeDevice;
+          store.dispatch(canvasActions.setActiveDevice(data.canvas.activeDevice));
         }
-      } else {
-        // 如果没有 canvas 数据，使用默认值
-        console.warn(
-          "[PersistenceManager] Canvas data is missing, using defaults"
-        );
-        canvasStore.showGrid = false;
-        canvasStore.snapToGrid = false;
-        canvasStore.viewportWidth = 1920;
-        canvasStore.activeDevice = "desktop";
       }
 
-      // 导入主题
       if (data.theme) {
-        useThemeStore.getState().setTheme(data.theme);
+        store.dispatch(themeActions.setTheme(data.theme));
       }
 
-      // 导入数据源
-      const dataStore = useDataStore.getState();
-      // 先删除所有现有数据源
-      const existingDataSourceIds = [
-        ...dataStore.dataSources.map((ds) => ds.id),
-      ];
-      existingDataSourceIds.forEach((id) => {
-        dataStore.deleteDataSource(id);
-      });
-      // 然后添加新的数据源
       if (data.dataSources && Array.isArray(data.dataSources)) {
         data.dataSources.forEach((ds) => {
-          dataStore.addDataSource(ds);
+          store.dispatch(dataActions.addDataSource(ds));
         });
       }
 
-      // 导入UI设置
-      const uiStore = useUIStore.getState();
       if (data.settings?.activeTab) {
-        uiStore.setActiveTab(data.settings.activeTab);
+        store.dispatch(uiActions.setActiveTab(data.settings.activeTab));
       }
       if (data.settings?.sidebarCollapsed !== undefined) {
-        uiStore.sidebarCollapsed = data.settings.sidebarCollapsed;
+        const current = this.getState().ui.sidebarCollapsed;
+        if (current !== data.settings.sidebarCollapsed) {
+          store.dispatch(uiActions.toggleSidebar());
+        }
       }
       if (data.settings?.rightPanelCollapsed !== undefined) {
-        uiStore.rightPanelCollapsed = data.settings.rightPanelCollapsed;
+        const current = this.getState().ui.rightPanelCollapsed;
+        if (current !== data.settings.rightPanelCollapsed) {
+          store.dispatch(uiActions.toggleRightPanel());
+        }
       }
       if (data.settings?.leftPanelCollapsed !== undefined) {
-        uiStore.leftPanelCollapsed = data.settings.leftPanelCollapsed;
+        const current = this.getState().ui.leftPanelCollapsed;
+        if (current !== data.settings.leftPanelCollapsed) {
+          store.dispatch(uiActions.toggleLeftPanel());
+        }
       }
 
-      // 更新项目名称
       if (data.name) {
-        uiStore.setProjectName(data.name);
+        store.dispatch(uiActions.setProjectName(data.name));
       }
     } catch (error) {
       console.error("导入项目数据失败:", error);
@@ -219,9 +186,6 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 获取所有项目
-   */
   static getAllProjects(): ProjectData[] {
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
@@ -232,16 +196,12 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 删除项目
-   */
   static deleteProject(projectId: string): boolean {
     try {
       const projects = this.getAllProjects();
       const filteredProjects = projects.filter((p) => p.id !== projectId);
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredProjects));
 
-      // 如果删除的是当前项目，清除当前项目ID
       if (this.getCurrentProjectId() === projectId) {
         this.clearCurrentProjectId();
       }
@@ -253,30 +213,18 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 设置当前项目ID
-   */
   static setCurrentProjectId(projectId: string): void {
     localStorage.setItem(this.CURRENT_PROJECT_KEY, projectId);
   }
 
-  /**
-   * 获取当前项目ID
-   */
   static getCurrentProjectId(): string | null {
     return localStorage.getItem(this.CURRENT_PROJECT_KEY);
   }
 
-  /**
-   * 清除当前项目ID
-   */
   static clearCurrentProjectId(): void {
     localStorage.removeItem(this.CURRENT_PROJECT_KEY);
   }
 
-  /**
-   * 导出项目为JSON文件
-   */
   static exportToFile(projectData: ProjectData, filename?: string): void {
     try {
       const dataStr = JSON.stringify(projectData, null, 2);
@@ -295,10 +243,6 @@ class PersistenceManager {
     }
   }
 
-  /**
-   * 从文件导入项目
-   * 支持 ProjectData 和 PageSchema 两种格式
-   */
   static async importFromFile(file: File): Promise<ProjectData> {
     return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
@@ -308,11 +252,8 @@ class PersistenceManager {
           const jsonText = e.target?.result as string;
           const data = JSON.parse(jsonText);
 
-          // 检查是否是 Schema 格式
           if (this.isSchemaFormat(data)) {
-            // 使用 WASM 异步版本验证和迁移 Schema
             try {
-              // 先验证 Schema
               const validation = await validateSchemaAsync(jsonText);
               if (!validation.valid) {
                 throw new Error(
@@ -320,7 +261,6 @@ class PersistenceManager {
                 );
               }
 
-              // 迁移 Schema（如果需要）
               const schemaVersion = data.version || "1.0.0";
               const migratedJson = await migrateSchemaAsync(
                 jsonText,
@@ -328,7 +268,6 @@ class PersistenceManager {
                 "1.0.0"
               );
 
-              // 使用 WASM 反序列化
               const projectData = await schemaJsonToProjectData(migratedJson);
               resolve(projectData);
             } catch (error) {
@@ -336,7 +275,6 @@ class PersistenceManager {
                 "WASM schema processing failed, using fallback:",
                 error
               );
-              // 降级到同步版本
               const migratedSchema = migrateSchema(data);
               if (!validateSchema(migratedSchema)) {
                 throw new Error("无效的 Schema 格式");
@@ -345,7 +283,6 @@ class PersistenceManager {
               resolve(projectData);
             }
           } else {
-            // 验证项目数据格式
             if (!this.validateProjectData(data)) {
               throw new Error("无效的项目文件格式");
             }
@@ -364,9 +301,6 @@ class PersistenceManager {
     });
   }
 
-  /**
-   * 检查数据是否是 Schema 格式
-   */
   private static isSchemaFormat(data: any): boolean {
     return (
       data &&
@@ -377,9 +311,6 @@ class PersistenceManager {
     );
   }
 
-  /**
-   * 验证项目数据格式
-   */
   private static validateProjectData(data: any): data is ProjectData {
     return (
       data &&
@@ -392,14 +323,11 @@ class PersistenceManager {
     );
   }
 
-  /**
-   * 自动保存当前项目（定时器）
-   */
   static startAutoSave(intervalMs: number = 30000): () => void {
     const interval = setInterval(() => {
       const currentProjectId = this.getCurrentProjectId();
       if (currentProjectId) {
-        const projectName = useUIStore.getState().projectName;
+        const projectName = this.getState().ui.projectName;
         this.saveCurrentProject(currentProjectId, projectName);
       }
     }, intervalMs);

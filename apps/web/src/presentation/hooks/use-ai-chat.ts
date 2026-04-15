@@ -4,7 +4,7 @@ import type { AIProvider } from "@/presentation/adapters/ai-generator.adapter";
 import { AIGeneratorAdapter } from "@/presentation/adapters/ai-generator.adapter";
 import { useAdapters } from "./use-adapters";
 import { fetchOllamaModelNames } from "@/lib/ai-generator/ollama-client";
-import { useComponentStore } from "@/infrastructure/state-management/stores";
+import { store } from "@/infrastructure/state-management/store";
 
 export interface ChatMessage {
   id: string;
@@ -117,7 +117,7 @@ export function useAIChat(options: UseAIChatOptions = {}): UseAIChatReturn {
 
   // 获取现有组件
   const getExistingComponents = useCallback((): Component[] => {
-    return useComponentStore.getState().components;
+    return store.getState().component.components;
   }, []);
 
   // 检测是否为追加意图

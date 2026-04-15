@@ -1,117 +1,59 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import type { Component } from "@/domain/component";
-import {
-  createHistory,
-  addToHistory,
-  undo,
-  redo,
-  canUndo,
-  canRedo,
-  type HistoryState,
-} from "@/application/services/history";
-import { useComponentStore } from "./component.store";
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import * as historyActions from "../store/slices/history.slice";
+import * as componentActions from "../store/slices/component.slice";
+import type { Component } from "@/domain/component/entities/component.entity";
+import { store } from "../store";
 
-interface HistoryStateStore {
-  // 历史状态
-  componentsHistory: HistoryState<Component[]>;
+export const useHistoryStore = () => {
+  const dispatch = useAppDispatch();
+  const state = useAppSelector((s) => s.history);
 
-  // 历史操作
-  addToHistory: (components: Component[]) => void;
-  undo: () => Component[] | null;
-  redo: () => Component[] | null;
-  canUndo: () => boolean;
-  canRedo: () => boolean;
-  clearHistory: () => void;
+  const syncComponentsToStore = useCallback((components: Component[]) => {
+    store.dispatch(componentActions.updateComponents(components));
+  }, []);
 
-  // 获取历史信息
-  getHistoryInfo: () => {
-    currentIndex: number;
-    totalSteps: number;
-    canUndo: boolean;
-    canRedo: boolean;
-  };
-}
+  const undo = useCallback(() => {
+    const currentState = store.getState();
+    const historyState = currentState.history.componentsHistory;
+    
+    if (historyState.past.length === 0) return null;
 
-export const useHistoryStore = create<HistoryStateStore>()(
-  devtools(
-    (set, get) => ({
-      // 初始状态
-      componentsHistory: createHistory([]),
+    const previous = historyState.past[historyState.past.length - 1];
+    dispatch(historyActions.undoComponents());
+    syncComponentsToStore(previous);
+    return previous;
+  }, [dispatch, syncComponentsToStore]);
 
-      // 添加到历史记录
-      addToHistory: (components: Component[]) => {
-        set(
-          (state) => ({
-            componentsHistory: addToHistory(
-              state.componentsHistory,
-              components
-            ),
-          }),
-          false,
-          "addToHistory"
-        );
-      },
+  const redo = useCallback(() => {
+    const currentState = store.getState();
+    const historyState = currentState.history.componentsHistory;
+    
+    if (historyState.future.length === 0) return null;
 
-      // 撤销
-      undo: () => {
-        const { componentsHistory } = get();
-        if (!canUndo(componentsHistory)) return null;
+    const next = historyState.future[0];
+    dispatch(historyActions.redoComponents());
+    syncComponentsToStore(next);
+    return next;
+  }, [dispatch, syncComponentsToStore]);
 
-        const newHistory = undo(componentsHistory);
-        set({ componentsHistory: newHistory }, false, "undo");
-
-        // 同步更新组件状态
-        useComponentStore.getState().updateComponents(newHistory.present);
-
-        return newHistory.present;
-      },
-
-      // 重做
-      redo: () => {
-        const { componentsHistory } = get();
-        if (!canRedo(componentsHistory)) return null;
-
-        const newHistory = redo(componentsHistory);
-        set({ componentsHistory: newHistory }, false, "redo");
-
-        // 同步更新组件状态
-        useComponentStore.getState().updateComponents(newHistory.present);
-
-        return newHistory.present;
-      },
-
-      // 检查是否可以撤销
-      canUndo: () => {
-        const { componentsHistory } = get();
-        return canUndo(componentsHistory);
-      },
-
-      // 检查是否可以重做
-      canRedo: () => {
-        const { componentsHistory } = get();
-        return canRedo(componentsHistory);
-      },
-
-      // 清除历史记录
-      clearHistory: () => {
-        set({ componentsHistory: createHistory([]) }, false, "clearHistory");
-      },
-
-      // 获取历史信息
-      getHistoryInfo: () => {
-        const { componentsHistory } = get();
-        return {
-          currentIndex: componentsHistory.past.length,
-          totalSteps:
-            componentsHistory.past.length + componentsHistory.future.length + 1,
-          canUndo: canUndo(componentsHistory),
-          canRedo: canRedo(componentsHistory),
-        };
-      },
+  return {
+    ...state,
+    addToHistory: (components: Component[]) =>
+      dispatch(historyActions.addToComponentsHistory(components)),
+    undo,
+    redo,
+    canUndo: () => state.componentsHistory.past.length > 0,
+    canRedo: () => state.componentsHistory.future.length > 0,
+    clearHistory: () => dispatch(historyActions.clearHistory()),
+    getHistoryInfo: () => ({
+      currentIndex: state.componentsHistory.past.length,
+      totalSteps:
+        state.componentsHistory.past.length +
+        state.componentsHistory.future.length +
+        1,
+      canUndo: state.componentsHistory.past.length > 0,
+      canRedo: state.componentsHistory.future.length > 0,
     }),
-    {
-      name: "history-store",
-    }
-  )
-);
+  };
+};

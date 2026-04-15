@@ -148,6 +148,7 @@ export function useAllStores() {
     isDragging: componentStore.isDragging,
     addComponent: (component: any) => stateManagement.addComponent(component),
     updateComponent: (id: string, updates: any) => stateManagement.updateComponent(id, updates),
+    updateComponents: (components: any[]) => stateManagement.setComponents(components),
     deleteComponent: (id: string) => stateManagement.deleteComponent(id),
     selectComponent: (component: any) => stateManagement.selectComponent(component),
     clearSelection: () => stateManagement.clearSelection(),

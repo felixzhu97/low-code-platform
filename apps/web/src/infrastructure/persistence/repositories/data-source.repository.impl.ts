@@ -1,66 +1,67 @@
-import type { DataSource } from "@/domain/datasource";
-import type { IDataSourceRepository } from "@/domain/datasource";
-import { useDataStore } from "@/infrastructure/state-management/stores";
+import type { DataSource } from "@/domain/datasource/entities/data-source.entity";
+import type { IDataSourceRepository } from "@/domain/repositories/data-source.repository";
+import { store } from "@/infrastructure/state-management/store";
+import * as dataActions from "@/infrastructure/state-management/store/slices/data.slice";
 
-/**
- * 数据源仓储实现（基于 Zustand Store）
- */
 export class DataSourceRepositoryImpl implements IDataSourceRepository {
+  private getState() {
+    return store.getState().data;
+  }
+
   async findById(id: string): Promise<DataSource | null> {
-    const state = useDataStore.getState();
-    return state.getDataSourceById(id);
+    return this.getState().dataSources.find((ds) => ds.id === id) || null;
   }
 
   async findAll(): Promise<DataSource[]> {
-    return useDataStore.getState().dataSources;
+    return this.getState().dataSources;
   }
 
   async findByType(type: DataSource["type"]): Promise<DataSource[]> {
-    const dataSources = useDataStore.getState().dataSources;
+    const dataSources = this.getState().dataSources;
     return dataSources.filter((ds) => ds.type === type);
   }
 
   async save(dataSource: DataSource): Promise<DataSource> {
-    const state = useDataStore.getState();
-    const existing = state.getDataSourceById(dataSource.id);
+    const state = this.getState();
+    const existing = state.dataSources.find((ds) => ds.id === dataSource.id);
 
     if (existing) {
-      state.updateDataSource(dataSource.id, dataSource);
+      store.dispatch(dataActions.updateDataSource({ id: dataSource.id, updates: dataSource }));
     } else {
-      state.addDataSource(dataSource);
+      store.dispatch(dataActions.addDataSource(dataSource));
     }
 
     return dataSource;
   }
 
   async saveAll(dataSources: DataSource[]): Promise<DataSource[]> {
-    const state = useDataStore.getState();
     dataSources.forEach((ds) => {
-      const existing = state.getDataSourceById(ds.id);
+      const state = this.getState();
+      const existing = state.dataSources.find((d) => d.id === ds.id);
       if (existing) {
-        state.updateDataSource(ds.id, ds);
+        store.dispatch(dataActions.updateDataSource({ id: ds.id, updates: ds }));
       } else {
-        state.addDataSource(ds);
+        store.dispatch(dataActions.addDataSource(ds));
       }
     });
     return dataSources;
   }
 
   async delete(id: string): Promise<void> {
-    useDataStore.getState().deleteDataSource(id);
+    store.dispatch(dataActions.deleteDataSource(id));
   }
 
   async deleteAll(ids: string[]): Promise<void> {
     ids.forEach((id) => {
-      useDataStore.getState().deleteDataSource(id);
+      store.dispatch(dataActions.deleteDataSource(id));
     });
   }
 
   async clear(): Promise<void> {
-    const state = useDataStore.getState();
+    const state = this.getState();
     const allIds = state.dataSources.map((ds) => ds.id);
     allIds.forEach((id) => {
-      state.deleteDataSource(id);
+      store.dispatch(dataActions.deleteDataSource(id));
     });
   }
 }

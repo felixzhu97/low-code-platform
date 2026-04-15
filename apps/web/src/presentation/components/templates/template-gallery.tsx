@@ -22,12 +22,9 @@ import { TemplatePreview } from "./template-preview";
 import { TemplateCard } from "./template-card";
 import { TemplateFilters } from "./template-filters";
 import { useTemplateGallery } from "../../hooks/use-template-gallery";
-import type { Component } from "@/domain/component";
+import type { Component } from "@/domain/component/entities/component.entity";
 import type { Template } from "@/presentation/data/templates";
-import {
-  useComponentStore,
-  useThemeStore,
-} from "@/infrastructure/state-management/stores";
+import { store } from "@/infrastructure/state-management/store";
 import { useAdapters } from "@/presentation/hooks/use-adapters";
 
 interface TemplateGalleryProps {}
@@ -153,7 +150,7 @@ const FavoriteIcon = styled(Star)<{ isFavorite: boolean }>`
 
 export function TemplateGallery(_props: TemplateGalleryProps) {
   const { templateAdapter } = useAdapters();
-  const { theme } = useThemeStore();
+  const { theme } = require("@/infrastructure/state-management/stores").useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null
@@ -196,7 +193,7 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
   };
 
   const handleUseTemplate = async (components: Component[]) => {
-    const existing = useComponentStore.getState().components;
+    const existing = store.getState().component.components;
     await templateAdapter.appendTemplateFromComponents(
       components,
       existing
