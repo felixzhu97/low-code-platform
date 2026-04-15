@@ -64,6 +64,7 @@ export function useComponentInteraction({
       if (isPreviewMode) return;
 
       e.stopPropagation();
+      e.preventDefault(); // 阻止默认行为
       selectComponent(component);
       onSelectComponent(component);
 
@@ -97,6 +98,9 @@ export function useComponentInteraction({
     (e: React.MouseEvent) => {
       if (!isDragging || !selectedComponentId || isPreviewMode) return;
       if (!dragStateRef.current) return;
+
+      e.stopPropagation(); // 阻止事件传播到其他组件
+      e.preventDefault(); // 阻止默认行为
 
       // 使用相对位移计算新位置，避免因页面滚动导致的位置跳动
       const deltaX = e.clientX - dragStateRef.current.mouseStartX;
@@ -133,15 +137,20 @@ export function useComponentInteraction({
   );
 
   // 鼠标抬起结束拖拽
-  const handleMouseUp = useCallback(() => {
-    dragStateRef.current = null;
-    setDragging(false);
-    // 拖拽结束后保存历史记录
-    if (addToHistory && components !== lastUpdateRef.current) {
-      addToHistory(components);
-      lastUpdateRef.current = components;
-    }
-  }, [setDragging, addToHistory, components]);
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      e?.stopPropagation();
+      e?.preventDefault();
+      dragStateRef.current = null;
+      setDragging(false);
+      // 拖拽结束后保存历史记录
+      if (addToHistory && components !== lastUpdateRef.current) {
+        addToHistory(components);
+        lastUpdateRef.current = components;
+      }
+    },
+    [setDragging, addToHistory, components]
+  );
 
   // 键盘操作
   const handleKeyDown = useCallback(

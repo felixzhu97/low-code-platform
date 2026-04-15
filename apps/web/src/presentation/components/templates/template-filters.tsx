@@ -27,6 +27,7 @@ const FilterPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  flex-shrink: 0;
 `;
 
 const FilterSection = styled.div``;

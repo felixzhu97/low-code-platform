@@ -15,7 +15,8 @@ const overlayStyles = css`
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   transition: opacity 0.2s ease-out;
 `
 
@@ -44,6 +45,7 @@ const contentStyles = css`
   z-index: 1001;
   width: 100%;
   max-width: 32rem;
+  max-height: 90vh;
   transform: translate(-50%, -50%);
   gap: 1rem;
   border: 1px solid hsl(var(--border));
@@ -52,6 +54,9 @@ const contentStyles = css`
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
   border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: 640px) {
     border-radius: 0.5rem;
@@ -140,6 +145,7 @@ const StyledDialogHeader = styled.div`
   flex-direction: column;
   gap: 0.375rem;
   text-align: center;
+  flex-shrink: 0;
 
   @media (min-width: 640px) {
     text-align: left;

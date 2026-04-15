@@ -279,7 +279,10 @@ const RailTabPanel = styled(TabsContent)`
 
 const CanvasWrap = styled.div`
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 `;
 
 const ComponentLoader = () => (

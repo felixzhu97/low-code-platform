@@ -102,23 +102,23 @@ export function PreviewCanvas({
         overflow: "visible",
       }}
     >
-      {[...rootComponents]
-        .sort((a, b) => (a.position?.y ?? 0) - (b.position?.y ?? 0))
-        .map((component) => (
-          <ComponentRenderer
-            key={component.id}
-            component={component}
-            parentComponent={null}
-            components={components}
-            theme={theme}
-            isPreviewMode={true}
-            selectedId={null}
-            dropTargetId={null}
-            onSelectComponent={noop}
-            onMouseDown={noop}
-            componentData={undefined}
-          />
-        ))}
+      <>
+      {rootComponents.map((component) => (
+        <ComponentRenderer
+          key={component.id}
+          component={component}
+          parentComponent={null}
+          components={components}
+          theme={theme}
+          isPreviewMode={true}
+          selectedId={null}
+          dropTargetId={null}
+          onSelectComponent={noop}
+          onMouseDown={noop}
+          componentData={undefined}
+        />
+      ))}
+    </>
     </div>
   );
 }

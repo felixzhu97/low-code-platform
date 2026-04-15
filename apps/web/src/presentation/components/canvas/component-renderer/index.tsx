@@ -240,8 +240,17 @@ export function ComponentRenderer({
             : "none",
           boxShadow: "none",
           ...animationStyle,
+          pointerEvents: selectedId && !isPreviewMode ? "none" : "auto",
         }}
         onMouseDown={(e) => onMouseDown(e, component)}
+        onMouseEnter={(e) => {
+          if (isPreviewMode) return;
+          e.stopPropagation();
+        }}
+        onMouseLeave={(e) => {
+          if (isPreviewMode) return;
+          e.stopPropagation();
+        }}
         onClick={(e) => {
           if (isPreviewMode) return;
           e.stopPropagation();

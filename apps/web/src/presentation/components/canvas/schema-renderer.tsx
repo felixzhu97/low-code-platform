@@ -132,9 +132,9 @@ export function SchemaRenderer({
 
   // 获取根级组件（没有父组件的组件）
   const rootComponents = useMemo(() => {
-    return [...ComponentManagementService.getRootComponents(
+    return ComponentManagementService.getRootComponents(
       parsedSchema.components
-    )].sort((a, b) => (a.position?.y ?? 0) - (b.position?.y ?? 0));
+    );
   }, [parsedSchema.components]);
 
   // 应用画布样式

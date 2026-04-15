@@ -7,6 +7,9 @@ import styled from "@emotion/styled"
 const StyledScrollAreaRoot = styled(ScrollAreaPrimitive.Root)`
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `
 
 const StyledScrollAreaViewport = styled(ScrollAreaPrimitive.Viewport)`

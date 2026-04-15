@@ -71,6 +71,7 @@ const ThumbnailWrapper = styled.div`
   width: 100%;
   overflow: hidden;
   background-color: hsl(var(--muted));
+  flex-shrink: 0;
 `;
 
 const CardActions = styled.div`

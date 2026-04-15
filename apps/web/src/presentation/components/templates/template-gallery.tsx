@@ -34,6 +34,7 @@ const SearchWrapper = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1rem;
+  flex-shrink: 0;
 `;
 
 const SearchRow = styled.div`
@@ -80,17 +81,23 @@ const TemplateGalleryContent = styled.div`
 
 const TemplateGridContainer = styled.div`
   flex: 1;
-  overflow-y: auto;
+  min-height: 0;
+  overflow: auto;
   padding-right: 0.25rem;
   margin-right: -0.25rem;
 
   &::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 `;
 
@@ -98,6 +105,7 @@ const TemplateGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
+  align-content: start;
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(3, 1fr);
@@ -192,12 +200,20 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
     setIsOpen(true);
   };
 
+  // 处理模板预览关闭
+  const handlePreviewClose = () => {
+    setSelectedTemplate(null);
+    setIsOpen(false);
+  };
+
   const handleUseTemplate = async (components: Component[]) => {
     const existing = store.getState().component.components;
     await templateAdapter.appendTemplateFromComponents(
       components,
       existing
     );
+    // 使用模板后关闭预览弹窗
+    setSelectedTemplate(null);
     setIsOpen(false);
   };
 
@@ -261,7 +277,10 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
           </SearchWrapper>
 
           <TemplateGalleryContent>
-            <Tabs defaultValue="all" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+            <Tabs
+              defaultValue="all"
+              style={{ height: "100%", display: "flex", flexDirection: "column" }}
+            >
               <TabsList css={{ marginBottom: "0.75rem", flexShrink: 0 }}>
                 <TabsTrigger value="all">全部模板</TabsTrigger>
                 <TabsTrigger value="favorites">我的收藏</TabsTrigger>
@@ -348,7 +367,7 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
       <TemplatePreview
         template={selectedTemplate}
         isOpen={isOpen && !!selectedTemplate}
-        onClose={() => setSelectedTemplate(null)}
+        onClose={handlePreviewClose}
         onUse={handleUseTemplate}
         isFavorite={
           selectedTemplate ? favorites.includes(selectedTemplate.id) : false
@@ -360,6 +379,10 @@ export function TemplateGallery(_props: TemplateGalleryProps) {
         <DialogContent
           css={css`
             max-width: 80rem;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
             z-index: 1101;
           `}
         >

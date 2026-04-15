@@ -16,6 +16,7 @@ const StyledTabsList = styled(TabsPrimitive.List)`
   background-color: hsl(var(--muted));
   padding: 0.25rem;
   color: hsl(var(--muted-foreground));
+  flex-shrink: 0;
 `
 
 const TabsList = React.forwardRef<

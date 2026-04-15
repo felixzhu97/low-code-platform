@@ -57,6 +57,8 @@ export class ComponentFactoryService {
           letterSpacing: "normal",
           textTransform: "none",
           textDecoration: "none",
+          width: "auto",
+          height: "auto",
         };
       case "button":
         return {
@@ -69,6 +71,8 @@ export class ComponentFactoryService {
           iconPosition: "left",
           fullWidth: false,
           onClick: "none",
+          width: "auto",
+          height: "auto",
         };
       case "svg":
         return {

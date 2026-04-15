@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { ScrollArea } from "@/presentation";
 import { Button } from "../ui/button";
 import {
   Toolbar,
@@ -24,7 +23,11 @@ import type { Component } from "@/domain/component/entities/component.entity";
 
 const CanvasRoot = styled.div`
   flex: 1;
+  min-height: 0;
   background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 const ToolbarBar = styled.div`
@@ -37,6 +40,7 @@ const ToolbarBar = styled.div`
   padding: 0 1rem;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   transition: box-shadow 200ms;
+  flex-shrink: 0;
 `;
 
 const ToolbarTitle = styled.span`
@@ -78,17 +82,27 @@ const LabelText = styled.span`
   }
 `;
 
-const CanvasScroll = styled(ScrollArea)`
-  height: ${(p) =>
-    p.preview ? "calc(100vh - 3.5rem)" : "calc(100vh - 7.5rem)"};
+const CanvasScroll = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 `;
 
-const CanvasArea = styled.div`
+const CanvasArea = styled.div<{ $minHeight: number }>`
   position: relative;
   z-index: 0;
   isolation: isolate;
-  min-height: 0;
+  min-height: ${(p) => p.$minHeight}px;
   padding: 1rem;
+  width: 100%;
+  display: inline-block;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  & > * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 `;
 
 const DeviceBanner = styled.div`
@@ -132,6 +146,33 @@ const EmptyDropText = styled.div`
 
 type CanvasProps = Record<string, never>;
 
+// 计算所有根级组件的边界
+function calculateCanvasBounds(components: Component[]): number {
+  const rootComponents = ComponentManagementService.getRootComponents(components);
+  if (rootComponents.length === 0) return 0;
+
+  let maxBottom = 0;
+  for (const component of rootComponents) {
+    const y = component.position?.y ?? 0;
+    const height = component.properties?.height;
+    
+    let componentBottom = y;
+    if (height && typeof height === "number") {
+      componentBottom = y + height;
+    } else {
+      // 对于没有明确高度的组件，估算一个最小高度
+      componentBottom = y + 50;
+    }
+    
+    if (componentBottom > maxBottom) {
+      maxBottom = componentBottom;
+    }
+  }
+
+  // 加上底部 padding (1rem = 16px, 转换为px)
+  return maxBottom + 16;
+}
+
 export const Canvas = React.memo<CanvasProps>(() => {
   const {
     components,
@@ -149,6 +190,28 @@ export const Canvas = React.memo<CanvasProps>(() => {
     dataSources,
     addToHistory,
   } = useAllStores();
+
+  // 画布区域 DOM 引用
+  const canvasAreaRef = useRef<HTMLDivElement>(null);
+  
+  // 计算的画布最小高度
+  const [canvasMinHeight, setCanvasMinHeight] = useState(0);
+
+  // 计算画布边界
+  useEffect(() => {
+    if (isPreviewMode) {
+      // 预览模式下使用视口宽度对应的内容高度
+      setCanvasMinHeight(0);
+      return;
+    }
+
+    // 编辑模式下根据组件内容计算最小高度
+    const bounds = calculateCanvasBounds(components);
+    // 最小高度为屏幕高度减去工具栏和画布头部高度（约 7.5rem = 120px）
+    const screenHeight = window.innerHeight - 120;
+    const minHeight = Math.max(bounds, screenHeight);
+    setCanvasMinHeight(minHeight);
+  }, [components, isPreviewMode]);
 
   const {
     selectedId,
@@ -204,6 +267,7 @@ export const Canvas = React.memo<CanvasProps>(() => {
   const setRefs = useCallback(
     (element: HTMLDivElement | null) => {
       canvasRef.current = element;
+      canvasAreaRef.current = element;
       drop(element);
     },
     [drop, canvasRef]
@@ -241,11 +305,8 @@ export const Canvas = React.memo<CanvasProps>(() => {
     ]
   );
 
-  const rootComponentsSorted = useMemo(
-    () =>
-      [...ComponentManagementService.getRootComponents(components)].sort(
-        (a, b) => (a.position?.y ?? 0) - (b.position?.y ?? 0)
-      ),
+  const rootComponents = useMemo(
+    () => ComponentManagementService.getRootComponents(components),
     [components]
   );
 
@@ -332,9 +393,10 @@ export const Canvas = React.memo<CanvasProps>(() => {
           </ToolbarBar>
         </TooltipProvider>
       )}
-      <CanvasScroll preview={isPreviewMode}>
+      <CanvasScroll>
         <CanvasArea
           id="canvas-area"
+          $minHeight={canvasMinHeight}
           ref={setRefs}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -368,14 +430,14 @@ export const Canvas = React.memo<CanvasProps>(() => {
             </DeviceBanner>
           )}
 
-          {rootComponentsSorted.length === 0 ? (
+          {rootComponents.length === 0 ? (
             <EmptyDropZone>
               <EmptyDropText>
                 <p>将组件拖拽到此处或选择一个模板开始</p>
               </EmptyDropText>
             </EmptyDropZone>
           ) : (
-            rootComponentsSorted.map((component) => renderComponent(component))
+            rootComponents.map((component) => renderComponent(component))
           )}
         </CanvasArea>
       </CanvasScroll>
