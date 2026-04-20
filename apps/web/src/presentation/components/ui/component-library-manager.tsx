@@ -30,7 +30,6 @@ import { Badge } from "./badge";
 import { CustomComponentBuilder } from "./custom-component-builder";
 
 import type { Component } from "@/domain/component";
-import { useAllStores } from "@/presentation/hooks";
 import { useCustomComponentsStore } from "@/shared/stores";
 
 interface ComponentLibraryManagerProps {}

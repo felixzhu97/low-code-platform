@@ -18,7 +18,6 @@ import { ComponentManagementService } from "@/application/services/component-man
 import { useCanvasDrag, useStateManagement } from "@/presentation";
 import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
-import { useAllStores } from "@/presentation/hooks";
 import type { Component } from "@/domain/component/entities/component.entity";
 import { useComponentState, useCanvasState } from "@/presentation/hooks/use-adapters";
 import { useDataStore, useHistoryStore, useThemeStore } from "@/shared/stores";

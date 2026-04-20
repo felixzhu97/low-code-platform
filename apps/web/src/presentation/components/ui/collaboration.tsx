@@ -24,7 +24,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Badge } from "./badge";
 import { Users, Send, Copy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { useAllStores } from "@/presentation/hooks";
 import { useUIStore } from "@/shared/stores";
 
 interface CollaborationProps {}

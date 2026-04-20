@@ -10,7 +10,3 @@ export { PersistenceManager } from "./persistence.manager";
 
 // 创建组合 hooks 用于简化使用
 export { useStores } from "./use-stores";
-
-// 为了向后兼容，也导出 useStores 作为 useAllStores 的别名
-// 注意：建议使用 @/presentation/hooks 中的 useAllStores
-export { useStores as useAllStores } from "./use-stores";
