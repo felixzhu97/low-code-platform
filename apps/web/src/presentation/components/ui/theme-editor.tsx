@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -89,7 +89,7 @@ const Actions = styled.div`
   justify-content: flex-end;
 `;
 
-export function ThemeEditor({}: ThemeEditorProps) {
+export const ThemeEditor = memo(function ThemeEditor({}: ThemeEditorProps) {
   const { theme, updateTheme } = useThemeStore();
   const [localTheme, setLocalTheme] = useState<ThemeConfig>(theme);
 
@@ -314,4 +314,4 @@ export function ThemeEditor({}: ThemeEditorProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

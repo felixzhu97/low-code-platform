@@ -1,4 +1,4 @@
-import { useAllStores } from "@/presentation/hooks";
+import { useComponentState, useStateManagement } from "@/presentation/hooks";
 
 /**
  * 简化的操作hooks
@@ -6,13 +6,9 @@ import { useAllStores } from "@/presentation/hooks";
  */
 export function useSimplifiedActions() {
   const {
-    addComponent,
-    updateComponent,
-    deleteComponent,
-    selectComponent,
-    addToHistory,
     components,
-  } = useAllStores();
+  } = useComponentState();
+  const {addComponent, updateComponent, deleteComponent, addToHistory} = useStateManagement();
 
   // 添加组件并记录历史
   const addComponentWithHistory = (component: any) => {

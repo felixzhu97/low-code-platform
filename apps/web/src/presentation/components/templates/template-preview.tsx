@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -167,7 +167,7 @@ const NameLabel = styled.span`
   font-weight: 500;
 `;
 
-export function TemplatePreview({
+export const TemplatePreview = memo(function TemplatePreview({
   template,
   isOpen,
   onClose,
@@ -371,4 +371,4 @@ export function TemplatePreview({
       </DialogContent>
     </Dialog>
   );
-}
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -29,7 +29,8 @@ import { Card, CardContent } from "./card";
 import { Switch } from "./switch";
 
 import type { Component } from "@/domain/component";
-import { useAllStores } from "@/presentation/hooks";
+import { useComponentState } from "@/presentation/hooks";
+import { useCustomComponentsStore } from "@/shared/stores";
 
 interface CustomComponentBuilderProps {}
 
@@ -116,8 +117,9 @@ const StatusText = styled.div`
   color: hsl(var(--muted-foreground));
 `;
 
-export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
-  const { addCustomComponent, components: existingComponents } = useAllStores();
+export const CustomComponentBuilder = memo(function CustomComponentBuilder({}: CustomComponentBuilderProps) {
+  const { addCustomComponent } = useCustomComponentsStore();
+  const { components: existingComponents } = useComponentState();
   const [componentName, setComponentName] = useState("");
   const [componentType, setComponentType] = useState("container");
   const [componentCategory, setComponentCategory] = useState("layout");
@@ -287,4 +289,4 @@ export function CustomComponentBuilder({}: CustomComponentBuilderProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

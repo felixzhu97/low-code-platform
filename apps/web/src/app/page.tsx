@@ -28,9 +28,9 @@ import {
   SheetTrigger,
 } from "@/presentation/components/ui";
 import { Eye, Undo2, Redo2, MoreHorizontal, LayoutGrid, Layers, Database, MessageSquare } from "lucide-react";
-import { useToolbarResponsive } from "@/presentation/hooks";
-import { useAllStores } from "@/presentation/hooks";
+import { useCanvasState, useComponentState, useToolbarResponsive } from "@/presentation/hooks";
 import { Skeleton } from "@/presentation/components/ui/skeleton";
+import { useHistoryStore, useUIStore } from "@/infrastructure/state-management/stores";
 
 const ResponsiveControls = lazy(() =>
   import("@/presentation/components/ui").then((mod) => ({
@@ -302,17 +302,10 @@ const TabContentLoader = () => (
 export default function LowCodePlatform() {
   const { shouldCollapse } = useToolbarResponsive();
 
-  const {
-    selectComponent,
-    isPreviewMode,
-    setPreviewMode,
-    activeTab,
-    setActiveTab,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-  } = useAllStores();
+  const {selectComponent} = useComponentState();
+  const {isPreviewMode,setPreviewMode} = useCanvasState();
+  const {activeTab,setActiveTab} = useUIStore();
+  const {undo, redo, canUndo, canRedo} = useHistoryStore();
 
   const togglePreviewMode = () => {
     setPreviewMode(!isPreviewMode);

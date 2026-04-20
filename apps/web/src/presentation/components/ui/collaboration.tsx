@@ -5,7 +5,7 @@ import { SelectContent } from "./select";
 import { SelectValue } from "./select";
 import { SelectTrigger } from "./select";
 import { Select } from "./select";
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -25,6 +25,7 @@ import { Badge } from "./badge";
 import { Users, Send, Copy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import { useAllStores } from "@/presentation/hooks";
+import { useUIStore } from "@/shared/stores";
 
 interface CollaborationProps {}
 
@@ -207,8 +208,8 @@ const CommentInputRow = styled.div`
   margin-top: 1rem;
 `;
 
-export function Collaboration({}: CollaborationProps) {
-  const { projectName } = useAllStores();
+export const Collaboration = memo(function Collaboration({}: CollaborationProps) {
+  const { projectName } = useUIStore();
   const [shareLink, setShareLink] = useState(
     "https://lowcode.example.com/share/abc123"
   );
@@ -504,4 +505,4 @@ export function Collaboration({}: CollaborationProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

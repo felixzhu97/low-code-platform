@@ -31,7 +31,6 @@ export function useComponentInteraction({
   const {
     selectedComponentId,
     isDragging,
-    dragOffset,
     selectComponent,
     setDragging,
     setDragOffset,

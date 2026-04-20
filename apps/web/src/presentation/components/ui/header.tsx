@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import styled from "@emotion/styled";
 import { Button } from "./button";
 import { Save, Play, Download, Settings } from "lucide-react";
@@ -59,7 +59,7 @@ const IconMargin = styled.span`
   margin-right: 0.375rem;
 `;
 
-export function Header({ children }: HeaderProps) {
+export const Header = memo(({ children }: HeaderProps) => {
   return (
     <HeaderRoot role="banner">
       <LogoSection>
@@ -89,4 +89,6 @@ export function Header({ children }: HeaderProps) {
       </NavSection>
     </HeaderRoot>
   );
-}
+});
+
+Header.displayName = "Header";

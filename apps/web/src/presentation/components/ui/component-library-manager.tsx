@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -31,6 +31,7 @@ import { CustomComponentBuilder } from "./custom-component-builder";
 
 import type { Component } from "@/domain/component";
 import { useAllStores } from "@/presentation/hooks";
+import { useCustomComponentsStore } from "@/shared/stores";
 
 interface ComponentLibraryManagerProps {}
 
@@ -160,18 +161,8 @@ const HiddenFileInput = styled(Input)`
   opacity: 0;
 `;
 
-export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
-  const {
-    customComponents,
-    favorites,
-    searchTerm,
-    addCustomComponent,
-    removeCustomComponent,
-    importCustomComponents,
-    toggleFavorite,
-    setSearchTerm,
-    getFilteredComponents,
-  } = useAllStores();
+export const ComponentLibraryManager = memo(function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
+  const { customComponents, favorites, searchTerm, removeCustomComponent, importCustomComponents, toggleFavorite, setSearchTerm, getFilteredComponents } = useCustomComponentsStore();
 
   const filteredComponents = getFilteredComponents();
 
@@ -421,4 +412,4 @@ export function ComponentLibraryManager({}: ComponentLibraryManagerProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

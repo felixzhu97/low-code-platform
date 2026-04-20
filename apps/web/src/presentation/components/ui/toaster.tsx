@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { useToast } from "../../hooks/use-toast"
 import styled from "@emotion/styled";
 import {
@@ -16,7 +17,7 @@ const ToastGrid = styled.div`
   gap: 0.25rem;
 `
 
-export function Toaster() {
+export const Toaster = memo(function Toaster() {
   const { toasts } = useToast()
 
   return (
@@ -38,4 +39,4 @@ export function Toaster() {
       <ToastViewport />
     </ToastProvider>
   )
-}
+});

@@ -15,11 +15,13 @@ import { Trash2, Smartphone, Tablet, Grid, Grid3x3 } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { ComponentManagementService } from "@/application/services/component-management.service";
-import { useCanvasDrag } from "@/presentation";
+import { useCanvasDrag, useStateManagement } from "@/presentation";
 import { useComponentInteraction } from "@/presentation";
 import { ComponentRenderer } from "@/presentation";
 import { useAllStores } from "@/presentation/hooks";
 import type { Component } from "@/domain/component/entities/component.entity";
+import { useComponentState, useCanvasState } from "@/presentation/hooks/use-adapters";
+import { useDataStore, useHistoryStore, useThemeStore } from "@/shared/stores";
 
 const CanvasRoot = styled.div`
   flex: 1;
@@ -155,7 +157,7 @@ function calculateCanvasBounds(components: Component[]): number {
   for (const component of rootComponents) {
     const y = component.position?.y ?? 0;
     const height = component.properties?.height;
-    
+
     let componentBottom = y;
     if (height && typeof height === "number") {
       componentBottom = y + height;
@@ -163,7 +165,7 @@ function calculateCanvasBounds(components: Component[]): number {
       // 对于没有明确高度的组件，估算一个最小高度
       componentBottom = y + 50;
     }
-    
+
     if (componentBottom > maxBottom) {
       maxBottom = componentBottom;
     }
@@ -174,26 +176,17 @@ function calculateCanvasBounds(components: Component[]): number {
 }
 
 export const Canvas = React.memo<CanvasProps>(() => {
-  const {
-    components,
-    updateComponents,
-    selectComponent,
-    clearAllComponents,
-    isPreviewMode,
-    showGrid,
-    snapToGrid,
-    viewportWidth,
-    activeDevice,
-    theme,
-    toggleGrid,
-    toggleSnapToGrid,
-    dataSources,
-    addToHistory,
-  } = useAllStores();
+  const { components, updateComponents, selectComponent } = useComponentState();
+  const { toggleGrid, toggleSnapToGrid, showGrid, snapToGrid, isPreviewMode, viewportWidth, activeDevice } = useCanvasState();  
+  const { addToHistory } = useHistoryStore();
+  const { theme } = useThemeStore()
+  const { dataSources } = useDataStore()
+  const { setComponents } = useStateManagement();
+
 
   // 画布区域 DOM 引用
   const canvasAreaRef = useRef<HTMLDivElement>(null);
-  
+
   // 计算的画布最小高度
   const [canvasMinHeight, setCanvasMinHeight] = useState(0);
 
@@ -236,12 +229,12 @@ export const Canvas = React.memo<CanvasProps>(() => {
 
   // 清空画布并记录历史
   const handleClearWithHistory = useCallback(() => {
-    clearAllComponents();
+    setComponents([]);
     if (addToHistory) {
       addToHistory([]);
     }
     selectComponent(null);
-  }, [clearAllComponents, addToHistory, selectComponent]);
+  }, [setComponents, addToHistory, selectComponent]);
 
   const { drop, isOver, dropTargetId } = useCanvasDrag({
     components,

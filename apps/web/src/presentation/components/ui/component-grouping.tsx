@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import {
   Dialog,
@@ -19,7 +19,7 @@ import { Layers, Group } from "lucide-react";
 import { Checkbox } from "./checkbox";
 
 import type { Component } from "@/domain/component";
-import { useAllStores } from "@/presentation/hooks";
+import { useComponentState } from "@/presentation/hooks";
 import { useSimplifiedActions } from "@/presentation/hooks";
 
 interface ComponentGroupingProps {}
@@ -73,8 +73,8 @@ const HelperText = styled.p`
   color: hsl(var(--muted-foreground));
 `;
 
-export function ComponentGrouping({}: ComponentGroupingProps) {
-  const { components } = useAllStores();
+export const ComponentGrouping = memo(function ComponentGrouping({}: ComponentGroupingProps) {
+  const { components } = useComponentState();
   const { addComponentWithHistory } = useSimplifiedActions();
   const [groupName, setGroupName] = useState("新建组");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -201,4 +201,4 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

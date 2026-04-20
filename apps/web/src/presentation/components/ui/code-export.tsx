@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -14,11 +14,11 @@ import {
   Button,
 } from "@/presentation/components/ui";
 import { Code, Copy, Check, Download, Braces } from "lucide-react";
-import { useAllStores } from "@/presentation/hooks";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 import { Label } from "./label";
+import { useComponentState } from "@/presentation/hooks";
 
-interface CodeExportProps {}
+interface CodeExportProps { }
 
 const Wrapper = styled.div`
   display: flex;
@@ -53,12 +53,12 @@ const FormRow = styled.div`
   gap: 0.5rem;
 `;
 
-export function CodeExport({}: CodeExportProps) {
+export const CodeExport = memo(function CodeExport({ }: CodeExportProps) {
   const [code, setCode] = useState("");
   const [exportFormat, setExportFormat] = useState<"json" | "jsx" | "html">("json");
   const [copied, setCopied] = useState(false);
 
-  const store = useAllStores();
+  const { components } = useComponentState();
 
   const handleFormatChange = (format: "json" | "jsx" | "html") => {
     setExportFormat(format);
@@ -70,7 +70,6 @@ export function CodeExport({}: CodeExportProps) {
   };
 
   const generateCode = (format: "json" | "jsx" | "html"): string => {
-    const { components } = store;
 
     switch (format) {
       case "json":
@@ -223,4 +222,4 @@ ${bodyContent}
       </DialogContent>
     </Dialog>
   );
-}
+});

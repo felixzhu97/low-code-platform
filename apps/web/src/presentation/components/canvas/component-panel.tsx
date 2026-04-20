@@ -1,6 +1,6 @@
 "use client";
 
-import { isValidElement, ReactNode, useState } from "react";
+import { isValidElement, ReactNode, useState, memo } from "react";
 import { useDrag } from "react-dnd";
 import styled from "@emotion/styled";
 import { ScrollArea } from "../ui/scroll-area";
@@ -145,7 +145,7 @@ const DraggableCard = styled.div<{ $dragging: boolean }>`
   opacity: ${(p) => (p.$dragging ? 0.5 : 1)};
 `;
 
-export function ComponentPanel() {
+export const ComponentPanel = memo(() => {
   const { activeTab, setActiveTab } = useUIStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -443,4 +443,6 @@ export function ComponentPanel() {
       </StyledTabs>
     </PanelRoot>
   );
-}
+});
+
+ComponentPanel.displayName = "ComponentPanel";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import {
   Input,
   Label,
@@ -149,7 +149,7 @@ const FlexSlider = styled(Slider)`
   flex: 1;
 `;
 
-export function PropertiesPanel() {
+export const PropertiesPanel = memo(() => {
   const { selectedComponent, updateComponent } = useComponentStore();
   const [properties, setProperties] = useState<any>({});
 
@@ -1145,4 +1145,6 @@ export function PropertiesPanel() {
       </Tabs>
     </div>
   );
-}
+})
+
+PropertiesPanel.displayName = "PropertiesPanel";

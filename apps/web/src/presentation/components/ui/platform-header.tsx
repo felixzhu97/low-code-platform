@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -55,7 +55,7 @@ const ButtonIcon = styled.span`
   width: 1rem;
 `;
 
-export function PlatformHeader({
+export const PlatformHeader = memo(function PlatformHeader({
   canUndo,
   canRedo,
   previewMode,
@@ -120,4 +120,6 @@ export function PlatformHeader({
       </ButtonGroup>
     </Header>
   );
-}
+})
+
+PlatformHeader.displayName = "PlatformHeader";

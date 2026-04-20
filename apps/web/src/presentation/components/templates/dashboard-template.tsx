@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -182,7 +182,7 @@ const ChartCardContent = styled(CardContent)`
   justify-content: center;
 `;
 
-export function DashboardTemplate() {
+export const DashboardTemplate = memo(() => {
   const [period, setPeriod] = useState("monthly");
 
   return (
@@ -353,4 +353,6 @@ export function DashboardTemplate() {
       </Content>
     </Wrapper>
   );
-}
+});
+
+DashboardTemplate.displayName = "DashboardTemplate";

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import type { Component } from "@/domain/component";
-import { useAllStores } from "@/presentation/hooks";
+import { useComponentState } from "@/presentation/hooks";
 
 const TreeRoot = styled.div`
   display: flex;
@@ -183,7 +183,7 @@ export function ComponentTree() {
     selectComponent,
     deleteComponent,
     updateComponent,
-  } = useAllStores();
+  } = useComponentState();
 
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>(
     {}

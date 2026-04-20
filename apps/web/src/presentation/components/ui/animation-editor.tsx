@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import {
@@ -25,7 +25,7 @@ import { Play, Sparkles } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 
-import { useAllStores } from "@/presentation/hooks";
+import { useComponentState } from "@/presentation/hooks";
 
 interface AnimationEditorProps {}
 
@@ -156,8 +156,8 @@ const KeyframeStyles = () => {
   return null;
 };
 
-export function AnimationEditor({}: AnimationEditorProps) {
-  const { selectedComponentId: componentId, updateComponent } = useAllStores();
+export const AnimationEditor = memo(function AnimationEditor({}: AnimationEditorProps) {
+  const { selectedComponentId: componentId, updateComponent } = useComponentState();
   const [animation, setAnimation] = useState({
     type: "fade",
     duration: 500,
@@ -409,4 +409,4 @@ export function AnimationEditor({}: AnimationEditorProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import styled from "@emotion/styled";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 import { Laptop, Smartphone, Tablet } from "lucide-react";
@@ -44,7 +45,7 @@ const DeviceIcon = styled.span`
   width: 0.875rem;
 `;
 
-export function ResponsiveControls({}: ResponsiveControlsProps) {
+export const ResponsiveControls = memo(function ResponsiveControls({}: ResponsiveControlsProps) {
   const { activeDevice, setActiveDevice, setViewportWidth } = useCanvasStore();
 
   const handleDeviceChange = (device: string) => {
@@ -90,4 +91,4 @@ export function ResponsiveControls({}: ResponsiveControlsProps) {
       </TabsStyled>
     </Wrapper>
   );
-}
+});

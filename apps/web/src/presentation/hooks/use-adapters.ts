@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { AdapterFactory } from "@/presentation/adapters";
+import { useStateManagement } from "./hooks-index";
 
 /**
  * 使用适配器的 Hook
@@ -39,12 +40,6 @@ export function useComponentState() {
   // 操作应通过适配器执行以遵循整洁架构
   const {
     useComponentStore,
-    useCanvasStore,
-    useThemeStore,
-    useDataStore,
-    useUIStore,
-    useHistoryStore,
-    useCustomComponentsStore,
   } = require("@/infrastructure/state-management/stores");
   
   const componentStore = useComponentStore();
@@ -241,14 +236,14 @@ export function useAllStores() {
  * 从 shared/hooks 移到此位置以符合整洁架构
  */
 export function useSimplifiedActions() {
+  const { components } = useComponentState();
   const {
     addComponent,
     updateComponent,
     deleteComponent,
     selectComponent,
     addToHistory,
-    components,
-  } = useAllStores();
+  } = useStateManagement();
 
   // 添加组件并记录历史
   const addComponentWithHistory = (component: any) => {
