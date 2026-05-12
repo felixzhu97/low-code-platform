@@ -2,9 +2,7 @@
 import path from "path";
 
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  outputFileTracingRoot: path.join(import.meta.dirname, "../"),
   typescript: {
     ignoreBuildErrors: true,
   },
