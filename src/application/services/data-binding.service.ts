@@ -164,18 +164,20 @@ export class DataBindingService {
       switch (transform) {
         case "string":
           return String(value);
-        case "number":
+        case "number": {
           const num = Number(value);
           return isNaN(num) ? defaultValue : num;
+        }
         case "boolean":
           if (typeof value === "boolean") return value;
           if (typeof value === "string") {
             return value.toLowerCase() === "true" || value === "1";
           }
           return Boolean(value);
-        case "date":
+        case "date": {
           const date = new Date(value);
           return isNaN(date.getTime()) ? defaultValue : date;
+        }
         case "json":
           if (typeof value === "string") {
             return JSON.parse(value);
@@ -248,7 +250,7 @@ export class DataBindingService {
         this.generateMappingForObject(sourceObj, value, mappings, sourcePath);
       } else {
         // 检查源数据中是否存在对应字段
-        if (sourceObj.hasOwnProperty(key)) {
+        if (Object.hasOwn(sourceObj, key)) {
           mappings.push({
             field: key,
             sourcePath,

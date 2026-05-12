@@ -90,27 +90,15 @@ export function PlatformHeader({
           <Eye className="mr-2 h-4 w-4" />
           {previewMode ? "退出预览" : "预览"}
         </Button>
-        <ResponsiveControls onViewportChange={onViewportChange} />
-        <TemplateGallery onSelectTemplate={onSelectTemplate} theme={theme} />
-        <FormBuilder onAddForm={onAddForm} />
-        <ComponentGrouping
-          components={components}
-          onGroupComponents={onGroupComponents}
-        />
-        <AnimationEditor
-          componentId={selectedComponentId}
-          onApplyAnimation={onApplyAnimation}
-        />
-        <ThemeEditor theme={theme} onThemeChange={onThemeChange} />
-        <Collaboration projectName={projectName} />
-        <ComponentLibraryManager
-          customComponents={customComponents}
-          onAddComponent={onAddCustomComponent}
-          onRemoveComponent={onRemoveCustomComponent}
-          onImportComponents={onImportComponents}
-          existingComponents={components}
-        />
-        <CodeExport components={components} />
+        <ResponsiveControls />
+        <TemplateGallery />
+        <FormBuilder />
+        <ComponentGrouping />
+        <AnimationEditor />
+        <ThemeEditor />
+        <Collaboration />
+        <ComponentLibraryManager />
+        <CodeExport />
       </div>
     </Header>
   );

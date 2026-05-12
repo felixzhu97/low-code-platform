@@ -1,14 +1,20 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build
+
+# server (NestJS)
+apps/server/dist/
+apps/server/htmlcov/
+apps/server/node_modules/
+apps/server/coverage/
 
 # debug
 npm-debug.log*
@@ -28,6 +34,7 @@ next-env.d.ts
 
 # IDE
 .idea
+.vscode
 
 # macOS
 .DS_Store
@@ -39,5 +46,22 @@ docs/*
 #  kiro
 .kiro
 
-# IDE
-.vscode
+# pre-commit
+.husky/
+
+# coverage
+coverage/
+apps/server/coverage/
+apps/web/coverage/
+packages/**/coverage/
+
+# Python cache
+apps/server/app/**/__pycache__/
+apps/server/tests/__pycache__/
+__pycache__/
+
+# test artifacts
+apps/server/.pytest_cache/
+
+# personal
+TODO.md
