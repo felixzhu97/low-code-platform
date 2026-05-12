@@ -84,9 +84,10 @@ export function ThemeEditor({}: ThemeEditorProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Palette className="mr-2 h-4 w-4" />
-          主题设置
+        <Button variant="ghost" size="sm" className="group/btn relative overflow-hidden">
+          <span className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100" />
+          <Palette className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">主题设置</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">

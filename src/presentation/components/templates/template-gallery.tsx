@@ -93,8 +93,9 @@ export function TemplateGallery({}: TemplateGalleryProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
-          浏览模板库
+        <Button variant="outline" className="w-full sm:w-auto">
+          <span className="hidden sm:inline">浏览模板库</span>
+          <span className="sm:hidden">模板</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">

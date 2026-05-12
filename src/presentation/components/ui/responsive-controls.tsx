@@ -30,11 +30,10 @@ export function ResponsiveControls({}: ResponsiveControlsProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-0.5">
       <Tabs
         value={activeDevice}
         onValueChange={handleDeviceChange}
-        className="mr-2"
       >
         <TabsList className="grid w-auto grid-cols-3">
           <TabsTrigger value="mobile" className="px-3">

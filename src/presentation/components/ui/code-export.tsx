@@ -176,9 +176,10 @@ export function CodeExport({}: CodeExportProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Code className="mr-2 h-4 w-4" />
-          导出代码
+        <Button variant="ghost" size="sm" className="group/btn relative overflow-hidden">
+          <span className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100" />
+          <Code className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">导出代码</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">

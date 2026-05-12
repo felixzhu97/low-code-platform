@@ -103,9 +103,10 @@ export function AnimationEditor({}: AnimationEditorProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" disabled={!componentId}>
-          <Sparkles className="mr-2 h-4 w-4" />
-          动画效果
+        <Button variant="ghost" size="sm" className="group/btn relative overflow-hidden" disabled={!componentId}>
+          <span className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100" />
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">动画效果</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">

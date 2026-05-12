@@ -67,34 +67,69 @@ export function PlatformHeader({
 }: PlatformHeaderProps) {
   return (
     <Header>
-      <div className="flex items-center gap-2">
+      {/* Left Group: Core Actions */}
+      <div className="flex items-center gap-0.5">
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={onUndo}
           disabled={!canUndo}
+          className="group/btn relative overflow-hidden"
         >
-          <Undo2 className="mr-2 h-4 w-4" />
-          撤销
+          <span
+            className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100"
+          />
+          <Undo2 className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">撤销</span>
         </Button>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={onRedo}
           disabled={!canRedo}
+          className="group/btn relative overflow-hidden"
         >
-          <Redo2 className="mr-2 h-4 w-4" />
-          重做
+          <span
+            className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100"
+          />
+          <Redo2 className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">重做</span>
         </Button>
-        <Button variant="outline" size="sm" onClick={onTogglePreview}>
-          <Eye className="mr-2 h-4 w-4" />
-          {previewMode ? "退出预览" : "预览"}
+
+        {/* Separator */}
+        <div className="mx-2 h-5 w-px bg-border/60" />
+
+        <Button
+          variant={previewMode ? "secondary" : "ghost"}
+          size="sm"
+          onClick={onTogglePreview}
+          className="group/btn relative overflow-hidden"
+        >
+          <span
+            className={`absolute inset-0 transition-opacity duration-200 ${
+              previewMode
+                ? "bg-primary/10"
+                : "bg-primary/5 opacity-0 group-hover/btn:opacity-100"
+            }`}
+          />
+          <Eye className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">
+            {previewMode ? "退出预览" : "预览"}
+          </span>
         </Button>
+      </div>
+
+      {/* Center Group: Design Tools */}
+      <div className="flex items-center gap-0.5">
         <ResponsiveControls />
         <TemplateGallery />
         <FormBuilder />
         <ComponentGrouping />
         <AnimationEditor />
+
+        {/* Separator */}
+        <div className="mx-2 h-5 w-px bg-border/60" />
+
         <ThemeEditor />
         <Collaboration />
         <ComponentLibraryManager />

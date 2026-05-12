@@ -91,9 +91,10 @@ export function ComponentGrouping({}: ComponentGroupingProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" disabled={components.length < 2}>
-          <Group className="mr-2 h-4 w-4" />
-          组件分组
+        <Button variant="ghost" size="sm" className="group/btn relative overflow-hidden" disabled={components.length < 2}>
+          <span className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-200 group-hover/btn:opacity-100" />
+          <Group className="h-4 w-4" />
+          <span className="ml-1.5 hidden sm:inline">组件分组</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
