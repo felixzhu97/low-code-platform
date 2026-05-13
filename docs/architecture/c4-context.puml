@@ -1,34 +1,40 @@
-@startuml
+@startuml 低代码平台 - C4 上下文图
 !include ./c4-plantuml/C4_Context.puml
 
 LAYOUT_WITH_LEGEND()
 
-title Felix 低代码平台 - 系统上下文图
+title 系统上下文图 - 低代码平台
 
-Person(designer, "页面设计师", "使用可视化编辑器设计页面和表单")
-Person(developer, "开发者", "使用代码导出功能，自定义组件开发")
-Person(enduser, "终端用户", "访问和使用生成的页面")
-Person(admin, "管理员", "管理模板库、组件库和用户权限")
+Person(developer, "开发者", "使用平台构建应用程序的软件开发者")
+Person(designer, "设计师", "创建组件设计的 UI/UX 设计师")
+Person(admin, "管理员", "管理用户和资源的平台管理员")
 
-System(lowcode, "Felix 低代码平台", "可视化页面搭建、组件管理、模板系统的一体化平台")
+System(lowcode, "低代码平台", "用于构建 Web 应用的可视化拖拽平台") {
+    System_Boundary(canvas, "画布子系统") {
+        System_Ext(canvas_engine, "画布引擎", "渲染和管理可视化画布")
+    }
+    System_Boundary(component, "组件子系统") {
+        System_Ext(component_lib, "组件库", "存储可复用的 UI 组件")
+    }
+    System_Boundary(export, "导出子系统") {
+        System_Ext(code_generator, "代码生成器", "生成可部署的代码")
+    }
+}
 
-System_Ext(cdn, "CDN服务", "静态资源加速分发")
-System_Ext(storage, "对象存储", "图片、文件等静态资源存储")
-System_Ext(auth, "认证服务", "用户身份认证与授权")
-System_Ext(analytics, "数据分析", "页面访问统计和用户行为分析")
-System_Ext(api, "第三方API", "外部数据源和服务集成")
-System_Ext(export_service, "代码托管", "导出代码的版本管理和部署")
+System_Ext(git, "Git 服务", "导出代码的版本控制")
+System_Ext(cdn, "CDN", "提供静态资源和导出代码")
+System_Ext(db, "数据库", "存储项目、组件和用户数据")
 
-Rel(designer, lowcode, "设计页面", "拖拽组件、配置属性")
-Rel(developer, lowcode, "扩展开发", "自定义组件、代码导出")
-Rel(admin, lowcode, "平台管理", "模板管理、用户管理")
-Rel(enduser, lowcode, "访问页面", "使用生成的应用")
+Rel(developer, lowcode, "创建应用", "Web 浏览器")
+Rel(designer, lowcode, "设计组件", "Web 浏览器")
+Rel(admin, lowcode, "管理平台", "Web 浏览器")
 
-Rel(lowcode, storage, "存储资源", "HTTPS/API")
-Rel(lowcode, cdn, "资源分发", "HTTPS")
-Rel(lowcode, auth, "用户认证", "OAuth/SAML")
-Rel(lowcode, analytics, "数据上报", "HTTPS/API")
-Rel(lowcode, api, "数据集成", "REST/GraphQL")
-Rel(lowcode, export_service, "代码托管", "Git/API")
+Rel(lowcode, canvas_engine, "渲染 UI", "内部")
+Rel(lowcode, component_lib, "加载组件", "内部")
+Rel(lowcode, code_generator, "生成代码", "内部")
 
-@enduml 
+Rel(lowcode, db, "存储/获取数据", "PostgreSQL")
+Rel(code_generator, git, "版本控制", "Git")
+Rel(code_generator, cdn, "部署资源", "HTTPS")
+
+@enduml

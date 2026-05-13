@@ -74,10 +74,48 @@
 ├── hooks/                # 自定义Hooks
 ├── styles/               # 样式文件
 ├── public/               # 静态资源
-└── src/                  # 业务逻辑
+├── docs/                 # 文档
+│   └── architecture/     # 架构文档
+│       ├── README.md     # 架构说明
+│       ├── c4-context.puml    # C4上下文图
+│       └── c4-container.puml # C4容器图
+└── src/                  # 业务逻辑 (Clean Architecture + DDD)
     ├── domains/          # 领域模型
+    │   ├── entities/     # 实体
+    │   ├── valueObjects/ # 值对象
+    │   └── events/       # 领域事件
+    ├── application/      # 应用层
+    │   ├── commands/     # 命令
+    │   ├── queries/      # 查询
+    │   └── useCases/     # 用例
+    ├── infrastructure/   # 基础设施层
+    │   └── repositories/ # 仓储实现
     └── shared/           # 共享模块
 ```
+
+## 🏛️ 架构设计
+
+本项目采用 **Clean Architecture** (整洁架构) 和 **Domain-Driven Design** (领域驱动设计) 原则构建：
+
+- [架构文档](docs/architecture/README.md) - 详细的架构说明
+- [C4 Context 图](docs/architecture/c4-context.puml) - 系统上下文视图
+- [C4 Container 图](docs/architecture/c4-container.puml) - 容器组件视图
+
+### 核心原则
+
+| 原则 | 描述 |
+|------|------|
+| 依赖倒置 | 内层定义接口，外层实现，依赖方向始终向内 |
+| 单一职责 | 每层只关注自己的职责，保持内聚 |
+| 限界上下文 | 按业务领域划分模块，降低耦合 |
+
+### 领域模型
+
+| 限界上下文 | 核心实体 |
+|------------|----------|
+| Canvas | Canvas, Component, Layer, Widget |
+| Component | Component, Category, Group, Property |
+| Project | Project, Template, Version, Export |
 
 ## 🚀 快速开始
 
