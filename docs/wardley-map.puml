@@ -1,0 +1,114 @@
+@startuml Wardley Map - Low-Code Platform
+!theme plain
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam linetype ortho
+skinparam shadowing false
+
+title 沃德利地图 - 低代码平台 (Wardley Map)
+
+' ============ Y轴标签 ============
+note as Y_NOTE
+<color:#666666>**用户依赖度**
+↑ 高 - 用户必须理解
+│
+│
+│
+│
+│
+↓ 低 - 用户无需了解
+end note
+
+' ============ 定制层 (Custom-built) - 核心差异化 ============
+package "定制层 (Custom-built)" <<定制>> #FBE9E7 {
+    component "可视化编辑器 (Visual Editor)" as VE
+    component "拖拽编排 (Drag & Drop)" as DnD_EDIT
+    component "属性配置 (Property Config)" as PROP_CFG
+    component "数据绑定 (Data Binding)" as DATA_BIND
+    component "历史记录 (History)" as HISTORY
+}
+
+' ============ 产品层 (Product) - 可配置能力 ============
+package "产品层 (Product)" <<产品>> #E3F2FD {
+    component "画布 (Canvas)" as CANVAS
+    component "组件面板 (Component Panel)" as CP
+    component "组件树 (Component Tree)" as CT
+    component "图表组件 (Charts)" as CHARTS
+    component "表单组件 (Forms)" as FORMS
+    component "布局组件 (Layouts)" as LAYOUT
+    component "模板系统 (Templates)" as TEMPLATES
+    component "主题系统 (Themes)" as THEMES
+    component "持久化 (Persistence)" as PERSIST
+}
+
+' ============ 商品化层 (Commodity) - 标准化技术 ============
+package "商品化层 (Commodity)" <<商品化>> #ECEFF1 {
+    component "Next.js" as NEXTJS
+    component "React" as REACT
+    component "Zustand" as ZUSTAND
+    component "Radix UI" as RADIX
+    component "Tailwind CSS" as TAILWIND
+    component "React DnD" as DND_LIB
+    component "Recharts" as RECHARTS
+    component "React Hook Form" as RHF
+    component "Zod" as ZOD
+    component "clsx/tailwind-merge" as CLSX
+}
+
+' ============ X轴标签 ============
+note as X_NOTE
+<color:#666666>**演化程度**: 起源 | 定制 | 产品 | 商品化</color>
+end note
+
+' ============ 依赖链 ============
+
+' 可视化编辑器
+VE -down-> DnD_EDIT
+VE -down-> PROP_CFG
+VE -down-> CANVAS
+VE -down-> CP
+
+DnD_EDIT -down-> DND_LIB
+DnD_EDIT -down-> CANVAS
+
+PROP_CFG -down-> DATA_BIND
+PROP_CFG -down-> THEMES
+PROP_CFG -down-> HISTORY
+
+' 画布
+CANVAS -down-> CHARTS
+CANVAS -down-> FORMS
+CANVAS -down-> LAYOUT
+CANVAS -down-> RADIX
+
+CHARTS -down-> RECHARTS
+FORMS -down-> RHF
+FORMS -down-> ZOD
+
+' 组件系统
+CP -down-> CT
+CT -down-> DATA_BIND
+CANVAS -left-> DATA_BIND
+
+' 模板和持久化
+TEMPLATES -down-> PERSIST
+PERSIST -down-> THEMES
+
+' 基础设施
+NEXTJS -up-> REACT
+CANVAS -up-> NEXTJS
+CANVAS -up-> ZUSTAND
+CANVAS -up-> DND_LIB
+CANVAS -up-> TAILWIND
+CANVAS -up-> CLSX
+
+' ============ 图例 ============
+legend right
+|= 层级 |= 含义 |= 组件数 |
+|= **定制** | 核心差异化竞争力 | 5 |
+|= **产品** | 可配置的业务能力 | 9 |
+|= **商品化** | 标准化开源技术 | 10 |
+end legend
+
+@enduml

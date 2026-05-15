@@ -75,6 +75,7 @@
 ├── styles/               # 样式文件
 ├── public/               # 静态资源
 ├── docs/                 # 文档
+│   ├── wardley-map.puml  # 沃德利地图源码
 │   └── c4/               # C4 模型图
 │       ├── README.md         # C4 图说明
 │       ├── c4-context.puml   # C4 上下文图源码
@@ -127,6 +128,26 @@
 ##### 属性面板模块
 
 ![C3 Properties Panel Diagram](docs/c4/images/Component%20Diagram%20-%20Properties%20Panel%20Module.png)
+
+#### C4 沃德利地图 (Wardley Map)
+
+![Wardley Map](docs/images/Wardley%20Map%20-%20Low-Code%20Platform.png)
+
+> 沃德利地图展示了低代码平台的组件演化和依赖关系：
+> - **起源 (Genesis)**: 全新技术，需要大量创新
+> - **定制 (Custom)**: 业务定制开发，如可视化编辑器、组件工厂
+> - **产品 (Product)**: 通用产品，如画布组件、图表组件
+> - **商品化 (Commodity)**: 标准化基础设施，如 React、Next.js、Zustand
+
+**各层颜色含义：**
+- **红色**: 用户界面层 - 面向用户的核心功能
+- **紫色**: 组件系统层 - 组件化能力
+- **青色**: 数据管理层 - 数据流转
+- **绿色**: 主题样式层 - 视觉呈现
+- **橙色**: 状态管理层 - 状态控制
+- **棕色**: 应用服务层 - 业务逻辑
+- **粉色**: 领域模型层 - 核心领域
+- **灰色**: 基础设施层 - 技术支撑
 
 ### 核心原则
 
