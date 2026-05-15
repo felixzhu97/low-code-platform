@@ -1,0 +1,54 @@
+@startuml Component Diagram - Component Panel Module
+!include c4-plantuml/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 组件图 - 组件面板模块 (Component Panel Module)
+
+Container(componentPanel, "ComponentPanel", "React Component", "组件面板主组件，展示可拖拽的组件列表")
+Container(draggableComponent, "DraggableComponent", "React Component", "可拖拽组件项，支持拖拽到画布")
+Container(categoryList, "CategoryList", "React Component", "组件分类列表，显示组件分类标签")
+
+Container(uiStore, "UIStore", "Zustand Store", "UI状态管理：活动标签页、激活的分类")
+Container(componentStore, "ComponentStore", "Zustand Store", "组件状态管理：获取组件列表")
+
+' 组件结构关系
+Rel(componentPanel, draggableComponent, "渲染可拖拽组件")
+Rel(componentPanel, categoryList, "渲染分类列表")
+Rel(componentPanel, uiStore, "读写UI状态")
+Rel(componentPanel, componentStore, "读取组件配置")
+
+Rel(categoryList, uiStore, "读取激活的分类")
+
+' 拖拽功能
+Rel(draggableComponent, uiStore, "更新搜索状态")
+
+' UI 组件库
+Container(scrollArea, "ScrollArea", "Shadcn UI", "滚动区域组件")
+Container(tabs, "Tabs", "Shadcn UI", "标签页组件")
+Container(input, "Input", "Shadcn UI", "输入框组件（搜索）")
+Container(button, "Button", "Shadcn UI", "按钮组件（分类标签）")
+
+Rel(componentPanel, scrollArea, "使用")
+Rel(componentPanel, tabs, "使用")
+Rel(componentPanel, input, "使用")
+Rel(componentPanel, button, "使用")
+
+' 组件分类数据结构
+Container(basicComponents, "BasicComponents", "Data", "基础组件：文本、按钮、图片、分割线")
+Container(layoutComponents, "LayoutComponents", "Data", "布局组件：容器、网格、弹性、分栏、标签页、卡片组、响应式容器、行、列")
+Container(formComponents, "FormComponents", "Data", "表单组件：输入框、文本域、选择、复选框、单选框、开关、滑块、日期选择、文件上传")
+Container(dataComponents, "DataComponents", "Data", "数据组件：数据表格、数据列表、数据卡片、分页、树形控件")
+Container(chartComponents, "ChartComponents", "Data", "图表组件：柱状图、折线图、饼图、面积图、散点图、雷达图、仪表盘、环形图、树状图")
+Container(containerComponents, "ContainerComponents", "Data", "容器组件：卡片、折叠面板、标签页、模态框、抽屉、弹出框、提示框")
+Container(advancedComponents, "AdvancedComponents", "Data", "高级组件：轮播图、步骤条、进度条、头像、徽章、标签、时间线、评分")
+
+Rel(componentPanel, basicComponents, "展示")
+Rel(componentPanel, layoutComponents, "展示")
+Rel(componentPanel, formComponents, "展示")
+Rel(componentPanel, dataComponents, "展示")
+Rel(componentPanel, chartComponents, "展示")
+Rel(componentPanel, containerComponents, "展示")
+Rel(componentPanel, advancedComponents, "展示")
+
+@enduml
