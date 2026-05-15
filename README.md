@@ -75,10 +75,17 @@
 ├── styles/               # 样式文件
 ├── public/               # 静态资源
 ├── docs/                 # 文档
-│   └── architecture/     # 架构文档
-│       ├── README.md     # 架构说明
-│       ├── c4-context.puml    # C4上下文图
-│       └── c4-container.puml # C4容器图
+│   └── c4/               # C4 模型图
+│       ├── README.md         # C4 图说明
+│       ├── c4-context.puml   # C4 上下文图源码
+│       ├── c4-container.puml  # C4 容器图源码
+│       ├── c4-component-canvas.puml      # C3 画布组件图
+│       ├── c4-component-panel.puml       # C3 面板组件图
+│       ├── c4-component-properties.puml  # C3 属性组件图
+│       ├── c4-plantuml/       # PlantUML 模板库
+│       └── images/           # C4 图片
+│           ├── Low-Code Platform C4 Context Diagram.png
+│           └── Low-Code Platform C4 Container Diagram.png
 └── src/                  # 业务逻辑 (Clean Architecture + DDD)
     ├── domains/          # 领域模型
     │   ├── entities/     # 实体
@@ -97,9 +104,29 @@
 
 本项目采用 **Clean Architecture** (整洁架构) 和 **Domain-Driven Design** (领域驱动设计) 原则构建：
 
-- [架构文档](docs/architecture/README.md) - 详细的架构说明
-- [C4 Context 图](docs/architecture/c4-context.puml) - 系统上下文视图
-- [C4 Container 图](docs/architecture/c4-container.puml) - 容器组件视图
+### C4 模型图
+
+#### C1 系统上下文图
+
+![C4 Context Diagram](docs/c4/images/Low-Code%20Platform%20C4%20Context%20Diagram.png)
+
+#### C2 容器图
+
+![C4 Container Diagram](docs/c4/images/Low-Code%20Platform%20C4%20Container%20Diagram.png)
+
+#### C3 组件图
+
+##### 画布模块
+
+![C3 Canvas Component Diagram](docs/c4/images/Component%20Diagram%20-%20Canvas%20Module.png)
+
+##### 组件面板模块
+
+![C3 Component Panel Diagram](docs/c4/images/Component%20Diagram%20-%20Component%20Panel%20Module.png)
+
+##### 属性面板模块
+
+![C3 Properties Panel Diagram](docs/c4/images/Component%20Diagram%20-%20Properties%20Panel%20Module.png)
 
 ### 核心原则
 
