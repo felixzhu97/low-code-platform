@@ -36,12 +36,6 @@
 - **代码导出**: 导出为可部署的前端代码
 - **模板库**: 预置页面模板，快速开始项目
 
-## 📸 界面预览
-
-![Low-Code Platform Main Interface](screenshots/low-code-platform-main-interface.png)
-
-> 低代码平台主界面：左侧为组件面板，中间为可视化画布，右侧为属性配置面板
-
 ## 🛠 技术栈
 
 - **框架**: Next.js 15.2.4 + React 19
@@ -106,6 +100,12 @@
     │   └── repositories/ # 仓储实现
     └── shared/           # 共享模块
 ```
+
+## 📸 界面预览
+
+![Low-Code Platform Main Interface](screenshots/low-code-platform-main-interface.png)
+
+> 低代码平台主界面：左侧为组件面板，中间为可视化画布，右侧为属性配置面板
 
 ## 🏛️ 架构设计
 
