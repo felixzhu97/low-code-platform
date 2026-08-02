@@ -44,7 +44,7 @@ If **any** row matches, update the listed doc(s) in the same PR. If none match, 
 
 ## Example — new Chart type
 
-Adding a new chart component under `src/chart/presentation/`:
+Adding a new chart component under `src/chart/`:
 
 1. **Glossary** — Chart-related Preferred Term if naming changed.
 2. **C4** — at least `C3-Component-Frontend.puml` if the component graph changes; regenerate png if possible.

@@ -58,13 +58,15 @@ Open [http://localhost:3000](http://localhost:3000).
 ```
 src/
 ├── app/             # Next.js App Router shell
-├── canvas/          # Canvas + properties (domain → presentation)
-├── component/       # Component factory, panel, renderer
+├── canvas/          # Business domain: canvas UI + store + hooks
+├── component/       # Business domain: factory, panel, renderer, stores
 ├── template/ theme/ data/ chart/ form/ export/ collaboration/
-└── common/          # UI kit, utils, persistence, history
+├── components/      # Shared UI kit
+├── hooks/           # Shared hooks
+└── lib/             # Shared utils, persistence, history
 ```
 
-Each business module keeps `domain` / `application` / `infrastructure` / `presentation` colocated. See [Glossary](../Glossary.md) and `.cursor/rules/architecture.mdc`.
+Organize by business domain and colocate related files (React File Structure FAQ). No Clean Architecture layer folders. See [Glossary](../Glossary.md) and `.cursor/rules/architecture.mdc`.
 
 ---
 

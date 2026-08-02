@@ -14,45 +14,46 @@ is_background: true
 
 ## 项目代码风格
 
-### TypeScript / Clean Architecture
+### TypeScript / business-domain folders
 
-**包结构（domain-first）**：
+**包结构**（按业务域聚合，无整洁架构层名）：
 ```
 src/
-├── app/                              # Next.js shell
-├── {module}/domain|application|infrastructure|presentation/
-└── common/                           # UI kit, utils, persistence, history
+├── app/                 # Next.js shell
+├── {domain}/            # UI + store + hooks + helpers colocated
+├── components/          # Shared UI kit
+├── hooks/               # Shared hooks
+└── lib/                 # Shared utils / persistence / history
 ```
 
-Modules: `canvas`, `component`, `template`, `theme`, `data`, `chart`, `form`, `export`, `collaboration`.
+Business domains: `canvas`, `component`, `template`, `theme`, `data`, `chart`, `form`, `export`, `collaboration`.
 
 **关键规范**：
-- Domain 不依赖 React / Next.js
-- 应用服务编排用例；领域规则留在 `{module}/domain`
-- 禁止全局 `src/domain|application|presentation|shared` 与 `domain/port` / `*Port` / `adapter/in|out`
-- 变量与方法命名必须对齐 [领域术语表](../../docs/Glossary.md) Preferred Term；细则见 developer skill → `references/clean-code-naming.md`
-- UI 状态优先各域 `infrastructure` stores（经 `common/infrastructure/stores` facade 组合）
+- 禁止整洁架构层目录名 `domain|application|infrastructure|presentation`（业务域包本身如 `canvas/` 除外）
+- 变量与方法命名对齐 [领域术语表](../../docs/Glossary.md) Preferred Term；细则见 developer skill → `references/clean-code-naming.md`
+- UI 状态优先各业务域内 `*.store.ts`（经 `lib/stores` / `lib/use-stores` 组合）
+- 纯类型/计算模块尽量不依赖 React
 
-**示例 - 领域服务用法**：通过 `{module}/application` 调用 domain factory / management，不在组件内散落业务规则。
+**示例**：通过业务域内 factory / management helpers 编排，不在 JSX 内散落复杂规则。
 
-### React / Next.js (Presentation)
+### React / Next.js
 
 **关键规范**：
 - Next.js App Router 入口在 `src/app/`
-- UI 放在所属业务域的 `presentation/`（横切 primitives 在 `common/presentation/ui`）
-- Hooks 放各域 `presentation/hooks` 或 `common/presentation/hooks`
-- 类型优先；命名对齐 Glossary Preferred Term + clean-code-naming（禁止含糊的 `data`/`tmp`/`handle` 及术语同义词）
+- 业务域 UI 放在 `src/{domain}/`；共享 primitives 在 `src/components/ui`
+- 共享 hooks 在 `src/hooks/`；业务域 hooks 与该域同目录
+- 类型优先；命名对齐 Glossary Preferred Term + clean-code-naming
 
 **示例 - 组件职责**：
 - Canvas / ComponentPanel / PropertiesPanel 只负责交互与展示
-- 增删改组件走 application services + stores，不在 JSX 内写领域规则
+- 增删改组件走业务域 helpers + stores，不在 JSX 内写复杂规则
 
 ## 实现流程
 
 1. **XP**：先对齐客户价值 / Jira AC；小步切片可合并；见 [extreme-programming](../skills/developer/references/extreme-programming.md)
 2. **BDD**：用 Given-When-Then 澄清行为（对齐 Jira AC）
 3. **TDD**：Red → Green → Refactor；测试名 `should_expected_when_condition`
-4. **DDD**：规则落在 domain； application 只编排
+4. **DDD**：规则落在业务域 helpers / types；组件只编排展示
 5. **领域命名**：变量/方法用术语表 Preferred Term，再套 Clean Code 形式
 6. **UI/UX**：对齐 Apple HIG，极简风格（见 apple-minimal-ux）
 7. **分支 / Commit / PR / Jira**：`<type>/<slug>`（类型与 commit 一致；Jira key 仅写在 commit/PR）+ Chain PR；沿用 [developer](../skills/developer/SKILL.md) §6 与 [Product Owner](../skills/product-owner/SKILL.md)；References 优先官方文档与 research

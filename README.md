@@ -82,11 +82,12 @@
 │   └── product-owner/
 │       ├── User-Story-Map.md # 用户故事地图索引
 │       └── user-stories/     # Epic / GWT 故事正文
-└── src/                      # Clean Architecture
-    ├── domain/               # 领域层
-    ├── application/          # 应用层
-    ├── presentation/         # 表现层（编辑器 UI）
-    └── shared/               # 共享（stores / hooks）
+└── src/                      # Business-domain folders
+    ├── app/                  # Next.js App Router
+    ├── {domain}/             # canvas, component, template, theme, …
+    ├── components/           # Shared UI kit
+    ├── hooks/                # Shared hooks
+    └── lib/                  # Shared utils / persistence / history
 ```
 
 ## 📚 文档入口
@@ -106,7 +107,7 @@
 
 ## 🏛️ 架构设计
 
-本项目采用 **Clean Architecture** (整洁架构) 和 **Domain-Driven Design** (领域驱动设计) 原则构建：
+本项目按 **业务域（business domain）** 聚合源码并就近放置；领域术语见 [Glossary](docs/Glossary.md)：
 
 ### C4 模型图
 
