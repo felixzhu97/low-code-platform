@@ -25,7 +25,7 @@ Prefer many fast unit tests over a wide E2E suite.
 Red (failing test) → Green (minimal code) → Refactor (keep green)
 ```
 
-- Write the test first when implementing domain/application behavior
+- Write the test first when implementing business-domain helpers / store behavior
 - AAA: Arrange / Act / Assert
 - Do not test private methods; do not hit network/DB in unit tests
 
@@ -58,11 +58,11 @@ Prefer **Fake** for repositories over heavy mocking.
 | Commented-out / ignored tests | Delete or fix |
 | Ice-cream cone (many E2E, few unit) | Rebalance toward unit |
 
-## Layers in this codebase
+## Where tests live in this codebase
 
 | Code under test | Prefer |
 |-----------------|--------|
-| `domain/` | Unit + TDD |
-| `application/` | Unit with Fake repos; light integration |
-| `infrastructure/` / `web/` | Integration |
+| `src/{domain}/*.{ts,tsx}` helpers / stores | Unit + TDD |
+| Shared `src/lib/` | Unit with fakes; light integration |
+| Business-domain UI / hooks | Component tests |
 | Critical UI flows | Few E2E |

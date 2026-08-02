@@ -3,21 +3,17 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 容器图 (C2) - Low-Code Platform (domain-first)
+title 容器图 (C2) - Low-Code Platform (business-domain folders)
 
 Person(developer, "开发者", "使用编辑器构建页面")
 Person(designer, "设计师", "设计主题与模板")
 
 System_Boundary(lcp, "Low-Code Platform") {
-    Container(spa, "Web SPA", "Next.js 16 + React 19", "低代码编辑器入口（App Router，src/app）")
+    Container(spa, "Web SPA", "Next.js + React", "App Router 入口（src/app）")
 
-    Container(canvasMod, "Canvas module", "TS + React", "画布、属性面板、canvas store")
-    Container(componentMod, "Component module", "TS + React", "组件类型、工厂、管理、panel/renderer")
-    Container(templateMod, "Template module", "TS + React", "模板库与应用")
-    Container(themeMod, "Theme module", "TS + React", "主题与动画")
-    Container(dataMod, "Data module", "TS + React", "数据源与绑定")
-    Container(chartForm, "Chart / Form modules", "TS + React", "图表与表单构建")
-    Container(commonMod, "Common", "TS + React", "UI kit、utils、history、LocalStorage persistence")
+    Container(domains, "Business domain modules", "TS + React", "canvas / component / template / theme / data / chart / form / export / collaboration")
+    Container(sharedUi, "components + hooks", "React", "共享 UI kit 与 hooks")
+    Container(sharedLib, "lib", "TypeScript", "utils、history、LocalStorage persistence、store 组合")
 }
 
 System_Ext(browser_storage, "Browser LocalStorage", "本地项目状态持久化")
@@ -27,21 +23,11 @@ System_Ext(cdn, "CDN", "静态资源")
 Rel(developer, spa, "使用编辑器", "HTTPS")
 Rel(designer, spa, "设计页面", "HTTPS")
 
-Rel(spa, canvasMod, "组合画布壳")
-Rel(spa, componentMod, "组合组件面板")
-Rel(spa, templateMod, "模板入口")
-Rel(spa, themeMod, "主题入口")
-Rel(spa, dataMod, "数据面板")
-Rel(spa, chartForm, "图表/表单入口")
-
-Rel(canvasMod, componentMod, "渲染/选择组件")
-Rel(canvasMod, commonMod, "状态组合 / UI kit")
-Rel(componentMod, dataMod, "数据绑定用例")
-Rel(componentMod, commonMod, "stores facade / UI kit")
-Rel(templateMod, componentMod, "应用为组件树")
-Rel(themeMod, commonMod, "UI kit")
-Rel(dataMod, commonMod, "持久化协作")
-Rel(commonMod, browser_storage, "save / load", "LocalStorage")
+Rel(spa, domains, "组合各业务域")
+Rel(spa, sharedUi, "共享壳层 UI")
+Rel(domains, sharedUi, "使用 primitives")
+Rel(domains, sharedLib, "状态 / 工具 / 持久化")
+Rel(sharedLib, browser_storage, "save / load", "LocalStorage")
 
 Rel(spa, vercel, "deploy")
 Rel(spa, cdn, "assets")

@@ -1,18 +1,7 @@
-## 变更类型
+<why: brief motivation for this change — what problem it solves and why this approach>
 
-- 新功能
-- Bug 修复
-- 文档更新
+References:
+- [Title](URL)
 
-## 描述
-
-
-
-## 相关 Issue
-
-
-
-## 检查项
-
-- 代码已自测
-- 已添加单元测试
+Jira:
+- https://felixzhu.atlassian.net/browse/AI-XXX

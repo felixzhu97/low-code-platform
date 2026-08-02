@@ -32,8 +32,14 @@
       "@/app/*": [
         "./src/app/*"
       ],
-      "@/common/*": [
-        "./src/common/*"
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
       ],
       "@/canvas/*": [
         "./src/canvas/*"
