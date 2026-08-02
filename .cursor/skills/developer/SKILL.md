@@ -11,8 +11,8 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 
 ## Hard constraints
 
-1. Layers: [architecture](../../rules/architecture.mdc) — `presentation → application → domain` (+ `shared` cross-cutting)
-2. No `domain/port`, `adapter/in|out`, `*Port` in new code
+1. Layout: [architecture](../../rules/architecture.mdc) — feature folders; no CA layer directory names
+2. No `domain/port`, `adapter/in|out`, `*Port`, or CA layer folders in new code
 3. Tests: `should_expectedResult_when_condition`
 4. Names: Glossary [Preferred Term](../../../docs/Glossary.md) + [clean-code-naming](references/clean-code-naming.md)
 5. UI: Apple HIG + [apple-minimal-ux](references/apple-minimal-ux.md)
@@ -45,17 +45,17 @@ Detail: [testing](references/testing.md)
 | Doubles | Fake/Stub for repos; Mock only when verifying interaction |
 | Avoid | Over-mocking, weak asserts, ice-cream-cone E2E, ignored tests |
 
-### 2. DDD
+### 2. DDD (concepts, not folder names)
 
-| Concept | Package |
-|---------|---------|
-| Entity / types | `domain/entities/` — rich types + domain meaning |
-| Domain service | `domain/services/` — factory / domain rules |
-| Application service | `application/services/` — orchestration only |
-| Presentation | `presentation/` — React UI; no domain rules |
-| Shared | `shared/` — stores, hooks, persistence |
+| Concept | Location |
+|---------|----------|
+| Entity / types | `src/{feature}/types.ts` — rich types + domain meaning |
+| Domain / factory helpers | `src/{feature}/*-factory.service.ts` (or similar) |
+| Orchestration helpers | `src/{feature}/*-management.service.ts` (or similar) |
+| Feature UI | `src/{feature}/*.tsx` — keep complex rules out of JSX |
+| Shared | `src/components/`, `src/hooks/`, `src/lib/` |
 
-Detail: [ddd-rich-model](references/ddd-rich-model.md)
+Detail: [ddd-rich-model](references/ddd-rich-model.md) — prefer feature colocation over CA layer folders.
 
 ### 3. Naming
 

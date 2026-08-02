@@ -1,92 +1,73 @@
 ---
-description: Core project constraints — domain-first Clean Architecture, TypeScript naming, test naming. Deep guides live in skills.
+description: Core project constraints — React feature colocation, TypeScript naming, test naming. Deep guides live in skills.
 alwaysApply: true
 ---
 
 # Architecture & TypeScript Core
 
-## Dependency Rule
+## Folder organization (React)
 
-```
-{module}/presentation → {module}/application → {module}/domain
-{module}/infrastructure → {module}/domain
-common may be used by all modules; modules must not depend on common/presentation from domain
-prefer cross-module calls via application; avoid presentation ↔ presentation sprawl
-```
-
-**Domain has NO dependencies on other layers or frameworks (no React / Next.js).**
-
-## Terminology Index (Hexagonal ↔ This Project)
-
-| Hexagonal concept | Hexagonal layout | This project | Path pattern |
-|-------------------|------------------|--------------|--------------|
-| Driving adapter | `adapter/in` | Module presentation + application | `src/{module}/presentation/`, `application/` |
-| Driven adapter | `adapter/out` | Module / common infrastructure | `src/{module}/infrastructure/`, `src/common/infrastructure/` |
-| Outbound port | `domain/port` | Domain service / repository interface | `src/{module}/domain/` |
-| Domain core | `domain` | Module domain | `src/{module}/domain/` |
-| Composition / UI shell | — | Next.js App Router | `src/app/` |
-
-## Forbidden in New Code
-
-- Global layer roots: `src/domain/`, `src/application/`, `src/presentation/`, `src/shared/`
-- `domain/port/` — prefer domain services / repository interfaces under `{module}/domain/`
-- `*Port` interface suffix — prefer `*Repository`, `*Service`, or a domain-specific name
-- `adapter/in` / `adapter/out` packages — use `{module}/{layer}/`
-
-## Business Modules
-
-| Module | Path | Owns |
-|--------|------|------|
-| `canvas` | `src/canvas/` | Canvas UI, properties panel, canvas store / hooks |
-| `component` | `src/component/` | Component types, factory, management, panel / renderer, component stores |
-| `template` | `src/template/` | Gallery, template command, template data |
-| `theme` | `src/theme/` | Theme store / editor, animation editor |
-| `data` | `src/data/` | Data source / binding services, data store, data panel |
-| `chart` | `src/chart/` | Chart components + chart renderer |
-| `form` | `src/form/` | Form builder + form renderer |
-| `export` | `src/export/` | Code export UI |
-| `collaboration` | `src/collaboration/` | Collaboration UI |
-| `common` | `src/common/` | UI kit, `cn`/utils, persistence, history, cross-cutting hooks |
-
-## Layers (inside each module)
-
-| Layer | Contains |
-|-------|----------|
-| `domain/` | Types, entities, domain services |
-| `application/` | Use-case / application services |
-| `infrastructure/` | Zustand stores, adapters, LocalStorage helpers |
-| `presentation/` | React UI for that module |
-
-## Project Structure
+Follow React’s guidance: group by **feature**, colocate files that change together, avoid deep nesting. Do **not** use Clean Architecture layer folder names (`domain` / `application` / `infrastructure` / `presentation`).
 
 ```
 src/
 ├── app/                 # Next.js App Router shell
-├── canvas|component|template|theme|data|chart|form|export|collaboration/
-│   ├── domain/
-│   ├── application/
-│   ├── infrastructure/
-│   └── presentation/
-└── common/
-    ├── domain/
-    ├── application/
-    ├── infrastructure/
-    └── presentation/    # shadcn / Radix primitives + shell chrome
+├── components/          # Shared reusable UI (shadcn under components/ui)
+├── hooks/               # Shared hooks
+├── lib/                 # Shared non-UI helpers (utils, persistence, history, store facade)
+├── canvas/              # Feature: UI + store + hooks + types together
+├── component/
+├── template/
+├── theme/
+├── data/
+├── chart/
+├── form/
+├── export/
+└── collaboration/
 ```
 
-## Domain Rules
+References: [React File Structure FAQ](https://legacy.reactjs.org/docs/faq-structure.html), [Next.js App Router](https://nextjs.org/docs/app)
 
-- No React / Next.js imports in `{module}/domain/`
-- Prefer rich behavior in domain services over anemic bags of fields
-- Keep Preferred Terms aligned with [docs/Glossary.md](../../docs/Glossary.md)
+## Soft dependency habits
+
+```
+feature UI → feature helpers/stores → shared lib/components/hooks
+```
+
+- Prefer direct imports over fat barrels for app entry points
+- `components/ui/index.ts` exports **primitives only** (never feature shells) — feature re-exports caused Turbopack hangs
+- Pure type/helper modules should not import React when avoidable
+
+## Forbidden in New Code
+
+- Clean Architecture layer directories: `domain/`, `application/`, `infrastructure/`, `presentation/`
+- Global layer roots: `src/domain/`, `src/application/`, `src/presentation/`, `src/shared/`, `src/common/{layer}/`
+- `domain/port/`, `*Port` suffix, `adapter/in|out` packages
+
+## Features
+
+| Folder | Owns |
+|--------|------|
+| `canvas` | Canvas UI, properties panel, canvas store / hooks |
+| `component` | Types, factory, management, panel / renderer, component stores |
+| `template` | Gallery, template command, template data |
+| `theme` | Theme store / editor, animation editor |
+| `data` | Data source / binding, data store, data panel |
+| `chart` | Chart components + chart renderer |
+| `form` | Form builder + form renderer |
+| `export` | Code export UI |
+| `collaboration` | Collaboration UI |
+| `components` | Shared UI kit + shell chrome |
+| `hooks` | Cross-feature hooks |
+| `lib` | `cn`/utils, persistence, history, store composition |
 
 ## TypeScript Naming
 
 | Type | Rule | Example |
 |------|------|---------|
 | Component | PascalCase | `ComponentPanel` |
-| Store | camelCase + Store | `componentStore` / `useComponentStore` |
-| Service | PascalCase + Service | `ComponentManagementService` |
+| Store | camelCase + Store | `useComponentStore` |
+| Service / helper | PascalCase or descriptive file | `ComponentManagementService` |
 | Types / interfaces | PascalCase | `ThemeConfig` |
 | Methods / vars | camelCase | `findById` |
 | Constants | UPPER_SNAKE_CASE | `MAX_HISTORY` |
@@ -96,8 +77,6 @@ src/
 
 `should_expected_when_condition` (or Vitest `it("should ...")` matching the same intent).
 
-## References
+## Docs
 
-- [docs/Glossary.md](../../docs/Glossary.md)
-- [docs/developer/c4-model/](../../docs/developer/c4-model/)
-- [The C4 model](https://c4model.com/)
+Keep Preferred Terms aligned with [docs/Glossary.md](../../docs/Glossary.md).

@@ -7,8 +7,8 @@
 | 文件 | 层级 | 说明 |
 | --- | --- | --- |
 | `C1-Context.puml` | C1 | 系统上下文（开发者 / 设计师 / Vercel / CDN / Git） |
-| `C2-Container.puml` | C2 | 容器图（SPA + domain-first modules + common + LocalStorage） |
-| `C3-Component-Frontend.puml` | C3 | 前端编辑器组件图（按业务域：canvas / component / template / …） |
+| `C2-Container.puml` | C2 | 容器图（SPA + React feature folders + components/hooks/lib） |
+| `C3-Component-Frontend.puml` | C3 | 前端 feature 组件图（canvas / component / template / … colocated） |
 | `C4-Deployment.puml` | C4 | 本地开发（`pnpm dev` → `:3000`） |
 | `C4-Deployment-Production.puml` | C4 | 生产部署（Vercel） |
 
@@ -24,7 +24,7 @@
 
 ![C2-Container](png/C2-Container.png)
 
-> PNG may be stale after the domain-first layout change — regenerate from `.puml` when PlantUML is available.
+> PNG may be stale after the feature-folder layout change — regenerate from `.puml` when PlantUML is available.
 
 ---
 
@@ -32,7 +32,7 @@
 
 ![C3-Component-Frontend](png/C3-Component-Frontend.png)
 
-> PNG may be stale after the domain-first layout change — regenerate from `.puml` when PlantUML is available.
+> PNG may be stale after the feature-folder layout change — regenerate from `.puml` when PlantUML is available.
 
 ---
 
@@ -52,7 +52,7 @@
 | 状态 | Zustand |
 | 图表 | Recharts |
 | 表单 | React Hook Form + Zod |
-| 架构 | Clean Architecture（`domain` / `application` / `presentation` / `shared`） |
+| 架构 | React feature folders（`src/{feature}` + `components` / `hooks` / `lib`） |
 | 持久化 | Browser LocalStorage |
 | 部署 | Vercel（推荐）；自托管 `pnpm build && pnpm start` |
 

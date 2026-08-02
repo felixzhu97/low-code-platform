@@ -25,7 +25,7 @@ Prefer many fast unit tests over a wide E2E suite.
 Red (failing test) → Green (minimal code) → Refactor (keep green)
 ```
 
-- Write the test first when implementing domain/application behavior
+- Write the test first when implementing feature helpers / store behavior
 - AAA: Arrange / Act / Assert
 - Do not test private methods; do not hit network/DB in unit tests
 

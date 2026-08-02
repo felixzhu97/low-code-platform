@@ -31,29 +31,30 @@ This document defines the project **Ubiquitous Language**. English terms are the
 | -------------- | ---- | --------- | ------- | ----- |
 | Canvas | 画布 | `src/canvas/` | Center editor | Drag-drop layout, preview, component tree, properties panel |
 | Component | 组件 | `src/component/` | Left panel + canvas nodes | Types, factory, management, panel / renderer |
-| Properties | 属性配置 | `src/canvas/presentation/properties-panel.tsx` | Right panel | Style / data / interaction props (owned by Canvas) |
+| Properties | 属性配置 | `src/canvas/properties-panel.tsx` | Right panel | Style / data / interaction props (owned by Canvas) |
 | Template | 模板 | `src/template/` | Template gallery | Prefabricated page layouts |
 | Theme | 主题 | `src/theme/` | Theme editor | Colors, typography, CSS variables |
-| Animation | 动画 | `src/theme/presentation/animation-editor.tsx` | Animation editor | Motion presets (owned by Theme) |
-| Data Binding | 数据绑定 | `src/data/application/data-binding.service.ts` | Data panel | Bind components to data sources |
-| Data Source | 数据源 | `src/data/application/data-source.service.ts` | Data panel | Fetch / cache / refresh |
+| Animation | 动画 | `src/theme/animation-editor.tsx` | Animation editor | Motion presets (owned by Theme) |
+| Data Binding | 数据绑定 | `src/data/data-binding.service.ts` | Data panel | Bind components to data sources |
+| Data Source | 数据源 | `src/data/data-source.service.ts` | Data panel | Fetch / cache / refresh |
 | Form Builder | 表单构建 | `src/form/` | Form builder | React Hook Form + Zod |
 | Chart | 图表 | `src/chart/` | Canvas charts | Recharts-based visualizations |
 | Code Export | 代码导出 | `src/export/` | Export dialog | Generate deployable frontend code |
-| History | 历史记录 | `src/common/infrastructure/history.store.ts`, `src/common/application/history.ts` | Undo/redo | Operation history |
-| Persistence | 持久化 | `src/common/infrastructure/persistence.manager.ts` | LocalStorage | Browser-local project state |
+| History | 历史记录 | `src/lib/history.store.ts`, `src/lib/history.ts` | Undo/redo | Operation history |
+| Persistence | 持久化 | `src/lib/persistence.manager.ts` | LocalStorage | Browser-local project state |
 | Collaboration | 协作 | `src/collaboration/` | Collaboration UI | Planned / partial real-time sync |
-| Common | 横切 | `src/common/` | — | UI kit, utils, persistence, history |
+| Shared UI | 共享 UI | `src/components/` | — | UI kit + shell chrome |
+| Shared hooks | 共享 hooks | `src/hooks/` | — | Cross-feature hooks |
+| Shared lib | 共享工具 | `src/lib/` | — | utils, persistence, history |
 
-**Architecture (canonical): domain-first modules, layers inside each module**
+**Architecture (canonical): React feature folders + colocation**
 
-| Layer | Path pattern | Responsibility |
-| ----- | ------------ | -------------- |
-| Domain | `src/{module}/domain/` | Types, domain services |
-| Application | `src/{module}/application/` | Use-case services |
-| Infrastructure | `src/{module}/infrastructure/` | Zustand stores, adapters |
-| Presentation | `src/{module}/presentation/` | React UI for that module |
-| Common | `src/common/` | Cross-cutting UI kit + persistence + history |
+| Area | Path | Responsibility |
+| ---- | ---- | -------------- |
+| Features | `src/{feature}/` | UI, stores, hooks, helpers colocated (no CA layer dirs) |
+| Components | `src/components/` | Shared reusable UI |
+| Hooks | `src/hooks/` | Shared hooks |
+| Lib | `src/lib/` | Shared non-UI helpers |
 
 ```mermaid
 flowchart TB
@@ -87,17 +88,17 @@ flowchart TB
 
 | Preferred Term | 中文 | Definition | Code Anchors |
 | -------------- | ---- | ---------- | ------------ |
-| Component Instance | 组件实例 | A placed node on the canvas with type, props, and position | `domain/entities/types.ts` |
-| Component Factory | 组件工厂 | Creates component instances with defaults by type | `domain/services/` → factory service |
-| Component Management | 组件管理 | CRUD / move / select operations over instances | `application/services/component-management.service.ts` |
-| Component Panel | 组件面板 | Palette of draggable component types | `presentation/components/canvas/component-panel.tsx` |
-| Component Tree | 组件树 | Hierarchical view of canvas instances | `presentation/components/canvas/component-tree.tsx` |
-| Component Renderer | 组件渲染器 | Recursively renders layout / data / chart / form nodes | `presentation/components/canvas/component-renderer/` |
-| Preview Canvas | 预览画布 | Read-only rendering of the designed page | `presentation/components/canvas/preview-canvas.tsx` |
-| Device Preview | 设备预览 | Responsive viewport simulation (desktop/tablet/mobile) | `canvas.store` device type |
-| Custom Component | 自定义组件 | User-defined reusable component definition | `shared/stores/custom-components.store.ts` |
-| Template Gallery | 模板库 | Browse and apply page templates | `presentation/components/templates/template-gallery.tsx` |
-| Theme Config | 主题配置 | Token set for colors, fonts, radii | `ThemeConfig` in domain types / theme store |
+| Component Instance | 组件实例 | A placed node on the canvas with type, props, and position | `src/component/types.ts` |
+| Component Factory | 组件工厂 | Creates component instances with defaults by type | `src/component/component-factory.service.ts` |
+| Component Management | 组件管理 | CRUD / move / select operations over instances | `src/component/component-management.service.ts` |
+| Component Panel | 组件面板 | Palette of draggable component types | `src/component/component-panel.tsx` |
+| Component Tree | 组件树 | Hierarchical view of canvas instances | `src/canvas/component-tree.tsx` |
+| Component Renderer | 组件渲染器 | Recursively renders layout / data / chart / form nodes | `src/component/component-renderer/` |
+| Preview Canvas | 预览画布 | Read-only rendering of the designed page | `src/canvas/preview-canvas.tsx` |
+| Device Preview | 设备预览 | Responsive viewport simulation (desktop/tablet/mobile) | `src/canvas/canvas.store.ts` |
+| Custom Component | 自定义组件 | User-defined reusable component definition | `src/component/custom-components.store.ts` |
+| Template Gallery | 模板库 | Browse and apply page templates | `src/template/template-gallery.tsx` |
+| Theme Config | 主题配置 | Token set for colors, fonts, radii | `src/theme/types.ts` / `theme.store.ts` |
 | Undo / Redo | 撤销 / 重做 | Walk history stack of canvas mutations | `history.store` |
 | Local Persistence | 本地持久化 | Save/load editor state in LocalStorage | `persistence.manager.ts` |
 

@@ -16,9 +16,9 @@ is_background: true
 
 ## 审查清单
 
-- [ ] Clean Architecture 分层正确
-- [ ] 领域模型无外部依赖
-- [ ] 依赖方向正确（外层→内层）
+- [ ] Feature folders 符合 architecture.mdc（无 CA 层目录名）
+- [ ] 纯类型/计算模块尽量不依赖 React
+- [ ] 共享 UI barrel 不引入 feature 造成循环依赖
 - [ ] 无循环依赖
 
 ## 极简原则
