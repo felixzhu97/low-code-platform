@@ -1,5 +1,5 @@
 ---
-description: Core project constraints — React feature colocation, TypeScript naming, test naming. Deep guides live in skills.
+description: Core project constraints — business-domain colocation, TypeScript naming, test naming. Deep guides live in skills.
 alwaysApply: true
 ---
 
@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## Folder organization (React)
 
-Follow React’s guidance: group by **feature**, colocate files that change together, avoid deep nesting. Do **not** use Clean Architecture layer folder names (`domain` / `application` / `infrastructure` / `presentation`).
+Follow React’s guidance: group by **business domain**, colocate files that change together, avoid deep nesting. Do **not** use Clean Architecture layer folder names (`domain` / `application` / `infrastructure` / `presentation`).
 
 ```
 src/
@@ -15,7 +15,7 @@ src/
 ├── components/          # Shared reusable UI (shadcn under components/ui)
 ├── hooks/               # Shared hooks
 ├── lib/                 # Shared non-UI helpers (utils, persistence, history, store facade)
-├── canvas/              # Feature: UI + store + hooks + types together
+├── canvas/              # Business domain: UI + store + hooks + types together
 ├── component/
 ├── template/
 ├── theme/
@@ -31,11 +31,11 @@ References: [React File Structure FAQ](https://legacy.reactjs.org/docs/faq-struc
 ## Soft dependency habits
 
 ```
-feature UI → feature helpers/stores → shared lib/components/hooks
+business-domain UI → domain helpers/stores → shared lib/components/hooks
 ```
 
 - Prefer direct imports over fat barrels for app entry points
-- `components/ui/index.ts` exports **primitives only** (never feature shells) — feature re-exports caused Turbopack hangs
+- `components/ui/index.ts` exports **primitives only** (never business-domain shells) — re-exporting shells caused Turbopack hangs
 - Pure type/helper modules should not import React when avoidable
 
 ## Forbidden in New Code
@@ -44,7 +44,7 @@ feature UI → feature helpers/stores → shared lib/components/hooks
 - Global layer roots: `src/domain/`, `src/application/`, `src/presentation/`, `src/shared/`, `src/common/{layer}/`
 - `domain/port/`, `*Port` suffix, `adapter/in|out` packages
 
-## Features
+## Business domains
 
 | Folder | Owns |
 |--------|------|
@@ -58,7 +58,7 @@ feature UI → feature helpers/stores → shared lib/components/hooks
 | `export` | Code export UI |
 | `collaboration` | Collaboration UI |
 | `components` | Shared UI kit + shell chrome |
-| `hooks` | Cross-feature hooks |
+| `hooks` | Cross-domain hooks |
 | `lib` | `cn`/utils, persistence, history, store composition |
 
 ## TypeScript Naming

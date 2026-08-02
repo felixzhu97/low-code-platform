@@ -44,14 +44,14 @@ This document defines the project **Ubiquitous Language**. English terms are the
 | Persistence | 持久化 | `src/lib/persistence.manager.ts` | LocalStorage | Browser-local project state |
 | Collaboration | 协作 | `src/collaboration/` | Collaboration UI | Planned / partial real-time sync |
 | Shared UI | 共享 UI | `src/components/` | — | UI kit + shell chrome |
-| Shared hooks | 共享 hooks | `src/hooks/` | — | Cross-feature hooks |
+| Shared hooks | 共享 hooks | `src/hooks/` | — | Cross-domain hooks |
 | Shared lib | 共享工具 | `src/lib/` | — | utils, persistence, history |
 
-**Architecture (canonical): React feature folders + colocation**
+**Architecture (canonical): business-domain folders + colocation**
 
 | Area | Path | Responsibility |
 | ---- | ---- | -------------- |
-| Features | `src/{feature}/` | UI, stores, hooks, helpers colocated (no CA layer dirs) |
+| Business domains | `src/{domain}/` | UI, stores, hooks, helpers colocated (no CA layer dirs) |
 | Components | `src/components/` | Shared reusable UI |
 | Hooks | `src/hooks/` | Shared hooks |
 | Lib | `src/lib/` | Shared non-UI helpers |

@@ -1,5 +1,5 @@
 // UI primitives only (shadcn / Radix).
-// Do NOT re-export domain/feature shells here — that creates import cycles
+// Do NOT re-export business-domain shells here — that creates import cycles
 // (ui → platform-header → template/theme/... → ui) and can hang Turbopack.
 export * from "./accordion";
 export * from "./alert-dialog";

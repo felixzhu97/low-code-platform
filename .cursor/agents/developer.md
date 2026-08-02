@@ -14,46 +14,46 @@ is_background: true
 
 ## 项目代码风格
 
-### TypeScript / React feature folders
+### TypeScript / business-domain folders
 
-**包结构**（按 feature 聚合，无整洁架构层名）：
+**包结构**（按业务域聚合，无整洁架构层名）：
 ```
 src/
 ├── app/                 # Next.js shell
-├── {feature}/           # UI + store + hooks + helpers colocated
+├── {domain}/            # UI + store + hooks + helpers colocated
 ├── components/          # Shared UI kit
 ├── hooks/               # Shared hooks
 └── lib/                 # Shared utils / persistence / history
 ```
 
-Features: `canvas`, `component`, `template`, `theme`, `data`, `chart`, `form`, `export`, `collaboration`.
+Business domains: `canvas`, `component`, `template`, `theme`, `data`, `chart`, `form`, `export`, `collaboration`.
 
 **关键规范**：
-- 禁止 `domain|application|infrastructure|presentation` 目录名
+- 禁止整洁架构层目录名 `domain|application|infrastructure|presentation`（业务域包本身如 `canvas/` 除外）
 - 变量与方法命名对齐 [领域术语表](../../docs/Glossary.md) Preferred Term；细则见 developer skill → `references/clean-code-naming.md`
-- UI 状态优先各 feature 内 `*.store.ts`（经 `lib/stores` / `lib/use-stores` 组合）
+- UI 状态优先各业务域内 `*.store.ts`（经 `lib/stores` / `lib/use-stores` 组合）
 - 纯类型/计算模块尽量不依赖 React
 
-**示例**：通过 feature 内 factory / management helpers 编排，不在 JSX 内散落复杂规则。
+**示例**：通过业务域内 factory / management helpers 编排，不在 JSX 内散落复杂规则。
 
 ### React / Next.js
 
 **关键规范**：
 - Next.js App Router 入口在 `src/app/`
-- Feature UI 放在 `src/{feature}/`；共享 primitives 在 `src/components/ui`
-- 共享 hooks 在 `src/hooks/`；feature hooks 与 feature 同目录
+- 业务域 UI 放在 `src/{domain}/`；共享 primitives 在 `src/components/ui`
+- 共享 hooks 在 `src/hooks/`；业务域 hooks 与该域同目录
 - 类型优先；命名对齐 Glossary Preferred Term + clean-code-naming
 
 **示例 - 组件职责**：
 - Canvas / ComponentPanel / PropertiesPanel 只负责交互与展示
-- 增删改组件走 feature helpers + stores，不在 JSX 内写复杂规则
+- 增删改组件走业务域 helpers + stores，不在 JSX 内写复杂规则
 
 ## 实现流程
 
 1. **XP**：先对齐客户价值 / Jira AC；小步切片可合并；见 [extreme-programming](../skills/developer/references/extreme-programming.md)
 2. **BDD**：用 Given-When-Then 澄清行为（对齐 Jira AC）
 3. **TDD**：Red → Green → Refactor；测试名 `should_expected_when_condition`
-4. **DDD**：规则落在 domain； application 只编排
+4. **DDD**：规则落在业务域 helpers / types；组件只编排展示
 5. **领域命名**：变量/方法用术语表 Preferred Term，再套 Clean Code 形式
 6. **UI/UX**：对齐 Apple HIG，极简风格（见 apple-minimal-ux）
 7. **分支 / Commit / PR / Jira**：`<type>/<slug>`（类型与 commit 一致；Jira key 仅写在 commit/PR）+ Chain PR；沿用 [developer](../skills/developer/SKILL.md) §6 与 [Product Owner](../skills/product-owner/SKILL.md)；References 优先官方文档与 research

@@ -82,9 +82,9 @@
 │   └── product-owner/
 │       ├── User-Story-Map.md # 用户故事地图索引
 │       └── user-stories/     # Epic / GWT 故事正文
-└── src/                      # React feature folders
+└── src/                      # Business-domain folders
     ├── app/                  # Next.js App Router
-    ├── {feature}/            # canvas, component, template, theme, …
+    ├── {domain}/             # canvas, component, template, theme, …
     ├── components/           # Shared UI kit
     ├── hooks/                # Shared hooks
     └── lib/                  # Shared utils / persistence / history
@@ -107,7 +107,7 @@
 
 ## 🏛️ 架构设计
 
-本项目按 **React feature folders**（按业务功能聚合、就近放置）组织源码；领域术语见 [Glossary](docs/Glossary.md)：
+本项目按 **业务域（business domain）** 聚合源码并就近放置；领域术语见 [Glossary](docs/Glossary.md)：
 
 ### C4 模型图
 

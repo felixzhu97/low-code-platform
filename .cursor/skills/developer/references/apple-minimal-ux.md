@@ -66,4 +66,4 @@ Apple framing: technology should feel **invisible**; simplicity is sophisticatio
 - [ ] Minimal: removing an element would not hurt understanding or task completion
 - [ ] Feedback for async/error states exists and is non-blocking where possible
 - [ ] Accessibility: contrast, focus, labels (HIG Accessibility)
-- [ ] Feature UI lives under `src/{feature}/` (primitives in `src/components/ui`); keep complex rules out of components
+- [ ] Business-domain UI lives under `src/{domain}/` (primitives in `src/components/ui`); keep complex rules out of components

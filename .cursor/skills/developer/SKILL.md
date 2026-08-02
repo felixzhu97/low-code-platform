@@ -11,7 +11,7 @@ description: Feature development for this repo — XP, DDD, BDD, TDD, Glossary n
 
 ## Hard constraints
 
-1. Layout: [architecture](../../rules/architecture.mdc) — feature folders; no CA layer directory names
+1. Layout: [architecture](../../rules/architecture.mdc) — business-domain folders; no CA layer directory names
 2. No `domain/port`, `adapter/in|out`, `*Port`, or CA layer folders in new code
 3. Tests: `should_expectedResult_when_condition`
 4. Names: Glossary [Preferred Term](../../../docs/Glossary.md) + [clean-code-naming](references/clean-code-naming.md)
@@ -49,13 +49,13 @@ Detail: [testing](references/testing.md)
 
 | Concept | Location |
 |---------|----------|
-| Entity / types | `src/{feature}/types.ts` — rich types + domain meaning |
-| Domain / factory helpers | `src/{feature}/*-factory.service.ts` (or similar) |
-| Orchestration helpers | `src/{feature}/*-management.service.ts` (or similar) |
-| Feature UI | `src/{feature}/*.tsx` — keep complex rules out of JSX |
+| Entity / types | `src/{domain}/types.ts` — rich types + domain meaning |
+| Domain / factory helpers | `src/{domain}/*-factory.service.ts` (or similar) |
+| Orchestration helpers | `src/{domain}/*-management.service.ts` (or similar) |
+| Business-domain UI | `src/{domain}/*.tsx` — keep complex rules out of JSX |
 | Shared | `src/components/`, `src/hooks/`, `src/lib/` |
 
-Detail: [ddd-rich-model](references/ddd-rich-model.md) — prefer feature colocation over CA layer folders.
+Detail: [ddd-rich-model](references/ddd-rich-model.md) — prefer business-domain colocation over CA layer folders.
 
 ### 3. Naming
 

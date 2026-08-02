@@ -3,7 +3,7 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 组件图 (C3) - Frontend features (colocated)
+title 组件图 (C3) - Frontend business domains (colocated)
 
 Container_Boundary(canvasB, "canvas") {
     Component(canvas, "Canvas", "React", "主画布")

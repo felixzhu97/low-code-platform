@@ -3,7 +3,7 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 容器图 (C2) - Low-Code Platform (React feature folders)
+title 容器图 (C2) - Low-Code Platform (business-domain folders)
 
 Person(developer, "开发者", "使用编辑器构建页面")
 Person(designer, "设计师", "设计主题与模板")
@@ -11,7 +11,7 @@ Person(designer, "设计师", "设计主题与模板")
 System_Boundary(lcp, "Low-Code Platform") {
     Container(spa, "Web SPA", "Next.js + React", "App Router 入口（src/app）")
 
-    Container(features, "Feature modules", "TS + React", "canvas / component / template / theme / data / chart / form / export / collaboration")
+    Container(domains, "Business domain modules", "TS + React", "canvas / component / template / theme / data / chart / form / export / collaboration")
     Container(sharedUi, "components + hooks", "React", "共享 UI kit 与 hooks")
     Container(sharedLib, "lib", "TypeScript", "utils、history、LocalStorage persistence、store 组合")
 }
@@ -23,10 +23,10 @@ System_Ext(cdn, "CDN", "静态资源")
 Rel(developer, spa, "使用编辑器", "HTTPS")
 Rel(designer, spa, "设计页面", "HTTPS")
 
-Rel(spa, features, "组合各 feature")
+Rel(spa, domains, "组合各业务域")
 Rel(spa, sharedUi, "共享壳层 UI")
-Rel(features, sharedUi, "使用 primitives")
-Rel(features, sharedLib, "状态 / 工具 / 持久化")
+Rel(domains, sharedUi, "使用 primitives")
+Rel(domains, sharedLib, "状态 / 工具 / 持久化")
 Rel(sharedLib, browser_storage, "save / load", "LocalStorage")
 
 Rel(spa, vercel, "deploy")

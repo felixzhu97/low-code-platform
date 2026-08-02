@@ -58,15 +58,15 @@ Open [http://localhost:3000](http://localhost:3000).
 ```
 src/
 ├── app/             # Next.js App Router shell
-├── canvas/          # Feature: canvas UI + store + hooks
-├── component/       # Feature: factory, panel, renderer, stores
+├── canvas/          # Business domain: canvas UI + store + hooks
+├── component/       # Business domain: factory, panel, renderer, stores
 ├── template/ theme/ data/ chart/ form/ export/ collaboration/
 ├── components/      # Shared UI kit
 ├── hooks/           # Shared hooks
 └── lib/             # Shared utils, persistence, history
 ```
 
-Organize by feature and colocate related files (React File Structure FAQ). No Clean Architecture layer folders. See [Glossary](../Glossary.md) and `.cursor/rules/architecture.mdc`.
+Organize by business domain and colocate related files (React File Structure FAQ). No Clean Architecture layer folders. See [Glossary](../Glossary.md) and `.cursor/rules/architecture.mdc`.
 
 ---
 
