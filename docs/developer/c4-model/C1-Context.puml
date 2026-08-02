@@ -1,0 +1,31 @@
+@startuml C1-Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 系统上下文图 (C1) - Low-Code Platform
+
+Person(developer, "开发者", "拖拽构建页面、配置组件、导出代码")
+Person(designer, "设计师", "定制主题、模板与可复用组件")
+Person(admin, "管理员", "管理组件库与协作策略（规划）")
+
+System(lowcode, "Low-Code Platform", "Next.js 可视化低代码编辑器：画布、组件库、主题、模板、本地持久化与代码导出")
+
+System_Ext(browser, "Web Browser", "运行 SPA 的客户端环境")
+System_Ext(cdn, "CDN", "静态资源分发（生产）")
+System_Ext(vercel, "Vercel", "生产托管 Next.js（推荐）")
+System_Ext(git, "Git Hosting", "源码版本控制；导出代码可推送（规划）")
+
+Rel(developer, lowcode, "构建应用", "HTTPS")
+Rel(designer, lowcode, "设计组件/主题", "HTTPS")
+Rel(admin, lowcode, "管理平台", "HTTPS")
+Rel(developer, browser, "访问")
+Rel(designer, browser, "访问")
+
+Rel(lowcode, browser, "渲染编辑器", "React/DOM")
+Rel(lowcode, vercel, "部署", "HTTPS")
+Rel(lowcode, cdn, "分发静态资源", "HTTPS")
+Rel(lowcode, git, "同步导出代码", "Git/HTTPS")
+
+SHOW_LEGEND()
+@enduml

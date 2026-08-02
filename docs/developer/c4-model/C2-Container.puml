@@ -1,0 +1,38 @@
+@startuml C2-Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title 容器图 (C2) - Low-Code Platform
+
+Person(developer, "开发者", "使用编辑器构建页面")
+Person(designer, "设计师", "设计主题与模板")
+
+System_Boundary(lcp, "Low-Code Platform") {
+    Container(spa, "Web SPA", "Next.js 16 + React 19", "低代码编辑器入口（App Router）")
+
+    Container(presentation, "Presentation", "React + React DnD", "Canvas / Panel / Properties / Templates / Charts / Forms")
+    Container(application, "Application", "TypeScript services", "Component management, data binding, data source, history")
+    Container(domain, "Domain", "Entities + domain services", "Component factory, types, domain rules")
+    Container(shared, "Shared", "Zustand + hooks", "Stores, persistence (LocalStorage), cross-cutting utils")
+}
+
+System_Ext(browser_storage, "Browser LocalStorage", "本地项目状态持久化")
+System_Ext(vercel, "Vercel", "生产托管")
+System_Ext(cdn, "CDN", "静态资源")
+
+Rel(developer, spa, "使用编辑器", "HTTPS")
+Rel(designer, spa, "设计页面", "HTTPS")
+
+Rel(spa, presentation, "渲染 UI")
+Rel(presentation, application, "调用用例服务")
+Rel(application, domain, "执行领域规则")
+Rel(presentation, shared, "读写状态")
+Rel(application, shared, "历史 / 持久化协作")
+Rel(shared, browser_storage, "save / load", "LocalStorage")
+
+Rel(spa, vercel, "deploy")
+Rel(spa, cdn, "assets")
+
+SHOW_LEGEND()
+@enduml

@@ -74,32 +74,29 @@
 ├── hooks/                # 自定义Hooks
 ├── styles/               # 样式文件
 ├── public/               # 静态资源
-├── docs/                 # 文档
-│   ├── wardley-map.puml  # 沃德利地图源码
-│   └── c4/               # C4 模型图
-│       ├── README.md         # C4 图说明
-│       ├── c4-context.puml   # C4 上下文图源码
-│       ├── c4-container.puml  # C4 容器图源码
-│       ├── c4-component-canvas.puml      # C3 画布组件图
-│       ├── c4-component-panel.puml       # C3 面板组件图
-│       ├── c4-component-properties.puml  # C3 属性组件图
-│       ├── c4-plantuml/       # PlantUML 模板库
-│       └── images/           # C4 图片
-│           ├── Low-Code Platform C4 Context Diagram.png
-│           └── Low-Code Platform C4 Container Diagram.png
-└── src/                  # 业务逻辑 (Clean Architecture + DDD)
-    ├── domains/          # 领域模型
-    │   ├── entities/     # 实体
-    │   ├── valueObjects/ # 值对象
-    │   └── events/       # 领域事件
-    ├── application/      # 应用层
-    │   ├── commands/     # 命令
-    │   ├── queries/      # 查询
-    │   └── useCases/     # 用例
-    ├── infrastructure/   # 基础设施层
-    │   └── repositories/ # 仓储实现
-    └── shared/           # 共享模块
+├── docs/                     # Living docs（对齐 explore-ai 结构）
+│   ├── Glossary.md           # 领域术语表
+│   ├── developer/
+│   │   ├── QUICKSTART.md     # 开发快速开始
+│   │   └── c4-model/         # C4 模型（.puml + png）
+│   └── product-owner/
+│       ├── User-Story-Map.md # 用户故事地图索引
+│       └── user-stories/     # Epic / GWT 故事正文
+└── src/                      # Clean Architecture
+    ├── domain/               # 领域层
+    ├── application/          # 应用层
+    ├── presentation/         # 表现层（编辑器 UI）
+    └── shared/               # 共享（stores / hooks）
 ```
+
+## 📚 文档入口
+
+| 受众 | 文档 |
+|------|------|
+| 全员 | [领域术语表 (Glossary)](docs/Glossary.md) |
+| 开发者 | [QUICKSTART](docs/developer/QUICKSTART.md) · [C4 模型](docs/developer/c4-model/README.md) |
+| 产品 | [用户故事地图](docs/product-owner/User-Story-Map.md) |
+
 
 ## 📸 界面预览
 
@@ -113,47 +110,19 @@
 
 ### C4 模型图
 
+完整说明与源文件见 [docs/developer/c4-model/](docs/developer/c4-model/README.md)。
+
 #### C1 系统上下文图
 
-![C4 Context Diagram](docs/c4/images/Low-Code%20Platform%20C4%20Context%20Diagram.png)
+![C4 Context Diagram](docs/developer/c4-model/png/C1-Context.png)
 
 #### C2 容器图
 
-![C4 Container Diagram](docs/c4/images/Low-Code%20Platform%20C4%20Container%20Diagram.png)
+![C4 Container Diagram](docs/developer/c4-model/png/C2-Container.png)
 
-#### C3 组件图
+#### C3 前端组件图
 
-##### 画布模块
-
-![C3 Canvas Component Diagram](docs/c4/images/Component%20Diagram%20-%20Canvas%20Module.png)
-
-##### 组件面板模块
-
-![C3 Component Panel Diagram](docs/c4/images/Component%20Diagram%20-%20Component%20Panel%20Module.png)
-
-##### 属性面板模块
-
-![C3 Properties Panel Diagram](docs/c4/images/Component%20Diagram%20-%20Properties%20Panel%20Module.png)
-
-#### C4 沃德利地图 (Wardley Map)
-
-![Wardley Map](docs/images/Wardley%20Map%20-%20Low-Code%20Platform.png)
-
-> 沃德利地图展示了低代码平台的组件演化和依赖关系：
-> - **起源 (Genesis)**: 全新技术，需要大量创新
-> - **定制 (Custom)**: 业务定制开发，如可视化编辑器、组件工厂
-> - **产品 (Product)**: 通用产品，如画布组件、图表组件
-> - **商品化 (Commodity)**: 标准化基础设施，如 React、Next.js、Zustand
-
-**各层颜色含义：**
-- **红色**: 用户界面层 - 面向用户的核心功能
-- **紫色**: 组件系统层 - 组件化能力
-- **青色**: 数据管理层 - 数据流转
-- **绿色**: 主题样式层 - 视觉呈现
-- **橙色**: 状态管理层 - 状态控制
-- **棕色**: 应用服务层 - 业务逻辑
-- **粉色**: 领域模型层 - 核心领域
-- **灰色**: 基础设施层 - 技术支撑
+![C3 Frontend Component Diagram](docs/developer/c4-model/png/C3-Component-Frontend.png)
 
 ### 核心原则
 

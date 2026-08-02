@@ -1,0 +1,32 @@
+---
+description: Keep Glossary / C4 / User Story Map in sync when product or architecture changes
+globs:
+  - docs/**/*
+  - src/**/*
+---
+
+# Living Docs Sync
+
+Code that changes architecture, domain language, or product capabilities must update living docs in the **same PR**. Pure test/style/chore with no product or architecture meaning does not.
+
+## Documents
+
+| Document | Path | Owns |
+|----------|------|------|
+| Domain Glossary | [docs/Glossary.md](mdc:docs/Glossary.md) | Preferred Terms, modules, UI areas, code paths |
+| C4 model | [docs/developer/c4-model/](mdc:docs/developer/c4-model) | Context / containers / components / deployment (`.puml` is source of truth) |
+| User Story Map | [docs/product-owner/User-Story-Map.md](mdc:docs/product-owner/User-Story-Map.md) | Journey / Backbone / Epic index (status) |
+| User stories (Epics) | [docs/product-owner/user-stories/](mdc:docs/product-owner/user-stories) | Per-US As a / GWT acceptance criteria / status |
+
+## Trigger matrix
+
+| Change | Update |
+|--------|--------|
+| New or renamed Preferred Term, business concept, package path, UI area | Glossary |
+| New module / container boundary / external system | C2 (+ C1 if actors/systems change) |
+| Frontend shell, canvas/panels, major store/service structure | C3-Component-Frontend |
+| Local or production deploy topology, ports, hosting | C4-Deployment and/or C4-Deployment-Production |
+| New user-visible capability or delivery status change | User Story Map index **and** matching `user-stories/E*.md` |
+| Pure unit tests, formatting, dependency bump with no product/architecture semantics | None (N/A) |
+
+`.puml` first. Regenerate `png/` when PlantUML is available; otherwise note in the PR that PNGs are stale.
