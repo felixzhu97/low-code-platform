@@ -1,22 +1,19 @@
 import type React from "react";
 import type { Component } from "@/component/domain/types"
 import type { ThemeConfig } from "@/theme/domain/types";
+import { Button } from "@/common/presentation/ui/button";
+import { Separator } from "@/common/presentation/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/common/presentation/ui/avatar";
+import { Progress } from "@/common/presentation/ui/progress";
+import { Badge } from "@/common/presentation/ui/badge";
+import { Card, CardContent } from "@/common/presentation/ui/card";
 import {
-  Button,
-  Separator,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Progress,
-  Badge,
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  Card,
-  CardContent,
-} from "@/common/presentation/ui";
+} from "@/common/presentation/ui/carousel";
 import { CheckCircle, Circle, Star, Clock, User } from "lucide-react";
 import { cn } from "@/common/application/utils";
 import { ComponentRenderer } from "./index";

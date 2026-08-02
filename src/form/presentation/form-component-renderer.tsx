@@ -1,25 +1,16 @@
 import type React from "react";
 import type { Component } from "@/component/domain/types";
-import {
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Slider,
-  Calendar,
-  Switch,
-  Button,
-  Input,
-  Textarea,
-  Checkbox,
-  RadioGroup,
-  RadioGroupItem,
-} from "@/common/presentation/ui";
+import { Label } from "@/common/presentation/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/presentation/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/common/presentation/ui/popover";
+import { Slider } from "@/common/presentation/ui/slider";
+import { Switch } from "@/common/presentation/ui/switch";
+import { Button } from "@/common/presentation/ui/button";
+import { Input } from "@/common/presentation/ui/input";
+import { Textarea } from "@/common/presentation/ui/textarea";
+import { Checkbox } from "@/common/presentation/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/common/presentation/ui/radio-group";
+import { Calendar } from "@/common/presentation/ui/calendar";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { CalendarIcon, Clock, Upload } from "lucide-react";

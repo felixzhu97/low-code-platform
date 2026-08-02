@@ -1,17 +1,20 @@
 import React from "react";
-import { Button, Header } from "@/common/presentation/ui";
+import { Button } from "@/common/presentation/ui/button";
+import { Header } from "@/common/presentation/header";
 import { ResponsiveControls } from "@/canvas/presentation/responsive-controls";
-import { ComponentGrouping, ComponentLibraryManager } from "@/component/presentation";
-import { AnimationEditor, ThemeEditor } from "@/theme/presentation";
-import { Collaboration } from "@/collaboration/presentation";
-import { CodeExport } from "@/export/presentation";
+import { ComponentGrouping } from "@/component/presentation/component-grouping";
+import { ComponentLibraryManager } from "@/component/presentation/component-library-manager";
+import { AnimationEditor } from "@/theme/presentation/animation-editor";
+import { ThemeEditor } from "@/theme/presentation/theme-editor";
+import { Collaboration } from "@/collaboration/presentation/collaboration";
+import { CodeExport } from "@/export/presentation/code-export";
 import { Eye, Undo2, Redo2 } from "lucide-react";
 
-import type { Component } from "@/component/domain/types"
-import type { ThemeConfig } from "@/theme/domain/types"
+import type { Component } from "@/component/domain/types";
+import type { ThemeConfig } from "@/theme/domain/types";
 import type { TemplateSelectHandler } from "@/template/domain/types";
-import { TemplateGallery } from "@/template/presentation";
-import { FormBuilder } from "@/form/presentation/forms";
+import { TemplateGallery } from "@/template/presentation/template-gallery";
+import { FormBuilder } from "@/form/presentation/forms/form-builder";
 
 interface PlatformHeaderProps {
   canUndo: boolean;

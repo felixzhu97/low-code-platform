@@ -1,18 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  ScrollArea,
-} from "@/common/presentation/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/common/presentation/ui/dialog";
+import { Button } from "@/common/presentation/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";
+import { ScrollArea } from "@/common/presentation/ui/scroll-area";
 import { Star, Code, Layout, Smartphone, Tablet, Monitor } from "lucide-react";
 import { PreviewCanvas } from "@/canvas/presentation/preview-canvas";
 

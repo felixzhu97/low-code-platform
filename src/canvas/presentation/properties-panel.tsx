@@ -1,30 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Input } from "@/common/presentation/ui/input";
+import { Label } from "@/common/presentation/ui/label";
+import { Switch } from "@/common/presentation/ui/switch";
+import { Slider } from "@/common/presentation/ui/slider";
+import { ScrollArea } from "@/common/presentation/ui/scroll-area";
 import {
-  Input,
-  Label,
-  Switch,
-  Slider,
-  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+} from "@/common/presentation/ui/select";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+} from "@/common/presentation/ui/accordion";
+import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  ColorPicker,
-} from "@/common/presentation/ui";
+} from "@/common/presentation/ui/tabs";
+import { ColorPicker } from "@/theme/presentation/color-picker";
 
 import { Component } from "@/component/domain/types";
-import { useComponentStore } from "@/common/infrastructure/stores";
+import { useComponentStore } from "@/component/infrastructure/component.store";
 
 type PropertiesPanelProps = {
   // 移除 props，现在从 store 获取状态

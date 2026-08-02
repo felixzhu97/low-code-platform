@@ -1,37 +1,21 @@
 import type React from "react";
 import type { Component } from "@/component/domain/types"
 import type { ThemeConfig } from "@/theme/domain/types";
+import { Card, CardContent } from "@/common/presentation/ui/card";
+import { Button } from "@/common/presentation/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/common/presentation/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/common/presentation/ui/collapsible";
+import { Popover, PopoverContent, PopoverTrigger } from "@/common/presentation/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/common/presentation/ui/tooltip";
 import {
-  Card,
-  CardContent,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/common/presentation/ui";
+} from "@/common/presentation/ui/drawer";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/common/application/utils";
 import { ComponentRenderer } from "./index";

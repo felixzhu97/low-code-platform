@@ -1,7 +1,6 @@
-import React from "react";
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDrag } from "react-dnd";
 import { ScrollArea } from "@/common/presentation/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";

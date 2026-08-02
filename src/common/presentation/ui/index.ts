@@ -1,4 +1,6 @@
-// UI primitives (shadcn / Radix)
+// UI primitives only (shadcn / Radix).
+// Do NOT re-export domain/feature shells here — that creates import cycles
+// (ui → platform-header → template/theme/... → ui) and can hang Turbopack.
 export * from "./accordion";
 export * from "./alert-dialog";
 export * from "./alert";
@@ -10,7 +12,8 @@ export * from "./button";
 export * from "./calendar";
 export * from "./card";
 export * from "./carousel";
-export * from "./chart";
+// chart.tsx pulls the full recharts package — import from
+// `@/common/presentation/ui/chart` directly when needed.
 export * from "./checkbox";
 export * from "./collapsible";
 export * from "./command";
@@ -46,10 +49,3 @@ export * from "./toast";
 export * from "./toggle-group";
 export * from "./toggle";
 export * from "./tooltip";
-
-// Shell / shared chrome living under common/presentation
-export * from "../header";
-export * from "../platform-header";
-export * from "../virtual-list";
-
-export { ColorPicker } from "@/theme/presentation/color-picker";

@@ -1,19 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Button,
-  Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  DialogTrigger,
-} from "@/common/presentation/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/common/presentation/ui/dialog";
+import { Button } from "@/common/presentation/ui/button";
+import { Input } from "@/common/presentation/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";
 import { Search, X, Star } from "lucide-react";
 import { TemplatePreview } from "./template-preview";
 import { TemplateCard } from "./template-card";
@@ -23,7 +14,8 @@ import { useTemplateGallery } from "./hooks/use-template-gallery";
 import type { Component } from "@/component/domain/types"
 import type { ThemeConfig } from "@/theme/domain/types";
 import type { Template } from "@/template/infrastructure/templates";
-import { useComponentStore, useThemeStore } from "@/common/infrastructure/stores";
+import { useComponentStore } from "@/component/infrastructure/component.store";
+import { useThemeStore } from "@/theme/infrastructure/theme.store";
 
 interface TemplateGalleryProps {
   // 移除 props，现在从 store 获取状态

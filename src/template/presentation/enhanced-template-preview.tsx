@@ -1,14 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  Button,
-  ScrollArea,
-  VirtualList,
-} from "@/common/presentation/ui";
+import { Tabs, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";
+import { Button } from "@/common/presentation/ui/button";
+import { ScrollArea } from "@/common/presentation/ui/scroll-area";
+import { VirtualList } from "@/common/presentation/virtual-list";
 import { PreviewCanvas } from "@/canvas/presentation/preview-canvas";
 import {
   Smartphone,

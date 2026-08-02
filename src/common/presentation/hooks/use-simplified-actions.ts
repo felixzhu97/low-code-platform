@@ -1,4 +1,4 @@
-import { useStores } from "@/common/infrastructure/stores";
+import { useStores } from "@/common/infrastructure/use-stores";
 
 /**
  * 简化的操作hooks

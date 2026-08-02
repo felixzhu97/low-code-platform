@@ -1,36 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  ScrollArea,
-  Button,
-  Input,
-  Label,
-  Switch,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Badge,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Textarea,
-} from "@/common/presentation/ui";
+import { ScrollArea } from "@/common/presentation/ui/scroll-area";
+import { Button } from "@/common/presentation/ui/button";
+import { Input } from "@/common/presentation/ui/input";
+import { Label } from "@/common/presentation/ui/label";
+import { Switch } from "@/common/presentation/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/presentation/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/common/presentation/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/common/presentation/ui/dialog";
+import { Badge } from "@/common/presentation/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/common/presentation/ui/card";
+import { Textarea } from "@/common/presentation/ui/textarea";
 import {
   PlusCircle,
   Database,

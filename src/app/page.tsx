@@ -3,32 +3,36 @@
 import { useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Canvas, PropertiesPanel } from "@/canvas/presentation";
-import { ComponentPanel } from "@/component/presentation";
+import { Canvas } from "@/canvas/presentation/canvas";
+import { PropertiesPanel } from "@/canvas/presentation/properties-panel";
+import { ComponentPanel } from "@/component/presentation/component-panel";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/common/presentation/ui/tabs";
-import { Header } from "@/common/presentation/ui";
-import { TemplateGallery } from "@/template/presentation";
-import { ResponsiveControls } from "@/canvas/presentation";
-import { ThemeEditor, AnimationEditor } from "@/theme/presentation";
-import { FormBuilder } from "@/form/presentation/forms";
-import { Collaboration } from "@/collaboration/presentation";
-import { CodeExport } from "@/export/presentation";
-import type { Component } from "@/component/domain/types"
+import { Header } from "@/common/presentation/header";
+import { TemplateGallery } from "@/template/presentation/template-gallery";
+import { ResponsiveControls } from "@/canvas/presentation/responsive-controls";
+import { ThemeEditor } from "@/theme/presentation/theme-editor";
+import { AnimationEditor } from "@/theme/presentation/animation-editor";
+import { FormBuilder } from "@/form/presentation/forms/form-builder";
+import { Collaboration } from "@/collaboration/presentation/collaboration";
+import { CodeExport } from "@/export/presentation/code-export";
+import type { Component } from "@/component/domain/types";
 import type { ThemeConfig } from "@/theme/domain/types";
 import { TemplateApplicationError } from "@/template/domain/types";
 import { TemplateService } from "@/template/application/template-command.service";
 import { Button } from "@/common/presentation/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager, ComponentGrouping } from "@/component/presentation";
-import { ComponentTree } from "@/canvas/presentation";
+import { ComponentLibraryManager } from "@/component/presentation/component-library-manager";
+import { ComponentGrouping } from "@/component/presentation/component-grouping";
+import { ComponentTree } from "@/canvas/presentation/component-tree";
 import { toast } from "@/common/presentation/hooks/use-toast";
-import { useStores, useSimplifiedActions } from "@/common/infrastructure/stores";
-import { DataPanel } from "@/data/presentation";
+import { useStores } from "@/common/infrastructure/use-stores";
+import { useSimplifiedActions } from "@/common/presentation/hooks/use-simplified-actions";
+import { DataPanel } from "@/data/presentation/data-panel";
 
 export default function LowCodePlatform() {
   // 从 stores 获取状态

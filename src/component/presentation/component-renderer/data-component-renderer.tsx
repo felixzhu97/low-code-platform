@@ -1,24 +1,12 @@
 import type React from "react";
 import type { Component } from "@/component/domain/types"
 import type { TableColumn, TreeNode } from "@/data/domain/types";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/common/presentation/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/common/presentation/ui/table";
+import { Button } from "@/common/presentation/ui/button";
+import { Badge } from "@/common/presentation/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/common/presentation/ui/avatar";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Button,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -26,7 +14,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/common/presentation/ui";
+} from "@/common/presentation/ui/pagination";
 import {
   ArrowUpDown,
   Filter,
