@@ -58,11 +58,11 @@ Prefer **Fake** for repositories over heavy mocking.
 | Commented-out / ignored tests | Delete or fix |
 | Ice-cream cone (many E2E, few unit) | Rebalance toward unit |
 
-## Layers in this codebase
+## Where tests live in this codebase
 
 | Code under test | Prefer |
 |-----------------|--------|
-| `domain/` | Unit + TDD |
-| `application/` | Unit with Fake repos; light integration |
-| `infrastructure/` / `web/` | Integration |
+| `src/{feature}/*.{ts,tsx}` helpers / stores | Unit + TDD |
+| Shared `src/lib/` | Unit with fakes; light integration |
+| Feature UI / hooks | Component tests |
 | Critical UI flows | Few E2E |
