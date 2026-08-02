@@ -29,20 +29,38 @@
       "@/*": [
         "./src/*"
       ],
-      "@/shared/*": [
-        "./src/shared/*"
+      "@/app/*": [
+        "./src/app/*"
       ],
-      "@/domain/*": [
-        "./src/domain/*"
+      "@/common/*": [
+        "./src/common/*"
       ],
-      "@/application/*": [
-        "./src/application/*"
+      "@/canvas/*": [
+        "./src/canvas/*"
       ],
-      "@/infrastructure/*": [
-        "./src/infrastructure/*"
+      "@/component/*": [
+        "./src/component/*"
       ],
-      "@/presentation/*": [
-        "./src/presentation/*"
+      "@/template/*": [
+        "./src/template/*"
+      ],
+      "@/theme/*": [
+        "./src/theme/*"
+      ],
+      "@/data/*": [
+        "./src/data/*"
+      ],
+      "@/chart/*": [
+        "./src/chart/*"
+      ],
+      "@/form/*": [
+        "./src/form/*"
+      ],
+      "@/export/*": [
+        "./src/export/*"
+      ],
+      "@/collaboration/*": [
+        "./src/collaboration/*"
       ]
     }
   },

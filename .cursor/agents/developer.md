@@ -16,30 +16,31 @@ is_background: true
 
 ### TypeScript / Clean Architecture
 
-**包结构**：
+**包结构（domain-first）**：
 ```
 src/
-├── domain/          # entities + domain services
-├── application/     # application services / orchestration
-├── presentation/    # React UI (canvas, panels, charts)
-└── shared/          # Zustand stores, hooks, persistence
+├── app/                              # Next.js shell
+├── {module}/domain|application|infrastructure|presentation/
+└── common/                           # UI kit, utils, persistence, history
 ```
+
+Modules: `canvas`, `component`, `template`, `theme`, `data`, `chart`, `form`, `export`, `collaboration`.
 
 **关键规范**：
 - Domain 不依赖 React / Next.js
-- 应用服务编排用例；领域规则留在 domain
-- 禁止新代码使用 `domain/port` / `*Port` / `adapter/in|out`
+- 应用服务编排用例；领域规则留在 `{module}/domain`
+- 禁止全局 `src/domain|application|presentation|shared` 与 `domain/port` / `*Port` / `adapter/in|out`
 - 变量与方法命名必须对齐 [领域术语表](../../docs/Glossary.md) Preferred Term；细则见 developer skill → `references/clean-code-naming.md`
-- UI 状态优先 Zustand stores（`shared/stores`）
+- UI 状态优先各域 `infrastructure` stores（经 `common/infrastructure/stores` facade 组合）
 
-**示例 - 领域服务用法**：通过 `application/services` 调用 domain factory / management，不在组件内散落业务规则。
+**示例 - 领域服务用法**：通过 `{module}/application` 调用 domain factory / management，不在组件内散落业务规则。
 
 ### React / Next.js (Presentation)
 
 **关键规范**：
 - Next.js App Router 入口在 `src/app/`
-- 组件放 `src/presentation/components/`
-- Hooks 放 `presentation/hooks` 或 `shared/hooks`
+- UI 放在所属业务域的 `presentation/`（横切 primitives 在 `common/presentation/ui`）
+- Hooks 放各域 `presentation/hooks` 或 `common/presentation/hooks`
 - 类型优先；命名对齐 Glossary Preferred Term + clean-code-naming（禁止含糊的 `data`/`tmp`/`handle` 及术语同义词）
 
 **示例 - 组件职责**：

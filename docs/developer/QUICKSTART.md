@@ -57,11 +57,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 src/
-├── domain/          # Entities & domain services
-├── application/     # Application services
-├── presentation/    # React UI (canvas, panels, charts)
-└── shared/          # Zustand stores, hooks, persistence
+├── app/             # Next.js App Router shell
+├── canvas/          # Canvas + properties (domain → presentation)
+├── component/       # Component factory, panel, renderer
+├── template/ theme/ data/ chart/ form/ export/ collaboration/
+└── common/          # UI kit, utils, persistence, history
 ```
+
+Each business module keeps `domain` / `application` / `infrastructure` / `presentation` colocated. See [Glossary](../Glossary.md) and `.cursor/rules/architecture.mdc`.
 
 ---
 

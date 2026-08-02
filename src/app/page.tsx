@@ -3,35 +3,32 @@
 import { useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  Canvas,
-  ComponentPanel,
-  PropertiesPanel,
-} from "@/presentation/components/canvas";
+import { Canvas, PropertiesPanel } from "@/canvas/presentation";
+import { ComponentPanel } from "@/component/presentation";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/presentation/components/ui/tabs";
-import { CodeExport, Header } from "@/presentation/components/ui";
-import { TemplateGallery } from "@/presentation/components/templates";
-import { ResponsiveControls } from "@/presentation/components/ui";
-import { ThemeEditor } from "@/presentation/components/ui";
-import { FormBuilder } from "@/presentation/components/forms";
-import { AnimationEditor } from "@/presentation/components/ui";
-import { Collaboration } from "@/presentation/components/ui";
-import type { Component, ThemeConfig } from "@/domain/entities/types";
-import { TemplateApplicationError } from "@/domain/entities/types";
-import { TemplateService } from "@/application/services/template-command.service";
-import { Button } from "@/presentation/components/ui/button";
+} from "@/common/presentation/ui/tabs";
+import { Header } from "@/common/presentation/ui";
+import { TemplateGallery } from "@/template/presentation";
+import { ResponsiveControls } from "@/canvas/presentation";
+import { ThemeEditor, AnimationEditor } from "@/theme/presentation";
+import { FormBuilder } from "@/form/presentation/forms";
+import { Collaboration } from "@/collaboration/presentation";
+import { CodeExport } from "@/export/presentation";
+import type { Component } from "@/component/domain/types"
+import type { ThemeConfig } from "@/theme/domain/types";
+import { TemplateApplicationError } from "@/template/domain/types";
+import { TemplateService } from "@/template/application/template-command.service";
+import { Button } from "@/common/presentation/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager } from "@/presentation/components/ui";
-import { ComponentGrouping } from "@/presentation/components/ui";
-import { ComponentTree } from "@/presentation/components/canvas";
-import { toast } from "@/presentation/hooks/use-toast";
-import { useStores, useSimplifiedActions } from "@/shared/stores";
-import { DataPanel } from "@/presentation/components/data";
+import { ComponentLibraryManager, ComponentGrouping } from "@/component/presentation";
+import { ComponentTree } from "@/canvas/presentation";
+import { toast } from "@/common/presentation/hooks/use-toast";
+import { useStores, useSimplifiedActions } from "@/common/infrastructure/stores";
+import { DataPanel } from "@/data/presentation";
 
 export default function LowCodePlatform() {
   // 从 stores 获取状态

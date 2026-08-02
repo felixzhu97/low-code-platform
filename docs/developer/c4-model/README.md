@@ -7,8 +7,8 @@
 | 文件 | 层级 | 说明 |
 | --- | --- | --- |
 | `C1-Context.puml` | C1 | 系统上下文（开发者 / 设计师 / Vercel / CDN / Git） |
-| `C2-Container.puml` | C2 | 容器图（SPA + Clean Architecture 四层 + LocalStorage） |
-| `C3-Component-Frontend.puml` | C3 | 前端编辑器组件图（Canvas / Panel / Stores / Services） |
+| `C2-Container.puml` | C2 | 容器图（SPA + domain-first modules + common + LocalStorage） |
+| `C3-Component-Frontend.puml` | C3 | 前端编辑器组件图（按业务域：canvas / component / template / …） |
 | `C4-Deployment.puml` | C4 | 本地开发（`pnpm dev` → `:3000`） |
 | `C4-Deployment-Production.puml` | C4 | 生产部署（Vercel） |
 
@@ -24,13 +24,15 @@
 
 ![C2-Container](png/C2-Container.png)
 
+> PNG may be stale after the domain-first layout change — regenerate from `.puml` when PlantUML is available.
+
 ---
 
 ## C3 - 前端组件图
 
 ![C3-Component-Frontend](png/C3-Component-Frontend.png)
 
-> 注：PNG 由既有画布模块图迁移而来；若与当前 `.puml` 不一致，请按下方命令重新生成。
+> PNG may be stale after the domain-first layout change — regenerate from `.puml` when PlantUML is available.
 
 ---
 
