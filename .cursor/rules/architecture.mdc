@@ -1,5 +1,5 @@
 ---
-description: Core project constraints — Clean Architecture layers, TypeScript naming, test naming. Deep guides live in skills.
+description: Core project constraints — domain-first Clean Architecture, TypeScript naming, test naming. Deep guides live in skills.
 alwaysApply: true
 ---
 
@@ -8,59 +8,75 @@ alwaysApply: true
 ## Dependency Rule
 
 ```
-presentation → application → domain
-shared = cross-cutting (stores / hooks / persistence); must not depend on presentation
+{module}/presentation → {module}/application → {module}/domain
+{module}/infrastructure → {module}/domain
+common may be used by all modules; modules must not depend on common/presentation from domain
+prefer cross-module calls via application; avoid presentation ↔ presentation sprawl
 ```
 
-**Domain has NO dependencies on other layers or frameworks.**
+**Domain has NO dependencies on other layers or frameworks (no React / Next.js).**
 
 ## Terminology Index (Hexagonal ↔ This Project)
 
-| Hexagonal concept | Hexagonal layout | This project layer | This project path |
-|-------------------|------------------|--------------------|-------------------|
-| Driving adapter | `adapter/in` | Presentation + Application | `src/presentation/`, `src/application/` |
-| Driven adapter | `adapter/out` | Shared persistence / infra helpers | `src/shared/` (e.g. persistence manager) |
-| Outbound port | `domain/port` | Repository / domain service interface | `src/domain/services/`, repository interfaces if added |
-| Domain core | `domain` | Domain | `src/domain/entities/`, `domain/services/` |
-| Composition / UI shell | — | Presentation | `src/presentation/components/` |
+| Hexagonal concept | Hexagonal layout | This project | Path pattern |
+|-------------------|------------------|--------------|--------------|
+| Driving adapter | `adapter/in` | Module presentation + application | `src/{module}/presentation/`, `application/` |
+| Driven adapter | `adapter/out` | Module / common infrastructure | `src/{module}/infrastructure/`, `src/common/infrastructure/` |
+| Outbound port | `domain/port` | Domain service / repository interface | `src/{module}/domain/` |
+| Domain core | `domain` | Module domain | `src/{module}/domain/` |
+| Composition / UI shell | — | Next.js App Router | `src/app/` |
 
 ## Forbidden in New Code
 
-- `domain/port/` — prefer domain services / repository interfaces under `domain/`
+- Global layer roots: `src/domain/`, `src/application/`, `src/presentation/`, `src/shared/`
+- `domain/port/` — prefer domain services / repository interfaces under `{module}/domain/`
 - `*Port` interface suffix — prefer `*Repository`, `*Service`, or a domain-specific name
-- `adapter/in` / `adapter/out` packages — use `presentation/`, `application/`, `shared/`
+- `adapter/in` / `adapter/out` packages — use `{module}/{layer}/`
 
-## Layers
+## Business Modules
 
-| Layer | Path | Contains |
-|-------|------|----------|
-| `domain/` | `src/domain/` | Entities, types, domain services (factory, rules) |
-| `application/` | `src/application/` | Application services / use-case orchestration |
-| `presentation/` | `src/presentation/` | React UI (canvas, panels, charts, templates) |
-| `shared/` | `src/shared/` | Zustand stores, hooks, LocalStorage persistence |
+| Module | Path | Owns |
+|--------|------|------|
+| `canvas` | `src/canvas/` | Canvas UI, properties panel, canvas store / hooks |
+| `component` | `src/component/` | Component types, factory, management, panel / renderer, component stores |
+| `template` | `src/template/` | Gallery, template command, template data |
+| `theme` | `src/theme/` | Theme store / editor, animation editor |
+| `data` | `src/data/` | Data source / binding services, data store, data panel |
+| `chart` | `src/chart/` | Chart components + chart renderer |
+| `form` | `src/form/` | Form builder + form renderer |
+| `export` | `src/export/` | Code export UI |
+| `collaboration` | `src/collaboration/` | Collaboration UI |
+| `common` | `src/common/` | UI kit, `cn`/utils, persistence, history, cross-cutting hooks |
+
+## Layers (inside each module)
+
+| Layer | Contains |
+|-------|----------|
+| `domain/` | Types, entities, domain services |
+| `application/` | Use-case / application services |
+| `infrastructure/` | Zustand stores, adapters, LocalStorage helpers |
+| `presentation/` | React UI for that module |
 
 ## Project Structure
 
 ```
 src/
-├── domain/
-│   ├── entities/
-│   └── services/
-├── application/
-│   └── services/
-├── presentation/
-│   ├── components/
-│   └── hooks/
-└── shared/
-    ├── stores/
-    └── hooks/
+├── app/                 # Next.js App Router shell
+├── canvas|component|template|theme|data|chart|form|export|collaboration/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   └── presentation/
+└── common/
+    ├── domain/
+    ├── application/
+    ├── infrastructure/
+    └── presentation/    # shadcn / Radix primitives + shell chrome
 ```
-
-App Router entry lives under `src/app/` (Next.js) and composes presentation.
 
 ## Domain Rules
 
-- No React / Next.js imports in `domain/`
+- No React / Next.js imports in `{module}/domain/`
 - Prefer rich behavior in domain services over anemic bags of fields
 - Keep Preferred Terms aligned with [docs/Glossary.md](../../docs/Glossary.md)
 
@@ -78,24 +94,10 @@ App Router entry lives under `src/app/` (Next.js) and composes presentation.
 
 ## Test Naming
 
-```
-should_expectedResult_when_condition
-```
+`should_expected_when_condition` (or Vitest `it("should ...")` matching the same intent).
 
-## Checklist
+## References
 
-- [ ] Domain has no outward dependencies
-- [ ] No circular dependencies across layers
-- [ ] Presentation does not contain domain rules
-
-## Hard constraints (delivery)
-
-When **creating a Jira ticket**, **branching**, **committing**, or **opening a PR**: always follow [developer](.cursor/skills/developer/SKILL.md) §6 (`<type>/<slug>`, Chain PRs, commit/PR templates) and [Product Owner](.cursor/skills/product-owner/SKILL.md). **References** must prefer official documentation and research links ([dependency-docs](.cursor/skills/developer/references/dependency-docs.md), [sources](.cursor/skills/business-tech-analysis/references/sources.md), arXiv).
-
-## Skills (on demand)
-
-| Task | Skill |
-|------|-------|
-| Feature / tests / commit / Apple UX | [developer](.cursor/skills/developer/SKILL.md) |
-| Business + tech strategy | [business-tech-analysis](.cursor/skills/business-tech-analysis/SKILL.md) |
-| Product Owner / Jira | [Product Owner](.cursor/skills/product-owner/SKILL.md) |
+- [docs/Glossary.md](../../docs/Glossary.md)
+- [docs/developer/c4-model/](../../docs/developer/c4-model/)
+- [The C4 model](https://c4model.com/)

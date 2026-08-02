@@ -29,30 +29,31 @@ This document defines the project **Ubiquitous Language**. English terms are the
 
 | Preferred Term | 中文 | Code Path | UI Area | Notes |
 | -------------- | ---- | --------- | ------- | ----- |
-| Canvas | 画布 | `presentation/components/canvas/` | Center editor | Drag-drop layout, preview, component tree |
-| Component | 组件 | `domain/entities/`, `domain/services/` | Left panel + canvas nodes | Built-in + custom components |
-| Properties | 属性配置 | `presentation/components/canvas/properties-panel.tsx` | Right panel | Style / data / interaction props |
-| Template | 模板 | `presentation/components/templates/` | Template gallery | Prefabricated page layouts |
-| Theme | 主题 | `shared/stores/theme.store.ts` | Theme editor | Colors, typography, CSS variables |
-| Animation | 动画 | `presentation/components/ui/animation-editor.tsx` | Animation editor | Motion presets for components |
-| Data Binding | 数据绑定 | `application/services/data-binding.service.ts` | Data panel | Bind components to data sources |
-| Data Source | 数据源 | `application/services/data-source.service.ts` | Data panel | Fetch / cache / refresh |
-| Form Builder | 表单构建 | `presentation/components/forms/` | Form builder | React Hook Form + Zod |
-| Chart | 图表 | `presentation/components/charts/` | Canvas charts | Recharts-based visualizations |
-| Code Export | 代码导出 | `presentation/components/` (code export UI) | Export dialog | Generate deployable frontend code |
-| History | 历史记录 | `shared/stores/history.store.ts`, `application/services/history.ts` | Undo/redo | Operation history |
-| Persistence | 持久化 | `shared/stores/persistence.manager.ts` | LocalStorage | Browser-local project state |
-| Collaboration | 协作 | `presentation/components/ui/collaboration.tsx` | Collaboration UI | Planned / partial real-time sync |
-| Common | 横切 | `shared/` | — | Hooks, utils, cross-cutting stores |
+| Canvas | 画布 | `src/canvas/` | Center editor | Drag-drop layout, preview, component tree, properties panel |
+| Component | 组件 | `src/component/` | Left panel + canvas nodes | Types, factory, management, panel / renderer |
+| Properties | 属性配置 | `src/canvas/presentation/properties-panel.tsx` | Right panel | Style / data / interaction props (owned by Canvas) |
+| Template | 模板 | `src/template/` | Template gallery | Prefabricated page layouts |
+| Theme | 主题 | `src/theme/` | Theme editor | Colors, typography, CSS variables |
+| Animation | 动画 | `src/theme/presentation/animation-editor.tsx` | Animation editor | Motion presets (owned by Theme) |
+| Data Binding | 数据绑定 | `src/data/application/data-binding.service.ts` | Data panel | Bind components to data sources |
+| Data Source | 数据源 | `src/data/application/data-source.service.ts` | Data panel | Fetch / cache / refresh |
+| Form Builder | 表单构建 | `src/form/` | Form builder | React Hook Form + Zod |
+| Chart | 图表 | `src/chart/` | Canvas charts | Recharts-based visualizations |
+| Code Export | 代码导出 | `src/export/` | Export dialog | Generate deployable frontend code |
+| History | 历史记录 | `src/common/infrastructure/history.store.ts`, `src/common/application/history.ts` | Undo/redo | Operation history |
+| Persistence | 持久化 | `src/common/infrastructure/persistence.manager.ts` | LocalStorage | Browser-local project state |
+| Collaboration | 协作 | `src/collaboration/` | Collaboration UI | Planned / partial real-time sync |
+| Common | 横切 | `src/common/` | — | UI kit, utils, persistence, history |
 
-**Architecture layers (canonical)**
+**Architecture (canonical): domain-first modules, layers inside each module**
 
-| Layer | Path | Responsibility |
-| ----- | ---- | -------------- |
-| Domain | `src/domain/` | Entities, domain services (factory, types) |
-| Application | `src/application/` | Use-case services (management, binding, history) |
-| Presentation | `src/presentation/` | React UI, canvas, panels, templates |
-| Shared | `src/shared/` | Zustand stores, hooks, persistence |
+| Layer | Path pattern | Responsibility |
+| ----- | ------------ | -------------- |
+| Domain | `src/{module}/domain/` | Types, domain services |
+| Application | `src/{module}/application/` | Use-case services |
+| Infrastructure | `src/{module}/infrastructure/` | Zustand stores, adapters |
+| Presentation | `src/{module}/presentation/` | React UI for that module |
+| Common | `src/common/` | Cross-cutting UI kit + persistence + history |
 
 ```mermaid
 flowchart TB

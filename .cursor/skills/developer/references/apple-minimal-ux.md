@@ -66,4 +66,4 @@ Apple framing: technology should feel **invisible**; simplicity is sophisticatio
 - [ ] Minimal: removing an element would not hurt understanding or task completion
 - [ ] Feedback for async/error states exists and is non-blocking where possible
 - [ ] Accessibility: contrast, focus, labels (HIG Accessibility)
-- [ ] Presentation UI lives under `src/presentation/`; keep domain rules out of components
+- [ ] Presentation UI lives under `src/{module}/presentation/` (primitives in `src/common/presentation/`); keep domain rules out of components

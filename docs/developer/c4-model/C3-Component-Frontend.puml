@@ -3,40 +3,51 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 组件图 (C3) - Frontend / Editor Shell
+title 组件图 (C3) - Frontend modules (domain-first)
 
-Container_Boundary(presentation, "Presentation") {
+Container_Boundary(canvasB, "canvas") {
     Component(canvas, "Canvas", "React", "主画布：放置、选择、布局")
     Component(preview, "PreviewCanvas", "React", "预览模式")
     Component(tree, "ComponentTree", "React", "组件层级树")
-    Component(panel, "ComponentPanel", "React", "左侧组件面板")
     Component(propsPanel, "PropertiesPanel", "React", "右侧属性配置")
+    Component(canvasStore, "CanvasStore", "Zustand", "预览、网格、设备")
+}
+
+Container_Boundary(componentB, "component") {
+    Component(panel, "ComponentPanel", "React", "左侧组件面板")
     Component(renderer, "ComponentRenderer", "React", "递归渲染 layout/data/chart/form")
+    Component(compMgmt, "ComponentManagementService", "TS", "组件 CRUD / 移动")
+    Component(factory, "ComponentFactoryService", "TS", "按类型创建默认实例")
+    Component(compStore, "ComponentStore", "Zustand", "组件列表与选中态")
+}
+
+Container_Boundary(templateB, "template") {
     Component(templates, "TemplateGallery", "React", "模板浏览与应用")
+    Component(templateSvc, "TemplateService", "TS", "应用模板到组件树")
+}
+
+Container_Boundary(themeB, "theme") {
     Component(themeEditor, "ThemeEditor", "React", "主题定制")
-    Component(formBuilder, "FormBuilder", "React", "表单构建")
+    Component(themeStore, "ThemeStore", "Zustand", "主题 token")
+}
+
+Container_Boundary(dataB, "data") {
+    Component(dataPanel, "DataPanel", "React", "数据源管理")
+    Component(dataBinding, "DataBindingService", "TS", "组件与数据源绑定")
+    Component(dataSource, "DataSourceService", "TS", "数据源获取与缓存")
+}
+
+Container_Boundary(chartFormB, "chart / form / export") {
     Component(charts, "Charts", "Recharts", "图表组件集")
+    Component(formBuilder, "FormBuilder", "React", "表单构建")
     Component(codeExport, "CodeExport", "React", "代码导出")
 }
 
-Container_Boundary(application, "Application") {
-    Component(compMgmt, "ComponentManagementService", "TS", "组件 CRUD / 移动")
-    Component(dataBinding, "DataBindingService", "TS", "组件与数据源绑定")
-    Component(dataSource, "DataSourceService", "TS", "数据源获取与缓存")
-    Component(historySvc, "HistoryService", "TS", "撤销重做支持")
-}
-
-Container_Boundary(domainLayer, "Domain") {
-    Component(factory, "ComponentFactoryService", "TS", "按类型创建默认实例")
-    Component(entities, "Entities / Types", "TS", "Component、ThemeConfig 等")
-}
-
-Container_Boundary(sharedLayer, "Shared") {
-    Component(compStore, "ComponentStore", "Zustand", "组件列表与选中态")
-    Component(canvasStore, "CanvasStore", "Zustand", "预览、网格、设备")
-    Component(themeStore, "ThemeStore", "Zustand", "主题 token")
+Container_Boundary(commonB, "common") {
     Component(historyStore, "HistoryStore", "Zustand", "历史栈")
+    Component(historySvc, "History helpers", "TS", "撤销重做支持")
     Component(persistence, "PersistenceManager", "TS", "LocalStorage 读写")
+    Component(uiKit, "UI kit", "React", "shadcn / Radix primitives")
 }
 
 Rel(canvas, tree, "显示层级")
@@ -59,7 +70,8 @@ Rel(compMgmt, compStore, "写状态")
 Rel(canvas, canvasStore, "画布配置")
 Rel(historySvc, historyStore, "记录变更")
 Rel(persistence, compStore, "持久化")
-Rel(factory, entities, "使用类型")
+Rel(canvas, uiKit, "基础控件")
+Rel(dataPanel, dataSource, "管理数据源")
 
 SHOW_LEGEND()
 @enduml

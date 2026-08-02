@@ -3,35 +3,36 @@
 import { useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  Canvas,
-  ComponentPanel,
-  PropertiesPanel,
-} from "@/presentation/components/canvas";
+import { Canvas } from "@/canvas/presentation/canvas";
+import { PropertiesPanel } from "@/canvas/presentation/properties-panel";
+import { ComponentPanel } from "@/component/presentation/component-panel";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/presentation/components/ui/tabs";
-import { CodeExport, Header } from "@/presentation/components/ui";
-import { TemplateGallery } from "@/presentation/components/templates";
-import { ResponsiveControls } from "@/presentation/components/ui";
-import { ThemeEditor } from "@/presentation/components/ui";
-import { FormBuilder } from "@/presentation/components/forms";
-import { AnimationEditor } from "@/presentation/components/ui";
-import { Collaboration } from "@/presentation/components/ui";
-import type { Component, ThemeConfig } from "@/domain/entities/types";
-import { TemplateApplicationError } from "@/domain/entities/types";
-import { TemplateService } from "@/application/services/template-command.service";
-import { Button } from "@/presentation/components/ui/button";
+} from "@/common/presentation/ui/tabs";
+import { Header } from "@/common/presentation/header";
+import { TemplateGallery } from "@/template/presentation/template-gallery";
+import { ResponsiveControls } from "@/canvas/presentation/responsive-controls";
+import { ThemeEditor } from "@/theme/presentation/theme-editor";
+import { AnimationEditor } from "@/theme/presentation/animation-editor";
+import { FormBuilder } from "@/form/presentation/forms/form-builder";
+import { Collaboration } from "@/collaboration/presentation/collaboration";
+import { CodeExport } from "@/export/presentation/code-export";
+import type { Component } from "@/component/domain/types";
+import type { ThemeConfig } from "@/theme/domain/types";
+import { TemplateApplicationError } from "@/template/domain/types";
+import { TemplateService } from "@/template/application/template-command.service";
+import { Button } from "@/common/presentation/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager } from "@/presentation/components/ui";
-import { ComponentGrouping } from "@/presentation/components/ui";
-import { ComponentTree } from "@/presentation/components/canvas";
-import { toast } from "@/presentation/hooks/use-toast";
-import { useStores, useSimplifiedActions } from "@/shared/stores";
-import { DataPanel } from "@/presentation/components/data";
+import { ComponentLibraryManager } from "@/component/presentation/component-library-manager";
+import { ComponentGrouping } from "@/component/presentation/component-grouping";
+import { ComponentTree } from "@/canvas/presentation/component-tree";
+import { toast } from "@/common/presentation/hooks/use-toast";
+import { useStores } from "@/common/infrastructure/use-stores";
+import { useSimplifiedActions } from "@/common/presentation/hooks/use-simplified-actions";
+import { DataPanel } from "@/data/presentation/data-panel";
 
 export default function LowCodePlatform() {
   // 从 stores 获取状态
