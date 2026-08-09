@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/carousel";
 import { CheckCircle, Circle, Star, Clock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ComponentRenderer } from "./index";
+import { ComponentRenderer } from "./component-renderer";
+
+const noopSelectComponent = (_component: Component) => {};
+const noopMouseDown = (_e: React.MouseEvent, _component: Component) => {};
 
 interface BasicComponentRendererProps {
   component: Component;
@@ -44,8 +47,8 @@ export function BasicComponentRenderer({
   isPreviewMode = false,
   selectedId = null,
   dropTargetId = null,
-  onSelectComponent = () => {},
-  onMouseDown = () => {},
+  onSelectComponent = noopSelectComponent,
+  onMouseDown = noopMouseDown,
 }: BasicComponentRendererProps) {
   // 渲染图标的辅助函数
   const renderIcon = (iconName: string) => {

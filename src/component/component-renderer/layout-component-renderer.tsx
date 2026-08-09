@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/drawer";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ComponentRenderer } from "./index";
+import { ComponentRenderer } from "./component-renderer";
 
 interface LayoutComponentRendererProps {
   component: Component;

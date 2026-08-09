@@ -6,8 +6,8 @@ import { useHistoryStore } from "@/lib/history.store";
 import { useUIStore } from "@/lib/ui.store";
 import { useCustomComponentsStore } from "@/component/custom-components.store";
 /**
- * 组合所有 stores 的 hook
- * 提供统一的状态访问接口
+ * Compatibility facade that subscribes to every store field.
+ * Prefer narrow Zustand selectors (or getState in handlers) on hot paths.
  */
 export function useStores() {
   const componentStore = useComponentStore();
