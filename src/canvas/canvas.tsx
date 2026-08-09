@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Trash2, Smartphone, Tablet } from "lucide-react";
@@ -12,35 +11,32 @@ import { ComponentManagementService } from "@/component/component-management.ser
 import { useCanvasDrag } from "@/canvas/use-canvas-drag";
 import { useComponentInteraction } from "@/component/use-component-interaction";
 import { ComponentRenderer } from "@/component/component-renderer";
-import { useStores, useComponentStore } from "@/lib/stores";
+import { useComponentStore } from "@/component/component.store";
+import { useCanvasStore } from "@/canvas/canvas.store";
+import { useThemeStore } from "@/theme/theme.store";
+import { useDataStore } from "@/data/data.store";
 import type { Component } from "@/component/types";
 
-type CanvasProps = {
-  // 移除 props，现在从 store 获取状态
+const updateComponentsInStore = (newComponents: Component[]) => {
+  useComponentStore.getState().updateComponents(newComponents);
 };
 
-export const Canvas = React.memo<CanvasProps>(() => {
-  // 从 stores 获取状态
-  const {
-    // 组件状态
-    components,
-    selectedComponent,
-    selectComponent,
-    clearAllComponents,
-    // 画布状态
-    isPreviewMode,
-    showGrid,
-    snapToGrid,
-    viewportWidth,
-    activeDevice,
-    theme,
-    toggleGrid,
-    toggleSnapToGrid,
-    // 数据状态
-    dataSources,
-  } = useStores();
+export const Canvas = React.memo(function Canvas() {
+  const components = useComponentStore((s) => s.components);
+  const selectComponent = useComponentStore((s) => s.selectComponent);
+  const clearAllComponents = useComponentStore((s) => s.clearAllComponents);
 
-  // 使用自定义Hook处理组件交互
+  const isPreviewMode = useCanvasStore((s) => s.isPreviewMode);
+  const showGrid = useCanvasStore((s) => s.showGrid);
+  const snapToGrid = useCanvasStore((s) => s.snapToGrid);
+  const viewportWidth = useCanvasStore((s) => s.viewportWidth);
+  const activeDevice = useCanvasStore((s) => s.activeDevice);
+  const toggleGrid = useCanvasStore((s) => s.toggleGrid);
+  const toggleSnapToGrid = useCanvasStore((s) => s.toggleSnapToGrid);
+
+  const theme = useThemeStore((s) => s.theme);
+  const dataSources = useDataStore((s) => s.dataSources);
+
   const {
     selectedId,
     isDragging,
@@ -51,31 +47,22 @@ export const Canvas = React.memo<CanvasProps>(() => {
     handleMouseMove,
     handleMouseUp,
     handleKeyDown,
-    handleClear,
   } = useComponentInteraction({
     components,
-    onUpdateComponents: (newComponents) => {
-      // 直接更新 store
-      useComponentStore.getState().updateComponents(newComponents);
-    },
+    onUpdateComponents: updateComponentsInStore,
     onSelectComponent: selectComponent,
     isPreviewMode,
     snapToGrid,
   });
 
-  // 使用自定义Hook处理拖拽
   const { drop, isOver, dropTargetId } = useCanvasDrag({
     components,
-    onUpdateComponents: (newComponents) => {
-      // 直接更新 store
-      useComponentStore.getState().updateComponents(newComponents);
-    },
+    onUpdateComponents: updateComponentsInStore,
     isPreviewMode,
     snapToGrid,
     theme,
   });
 
-  // 获取组件绑定的数据源
   const getComponentData = useCallback(
     (component: Component) => {
       return ComponentManagementService.getComponentData(
@@ -86,7 +73,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     [dataSources]
   );
 
-  // 创建ref合并函数
   const setRefs = useCallback(
     (element: HTMLDivElement | null) => {
       canvasRef.current = element;
@@ -95,7 +81,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     [drop, canvasRef]
   );
 
-  // 递归渲染组件
   const renderComponent = useCallback(
     (component: Component, parentComponent: Component | null = null) => {
       const componentData = getComponentData(component);
@@ -128,7 +113,6 @@ export const Canvas = React.memo<CanvasProps>(() => {
     ]
   );
 
-  // 获取根级组件（没有父组件的组件）
   const rootComponents =
     ComponentManagementService.getRootComponents(components);
 

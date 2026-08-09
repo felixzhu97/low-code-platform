@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { Component } from "@/component/types";
 import { ComponentManagementService } from "@/component/component-management.service";
-import { useComponentStore, useCanvasStore } from "@/lib/stores";
+import { useComponentStore } from "@/lib/stores";
 
 interface UseComponentInteractionProps {
   components: Component[];
@@ -18,15 +18,12 @@ export function useComponentInteraction({
   isPreviewMode,
   snapToGrid,
 }: UseComponentInteractionProps) {
-  // 从 store 获取状态
-  const {
-    selectedComponentId,
-    isDragging,
-    dragOffset,
-    selectComponent,
-    setDragging,
-    setDragOffset,
-  } = useComponentStore();
+  const selectedComponentId = useComponentStore((s) => s.selectedComponentId);
+  const isDragging = useComponentStore((s) => s.isDragging);
+  const dragOffset = useComponentStore((s) => s.dragOffset);
+  const selectComponent = useComponentStore((s) => s.selectComponent);
+  const setDragging = useComponentStore((s) => s.setDragging);
+  const setDragOffset = useComponentStore((s) => s.setDragOffset);
 
   const canvasRef = useRef<HTMLDivElement>(null);
 

@@ -1,44 +1,47 @@
-import { useStores } from "@/lib/use-stores";
+import { useCallback } from "react";
+import { useComponentStore } from "@/component/component.store";
+import { useHistoryStore } from "@/lib/history.store";
 
 /**
- * 简化的操作hooks
- * 提供常用的组合操作，减少重复代码
+ * Composition helpers that read/write stores via getState so callers
+ * do not subscribe to full store snapshots.
  */
 export function useSimplifiedActions() {
-  const {
-    addComponent,
-    updateComponent,
-    deleteComponent,
-    selectComponent,
-    addToHistory,
-    components,
-  } = useStores();
+  const addComponentWithHistory = useCallback((component: unknown) => {
+    const { addComponent } = useComponentStore.getState();
+    addComponent(component as Parameters<typeof addComponent>[0]);
+    useHistoryStore
+      .getState()
+      .addToHistory(useComponentStore.getState().components);
+  }, []);
 
-  // 添加组件并记录历史
-  const addComponentWithHistory = (component: any) => {
-    addComponent(component);
-    addToHistory(components);
-  };
+  const updateComponentWithHistory = useCallback(
+    (id: string, updates: unknown) => {
+      const { updateComponent } = useComponentStore.getState();
+      updateComponent(id, updates as Parameters<typeof updateComponent>[1]);
+      useHistoryStore
+        .getState()
+        .addToHistory(useComponentStore.getState().components);
+    },
+    []
+  );
 
-  // 更新组件并记录历史
-  const updateComponentWithHistory = (id: string, updates: any) => {
-    updateComponent(id, updates);
-    addToHistory(components);
-  };
+  const deleteComponentWithHistory = useCallback((id: string) => {
+    useComponentStore.getState().deleteComponent(id);
+    useHistoryStore
+      .getState()
+      .addToHistory(useComponentStore.getState().components);
+  }, []);
 
-  // 删除组件并记录历史
-  const deleteComponentWithHistory = (id: string) => {
-    deleteComponent(id);
-    addToHistory(components);
-  };
-
-  // 批量添加组件并记录历史
-  const addComponentsWithHistory = (componentsToAdd: any[]) => {
+  const addComponentsWithHistory = useCallback((componentsToAdd: unknown[]) => {
+    const { addComponent } = useComponentStore.getState();
     componentsToAdd.forEach((component) => {
-      addComponent(component);
+      addComponent(component as Parameters<typeof addComponent>[0]);
     });
-    addToHistory(components);
-  };
+    useHistoryStore
+      .getState()
+      .addToHistory(useComponentStore.getState().components);
+  }, []);
 
   return {
     addComponentWithHistory,

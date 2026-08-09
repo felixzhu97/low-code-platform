@@ -19,11 +19,43 @@ import {
 } from "lucide-react";
 
 import { ComponentCategory } from "@/component/types";
-import { useUIStore } from "@/lib/stores";
+
+type PaletteComponent = {
+  id: string;
+  name: string;
+  type: string;
+  isContainer?: boolean;
+};
+
+function DraggableComponent({ component }: { component: PaletteComponent }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "COMPONENT",
+    item: {
+      id: component.id,
+      name: component.name,
+      type: component.type,
+      isContainer: component.isContainer,
+    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  return (
+    <div
+      ref={drag as unknown as React.Ref<HTMLDivElement>}
+      className="flex cursor-grab items-center justify-between rounded-md border bg-card p-2 text-sm shadow-sm"
+      style={{ opacity: isDragging ? 0.5 : 1 }}
+    >
+      <span>{component.name}</span>
+      {component.isContainer && (
+        <Layers className="h-3 w-3 text-muted-foreground" />
+      )}
+    </div>
+  );
+}
 
 export function ComponentPanel() {
-  // 从 store 获取状态
-  const { activeTab, setActiveTab } = useUIStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -179,50 +211,6 @@ export function ComponentPanel() {
   const visibleCategories = searchTerm
     ? filteredCategories.filter((category) => category.components.length > 0)
     : filteredCategories;
-
-  // 拖拽组件
-  const DraggableComponent = ({
-    component,
-  }: {
-    component: {
-      id: string;
-      name: string;
-      type: string;
-      isContainer?: boolean;
-    };
-  }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
-      type: "COMPONENT",
-      item: {
-        id: component.id,
-        name: component.name,
-        type: component.type,
-        isContainer: component.isContainer,
-      },
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-      end: (item, monitor) => {
-        const didDrop = monitor.didDrop();
-        if (didDrop) {
-          console.log(`Component ${item.name} was dropped successfully`);
-        }
-      },
-    }));
-
-    return (
-      <div
-        ref={drag as any}
-        className="flex cursor-grab items-center justify-between rounded-md border bg-card p-2 text-sm shadow-sm"
-        style={{ opacity: isDragging ? 0.5 : 1 }}
-      >
-        <span>{component.name}</span>
-        {component.isContainer && (
-          <Layers className="h-3 w-3 text-muted-foreground" />
-        )}
-      </div>
-    );
-  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden">

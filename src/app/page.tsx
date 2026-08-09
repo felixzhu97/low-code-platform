@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import dynamic from "next/dynamic";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Canvas } from "@/canvas/canvas";
@@ -13,98 +14,90 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Header } from "@/components/header";
-import { TemplateGallery } from "@/template/template-gallery";
 import { ResponsiveControls } from "@/canvas/responsive-controls";
-import { ThemeEditor } from "@/theme/theme-editor";
-import { AnimationEditor } from "@/theme/animation-editor";
-import { FormBuilder } from "@/form/forms/form-builder";
-import { Collaboration } from "@/collaboration/collaboration";
-import { CodeExport } from "@/export/code-export";
-import type { Component } from "@/component/types";
-import type { ThemeConfig } from "@/theme/types";
-import { TemplateApplicationError } from "@/template/types";
-import { TemplateService } from "@/template/template-command.service";
 import { Button } from "@/components/ui/button";
 import { Eye, Undo2, Redo2 } from "lucide-react";
-import { ComponentLibraryManager } from "@/component/component-library-manager";
-import { ComponentGrouping } from "@/component/component-grouping";
 import { ComponentTree } from "@/canvas/component-tree";
-import { toast } from "@/hooks/use-toast";
-import { useStores } from "@/lib/use-stores";
-import { useSimplifiedActions } from "@/hooks/use-simplified-actions";
-import { DataPanel } from "@/data/data-panel";
+import { useComponentStore } from "@/component/component.store";
+import { useCanvasStore } from "@/canvas/canvas.store";
+import { useUIStore } from "@/lib/ui.store";
+import { useHistoryStore } from "@/lib/history.store";
+
+const TemplateGallery = dynamic(
+  () =>
+    import("@/template/template-gallery").then((m) => ({
+      default: m.TemplateGallery,
+    })),
+  { ssr: false }
+);
+const FormBuilder = dynamic(
+  () =>
+    import("@/form/forms/form-builder").then((m) => ({
+      default: m.FormBuilder,
+    })),
+  { ssr: false }
+);
+const ComponentGrouping = dynamic(
+  () =>
+    import("@/component/component-grouping").then((m) => ({
+      default: m.ComponentGrouping,
+    })),
+  { ssr: false }
+);
+const AnimationEditor = dynamic(
+  () =>
+    import("@/theme/animation-editor").then((m) => ({
+      default: m.AnimationEditor,
+    })),
+  { ssr: false }
+);
+const ThemeEditor = dynamic(
+  () =>
+    import("@/theme/theme-editor").then((m) => ({ default: m.ThemeEditor })),
+  { ssr: false }
+);
+const Collaboration = dynamic(
+  () =>
+    import("@/collaboration/collaboration").then((m) => ({
+      default: m.Collaboration,
+    })),
+  { ssr: false }
+);
+const ComponentLibraryManager = dynamic(
+  () =>
+    import("@/component/component-library-manager").then((m) => ({
+      default: m.ComponentLibraryManager,
+    })),
+  { ssr: false }
+);
+const CodeExport = dynamic(
+  () =>
+    import("@/export/code-export").then((m) => ({ default: m.CodeExport })),
+  { ssr: false }
+);
+const DataPanel = dynamic(
+  () => import("@/data/data-panel").then((m) => ({ default: m.DataPanel })),
+  { ssr: false }
+);
 
 export default function LowCodePlatform() {
-  // 从 stores 获取状态
-  const {
-    // 组件状态
-    components,
-    selectedComponent,
-    selectComponent,
-    // 画布状态
-    isPreviewMode,
-    setPreviewMode,
-    // UI状态
-    activeTab,
-    projectName,
-    setActiveTab,
-    // 历史记录状态
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-  } = useStores();
+  const selectComponent = useComponentStore((s) => s.selectComponent);
+  const isPreviewMode = useCanvasStore((s) => s.isPreviewMode);
+  const setPreviewMode = useCanvasStore((s) => s.setPreviewMode);
+  const activeTab = useUIStore((s) => s.activeTab);
+  const setActiveTab = useUIStore((s) => s.setActiveTab);
+  const undo = useHistoryStore((s) => s.undo);
+  const redo = useHistoryStore((s) => s.redo);
+  const canUndo = useHistoryStore((s) => s.componentsHistory.past.length > 0);
+  const canRedo = useHistoryStore((s) => s.componentsHistory.future.length > 0);
 
-  // 使用简化的操作hooks
-  const { addComponentsWithHistory } = useSimplifiedActions();
-
-  // 简化的处理函数
-
-  const togglePreviewMode = () => {
-    setPreviewMode(!isPreviewMode);
-    if (!isPreviewMode) {
+  const togglePreviewMode = useCallback(() => {
+    const previewing = useCanvasStore.getState().isPreviewMode;
+    setPreviewMode(!previewing);
+    if (!previewing) {
       selectComponent(null);
     }
-  };
-
-  // 移除不必要的处理函数，组件直接使用store actions
-
-  // 处理模板选择
-  const handleSelectTemplate = useCallback(
-    (templateComponents: Component[]) => {
-      try {
-        const processedComponents =
-          TemplateService.applyTemplate(templateComponents);
-
-        // 添加组件到store
-        addComponentsWithHistory(processedComponents);
-
-        toast({
-          title: "模板应用成功",
-          description: `已添加 ${processedComponents.length} 个组件到画布`,
-        });
-      } catch (error) {
-        console.error("应用模板时出错:", error);
-
-        if (error instanceof TemplateApplicationError) {
-          toast({
-            title: "模板应用失败",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "应用模板失败",
-            description: "处理模板时发生未知错误",
-            variant: "destructive",
-          });
-        }
-      }
-    },
-    [addComponentsWithHistory]
-  );
-
-  // 移除不必要的处理函数，组件直接使用store actions
+  }, [setPreviewMode, selectComponent]);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -115,7 +108,7 @@ export default function LowCodePlatform() {
               variant="outline"
               size="sm"
               onClick={undo}
-              disabled={!canUndo()}
+              disabled={!canUndo}
             >
               <Undo2 className="mr-2 h-4 w-4" />
               撤销
@@ -124,7 +117,7 @@ export default function LowCodePlatform() {
               variant="outline"
               size="sm"
               onClick={redo}
-              disabled={!canRedo()}
+              disabled={!canRedo}
             >
               <Redo2 className="mr-2 h-4 w-4" />
               重做

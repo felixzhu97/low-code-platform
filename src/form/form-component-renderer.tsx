@@ -80,8 +80,8 @@ export function FormComponentRenderer({
             </SelectTrigger>
             <SelectContent>
               {(props.options || ["选项1", "选项2", "选项3"]).map(
-                (option: string, index: number) => (
-                  <SelectItem key={index} value={option}>
+                (option: string) => (
+                  <SelectItem key={option} value={option}>
                     {option}
                   </SelectItem>
                 )
@@ -119,7 +119,10 @@ export function FormComponentRenderer({
           <RadioGroup defaultValue={props.defaultValue || "option-1"}>
             {(props.options || ["选项1", "选项2", "选项3"]).map(
               (option: string, index: number) => (
-                <div key={index} className="flex items-center space-x-2">
+                <div
+                  key={`${component.id}-${option}`}
+                  className="flex items-center space-x-2"
+                >
                   <RadioGroupItem
                     value={`option-${index + 1}`}
                     id={`${component.id}-${index}`}

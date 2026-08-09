@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useDrop } from "react-dnd";
 import type { Component } from "@/component/types";
 import { ComponentManagementService } from "@/component/component-management.service";
@@ -9,23 +9,46 @@ interface UseCanvasDragProps {
   onUpdateComponents: (components: Component[]) => void;
   isPreviewMode: boolean;
   snapToGrid: boolean;
-  theme?: any;
+  theme?: unknown;
 }
 
 export function useCanvasDrag({
   components,
-  onUpdateComponents,
+  onUpdateComponents: _onUpdateComponents,
   isPreviewMode,
   snapToGrid,
   theme,
 }: UseCanvasDragProps) {
-  const { dropTargetId, setDropTarget, addComponent } = useComponentStore();
+  const dropTargetId = useComponentStore((s) => s.dropTargetId);
+  const setDropTarget = useComponentStore((s) => s.setDropTarget);
+  const addComponent = useComponentStore((s) => s.addComponent);
 
-  // 拖拽Drop处理
+  const resolveDropTargetId = useCallback(
+    (clientX: number, clientY: number): string | null => {
+      const elementsAtPoint = document.elementsFromPoint(clientX, clientY);
+
+      for (const element of elementsAtPoint) {
+        const componentId = element.getAttribute("data-component-id");
+        if (!componentId) continue;
+
+        const component = components.find((comp) => comp.id === componentId);
+        if (
+          component &&
+          ComponentManagementService.isContainer(component.type)
+        ) {
+          return componentId;
+        }
+      }
+
+      return null;
+    },
+    [components]
+  );
+
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "COMPONENT",
-      drop: (item: any, monitor) => {
+      drop: (item: { type: string }, monitor) => {
         if (isPreviewMode) return;
 
         const offset = monitor.getClientOffset();
@@ -33,83 +56,69 @@ export function useCanvasDrag({
           .getElementById("canvas-area")
           ?.getBoundingClientRect();
 
-        if (offset && canvasRect) {
-          let position = {
-            x: offset.x - canvasRect.left,
-            y: offset.y - canvasRect.top,
-          };
+        if (!offset || !canvasRect) return;
 
-          // 应用网格对齐
-          if (snapToGrid) {
-            position = ComponentManagementService.snapToGrid(position);
-          }
+        let position = {
+          x: offset.x - canvasRect.left,
+          y: offset.y - canvasRect.top,
+        };
 
-          // 如果有目标容器，则将组件添加到容器中
-          if (dropTargetId) {
-            const targetComponent = components.find(
-              (comp) => comp.id === dropTargetId
-            );
-            if (
-              targetComponent &&
-              ComponentManagementService.isContainer(targetComponent.type)
-            ) {
-              const newComponent = ComponentManagementService.createComponent(
-                item.type,
-                { x: 0, y: 0 }, // 相对于容器的位置
-                dropTargetId,
-                theme
-              );
-
-              addComponent(newComponent);
-              setDropTarget(null);
-              return newComponent;
-            }
-          }
-
-          // 否则添加到画布根级别
-          const newComponent = ComponentManagementService.createComponent(
-            item.type,
-            position,
-            null,
-            theme
-          );
-
-          addComponent(newComponent);
-          return newComponent;
+        if (snapToGrid) {
+          position = ComponentManagementService.snapToGrid(position);
         }
+
+        const currentDropTargetId =
+          useComponentStore.getState().dropTargetId;
+
+        if (currentDropTargetId) {
+          const targetComponent = components.find(
+            (comp) => comp.id === currentDropTargetId
+          );
+          if (
+            targetComponent &&
+            ComponentManagementService.isContainer(targetComponent.type)
+          ) {
+            const newComponent = ComponentManagementService.createComponent(
+              item.type,
+              { x: 0, y: 0 },
+              currentDropTargetId,
+              theme
+            );
+
+            addComponent(newComponent);
+            setDropTarget(null);
+            return newComponent;
+          }
+        }
+
+        const newComponent = ComponentManagementService.createComponent(
+          item.type,
+          position,
+          null,
+          theme
+        );
+
+        addComponent(newComponent);
+        return newComponent;
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
-      hover: (item: any, monitor) => {
-        // 清除之前的目标
-        setDropTarget(null);
-
-        // 获取当前鼠标位置
+      hover: (_item, monitor) => {
         const clientOffset = monitor.getClientOffset();
-        if (!clientOffset) return;
+        if (!clientOffset) {
+          if (useComponentStore.getState().dropTargetId !== null) {
+            setDropTarget(null);
+          }
+          return;
+        }
 
-        // 查找鼠标下方的组件
-        const elementsAtPoint = document.elementsFromPoint(
+        const nextTargetId = resolveDropTargetId(
           clientOffset.x,
           clientOffset.y
         );
-
-        // 查找第一个可作为容器的组件
-        for (const element of elementsAtPoint) {
-          const componentId = element.getAttribute("data-component-id");
-          if (componentId) {
-            const component = components.find(
-              (comp) => comp.id === componentId
-            );
-            if (
-              component &&
-              ComponentManagementService.isContainer(component.type)
-            ) {
-              setDropTarget(componentId);
-              break;
-            }
-          }
+        if (useComponentStore.getState().dropTargetId !== nextTargetId) {
+          setDropTarget(nextTargetId);
         }
       },
     }),
@@ -117,10 +126,10 @@ export function useCanvasDrag({
       components,
       snapToGrid,
       isPreviewMode,
-      dropTargetId,
       addComponent,
       theme,
       setDropTarget,
+      resolveDropTargetId,
     ]
   );
 
