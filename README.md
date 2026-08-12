@@ -5,9 +5,9 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org/)
 
-Visual low-code page builder for the browser: drag-and-drop canvas, component library, themes, data binding, charts, templates, and code export.
+Low-Code Platform brings visual page building into everyday product work. Our mission is to help teams design, compose, and ship interfaces faster—without sacrificing clarity or code quality.
 
-![Low-Code Platform main interface](screenshots/low-code-platform-main-interface.png)
+**Live:** [https://low-code-platform-eta.vercel.app/](https://low-code-platform-eta.vercel.app/)
 
 ## Table of Contents
 
@@ -99,7 +99,6 @@ low-code-platform/
 │   ├── hooks/               # Shared hooks
 │   └── lib/                 # utils, persistence, history, store facade
 ├── docs/                    # Glossary, C4, user stories
-├── screenshots/
 └── public/
 ```
 
