@@ -1,6 +1,6 @@
 # Quick Start | 快速开始
 
-> Low-Code Platform — local development guide
+> Explore Lowcode — Local Development Guide（本地开发指南）
 
 ---
 

@@ -1,6 +1,20 @@
 # Glossary | 领域术语表
 
-> Low-Code Platform — Ubiquitous Language（统一语言）
+> Explore Lowcode — Ubiquitous Language（统一语言）
+
+---
+
+## 0. Product naming | 产品命名
+
+| Use | Form | Notes |
+| ---- | ---- | ----- |
+| Display (EN / UI title) | `Explore Lowcode` | Space between Explore and Lowcode; **not** ExploreLowcode / Explore Low-Code / Explore LowCode |
+| Repo / npm / clone dir | `explore-lowcode` | Hyphenated lowercase only |
+| Chinese gloss | 低代码 | Optional parenthetical after the English brand |
+| Technique (not the product) | low-code / 低代码 | Generic concept; do not use 低代码平台 as the product name |
+
+**中英混排：** 中文与拉丁字母、数字之间保留半角空格，例如：`Explore Lowcode 的架构`。  
+**首次出现（中文正文）：** `Explore Lowcode（低代码）`；之后可只写 `Explore Lowcode`。
 
 ---
 

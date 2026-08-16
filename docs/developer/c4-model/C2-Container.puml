@@ -3,17 +3,17 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 容器图 (C2) - Low-Code Platform (business-domain folders)
+title 容器图 (C2) — Explore Lowcode（业务域目录）
 
 Person(developer, "开发者", "使用编辑器构建页面")
 Person(designer, "设计师", "设计主题与模板")
 
-System_Boundary(lcp, "Low-Code Platform") {
+System_Boundary(lcp, "Explore Lowcode") {
     Container(spa, "Web SPA", "Next.js + React", "App Router 入口（src/app）")
 
-    Container(domains, "Business domain modules", "TS + React", "canvas / component / template / theme / data / chart / form / export / collaboration")
+    Container(domains, "业务域模块", "TS + React", "canvas / component / template / theme / data / chart / form / export / collaboration")
     Container(sharedUi, "components + hooks", "React", "共享 UI kit 与 hooks")
-    Container(sharedLib, "lib", "TypeScript", "utils、history、LocalStorage persistence、store 组合")
+    Container(sharedLib, "lib", "TypeScript", "utils、history、LocalStorage 持久化、store 组合")
 }
 
 System_Ext(browser_storage, "Browser LocalStorage", "本地项目状态持久化")

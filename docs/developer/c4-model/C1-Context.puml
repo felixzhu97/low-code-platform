@@ -3,13 +3,13 @@
 
 LAYOUT_WITH_LEGEND()
 
-title 系统上下文图 (C1) - Low-Code Platform
+title 系统上下文图 (C1) — Explore Lowcode
 
 Person(developer, "开发者", "拖拽构建页面、配置组件、导出代码")
 Person(designer, "设计师", "定制主题、模板与可复用组件")
 Person(admin, "管理员", "管理组件库与协作策略（规划）")
 
-System(lowcode, "Low-Code Platform", "Next.js 可视化低代码编辑器：画布、组件库、主题、模板、本地持久化与代码导出")
+System(lowcode, "Explore Lowcode", "Next.js 可视化低代码编辑器：画布、组件库、主题、模板、本地持久化与代码导出")
 
 System_Ext(browser, "Web Browser", "运行 SPA 的客户端环境")
 System_Ext(cdn, "CDN", "静态资源分发（生产）")

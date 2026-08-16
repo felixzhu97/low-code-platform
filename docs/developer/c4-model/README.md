@@ -1,6 +1,6 @@
 # C4 模型文档
 
-使用 PlantUML 绘制的 C4 架构模型，描述 Low-Code Platform 的架构。
+使用 PlantUML 绘制的 C4 架构模型，描述 Explore Lowcode（低代码）的架构。
 
 ## 文件
 
@@ -14,29 +14,29 @@
 
 ---
 
-## C1 - 系统上下文图
+## C1 — 系统上下文图
 
 ![C1-Context](png/C1-Context.png)
 
 ---
 
-## C2 - 容器图
+## C2 — 容器图
 
 ![C2-Container](png/C2-Container.png)
 
-> PNG may be stale after the business-domain layout change — regenerate from `.puml` when PlantUML is available.
+> 业务域目录调整后 PNG 可能过期 — 可用 PlantUML 从 `.puml` 重新生成。
 
 ---
 
-## C3 - 前端组件图
+## C3 — 前端组件图
 
 ![C3-Component-Frontend](png/C3-Component-Frontend.png)
 
-> PNG may be stale after the business-domain layout change — regenerate from `.puml` when PlantUML is available.
+> 业务域目录调整后 PNG 可能过期 — 可用 PlantUML 从 `.puml` 重新生成。
 
 ---
 
-## C4 - 部署图
+## C4 — 部署图
 
 本地与生产部署源文件：`C4-Deployment.puml`、`C4-Deployment-Production.puml`。重新生成 PNG 后放入 `png/`。
 
