@@ -1,11 +1,11 @@
-# Low-Code Platform
+# Explore Lowcode
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org/)
 
-Low-Code Platform brings visual page building into everyday product work. Our mission is to help teams design, compose, and ship interfaces faster—without sacrificing clarity or code quality.
+Explore Lowcode brings visual page building into everyday product work. Our mission is to help teams design, compose, and ship interfaces faster—without sacrificing clarity or code quality.
 
 **Live:** [https://low-code-platform-eta.vercel.app/](https://low-code-platform-eta.vercel.app/)
 
@@ -62,8 +62,8 @@ No API keys are required for the local editor.
 ## Getting Started
 
 ```bash
-git clone https://github.com/felixzhu97/low-code-platform.git
-cd low-code-platform
+git clone https://github.com/felixzhu97/explore-lowcode.git
+cd explore-lowcode
 pnpm install
 pnpm dev
 ```
@@ -89,7 +89,7 @@ pnpm test:coverage
 ## Project Structure
 
 ```
-low-code-platform/
+explore-lowcode/
 ├── src/
 │   ├── app/                 # Next.js App Router shell
 │   ├── canvas/              # Canvas UI, store, hooks
