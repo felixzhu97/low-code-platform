@@ -27,7 +27,7 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:4250](http://localhost:4250).
 
 ---
 
@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | ------- | ----------- |
 | `pnpm dev` | Start Next.js dev server |
 | `pnpm build` | Production build |
-| `pnpm start` | Serve production build (`PORT` defaults to 3000) |
+| `pnpm start` | Serve production build (`PORT` defaults to 4250) |
 | `pnpm lint` | Run ESLint |
 | `pnpm test` | Run Vitest |
 | `pnpm test:coverage` | Coverage report |
@@ -87,7 +87,7 @@ pnpm start
 
 | Variable | Description | Default |
 | -------- | ----------- | ------- |
-| `PORT` | HTTP listen port | `3000` |
+| `PORT` | HTTP listen port | `4250` |
 
 On platforms like Render, bind to `0.0.0.0:$PORT`.
 
@@ -97,7 +97,7 @@ On platforms like Render, bind to `0.0.0.0:$PORT`.
 
 | Symptom | Check |
 | ------- | ----- |
-| Port in use | Stop other process on 3000 or set `PORT` |
+| Port in use | Stop other process on 4250 or set `PORT` |
 | Stale Next cache | Remove `.next` and rerun `pnpm dev` |
 | Test failures | Ensure `pnpm install` completed; run `pnpm test` |
 
